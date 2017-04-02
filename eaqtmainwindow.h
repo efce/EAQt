@@ -1,0 +1,161 @@
+
+  /*****************************************************************************************************************
+  *  Electrochmical analyzer software EAQt to be used with 8KCA and M161
+  *
+  *  Copyright (C) 2017  Filip Ciepiela <filip.ciepiela@agh.edu.pl> and Małgorzata Jakubowska <jakubows@agh.edu.pl>
+  *  This program is free software; you can redistribute it and/or modify 
+  *  it under the terms of the GNU General Public License as published by
+  *  the Free Software Foundation; either version 3 of the License, or
+  *  (at your option) any later version.
+  *  This program is distributed in the hope that it will be useful,
+  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  *  GNU General Public License for more details.
+  *  You should have received a copy of the GNU General Public License
+  *  along with this program; if not, write to the Free Software Foundation,
+  *  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
+  *******************************************************************************************************************/
+#ifndef EAQTMAINWINDOW_H
+#define EAQTMAINWINDOW_H
+
+#include <QMainWindow>
+#include <QtWidgets/QPushButton>
+#include <QtWidgets/QHBoxLayout>
+#include <QtWidgets/QVBoxLayout>
+#include <QtWidgets>
+#include <QTimer>
+#include "./Qcustomplot/qcustomplot.h"
+#include "eaqtuiinterface.h"
+#include "eaqtdata.h"
+#include "eaqtplotcursor.h"
+#include "eaqtmousehandler.h"
+
+namespace Ui {
+class MainWindow;
+}
+
+class EAQtMainWindow : public QMainWindow, EAQtUIInterface
+{
+    Q_OBJECT
+
+public:
+    explicit EAQtMainWindow(QWidget *parent = 0);
+    ~EAQtMainWindow();
+    void InitialUpdate(EAQtData& d);
+     void updateAll(bool rescale = true);
+     EAQtUIInterface* getUIInterface();
+     QCPGraph* PlotAddGraph();
+     bool PlotRemoveGraph(QCPGraph* graph);
+     EAQtPlotCursor *PlotAddCursor();
+     double PlotGetXMiddle();
+     void PlotReplot();
+     void PlotSetInteraction(QCP::Interactions) ;
+     QCPItemStraightLine* PlotAddLine();
+     void MeasurementSetup();
+     void MeasurementAfter();
+     void MeasurementUpdate();
+     void showMessageBox(QString text, QString title = "");
+     bool showQuestionBox(QString text, QString title = "");
+     EAQtSaveFiledialog::SaveDetails DialogSaveInFile();
+     void changeStartButtonText(QString);
+     void setLowLabelText(int n, QString text);
+     void setStatusText(QString str);
+     void disableButtonsOnly();
+     void disableButtonsAndTable();
+     void enableAll();
+public slots:
+     void PlotRescaleAxes();
+
+private slots:
+    void handleMouseMoved(QMouseEvent*);
+    void handleMouseDoubleClick(QMouseEvent*);
+    void handleMouseReleased(QMouseEvent*);
+    void handleMousePress(QMouseEvent*);
+
+private:
+    Ui::MainWindow *ui;
+    QGridLayout *_mainLayout;
+    EAQtData *_pEAQtData;
+    EAQtMouseHandler *_mouseHandler;
+    QTableWidget *_tableCurveMain;
+    QCustomPlot *_plotMain;
+    QVector<QPushButton*> _vecButtonsDisablable;
+    QPushButton* _butStartMes;
+    QVector<QLabel*> _vecLowText;
+    QComboBox *_comboOnXAxis;
+    QCP::Interactions _plotDefaultInteractions;
+    QTime *_timeOfMouse;
+    bool _isRectangleZoom;
+    QCPItemRect *_rectZoom;
+    QPushButton *_butZoom;
+
+private:
+    void createActionsTopMenu();
+    void createMenusTopMenu();
+    void PlotRegenerate();
+    void TableRegenerate();
+    void TableDrawSelection();
+    void PlotDrawSelection();
+
+    QGridLayout *createLayout();
+
+    QMenu *_menuFile;
+    QMenu *_menuMeasurement;
+    QMenu *_menuInterpretation;
+    QMenu *_menuAnalysis;
+    QMenu *_menuCalibration;
+    QMenu *_menuAbout;
+
+    QAction *_actStartMeasurement;
+    QAction *_actPVMeasurement;
+    QAction *_actLSVMeasurement;
+    QAction *_actAccessories;
+    QAction *_actCGMDEsettings;
+    QAction *_actParamCopy;
+    QAction *_actParamSave;
+    QAction *_actParamLoad;
+
+    QAction *_actSaveCurve;
+    QAction *_actExportCurve;
+
+    QAction *_actDataCursor;
+    QAction *_actCalibration;
+    QAction *_actBkgCorrection;
+    QAction *_actRelativeValues;
+    QAction *_actMoveUpDown;
+
+    QAction *_actSoftware;
+    QAction *_actReportIssues;
+    QAction *_actSourceCode;
+
+private slots:
+    void TableRowSelected();
+    void PlotSelectionChanged();
+    void PlotRectangleZoom();
+    void ComboOnAxisSelected(int);
+    void selectAll();
+    void showParamDialogPV();
+    void showParamDialogLSV();
+    void showAccessoriesDialog();
+    void deleteActive();
+    void deleteNonactive();
+    void deleteAll();
+    void openFile();
+    void userStopsMeasurement();
+    void userStartsMeasurement();
+    void saveCurve();
+    void paramCopy();
+    void paramSave();
+    void paramLoad();
+    void exportCurve();
+    void showDataCursor();
+    void startCalibration();
+    void startBackgroundCorrection();
+    void startRelativeValues();
+    void startMoveUpDown();
+    void showAboutSoftware();
+    void showGithubIssues();
+    void showGithub();
+};
+
+#endif // MAINWINDOW_H

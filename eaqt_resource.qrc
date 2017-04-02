@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/icons">
+        <file alias="icon_rescale">img/rescale.svg</file>
+        <file alias="icon_zoom">img/zoom.svg</file>
+    </qresource>
+</RCC>

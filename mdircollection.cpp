@@ -1,0 +1,53 @@
+
+  /*****************************************************************************************************************
+  *  Electrochmical analyzer software EAQt to be used with 8KCA and M161
+  *
+  *  Copyright (C) 2017  Filip Ciepiela <filip.ciepiela@agh.edu.pl> and Małgorzata Jakubowska <jakubows@agh.edu.pl>
+  *  This program is free software; you can redistribute it and/or modify 
+  *  it under the terms of the GNU General Public License as published by
+  *  the Free Software Foundation; either version 3 of the License, or
+  *  (at your option) any later version.
+  *  This program is distributed in the hope that it will be useful,
+  *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  *  GNU General Public License for more details.
+  *  You should have received a copy of the GNU General Public License
+  *  along with this program; if not, write to the Free Software Foundation,
+  *  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
+  *******************************************************************************************************************/
+#include "mdircollection.h"
+
+MDirCollection::MDirCollection()
+{
+    _vMdirs.reserve(0);
+}
+
+
+MDirCollection::~MDirCollection()
+{
+    this->clear();
+}
+MDir* MDirCollection::get(uint32_t index)
+{
+    return _vMdirs[index];
+}
+
+void MDirCollection::clear()
+{
+    for ( uint i = 0; i< _vMdirs.size() ; ++i ) {
+        delete _vMdirs[i];
+    }
+    _vMdirs.clear();
+}
+
+uint32_t MDirCollection::addNew()
+{
+    uint32_t index = _vMdirs.size();
+    _vMdirs.push_back(new MDir);
+    return index;
+}
+
+uint32_t MDirCollection::count()
+{
+    return _vMdirs.size();
+}
