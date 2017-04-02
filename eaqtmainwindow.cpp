@@ -873,7 +873,25 @@ void EAQtMainWindow::exportCurve()
         this->showMessageBox(tr("Cannot save - no curve(s) selected."));
         return;
     }
-    //TODO
+    QFileDialog *qfd = new QFileDialog();
+    QString filter = "Text file (*.txt);;Comma separated values (.csv)";
+    QString savePath = qfd->getSaveFileName(this,tr("Add curve to file"),NULL,filter,&filter);
+    if (savePath.isEmpty() ) {
+        return;
+    }
+    QFileInfo fi(savePath);
+    if ( fi.isFile() ) {
+        if ( !showQuestionBox(tr("This will overwrite existing file. Are you sure ?")
+                             ,tr("Warning")) ) {
+            return;
+        }
+    }
+    if ( savePath.right(4).compare(".txt",Qt::CaseInsensitive) == 0 ) {
+        _pEAQtData->exportToTXT(savePath);
+    } else {
+        _pEAQtData->exportToCSV(savePath);
+    }
+    delete qfd;
 }
 
 void EAQtMainWindow::setLowLabelText(int n, QString text)
@@ -948,7 +966,7 @@ void EAQtMainWindow::showAboutSoftware()
     QLabel* st5 = new QLabel();
     QLabel* st6 = new QLabel();
     QLabel* st7 = new QLabel();
-    st1->setText(tr("Elechtrochemical analyzer software EAQt"));
+    st1->setText(tr("Electrochemical analyzer software EAQt"));
     st2->setText(tr("The program developed by Filip Ciepiela and Małgorzata Jakubowska"));
     st3->setText(tr("Git version: %1").arg(GIT_CURRENT_SHA1));
     st4->setText(tr("This program is licensed under GPLv3. It makes use of following software:"));

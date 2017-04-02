@@ -56,6 +56,7 @@ private:
     EAQtData& operator=(EAQtData const& copy); // Don't implement
 
     void SetCurrentRange(int, int b = 0);
+    int GetCurrentRange();
     void InitParam();
     void InitParamLSV();
     void InitEca();
@@ -110,6 +111,8 @@ public:
     bool MDirReadPro(QFile &ff);
     void CurReadFilePro(QString *FileName, int PosNr);
     int SafeAppend(QString pFileName, Curve* CurveToAppend);
+    void exportToTXT(QString path);
+    void exportToCSV(QString path);
 
     void MesStart(bool isLsv = false);
     void MesStop();

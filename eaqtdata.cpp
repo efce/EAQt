@@ -2373,6 +2373,11 @@ void EAQtData::SetCurrentRange(int nNewRange, int nElek) {
     this->_currentRange = nNewRange + add;
 }
 
+int EAQtData::GetCurrentRange()
+{
+    return _currentRange;
+}
+
 QVector<QString> EAQtData::getChannelsNames()
 {
     return _vChannelNamesOfMultielectrode;
@@ -2426,4 +2431,160 @@ void EAQtData::setMesSeriesFile(QString fp)
 EAQtSignalProcessing* EAQtData::getProcessing()
 {
     return _processing;
+}
+
+void EAQtData::exportToCSV(QString path)
+{
+    QFile *ff = new QFile(path);
+    uint32_t i, k;
+    int* blen;
+    blen = new int[_curves->count()];
+    int blenm;
+    char* endOfLine = new char[2]{ '\r', '\n' };
+    if (this->Act() != SELECT::all) {
+        i = this->Act();
+    } else {
+        for (i = 0 ; i < _curves->count(); i++)
+            if (_curves->get(i) != NULL)
+                break;
+    }
+    if ( !ff->open(QIODevice::ReadWrite) ) {
+        _pUI->showMessageBox(tr("Could not open file for writing."), tr("Error"));
+    }
+
+    std::string tmp;
+    int pt;
+    if (this->Act() == SELECT::all)  // wszystkie aktywne
+    {
+
+        QVector<double>* workE=_curves->get(0)->getPotentialVector();
+        int savedCurrentRange = this->GetCurrentRange();
+
+        for ( int i = 0; i<_curves->count(); ++i) {
+            this->SetCurrentRange(_curves->get(i)->Param(PARAM::crange)
+                                  , _curves->get(i)->Param(PARAM::electr));
+            if ( this->getXAxis() == XAXIS::potential ) {
+                for ( pt = 0; pt < _curves->get(i)->Param(PARAM::ptnr)-1; ++pt ) {
+                    tmp = this->_EforTXT(_curves->get(i)->getPotentialPoint(pt)).toStdString();
+                    tmp.append(",");
+                    ff->write(tmp.data(),tmp.size());
+                }
+                tmp = this->_EforTXT(_curves->get(i)->getPotentialPoint(pt)).toStdString();
+                ff->write(tmp.data(),tmp.size());
+            } else {
+                for ( pt = 0; pt < _curves->get(i)->Param(PARAM::ptnr)-1; ++pt ) {
+                    tmp = this->_TIMEforTXT(_curves->get(i)->getTimeVector()->at(pt)).toStdString();
+                    tmp.append(",");
+                    ff->write(tmp.data(),tmp.size());
+                }
+                tmp = this->_TIMEforTXT(_curves->get(i)->getTimeVector()->at(pt)).toStdString();
+                ff->write(tmp.data(),tmp.size());
+            }
+            ff->write(endOfLine,2);
+
+            for ( pt = 0; pt < _curves->get(i)->Param(PARAM::ptnr)-1; ++pt ) {
+                tmp = this->_IforTXT(_curves->get(i)->Result(pt)).toStdString();
+                tmp.append(",");
+                ff->write(tmp.data(),tmp.size());
+            }
+            tmp = this->_IforTXT(_curves->get(i)->Result(pt)).toStdString();
+            ff->write(tmp.data(),tmp.size());
+            ff->write(endOfLine,2);
+        }
+        this->SetCurrentRange(savedCurrentRange);
+    } else { // jedna aktywna
+        i=this->Act();
+        if ( this->getXAxis() == XAXIS::potential ) {
+            int pt = _curves->get(i)->Param(PARAM::ptnr);
+            for ( pt = 0; pt<(_curves->get(i)->Param(PARAM::ptnr)-1); ++pt ) {
+                tmp = this->_EforTXT(_curves->get(i)->getPotentialPoint(pt)).toStdString();
+                tmp.append(",");
+                ff->write(tmp.data(),tmp.size());
+            }
+            tmp = this->_EforTXT(_curves->get(i)->getPotentialPoint(pt)).toStdString();
+            ff->write(tmp.data(),tmp.size());
+        } else {
+            for ( pt = 0; pt < (_curves->get(i)->Param(PARAM::ptnr)-1); ++pt ) {
+                tmp = this->_TIMEforTXT(_curves->get(i)->getTimeVector()->at(pt)).toStdString();
+                tmp.append(",");
+                ff->write(tmp.data(),tmp.size());
+            }
+            tmp = this->_TIMEforTXT(_curves->get(i)->getTimeVector()->at(pt)).toStdString();
+            ff->write(tmp.data(),tmp.size());
+        }
+        ff->write(endOfLine,2);
+
+        for ( pt = 0; pt < _curves->get(i)->Param(PARAM::ptnr)-1; ++pt ) {
+            tmp = this->_IforTXT(_curves->get(i)->Result(pt)).toStdString();
+            tmp.append(",");
+            ff->write(tmp.data(),tmp.size());
+        }
+        tmp = this->_IforTXT(_curves->get(i)->Result(pt)).toStdString();
+        ff->write(tmp.data(),tmp.size());
+        if ( i != _curves->count() -1 ) {
+            // Ostatnia linia bez crlf
+            ff->write(endOfLine,2);
+        }
+    }
+    ff->close();
+    delete ff;
+}
+
+void EAQtData::exportToTXT(QString path)
+{
+    uint32_t i, k;
+    char buf[256];
+    int* blen;
+    blen = new int[_curves->count()];
+    int blenm;
+
+    QFile *ff = new QFile(path);
+    if ( !ff->open(QIODevice::ReadWrite) ) {
+        _pUI->showMessageBox(tr("Failed to open file for writing"),tr("Error"));
+    }
+
+    if (this->Act() == SELECT::all ) {
+        for (i = 0 ; i < _curves->count() ; i++) {
+            if ( _curves->get(i) != NULL ) {
+                blen[i] = _curves->get(i)->Param(PARAM::ptnr);
+            } else {
+                blen[i] = 0;
+            }
+        }
+        blenm = 0;
+        for (i=0 ; i<_curves->count() ; i++) {
+            if (blen[i] > blenm) {
+                blenm = blen[i];
+            }
+        }
+        QVector<double> *workE = _curves->get(0)->getPotentialVector();
+
+        for (k=0 ; k<blenm ; k++) {
+            sprintf(buf, "%10.5lf   ", workE->at(k));
+            ff->write(buf, strlen(buf));
+            for (i = 0 ; i < _curves->count() ; i++)
+                if ( _curves->get(i) != NULL ) {
+                    if (k < blen[i]) {
+                        sprintf(buf,"%10.5lf   ", _curves->get(i)->Result(k));
+                        ff->write(buf, strlen(buf));
+                    } else {
+                        sprintf(buf, "             ");
+                        ff->write(buf, strlen(buf));
+                    }
+                }
+            sprintf(buf, "\n");
+            ff->write(buf, 1);
+        }
+    } else {
+        i = this->Act();
+        QVector<double> *workE = _curves->get(i)->getPotentialVector();
+        for (k=0 ; k < _curves->get(i)->Param(PARAM::ptnr) ; k++)
+        {
+            sprintf(buf,"%10.5lf   %10.5lf\n", workE->at(k), _curves->get(i)->Result(k));
+            ff->write(buf, strlen(buf));
+        }
+    }
+    ff->close();
+    delete[] blen;
+    delete ff;
 }
