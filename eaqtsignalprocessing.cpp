@@ -150,7 +150,7 @@ void EAQtSignalProcessing::sgSmooth(QVector<double> *y, int order, int span)
     }
 
     polynomialFit(x, y->mid(y->size()-span-1,span), order, &coeff);
-    for ( int i = 0; i<posy-1; ++i) {
+    for ( int i = posy+1; i<=span; ++i) {
         newy=0;
         for (ii=0; ii<=order;++ii) {
             newy += coeff[ii]*pow(i+1,ii);
