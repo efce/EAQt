@@ -34,6 +34,7 @@ public:
     static void linearRegression(QVector<double> x, QVector<double> y, double* slope, double* intercept);
     static void correlation(QVector<double> x, QVector<double> y, double* correlationCoef);
     static void polynomialFit(QVector<double> x, QVector<double> y, int order, QVector<double>* coeff);
+    static void sgSmooth(QVector<double>* y, int order, int span);
 private:
     CurveCollection* _curves;
     QCPGraph* _graph;

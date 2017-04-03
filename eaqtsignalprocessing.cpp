@@ -121,6 +121,44 @@ void EAQtSignalProcessing::polynomialFit(QVector<double> x, QVector<double> y, i
      }
 }
 
+void EAQtSignalProcessing::sgSmooth(QVector<double> *y, int order, int span)
+{
+    QVector<double>x(span);
+    for ( int i =0; i<span; ++i ) {
+        x[i]=i+1;
+    }
+    QVector<double> coeff;
+    double newy;
+    int ii;
+    int posy = ceil(span/2);
+    for ( int i = 0; i<y->size()-span; ++i) {
+        polynomialFit(x, y->mid(i,span), order, &coeff);
+        newy=0;
+        for (ii=0; ii<=order;++ii) {
+            newy += coeff[ii]*pow(posy,ii);
+        }
+        y->replace(i+posy-1, newy);
+    }
+
+    polynomialFit(x, y->mid(0,span), order, &coeff);
+    for ( int i = 0; i<posy-1; ++i) {
+        newy=0;
+        for (ii=0; ii<=order;++ii) {
+            newy += coeff[ii]*pow(i+1,ii);
+        }
+        y->replace(i,newy);
+    }
+
+    polynomialFit(x, y->mid(y->size()-span-1,span), order, &coeff);
+    for ( int i = 0; i<posy-1; ++i) {
+        newy=0;
+        for (ii=0; ii<=order;++ii) {
+            newy += coeff[ii]*pow(i+1,ii);
+        }
+        y->replace(i+y->size()-span-1,newy);
+    }
+}
+
 void EAQtSignalProcessing::generateBackground(uint32_t r1, uint32_t r2, uint32_t r3, uint32_t r4)
 {
     Curve *c = _curves->get(EAQtData::getInstance().Act());

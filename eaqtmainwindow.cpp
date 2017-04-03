@@ -785,6 +785,10 @@ void EAQtMainWindow::createActionsTopMenu()
     this->_actMoveUpDown->setStatusTip(tr("Move curve up/down"));
     connect(_actMoveUpDown, SIGNAL(triggered(bool)),this,SLOT(startMoveUpDown()));
 
+    this->_actSmooth = new QAction(tr("SG-Smooth"), this);
+    this->_actSmooth->setStatusTip(tr("Savitzky golay smoothing"));
+    connect(_actSmooth, SIGNAL(triggered(bool)),this,SLOT(startSmooth()));
+
     _actSoftware = new QAction(tr("Software"),this);
     _actSoftware->setStatusTip(tr("Show information about the software"));
     connect(_actSoftware,SIGNAL(triggered(bool)),this,SLOT(showAboutSoftware()));
@@ -820,6 +824,7 @@ void EAQtMainWindow::createMenusTopMenu()
     _menuAnalysis->addAction(this->_actBkgCorrection);
     _menuAnalysis->addAction(this->_actRelativeValues);
     _menuAnalysis->addAction(this->_actMoveUpDown);
+    _menuAnalysis->addAction(this->_actSmooth);
 
     _menuAbout = this->menuBar()->addMenu(tr("About"));
     _menuAbout->addAction(_actSoftware);
@@ -1052,5 +1057,17 @@ void EAQtMainWindow::toggleCurveInfo(bool show)
     } else {
         _butCurveInfoToggle->setText(">");
 
+    }
+}
+
+void EAQtMainWindow::startSmooth()
+{
+    if ( _pEAQtData->getCurves()->count() > 0
+    && this->_pEAQtData->Act() >= 0 ) {
+        Curve* c = _pEAQtData->getCurves()->get(_pEAQtData->Act());
+        //TODO change to Y vecotr !
+        EAQtSignalProcessing::sgSmooth(c->getCurrentVector(),3,9);
+        c->Param(PARAM::inf_smooth,PARAM::inf_smooth_yes);
+        updateAll();
     }
 }

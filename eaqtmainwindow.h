@@ -129,6 +129,7 @@ private:
     QAction *_actBkgCorrection;
     QAction *_actRelativeValues;
     QAction *_actMoveUpDown;
+    QAction *_actSmooth;
 
     QAction *_actSoftware;
     QAction *_actReportIssues;
@@ -160,6 +161,7 @@ private slots:
     void startBackgroundCorrection();
     void startRelativeValues();
     void startMoveUpDown();
+    void startSmooth();
     void showAboutSoftware();
     void showGithubIssues();
     void showGithub();
