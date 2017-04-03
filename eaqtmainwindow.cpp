@@ -488,6 +488,7 @@ QGridLayout* EAQtMainWindow::createLayout()
     _curveInfoData->setFixedWidth(200);
     _curveInfoData->setContentsMargins(0,0,0,0);
     _curveInfoData->setVisible(false);
+    _curveInfoData->setStyleSheet(".curveInfo { margin: 0px; padding: 0px; border: solid 1px black; }");
     QHBoxLayout* hbl = new QHBoxLayout();
     hbl->setMargin(0);
     hbl->setSpacing(0);

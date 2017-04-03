@@ -7,26 +7,43 @@ DisplayCurve::DisplayCurve(Curve* c)
 
 QString DisplayCurve::getHTMLInfo()
 {
+    //TODO for total revamp ...
     QString pte;
-    pte.append( "<h3>" + QApplication::translate("EAQtMainWindow","General") + "</h3>"
-                + "<p><strong>" + QApplication::translate("EAQtMainWindow","name: ") + "</strong>" + _curve->CName() + "</p>"
-                + "<p><strong>" + QApplication::translate("EAQtMainWindow","file: ") + "</strong>" + _curve->FName() + "</p>"
-                + "<p><strong>" + QApplication::translate("EAQtMainWindow","date: ") + "</strong>" + QString("%1-%2-%3 %4:%5:%6").arg(_curve->Param(PARAM::date_year))
+    bool isLSV = (_curve->Param(PARAM::method) == PARAM::method_lsv);
+    pte.append( "<h4>" + QApplication::translate("EAQtMainWindow","General") + "</h4>"
+                + "<tr><th>" + QApplication::translate("EAQtMainWindow","name: ") + "</th></tr><tr><td>" + _curve->CName() + "</td></tr>"
+                + "<tr><th>" + QApplication::translate("EAQtMainWindow","file: ") + "</th></tr><tr><td>" + _curve->FName() + "</td></tr>"
+                + "<tr><th>" + QApplication::translate("EAQtMainWindow","date: ") + "</th></tr><tr><td>" + QString("%1-%2-%3 %4:%5:%6").arg(_curve->Param(PARAM::date_year))
                                                 .arg(_curve->Param(PARAM::date_month), 2, 10, QChar('0'))
                                                 .arg(_curve->Param(PARAM::date_day), 2, 10, QChar('0'))
                                                 .arg(_curve->Param(PARAM::date_hour), 2, 10, QChar('0'))
                                                 .arg(_curve->Param(PARAM::date_minutes), 2, 10, QChar('0'))
                                                 .arg(_curve->Param(PARAM::date_seconds), 2, 10, QChar('0'))
-                                                    + "</p>"
-                + "<h3>" + QApplication::translate("EAQtMainWindow","Measurement") + "</h3>"
-                + "<p>" + QApplication::translate("EAQtMainWindow","setup: ") + getEl32() + "</p>"
-                + "<p>" + QApplication::translate("EAQtMainWindow","type: ") + getMespv() + ", "
+                                                    + "</td></tr></table>"
+                + "<h4>" + QApplication::translate("EAQtMainWindow","Measurement") + "</h4>"
+                + "<table><tr><th colspan=2>" + QApplication::translate("EAQtMainWindow","setup: ") + "</th></tr><tr><td colspan=2>" + getEl32() + "</td></tr>"
+                + "<tr><th colspan=2>" + QApplication::translate("EAQtMainWindow","type: ") + "</th></tr><tr><td colspan=2>" + getMespv() + ", "
                                                                      + getMethod() + ", "
-                                                                     + (_curve->Param(PARAM::method)!=PARAM::method_lsv?","+getSampl():"")
-                                                                     + "</p>"
-                + "<p>" + QApplication::translate("EAQtMainWindow","electrode: ") + getElectr() + "</p>"
-                + "<p>" + QApplication::translate("EAQtMainWindow","cyclic: ") + getMessc() + "</p>"
-                + "<p>" + QApplication::translate("EAQtMainWindow","current range: ") + getCranage() + "</p>" );
+                                                                     + (isLSV?","+getSampl():"")
+                                                                     + "</td></tr>"
+                + "<tr><th>" + QApplication::translate("EAQtMainWindow","electrode: ") +"</th><td>" + getElectr() + "</td></tr>"
+                + "<tr><th>" + QApplication::translate("EAQtMainWindow","cyclic: ") + "</th><td>" + getMessc() + "</td></tr>"
+                + "<tr><td>" + QApplication::translate("EAQtMainWindow","Es: %1 mV</td><td>Ee: %2 mV").arg(_curve->Param(PARAM::Ep)).arg(_curve->Param(PARAM::Ek)) + "</td></tr>" );
+    if ( isLSV ) {
+        pte.append("<tr><td colspan=2>dE/dt: ");
+        double speed = MEASUREMENT::LSVstepE[_curve->Param(PARAM::dEdt)]/MEASUREMENT::LSVtime[_curve->Param(PARAM::dEdt)];
+        if ( speed < 0.025 )
+            pte.append("%1 mV/s").arg(speed*1000,0,'f',1);
+        else if ( speed < 1 )
+            pte.append("%1 mV/s").arg(speed*1000,0,'f',0);
+        else
+            pte.append("%1 V/s").arg(speed,0,'f',0);
+        pte.append("</td></tr>");
+    } else {
+        pte.append(QString("<tr><td colspan=2>Estep: %1 mV</td></tr>").arg(_curve->Param(PARAM::Estep)));
+        pte.append(QString("<tr><td>ts: %1 ms</td><td>tw: %2 ms</td></tr>").arg(_curve->Param(PARAM::tp)).arg(_curve->Param(PARAM::tw)));
+    }
+    pte.append(QString("<tr><td colspan=2>td: %1 ms</td></tr>").arg(_curve->Param(PARAM::td)));
     return pte;
 }
 
