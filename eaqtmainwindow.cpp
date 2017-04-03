@@ -184,7 +184,6 @@ void EAQtMainWindow::updateAll(bool rescale)
 
 void EAQtMainWindow::TableRegenerate()
 {
-
     this->_tableCurveMain->setUpdatesEnabled(false);
     this->_tableCurveMain->blockSignals(true);
     this->_tableCurveMain->clear();
@@ -192,12 +191,23 @@ void EAQtMainWindow::TableRegenerate()
     Curve* curve;
     int i = 0;
     while ( (curve=this->_pEAQtData->getCurves()->get(i)) != NULL ) {
-        QTableWidgetItem* qtifile = new QTableWidgetItem(curve->FName());
+        int charRight;
+        QString prepend;
+        if ( curve->FName().size() > 40 ) {
+            charRight = 37;
+            prepend = "...";
+        } else {
+            charRight = curve->FName().size();
+            prepend = "";
+        }
+        QTableWidgetItem* qtifile = new QTableWidgetItem(prepend + curve->FName().right(charRight));
         qtifile->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
         qtifile->setSelected(false);
+        qtifile->setTextAlignment(Qt::AlignRight);
         QTableWidgetItem* qtiname = new QTableWidgetItem(curve->CName());
         qtiname->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
         qtiname->setSelected(false);
+        qtiname->setTextAlignment(Qt::AlignRight);
         this->_tableCurveMain->setItem(i,0,qtifile);
         this->_tableCurveMain->setItem(i,1,qtiname);
         ++i;
@@ -996,3 +1006,4 @@ void EAQtMainWindow::showGithub()
     QString link = "https://github.com/efce/EAQt";
     QDesktopServices::openUrl(QUrl(link));
 }
+
