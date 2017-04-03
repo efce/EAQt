@@ -761,15 +761,15 @@ void EAQtMainWindow::createActionsTopMenu()
     this->_actMoveUpDown->setStatusTip(tr("Move curve up/down"));
     connect(_actMoveUpDown, SIGNAL(triggered(bool)),this,SLOT(startMoveUpDown()));
 
-    _actSoftware = new QAction(tr("Software"));
+    _actSoftware = new QAction(tr("Software"),this);
     _actSoftware->setStatusTip(tr("Show information about the software"));
     connect(_actSoftware,SIGNAL(triggered(bool)),this,SLOT(showAboutSoftware()));
 
-    _actReportIssues = new QAction(tr("Report issues"));
+    _actReportIssues = new QAction(tr("Report issues"),this);
     _actReportIssues->setStatusTip(tr("If you found any bugs or have some feature request report it on github"));
     connect(_actReportIssues,SIGNAL(triggered(bool)),this,SLOT(showGithubIssues()));
 
-    _actSourceCode = new QAction(tr("Source code"));
+    _actSourceCode = new QAction(tr("Source code"),this);
     _actSourceCode->setStatusTip(tr("Source code for the program is available on github"));
     connect(_actSourceCode,SIGNAL(triggered(bool)),this,SLOT(showGithub()));
 }
