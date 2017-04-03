@@ -44,7 +44,7 @@ public:
         static EAQtData instance; // Guaranteed to be destroyed.
         return instance;
     }
-    void InitialUpdate(EAQtUIInterface *wp);
+    void initialUpdate(EAQtUIInterface *wp);
     ~EAQtData();
 
 /*-------------
@@ -55,19 +55,19 @@ private:
     EAQtData(EAQtData const& copy);       // Don't Implement
     EAQtData& operator=(EAQtData const& copy); // Don't implement
 
-    void SetCurrentRange(int, int b = 0);
-    int GetCurrentRange();
-    void InitParam();
-    void InitParamLSV();
-    void InitEca();
-    void InitPtime();
-    void CreateMatrix();
-    void CrmxSQW();
+    void setCurrentRange(int, int b = 0);
+    int getCurrentRange();
+    void initParam();
+    void initParamLSV();
+    void initEca();
+    void initPtime();
+    void createMatrix();
+    void crmxSQW();
     void loadMesFile();
-    void SeriaWait(uint32_t);
+    void seriaWait(uint32_t);
 
-    bool SendLSVToEA();
-    bool SendPVToEA();
+    bool sendLSVToEA();
+    bool sendPVToEA();
 
 public:
     void openFile(QString *filePath, int nrPos);
@@ -110,7 +110,7 @@ public:
     int CurReadCurvePro(QFile &ff, QString pCName);
     bool MDirReadPro(QFile &ff);
     void CurReadFilePro(QString *FileName, int PosNr);
-    int SafeAppend(QString pFileName, Curve* CurveToAppend);
+    int safeAppend(QString pFileName, Curve* CurveToAppend);
     void exportToTXT(QString path);
     void exportToCSV(QString path);
 

@@ -276,6 +276,7 @@ void EAQtMainWindow::PlotDrawSelection()
     }
     this->_plotMain->blockSignals(false);
     this->_plotMain->setUpdatesEnabled(true);
+    this->updateCurveInfo();
     this->_plotMain->replot();
 }
 
@@ -469,9 +470,9 @@ QGridLayout* EAQtMainWindow::createLayout()
     _rectZoom->setSelectable(false);
     QGridLayout* mainLayout = new QGridLayout();
 
-    mainLayout->addWidget(this->_plotMain,0,0,1,1);
-    mainLayout->addItem(mainButtonLayout,0,1,1,1);
-    mainLayout->setColumnStretch(0,5);
+    mainLayout->addWidget(this->_plotMain,0,1,1,1);
+    mainLayout->addItem(mainButtonLayout,0,2,1,1);
+    mainLayout->setColumnStretch(1,5);
 
     QHBoxLayout *labelsBox = new QHBoxLayout();
     this->_vecLowText.resize(5);
@@ -479,7 +480,29 @@ QGridLayout* EAQtMainWindow::createLayout()
         this->_vecLowText[i] = new QLabel(tr("%1").arg(i));
         labelsBox->addWidget(_vecLowText[i]);
     }
-    mainLayout->addLayout(labelsBox,3,0,1,2);
+    mainLayout->addLayout(labelsBox,3,1,1,2);
+
+    _curveInfoMain = new QWidget();
+    _curveInfoData = new QTextEdit();
+    _curveInfoData->setReadOnly(true);
+    _curveInfoData->setFixedWidth(200);
+    _curveInfoData->setContentsMargins(0,0,0,0);
+    _curveInfoData->setVisible(false);
+    QHBoxLayout* hbl = new QHBoxLayout();
+    hbl->setMargin(0);
+    hbl->setSpacing(0);
+    hbl->addStretch(0);
+    _butCurveInfoToggle = new QPushButton();
+    _butCurveInfoToggle->setText(">");
+    _butCurveInfoToggle->setCheckable(true);
+    _butCurveInfoToggle->setChecked(false);
+    _butCurveInfoToggle->setFixedWidth(15);
+    _butCurveInfoToggle->setFixedHeight(100);
+    connect(_butCurveInfoToggle,SIGNAL(toggled(bool)),this,SLOT(toggleCurveInfo(bool)));
+    hbl->addWidget(_curveInfoData);
+    hbl->addWidget(_butCurveInfoToggle);
+    _curveInfoMain->setLayout(hbl);
+    mainLayout->addWidget(_curveInfoMain,0,0,2,1);
 
     connect(this->_plotMain, SIGNAL(selectionChangedByUser()), this, SLOT(PlotSelectionChanged()));
 
@@ -859,7 +882,7 @@ void EAQtMainWindow::saveCurve()
         int err;
         Curve* curve;
         while ( (curve=this->_pEAQtData->getCurves()->get(i)) != NULL ) {
-            err = this->_pEAQtData->SafeAppend(savePath, curve);
+            err = this->_pEAQtData->safeAppend(savePath, curve);
             if ( err != 0 ) {
                 showMessageBox(tr("There was an error while saving the curves, please try again."),tr("Error."));
                 return;
@@ -872,7 +895,7 @@ void EAQtMainWindow::saveCurve()
         if ( curve == NULL ) {
             showMessageBox(tr("Curve could not be selected for save, please try to select it again."),tr("Error"));
         }
-        this->_pEAQtData->SafeAppend(savePath, curve);
+        this->_pEAQtData->safeAppend(savePath, curve);
     }
     return;
 }
@@ -1008,3 +1031,25 @@ void EAQtMainWindow::showGithub()
     QDesktopServices::openUrl(QUrl(link));
 }
 
+void EAQtMainWindow::updateCurveInfo()
+{
+    Curve* c = _pEAQtData->getCurves()->get(_pEAQtData->Act());
+    if ( c == NULL ) {
+        _curveInfoData->setText("");
+        return;
+    }
+    DisplayCurve *dc = new DisplayCurve(c);
+    _curveInfoData->setText(dc->getHTMLInfo());
+    delete dc;
+}
+
+void EAQtMainWindow::toggleCurveInfo(bool show)
+{
+    _curveInfoData->setVisible(show);
+    if ( show ) {
+        _butCurveInfoToggle->setText("<");
+    } else {
+        _butCurveInfoToggle->setText(">");
+
+    }
+}

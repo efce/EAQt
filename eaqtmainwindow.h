@@ -29,6 +29,7 @@
 #include "eaqtdata.h"
 #include "eaqtplotcursor.h"
 #include "eaqtmousehandler.h"
+#include "displaycurve.h"
 
 namespace Ui {
 class MainWindow;
@@ -88,10 +89,15 @@ private:
     bool _isRectangleZoom;
     QCPItemRect *_rectZoom;
     QPushButton *_butZoom;
+    QWidget *_curveInfoMain;
+    QPushButton *_butCurveInfoToggle;
+    QTextEdit *_curveInfoData;
 
 private:
     void createActionsTopMenu();
     void createMenusTopMenu();
+    QWidget* createCurveInfo();
+    void updateCurveInfo();
     void PlotRegenerate();
     void TableRegenerate();
     void TableDrawSelection();
@@ -129,6 +135,7 @@ private:
     QAction *_actSourceCode;
 
 private slots:
+    void toggleCurveInfo(bool);
     void TableRowSelected();
     void PlotSelectionChanged();
     void PlotRectangleZoom();

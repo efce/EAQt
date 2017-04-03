@@ -32,7 +32,7 @@ int main(int argc, char *argv[])
     bool at = a.installTranslator(&translator);
 
     EAQtMainWindow w;
-    EAQtData::getInstance().InitialUpdate((EAQtUIInterface*)&w);
+    EAQtData::getInstance().initialUpdate((EAQtUIInterface*)&w);
     w.InitialUpdate(EAQtData::getInstance());
     w.show();
     return a.exec();

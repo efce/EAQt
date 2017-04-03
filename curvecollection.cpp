@@ -51,7 +51,7 @@ uint32_t CurveCollection::addNew(uint32_t nrOfDataPoints)
 
 Curve* CurveCollection::get(uint32_t index)
 {
-    if ( index < _vCurves.size() ) {
+    if ( index < _vCurves.size() && index >= 0 ) {
         return _vCurves[index];
     } else {
         return NULL;

@@ -47,7 +47,8 @@ SOURCES += main.cpp\
     eaqtcalibrationdialog.cpp \
     curvecollection.cpp \
     mdircollection.cpp \
-    eaqtsignalprocessing.cpp
+    eaqtsignalprocessing.cpp \
+    displaycurve.cpp
 
 HEADERS  += \
     Qcustomplot/qcustomplot.h \
@@ -375,7 +376,8 @@ HEADERS  += \
     Eigen/SuperLUSupport \
     Eigen/SVD \
     Eigen/UmfPackSupport \
-    pstdin/pstdin.h
+    pstdin/pstdin.h \
+    displaycurve.h
 
 FORMS    += mainwindow.ui
 

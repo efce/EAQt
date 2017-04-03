@@ -58,11 +58,11 @@ EAQtData::EAQtData() : QObject(), EAQtDataInterface()
     this->_displayCurveNr = 0;
     this->_currentPointOnCurve = 0;
 
-    InitParam();
-    InitParamLSV();
+    initParam();
+    initParamLSV();
 }
 
-void EAQtData::InitialUpdate(EAQtUIInterface *wp)
+void EAQtData::initialUpdate(EAQtUIInterface *wp)
 {
     _pUI = wp;
     _curves = new CurveCollection(wp);
@@ -81,7 +81,7 @@ EAQtData::~EAQtData()
     delete _network;
 }
 
-void EAQtData::InitParam()
+void EAQtData::initParam()
 {
     // Parametry pomiaru
     for (int j=0 ; j<PARAM::PARAMNUM ; j++)
@@ -115,7 +115,7 @@ void EAQtData::InitParam()
     _PVParam[PARAM::kpt] = 30;
 }
 
-void EAQtData::InitParamLSV()
+void EAQtData::initParamLSV()
 {
     // Parametry pomiaru
     for (int j=0 ; j<=61 ; j++)
@@ -143,7 +143,7 @@ void EAQtData::InitParamLSV()
     _LSVParam[PARAM::kpt] = 30;
 }
 
-void EAQtData::InitEca()
+void EAQtData::initEca()
 {
     int32_t work;
 
@@ -164,7 +164,7 @@ void EAQtData::InitEca()
     E1I = work;
 }
 
-void EAQtData::InitPtime()
+void EAQtData::initPtime()
 {
     int64_t work;
     //Count tr = tk-i*(tw+tp)  i=1,2 (sampling)
@@ -193,7 +193,7 @@ void EAQtData::InitPtime()
         _singleStepTime = this->getMesCurves()->get(0)->Param(PARAM::tp);
 }
 
-void EAQtData::CreateMatrix()
+void EAQtData::createMatrix()
 {
     int32_t mxptr;
     int32_t j;
@@ -285,7 +285,7 @@ void EAQtData::CreateMatrix()
     }
 }
 
-void EAQtData::CrmxSQW()
+void EAQtData::crmxSQW()
 {
     int32_t i, last, curr;
 
@@ -537,7 +537,7 @@ int EAQtData::CurReadCurvePro(QFile &ff, QString pCName)
 
     }
 
-    this->SetCurrentRange(this->getCurves()->get(j1)->Param(PARAM::crange),this->getCurves()->get(j1)->Param(PARAM::crange));
+    this->setCurrentRange(this->getCurves()->get(j1)->Param(PARAM::crange),this->getCurves()->get(j1)->Param(PARAM::crange));
     this->getCurves()->get(j1)->FName(ff.fileName());
     this->_pUI->updateAll();
 
@@ -851,7 +851,7 @@ void EAQtData::MesStart(bool isLsv)
             //			view->MessageBox(m_String);
         }
         if ( this->_pSeriesData->Mes_Delay() != 0 ) {
-            this->SeriaWait(this->_pSeriesData->Mes_Delay());
+            this->seriaWait(this->_pSeriesData->Mes_Delay());
         }
     }
     /////////////////////////////////////////////////////////////////////////////
@@ -1018,7 +1018,7 @@ void EAQtData::MesStart(bool isLsv)
             * !!!
             */
         }
-        SetCurrentRange(_LSVParam[PARAM::crange],_LSVParam[PARAM::electr]);
+        setCurrentRange(_LSVParam[PARAM::crange],_LSVParam[PARAM::electr]);
     } else { // KONIEC DODATKOWE LSV, POCZATEK DODATKOWE DLA PV
 
         if ( _PVParam[PARAM::nonaveragedsampling] != 0 ) {
@@ -1131,17 +1131,17 @@ void EAQtData::MesStart(bool isLsv)
             this->getMesCurves()->get(mesCurveIndex)->allocateMesArray();
         }
 
-        SetCurrentRange(_PVParam[PARAM::crange],_PVParam[PARAM::electr]);
-        InitEca();
-        InitPtime();
+        setCurrentRange(_PVParam[PARAM::crange],_PVParam[PARAM::electr]);
+        initEca();
+        initPtime();
         //ilpw = this->getMesCurves()->get(0)->Param(PARAM::aver);
-        CreateMatrix();
+        createMatrix();
         ainmat = 0;
         if (_measurementMatrix[0] == -1) {
             ainmat = 1;
         }
         if ( _PVParam[PARAM::method] == PARAM::method_sqw ) {
-            CrmxSQW(); // SQW
+            crmxSQW(); // SQW
         }
 
     } // KONIEC DODATKOWE
@@ -1174,7 +1174,7 @@ void EAQtData::MesStart(bool isLsv)
     _conductingMeasurement = 1;
 
     if ( _wasLSVMeasurement == 0 ){
-        if ( SendPVToEA() ) {
+        if ( sendPVToEA() ) {
             _PVParam[PARAM::tp]=itp;
             _PVParam[PARAM::tw]=itw;
             int nn=0;
@@ -1197,7 +1197,7 @@ void EAQtData::MesStart(bool isLsv)
             return;
         }
     } else {
-        if ( SendLSVToEA() ) {
+        if ( sendLSVToEA() ) {
             return ;
         } // m_nMesInfo=2,3 - pomiar LSV
         else {
@@ -1211,7 +1211,7 @@ void EAQtData::MesStart(bool isLsv)
     }
 }
 
-bool EAQtData::SendPVToEA()
+bool EAQtData::sendPVToEA()
 {
     int32_t i, lenEact;
     uint32_t TxN;
@@ -1342,7 +1342,7 @@ void EAQtData::MesStop()
     }
 }
 
-bool EAQtData::SendLSVToEA()
+bool EAQtData::sendLSVToEA()
 {
     int i;
     uint16_t TxN;
@@ -1744,7 +1744,7 @@ int EAQtData::MesSaveAll(QString UserCName, QString UserFName, QString UserComme
 
     num=0;
     while ( getMesCurves()->get(num) != NULL ) {
-        if ( (err = SafeAppend(getMesCurves()->get(num)->FName(), getMesCurves()->get(num))) < 0 ) {
+        if ( (err = safeAppend(getMesCurves()->get(num)->FName(), getMesCurves()->get(num))) < 0 ) {
             //AfxMessageBox(IDS_info6, MB_OK);
             return -1;
         }
@@ -1767,7 +1767,7 @@ int EAQtData::MesSaveAll(QString UserCName, QString UserFName, QString UserComme
  * Append Curve structure to file, this does some validation if operation was successfull
  * (we cannot lose any measurement data)
  */
-int EAQtData::SafeAppend(QString pFileName, Curve* CurveToAppend)
+int EAQtData::safeAppend(QString pFileName, Curve* CurveToAppend)
 {
     /// 0 - All OK
     /// -1 - Destination file Inaccessible or corrupted
@@ -2108,7 +2108,7 @@ void EAQtData::loadMesFile()
 /*
  * When there is delay between measurements is MeasurementSeries, this should be done
  */
-void EAQtData::SeriaWait(uint32_t delay)
+void EAQtData::seriaWait(uint32_t delay)
 {
     QTime dieTime= QTime::currentTime().addSecs(delay*1000);
     while (QTime::currentTime() < dieTime) {
@@ -2363,7 +2363,7 @@ QString EAQtData::dispMATH(double dNumber) {
     return QString("%1").arg(dNumber,0,'f',nDispAferComma);
 }
 
-void EAQtData::SetCurrentRange(int nNewRange, int nElek) {
+void EAQtData::setCurrentRange(int nNewRange, int nElek) {
     int add;
     if ( nElek >= PARAM::electr_micro ) {
         add = PARAM::crange_macro_100nA + 1;
@@ -2373,7 +2373,7 @@ void EAQtData::SetCurrentRange(int nNewRange, int nElek) {
     this->_currentRange = nNewRange + add;
 }
 
-int EAQtData::GetCurrentRange()
+int EAQtData::getCurrentRange()
 {
     return _currentRange;
 }
@@ -2458,10 +2458,10 @@ void EAQtData::exportToCSV(QString path)
     {
 
         QVector<double>* workE=_curves->get(0)->getPotentialVector();
-        int savedCurrentRange = this->GetCurrentRange();
+        int savedCurrentRange = this->getCurrentRange();
 
         for ( int i = 0; i<_curves->count(); ++i) {
-            this->SetCurrentRange(_curves->get(i)->Param(PARAM::crange)
+            this->setCurrentRange(_curves->get(i)->Param(PARAM::crange)
                                   , _curves->get(i)->Param(PARAM::electr));
             if ( this->getXAxis() == XAXIS::potential ) {
                 for ( pt = 0; pt < _curves->get(i)->Param(PARAM::ptnr)-1; ++pt ) {
@@ -2491,7 +2491,7 @@ void EAQtData::exportToCSV(QString path)
             ff->write(tmp.data(),tmp.size());
             ff->write(endOfLine,2);
         }
-        this->SetCurrentRange(savedCurrentRange);
+        this->setCurrentRange(savedCurrentRange);
     } else { // jedna aktywna
         i=this->Act();
         if ( this->getXAxis() == XAXIS::potential ) {
