@@ -47,7 +47,7 @@ EAQtCalibrationDialog::EAQtCalibrationDialog(QVector<double> calY)
     gl->addWidget(lconc,0,2,1,1);
     for ( i = 0; i<calY.size(); ++i ) {
         QLabel *l1 = new QLabel(EAQtData::getInstance().getCurves()->get(i)->CName() + ": ");
-        QLabel *l2 = new QLabel(EAQtData::getInstance()._I(calY[i]) + " ");
+        QLabel *l2 = new QLabel(EAQtData::getInstance().dispI(calY[i]) + " ");
         this->_leConcentrations[i] = new QLineEdit();
         this->_leConcentrations[i]->setValidator(new QDoubleValidator(0.0,999999.9,10));
         this->_leConcentrations[i]->setText("0.0");

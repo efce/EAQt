@@ -2071,7 +2071,7 @@ void EAQtData::loadMesFile()
     try {
         res = this->_pSeriesData->LoadFromFile(this->_seriesFilePath.toStdString());
     } catch (int a) {
-        this->_pUI->showMessageBox(tr("error loading file: ") + this->_NR(a));
+        this->_pUI->showMessageBox(tr("error loading file: ") + this->dispNR(a));
     }
 
     if ( res == -1 ) {
@@ -2096,7 +2096,7 @@ void EAQtData::loadMesFile()
         //this->uiInterface->showMessageBox("IDS_info17"); // Wczytano
         //this->uiInterface->showMessageBox("IDS_info18"); // serii krzywych, rozpoczynam serię pomiarów
 
-        this->_pUI->showMessageBox("IDS_info17" + this->_NR(res) + "IDS_info18");
+        this->_pUI->showMessageBox("IDS_info17" + this->dispNR(res) + "IDS_info18");
         this->_isMesSeries = true;
     } else {
         this->_pUI->showMessageBox("IDS_info19"); // Błąd krytyczny, nie kontynuuję
@@ -2217,28 +2217,28 @@ void EAQtData::setXAxis(int newtype)
     this->_pUI->updateAll();
 }
 
-QString EAQtData::_E(int nNumber) {
+QString EAQtData::dispE(int nNumber) {
     if ( nNumber == 0 ) {
         return tr("%1 mV").arg(0.0, 0,'f', 1);
     }
     return tr("%1 mV").arg((double)nNumber, 0,'f', 1);
 }
 
-QString EAQtData::_E(double nNumber) {
+QString EAQtData::dispE(double nNumber) {
     if ( nNumber == 0 ) {
         return "0.0";
     }
     return tr("%1 mV").arg(nNumber,0,'f',1);
 }
 
-QString EAQtData::_EforTXT(double nNumber) {
+QString EAQtData::dispEforTXT(double nNumber) {
     if ( nNumber == 0 ) {
         return "0.0";
     }
     return tr("%1").arg(nNumber,0,'f',1);
 }
 
-QString EAQtData::_I(double dNumber) {
+QString EAQtData::dispI(double dNumber) {
     QString ret;
     switch (this->_currentRange) {
     case PARAM::crange_micro_5uA + PARAM::crange_macro_100nA + 1:
@@ -2281,7 +2281,7 @@ QString EAQtData::_I(double dNumber) {
     return ret;
 }
 
-QString EAQtData::_IforTXT(double dNumber) {
+QString EAQtData::dispIforTXT(double dNumber) {
     static QString ret;
     switch (this->_currentRange) {
     case PARAM::crange_micro_5uA + PARAM::crange_macro_100nA + 1:
@@ -2325,29 +2325,29 @@ QString EAQtData::_IforTXT(double dNumber) {
 }
 
 
-QString EAQtData::_NR(int nNumber) {
+QString EAQtData::dispNR(int nNumber) {
     if ( nNumber == 0 )
         return "0";
     return QString("%1").arg(nNumber);
 }
 
-QString EAQtData::_TIME(int nNumber) {
+QString EAQtData::dispTIME(int nNumber) {
     return QString("%1").arg(nNumber, 2, 10, QChar('0'));
 }
 
-QString EAQtData::_TIME1(int nNumber) {
+QString EAQtData::dispTIME1(int nNumber) {
     return QString("%1 ms").arg(nNumber);
 }
 
-QString EAQtData::_TIME1(double dNumber) {
+QString EAQtData::dispTIME1(double dNumber) {
     return QString("%1 ms").arg(static_cast<int>(dNumber));
 }
 
-QString EAQtData::_TIMEforTXT(double dNumber) {
+QString EAQtData::dispTIMEforTXT(double dNumber) {
     return QString("%1").arg(dNumber,0,'f',2);
 }
 
-QString EAQtData::_MATH(double dNumber) {
+QString EAQtData::dispMATH(double dNumber) {
     if ( dNumber == 0 )
         return "0";
     double dLog;
@@ -2465,29 +2465,29 @@ void EAQtData::exportToCSV(QString path)
                                   , _curves->get(i)->Param(PARAM::electr));
             if ( this->getXAxis() == XAXIS::potential ) {
                 for ( pt = 0; pt < _curves->get(i)->Param(PARAM::ptnr)-1; ++pt ) {
-                    tmp = this->_EforTXT(_curves->get(i)->getPotentialPoint(pt)).toStdString();
+                    tmp = this->dispEforTXT(_curves->get(i)->getPotentialPoint(pt)).toStdString();
                     tmp.append(",");
                     ff->write(tmp.data(),tmp.size());
                 }
-                tmp = this->_EforTXT(_curves->get(i)->getPotentialPoint(pt)).toStdString();
+                tmp = this->dispEforTXT(_curves->get(i)->getPotentialPoint(pt)).toStdString();
                 ff->write(tmp.data(),tmp.size());
             } else {
                 for ( pt = 0; pt < _curves->get(i)->Param(PARAM::ptnr)-1; ++pt ) {
-                    tmp = this->_TIMEforTXT(_curves->get(i)->getTimeVector()->at(pt)).toStdString();
+                    tmp = this->dispTIMEforTXT(_curves->get(i)->getTimeVector()->at(pt)).toStdString();
                     tmp.append(",");
                     ff->write(tmp.data(),tmp.size());
                 }
-                tmp = this->_TIMEforTXT(_curves->get(i)->getTimeVector()->at(pt)).toStdString();
+                tmp = this->dispTIMEforTXT(_curves->get(i)->getTimeVector()->at(pt)).toStdString();
                 ff->write(tmp.data(),tmp.size());
             }
             ff->write(endOfLine,2);
 
             for ( pt = 0; pt < _curves->get(i)->Param(PARAM::ptnr)-1; ++pt ) {
-                tmp = this->_IforTXT(_curves->get(i)->Result(pt)).toStdString();
+                tmp = this->dispIforTXT(_curves->get(i)->Result(pt)).toStdString();
                 tmp.append(",");
                 ff->write(tmp.data(),tmp.size());
             }
-            tmp = this->_IforTXT(_curves->get(i)->Result(pt)).toStdString();
+            tmp = this->dispIforTXT(_curves->get(i)->Result(pt)).toStdString();
             ff->write(tmp.data(),tmp.size());
             ff->write(endOfLine,2);
         }
@@ -2497,29 +2497,29 @@ void EAQtData::exportToCSV(QString path)
         if ( this->getXAxis() == XAXIS::potential ) {
             int pt = _curves->get(i)->Param(PARAM::ptnr);
             for ( pt = 0; pt<(_curves->get(i)->Param(PARAM::ptnr)-1); ++pt ) {
-                tmp = this->_EforTXT(_curves->get(i)->getPotentialPoint(pt)).toStdString();
+                tmp = this->dispEforTXT(_curves->get(i)->getPotentialPoint(pt)).toStdString();
                 tmp.append(",");
                 ff->write(tmp.data(),tmp.size());
             }
-            tmp = this->_EforTXT(_curves->get(i)->getPotentialPoint(pt)).toStdString();
+            tmp = this->dispEforTXT(_curves->get(i)->getPotentialPoint(pt)).toStdString();
             ff->write(tmp.data(),tmp.size());
         } else {
             for ( pt = 0; pt < (_curves->get(i)->Param(PARAM::ptnr)-1); ++pt ) {
-                tmp = this->_TIMEforTXT(_curves->get(i)->getTimeVector()->at(pt)).toStdString();
+                tmp = this->dispTIMEforTXT(_curves->get(i)->getTimeVector()->at(pt)).toStdString();
                 tmp.append(",");
                 ff->write(tmp.data(),tmp.size());
             }
-            tmp = this->_TIMEforTXT(_curves->get(i)->getTimeVector()->at(pt)).toStdString();
+            tmp = this->dispTIMEforTXT(_curves->get(i)->getTimeVector()->at(pt)).toStdString();
             ff->write(tmp.data(),tmp.size());
         }
         ff->write(endOfLine,2);
 
         for ( pt = 0; pt < _curves->get(i)->Param(PARAM::ptnr)-1; ++pt ) {
-            tmp = this->_IforTXT(_curves->get(i)->Result(pt)).toStdString();
+            tmp = this->dispIforTXT(_curves->get(i)->Result(pt)).toStdString();
             tmp.append(",");
             ff->write(tmp.data(),tmp.size());
         }
-        tmp = this->_IforTXT(_curves->get(i)->Result(pt)).toStdString();
+        tmp = this->dispIforTXT(_curves->get(i)->Result(pt)).toStdString();
         ff->write(tmp.data(),tmp.size());
         if ( i != _curves->count() -1 ) {
             // Ostatnia linia bez crlf

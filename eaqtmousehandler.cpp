@@ -135,11 +135,11 @@ void EAQtMouseHandler::UpdateLocation(double* MX, double* MY)
 {
     if ( this->_activeMode == mm_normal ) {
         if (this->_pData->getXAxis() == XAXIS::potential ) {
-            this->_pUI->setLowLabelText(0,tr("Mouse cursor:") +  " E=" + this->_pData->_E(*MX) + " I=" + this->_pData->_I(*MY));
+            this->_pUI->setLowLabelText(0,tr("Mouse cursor:") +  " E=" + this->_pData->dispE(*MX) + " I=" + this->_pData->dispI(*MY));
         } else if (this->_pData->getXAxis() == XAXIS::time ) {
-            this->_pUI->setLowLabelText(0,tr("Mouse cursor:") + " t=" + this->_pData->_TIME1(*MX) + " I=" + this->_pData->_I(*MY));
+            this->_pUI->setLowLabelText(0,tr("Mouse cursor:") + " t=" + this->_pData->dispTIME1(*MX) + " I=" + this->_pData->dispI(*MY));
         } else {
-             this->_pUI->setLowLabelText(0,tr("Mouse cursor:") + " sample#=" + this->_pData->_NR(*MX) + " I=" + this->_pData->_I(*MY));
+             this->_pUI->setLowLabelText(0,tr("Mouse cursor:") + " sample#=" + this->_pData->dispNR(*MX) + " I=" + this->_pData->dispI(*MY));
         }
     } else if ( this->_activeMode == mm_relativeParamters ) {
         if ( this->_structRPL.followCursor ) {
@@ -160,9 +160,9 @@ void EAQtMouseHandler::UpdateLocation(double* MX, double* MY)
             this->_vCursors[cl_relativeParameterCursor]->move(*MX);
             double dCurrentRelativeValue = this->_vCursors[cl_relativeParameterCursor]->getY() - (this->_structRPL.baseLineA * *MX + this->_structRPL.baseLineB);
             if ( this->_pData->getXAxis() == XAXIS::potential ) {
-                this->_pUI->setLowLabelText(0, tr("Relative position: ") + _pData->_E(*MX) + "  " + _pData->_I(dCurrentRelativeValue) + " ");
+                this->_pUI->setLowLabelText(0, tr("Relative position: ") + _pData->dispE(*MX) + "  " + _pData->dispI(dCurrentRelativeValue) + " ");
             } else if ( this->_pData->getXAxis() == XAXIS::time ) {
-                this->_pUI->setLowLabelText(0, tr("Relative position: ") + _pData->_TIME1(*MX) + "  " + _pData->_I(dCurrentRelativeValue) + " ");
+                this->_pUI->setLowLabelText(0, tr("Relative position: ") + _pData->dispTIME1(*MX) + "  " + _pData->dispI(dCurrentRelativeValue) + " ");
             }
             this->_pUI->PlotReplot();
         }
@@ -255,9 +255,9 @@ void EAQtMouseHandler::ForwardClick(double MouseCursorX,double MouseCursorY)
         this->_timesPressed = 0;
         this->_vCursors[cl_movingCursor]->move(MouseCursorX);
         this->_pUI->setLowLabelText(0,tr("Data cursor:")
-                                   + " nr=" + _pData->_NR(_vCursors[cl_movingCursor]->getIndex())
-                                   + " E=" + _pData->_E(this->_vCursors[cl_movingCursor]->getX())
-                                   + " I=" + _pData->_I(this->_vCursors[cl_movingCursor]->getY()));
+                                   + " nr=" + _pData->dispNR(_vCursors[cl_movingCursor]->getIndex())
+                                   + " E=" + _pData->dispE(this->_vCursors[cl_movingCursor]->getX())
+                                   + " I=" + _pData->dispI(this->_vCursors[cl_movingCursor]->getY()));
         this->_pUI->updateAll(false);
         break;
 
@@ -279,9 +279,9 @@ void EAQtMouseHandler::ForwardClick(double MouseCursorX,double MouseCursorY)
 
                 //m_String.LoadString(IDS_kursor); // Kursor
                 if ( _pData->getXAxis() == XAXIS::potential ) {
-                    strDisp += m_String + _pData->_NR(ii-cl_multipleSelect1+1) + ": " + this->_pData->_E(nPos) + "     ";
+                    strDisp += m_String + _pData->dispNR(ii-cl_multipleSelect1+1) + ": " + this->_pData->dispE(nPos) + "     ";
                 } else if ( _pData->getXAxis() == XAXIS::time ) {
-                    strDisp += m_String + _pData->_NR(ii-cl_multipleSelect1+1) + ": " + this->_pData->_TIME1(nPos) + "     ";
+                    strDisp += m_String + _pData->dispNR(ii-cl_multipleSelect1+1) + ": " + this->_pData->dispTIME1(nPos) + "     ";
                 } else if ( _pData->getXAxis() == XAXIS::nonaveraged ) {
                     //TODO
                 }
@@ -309,9 +309,9 @@ void EAQtMouseHandler::ForwardClick(double MouseCursorX,double MouseCursorY)
                 double nPos = this->GetCursorX(static_cast<cursorsList>(ii));
                 //m_String.LoadString(IDS_kursor); // Kursor
                 if ( _pData->getXAxis() == XAXIS::potential )
-                    strDisp += m_String + _pData->_NR(ii-cl_multipleSelect1+1) + ": " + this->_pData->_E(nPos) + "     ";
+                    strDisp += m_String + _pData->dispNR(ii-cl_multipleSelect1+1) + ": " + this->_pData->dispE(nPos) + "     ";
                 else if ( _pData->getXAxis() == XAXIS::time )
-                    strDisp += m_String + _pData->_NR(ii-cl_multipleSelect1+1) + ": " + this->_pData->_TIME1(nPos) + "     ";
+                    strDisp += m_String + _pData->dispNR(ii-cl_multipleSelect1+1) + ": " + this->_pData->dispTIME1(nPos) + "     ";
                 else {
                     //TODO
                 }
@@ -377,9 +377,9 @@ void EAQtMouseHandler::BackClick()
                 double nPos = this->GetCursorX(static_cast<cursorsList>(ii));
                 //m_String.LoadString(IDS_kursor); // Kursor
                 if ( _pData->getXAxis() == XAXIS::potential ) {
-                    strDisp += m_String + _pData->_NR(ii-cl_multipleSelect1+1) + ": " + this->_pData->_E(nPos) + "     ";
+                    strDisp += m_String + _pData->dispNR(ii-cl_multipleSelect1+1) + ": " + this->_pData->dispE(nPos) + "     ";
                 } else if ( _pData->getXAxis() == XAXIS::time ) {
-                    strDisp += m_String + _pData->_NR(ii-cl_multipleSelect1+1) + ": " + this->_pData->_TIME1(nPos) + "     ";
+                    strDisp += m_String + _pData->dispNR(ii-cl_multipleSelect1+1) + ": " + this->_pData->dispTIME1(nPos) + "     ";
                 } else {
                     //TODO:
                 }
@@ -401,9 +401,9 @@ void EAQtMouseHandler::BackClick()
                 double nPos = this->GetCursorX(static_cast<cursorsList>(ii));
                 //m_String.LoadString(IDS_kursor); // Kursor
                 if ( _pData->getXAxis() == XAXIS::potential) {
-                    strDisp += m_String + _pData->_NR(ii-cl_multipleSelect1+1) + ": " + this->_pData->_E(nPos) + "     ";
+                    strDisp += m_String + _pData->dispNR(ii-cl_multipleSelect1+1) + ": " + this->_pData->dispE(nPos) + "     ";
                 } else if ( _pData->getXAxis() == XAXIS::time) {
-                    strDisp += m_String + _pData->_NR(ii-cl_multipleSelect1+1) + ": " + this->_pData->_TIME1(nPos) + "     ";
+                    strDisp += m_String + _pData->dispNR(ii-cl_multipleSelect1+1) + ": " + this->_pData->dispTIME1(nPos) + "     ";
                 } else {
                     //TODO:
                 }

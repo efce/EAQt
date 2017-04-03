@@ -80,17 +80,17 @@ public:
     void deleteNonactiveCurvesFromGraph();
     void deleteAllCurvesFromGraph();
 
-    QString _I(double); //display formated current with units
-    QString _IforTXT(double); //display formated current w/o units
-    QString _E(int); // display formated potential with units
-    QString _E(double); //display formated potential with units
-    QString _EforTXT(double); //display formated potential w/o units
-    QString _NR(int); // display number
-    QString _MATH(double); // display number
-    QString _TIME(int); // display time e.g 01,13,06
-    QString _TIME1(int); // display time in sec, argument in ms
-    QString _TIME1(double);
-    QString _TIMEforTXT(double);
+    QString dispI(double); //display formated current with units
+    QString dispIforTXT(double); //display formated current w/o units
+    QString dispE(int); // display formated potential with units
+    QString dispE(double); //display formated potential with units
+    QString dispEforTXT(double); //display formated potential w/o units
+    QString dispNR(int); // display number
+    QString dispMATH(double); // display number
+    QString dispTIME(int); // display time e.g 01,13,06
+    QString dispTIME1(int); // display time in sec, argument in ms
+    QString dispTIME1(double);
+    QString dispTIMEforTXT(double);
 
     void Act(int nAct);
     int Act();
