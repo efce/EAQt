@@ -27,6 +27,7 @@ EAQtMainWindow::EAQtMainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    ui->retranslateUi(this);
     //ui->statusBar->hide();
     setGeometry(400, 250, 1100, 800);
     this->_timeOfMouse = new QTime();

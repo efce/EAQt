@@ -3,4 +3,8 @@
         <file alias="icon_rescale">img/rescale.svg</file>
         <file alias="icon_zoom">img/zoom.svg</file>
     </qresource>
+    <qresource prefix="/lang">
+        <file>eaqt_pl.qm</file>
+        <file>eaqt_pl.ts</file>
+    </qresource>
 </RCC>
