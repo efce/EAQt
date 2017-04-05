@@ -52,6 +52,7 @@ public:
      void PlotReplot();
      void PlotSetInteraction(QCP::Interactions) ;
      QCPItemStraightLine* PlotAddLine();
+     EAQtUIInterface::PlotLayer* PlotGetLayers();
      void MeasurementSetup();
      void MeasurementAfter();
      void MeasurementUpdate();
@@ -92,6 +93,7 @@ private:
     QWidget *_curveInfoMain;
     QPushButton *_butCurveInfoToggle;
     QTextEdit *_curveInfoData;
+    EAQtUIInterface::PlotLayer _plotLayers;
 
 private:
     void createActionsTopMenu();

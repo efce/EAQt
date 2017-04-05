@@ -155,7 +155,7 @@ void EAQtMouseHandler::UpdateLocation(double* MX, double* MY)
             this->_structRPL.baseLine->point1->setCoords(x1,y1);
             this->_structRPL.baseLine->point2->setCoords(x2,y2);
             this->_structRPL.baseLine->setVisible(true);
-            this->_pUI->PlotReplot();
+            this->_pUI->PlotGetLayers()->Markers->replot();
         } else if ( this->_structRPL.staticLine == true ) {
             this->_vCursors[cl_relativeParameterCursor]->move(*MX);
             double dCurrentRelativeValue = this->_vCursors[cl_relativeParameterCursor]->getY() - (this->_structRPL.baseLineA * *MX + this->_structRPL.baseLineB);
@@ -164,7 +164,7 @@ void EAQtMouseHandler::UpdateLocation(double* MX, double* MY)
             } else if ( this->_pData->getXAxis() == XAXIS::time ) {
                 this->_pUI->setLowLabelText(0, tr("Relative position: ") + _pData->dispTIME1(*MX) + "  " + _pData->dispI(dCurrentRelativeValue) + " ");
             }
-            this->_pUI->PlotReplot();
+            this->_pUI->PlotGetLayers()->Markers->replot();
         }
     }
 }
@@ -488,7 +488,7 @@ void EAQtMouseHandler::callUserFunction()
                     ,this->GetCursorPointIndex(cl_multipleSelect3)
                     ,this->GetCursorPointIndex(cl_multipleSelect4)
                 );
-            this->_pUI->updateAll(false);
+            this->_pUI->PlotGetLayers()->Markers->replot();
         } else if ( this->_timesPressed > 5 ) {
             //this->pData->PrepareUndoCurve();
             this->_pData->getProcessing()->subtractBackground();
@@ -515,7 +515,7 @@ void EAQtMouseHandler::callUserFunction()
             }
             this->_pData->getProcessing()->calibrationData(cl1, cl2);
             this->setDefaults();
-            this->_pUI->updateAll(false);
+            this->_pUI->PlotGetLayers()->Markers->replot();
         }
         break;
 
@@ -583,7 +583,7 @@ void EAQtMouseHandler::callUserFunction()
         if ( this->_isFunctionSetupNeeded ) { // tylko na poczatku
             this->_isFunctionSetupNeeded = false;
             this->_pUI->setStatusText("IDS_mysz6"); // WYSOKOŒÆ WZGLÊDNA: U¿yj lewego przycisku myszy aby ustawiæ pierwszy punkt krzywej bazowej. U¿yj prawego, aby cofn¹æ operacjê.
-            this->_pUI->PlotReplot();
+            this->_pUI->PlotGetLayers()->Markers->replot();
             return;
         }
         break;

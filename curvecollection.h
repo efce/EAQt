@@ -37,7 +37,7 @@ public:
     void remove(Curve*);
     void unset(uint32_t);
     void unset(Curve*);
-    Curve* get(uint32_t);
+    Curve* get(int);
     void clear();
     uint32_t count();
 private:

@@ -34,6 +34,12 @@ public:
     virtual void PlotReplot() = 0;
     virtual void PlotSetInteraction(QCP::Interactions) = 0;
     virtual QCPItemStraightLine* PlotAddLine() = 0;
+    struct PlotLayer {
+        QCPLayer* Active;
+        QCPLayer* NonActive;
+        QCPLayer* Markers;
+    };
+    virtual PlotLayer* PlotGetLayers() = 0;
 
     virtual void MeasurementSetup() = 0;
     virtual void MeasurementUpdate() = 0;

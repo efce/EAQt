@@ -20,11 +20,9 @@
 EAQtPlotCursor::EAQtPlotCursor(QCPItemStraightLine* sl, QCPGraph* gr)
 {
     this->_line = sl;
-    sl->setLayer("markers");
     sl->setSelectable(false);
     sl->setVisible(false);
     this->_point = gr;
-    gr->setLayer("markers");
     gr->setSelectable(QCP::stNone);
     gr->setVisible(false);
     gr->setLineStyle(QCPGraph::lsNone);

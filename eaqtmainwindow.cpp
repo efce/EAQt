@@ -82,7 +82,7 @@ void EAQtMainWindow::handleMouseMoved(QMouseEvent *me)
          me->accept();
          _rectZoom->bottomRight->setCoords(_plotMain->xAxis->pixelToCoord(me->pos().x())
                                        ,_plotMain->yAxis->pixelToCoord(me->pos().y()));
-         _plotMain->replot();
+         _plotLayers.Markers->replot();
          return;
     }
     me->accept();
@@ -226,7 +226,7 @@ void EAQtMainWindow::PlotRegenerate()
     while ( (curve=this->_pEAQtData->getCurves()->get(i)) != NULL ) {
         curve->getPlot()->setData(curve->getXVector(), curve->getYVector());
         curve->getPlot()->setPen(QPen(COLOR::regular));
-        curve->getPlot()->setLayer("nonactive");
+        curve->getPlot()->setLayer(_plotLayers.NonActive);
         curve->getPlot()->setSelection(QCPDataSelection());
         ++i;
     }
@@ -265,12 +265,12 @@ void EAQtMainWindow::PlotDrawSelection()
     while ( (curve=this->_pEAQtData->getCurves()->get(i)) != NULL ) {
         if ( this->_pEAQtData->Act() == i
         || this->_pEAQtData->Act() == SELECT::all ) {
-            curve->getPlot()->setLayer("active");
+            curve->getPlot()->setLayer(_plotLayers.Active);
             curve->getPlot()->setPen(QPen(COLOR::active));
             curve->getPlot()->setSelection(QCPDataSelection(curve->getPlot()->data()->dataRange()));
         } else {
             curve->getPlot()->setPen(QPen(COLOR::regular));
-            curve->getPlot()->setLayer("nonactive");
+            curve->getPlot()->setLayer(_plotLayers.NonActive);
         }
         ++i;
     }
@@ -459,14 +459,18 @@ QGridLayout* EAQtMainWindow::createLayout()
     this->ui->mainToolBar->addWidget(butRescale);
 
     this->_plotMain = new QCustomPlot();
-    this->_plotMain->addLayer("nonactive");
-    this->_plotMain->addLayer("active");
-    this->_plotMain->addLayer("markers");
+    this->_plotMain->addLayer("Nonactive");
+    _plotLayers.NonActive = _plotMain->layer("Nonactive");
+    this->_plotMain->addLayer("Active");
+    _plotLayers.Active = _plotMain->layer("Active");
+    this->_plotMain->addLayer("Markers");
+    _plotLayers.Markers = _plotMain->layer("Markers");
+    _plotLayers.Markers->setMode(QCPLayer::lmBuffered);
     this->_plotMain->setInteractions( this->_plotDefaultInteractions );
     this->_rectZoom = new QCPItemRect(_plotMain);
     _rectZoom->setPen(QPen(QColor(50,50,50),2,Qt::DashLine));
     _rectZoom->setVisible(false);
-    _rectZoom->setLayer("markers");
+    _rectZoom->setLayer(_plotLayers.Markers);
     _rectZoom->setSelectable(false);
     QGridLayout* mainLayout = new QGridLayout();
 
@@ -942,8 +946,10 @@ void EAQtMainWindow::setLowLabelText(int n, QString text)
 EAQtPlotCursor* EAQtMainWindow::PlotAddCursor()
 {
     QCPItemStraightLine *sl = new QCPItemStraightLine(this->_plotMain);
+    sl->setLayer(_plotLayers.Markers);
     QCPGraph *gf = PlotAddGraph();
-    return new EAQtPlotCursor(sl,gf);;
+    gf->setLayer(_plotLayers.Markers);
+    return new EAQtPlotCursor(sl,gf);
 }
 
 double EAQtMainWindow::PlotGetXMiddle()
@@ -960,7 +966,9 @@ void EAQtMainWindow::PlotSetInteraction(QCP::Interactions i)
 
 QCPItemStraightLine* EAQtMainWindow::PlotAddLine()
 {
-    return new QCPItemStraightLine(this->_plotMain);
+    QCPItemStraightLine* sl = new QCPItemStraightLine(this->_plotMain);
+    sl->setLayer(_plotLayers.Markers);
+    return sl;
 }
 
 void EAQtMainWindow::setStatusText(QString str)
@@ -1070,4 +1078,9 @@ void EAQtMainWindow::startSmooth()
         c->Param(PARAM::inf_smooth,PARAM::inf_smooth_yes);
         updateAll();
     }
+}
+
+EAQtUIInterface::PlotLayer* EAQtMainWindow::PlotGetLayers()
+{
+    return &_plotLayers;
 }
