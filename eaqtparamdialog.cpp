@@ -407,9 +407,13 @@ QGroupBox *EAQtParamDialog::createMesTypeGroup()
         this->_paramMethod.resize(4);
         groupBox->setTitle(tr("Voltammetry"));
         _paramMethod[PARAM::method_scv] = new QRadioButton(tr("staircase (SCV)"));
+        connect(_paramMethod[PARAM::method_scv],SIGNAL(toggled(bool)),this,SLOT(methodChanged()));
         _paramMethod[PARAM::method_npv] = new QRadioButton(tr("normal pulse (NPV)"));
+        connect(_paramMethod[PARAM::method_npv],SIGNAL(toggled(bool)),this,SLOT(methodChanged()));
         _paramMethod[PARAM::method_dpv] = new QRadioButton(tr("differential pulse (DPV)"));
+        connect(_paramMethod[PARAM::method_dpv],SIGNAL(toggled(bool)),this,SLOT(methodChanged()));
         _paramMethod[PARAM::method_sqw] = new QRadioButton(tr("sqaure wave (SQW)"));
+        connect(_paramMethod[PARAM::method_sqw],SIGNAL(toggled(bool)),this,SLOT(methodChanged()));
 
         _butProgramPotential = new QPushButton;
         _butProgramPotential->setText(tr("Program E"));
@@ -635,9 +639,13 @@ void EAQtParamDialog::onlEditchanged(QString text)
             mb.setText(tr("Ep cannot be equal Ek in LSV mode."));
         } else {
             this->_lineEdits[lid_points]->setDisabled(false);
+            this->_lineEdits[lid_Estep]->setDisabled(true);
+            this->_lineLabels[lid_Estep]->setDisabled(true);
         }
     } else {
         this->_lineEdits[lid_points]->setDisabled(true);
+        this->_lineEdits[lid_Estep]->setDisabled(false);
+        this->_lineLabels[lid_Estep]->setDisabled(false);
     }
 }
 
@@ -804,6 +812,7 @@ void EAQtParamDialog::prepareDialog()
         if ( this->getParam(PARAM::Ep) != this->getParam(PARAM::Ek) ) {
             _lineEdits[lid_points]->setDisabled(true);
         }
+        this->methodChanged();
     }
 }
 
@@ -980,5 +989,22 @@ void EAQtParamDialog::saveParams()
         } else {
             _pData->setIsMesSeries(false);
         }
+    }
+}
+
+void EAQtParamDialog::methodChanged()
+{
+    if ( _paramMethod[PARAM::method_scv]->isChecked() ) {
+        _lineLabels[lid_E0_dE]->setEnabled(false);
+        _lineEdits[lid_E0_dE]->setEnabled(false);
+    } else if ( _paramMethod[PARAM::method_npv]->isChecked() ) {
+        _lineLabels[lid_E0_dE]->setEnabled(true);
+        _lineEdits[lid_E0_dE]->setEnabled(true);
+        _lineLabels[lid_E0_dE]->setText("E0 [mV]:");
+    } else if ( _paramMethod[PARAM::method_dpv]->isChecked()
+           || _paramMethod[PARAM::method_sqw]->isChecked() ) {
+        _lineLabels[lid_E0_dE]->setEnabled(true);
+        _lineEdits[lid_E0_dE]->setEnabled(true);
+        _lineLabels[lid_E0_dE]->setText("dE [mV]:");
     }
 }

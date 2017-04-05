@@ -28,7 +28,7 @@ QString DisplayCurve::getHTMLInfo()
                                                                      + "</td></tr>"
                 + "<tr><th>" + QApplication::translate("EAQtMainWindow","electrode: ") +"</th><td>" + getElectr() + "</td></tr>"
                 + "<tr><th>" + QApplication::translate("EAQtMainWindow","cyclic: ") + "</th><td>" + getMessc() + "</td></tr>"
-                + "<tr><td>" + QApplication::translate("EAQtMainWindow","Es: %1 mV</td><td>Ee: %2 mV").arg(_curve->Param(PARAM::Ep)).arg(_curve->Param(PARAM::Ek)) + "</td></tr>" );
+                + "<tr><td>" + QApplication::translate("EAQtMainWindow","Ep: %1 mV</td><td>Ek: %2 mV").arg(_curve->Param(PARAM::Ep)).arg(_curve->Param(PARAM::Ek)) + "</td></tr>" );
     if ( isLSV ) {
         pte.append("<tr><td colspan=2>dE/dt: ");
         double speed = MEASUREMENT::LSVstepE[_curve->Param(PARAM::dEdt)]/MEASUREMENT::LSVtime[_curve->Param(PARAM::dEdt)];
@@ -44,6 +44,18 @@ QString DisplayCurve::getHTMLInfo()
         pte.append(QString("<tr><td>ts: %1 ms</td><td>tw: %2 ms</td></tr>").arg(_curve->Param(PARAM::tp)).arg(_curve->Param(PARAM::tw)));
     }
     pte.append(QString("<tr><td colspan=2>td: %1 ms</td></tr>").arg(_curve->Param(PARAM::td)));
+
+    if ( _curve->Param(PARAM::breaknr) > 0 ) {
+        pte.append(QApplication::translate("EAQtMainWindow","<tr><th colspan=2>Breaks:</td></tr>"));
+        pte.append(QApplication::translate("EAQtMainWindow","<tr><th>E [mV]</th><th>t [min:sec]</th></tr>"));
+        for ( int i=0; i<_curve->Param(PARAM::breaknr); ++i ) {
+            pte.append(QString("<tr><td>%1</td><td>%2:%3</td></tr>").arg(_curve->Param(PARAM::breakE+i))
+                                                                    .arg(_curve->Param(PARAM::breakmin+i), 2, 10, QChar('0'))
+                                                                    .arg(_curve->Param(PARAM::breaksec+i), 2, 10, QChar('0'))
+                       );
+        }
+    }
+    pte.append("</table>");
     return pte;
 }
 

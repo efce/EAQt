@@ -91,8 +91,8 @@ void EAQtData::initParam()
     _PVParam[PARAM::Ep] = -100;
     _PVParam[PARAM::Ek] = 100;
     _PVParam[PARAM::Estep] = 1;
-    _PVParam[PARAM::tp] = 100;
-    _PVParam[PARAM::tw] = 100;
+    _PVParam[PARAM::tp] = 10;
+    _PVParam[PARAM::tw] = 10;
     _PVParam[PARAM::tk] = 500;
     _PVParam[PARAM::ptnr] = 200;
     _PVParam[PARAM::pro] = 0;
@@ -446,6 +446,9 @@ void EAQtData::CurReadFilePro(QString *FileName, int PosNr)
 // --------------------------------------------------------
 int EAQtData::CurReadCurvePro(QFile &ff, QString pCName)
 {
+    if ( _measurementGo ) {
+        return 0;
+    }
     uint32_t j1;
     uint32_t i;
     int32_t fparam;
