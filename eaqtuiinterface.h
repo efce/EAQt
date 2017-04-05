@@ -37,6 +37,7 @@ public:
     struct PlotLayer {
         QCPLayer* Active;
         QCPLayer* NonActive;
+        QCPLayer* Measurement;
         QCPLayer* Markers;
     };
     virtual PlotLayer* PlotGetLayers() = 0;

@@ -378,6 +378,7 @@ bool EAQtData::MDirReadPro(QFile &ff)
     for(uint32_t i = 0;i < curvesInFile;++i) {
         ff.seek(iFilePos);
         uint32_t index = _fileIndex->addNew();
+        getMesCurves()->get(index)->getPlot()->setLayer(_pUI->PlotGetLayers()->NonActive);
         _fileIndex->get(index)->Off(iFilePos);         	// offset krzywej w pliku
         ff.read((char*)(&iAux), sizeof(uint32_t)); // długość krzywej
         iFilePos += iAux;
@@ -478,6 +479,7 @@ int EAQtData::CurReadCurvePro(QFile &ff, QString pCName)
     ff.seek(_fileIndex->get(i)->Off());
 
     j1 = getCurves()->addNew(1); // TMP nie znam ilosci punktow krzywej
+    getCurves()->get(j1)->getPlot()->setLayer(_pUI->PlotGetLayers()->NonActive);
     ff.read((char*)(&cLen), sizeof(uint32_t));			// ilosc bajtow krzywej w pliku
     ff.read(cAux, 1); // nazwa krzywej
     int ii=0;
@@ -900,6 +902,7 @@ void EAQtData::MesStart(bool isLsv)
         for ( int iii=0; iii<nrOfCurvesMeasured; iii++) { // rysowana jest jedna krzywa niezależnie
             // od tego czy jest cykliczna czy nie
             mesCurveIndex = this->getMesCurves()->addNew(_LSVParam[PARAM::ptnr]);
+            getMesCurves()->get(mesCurveIndex)->getPlot()->setLayer(_pUI->PlotGetLayers()->Measurement);
             QVector<double> vecMesPotential;
             QVector<double> vecMesTime;
             for (i=0 ; i<PARAM::PARAMNUM ; i++) {
@@ -1064,6 +1067,7 @@ void EAQtData::MesStart(bool isLsv)
         for ( int iii=0; iii<nrOfCurvesMeasured; iii++) { // rysowana jest jedna krzywa niezależnie
             // od tego czy jest cykliczna czy nie
             mesCurveIndex = this->getMesCurves()->addNew(_PVParam[PARAM::ptnr]);
+            getMesCurves()->get(mesCurveIndex)->getPlot()->setLayer(_pUI->PlotGetLayers()->Measurement);
             for (i=0 ; i<PARAM::PARAMNUM ; i++) {
                 this->getMesCurves()->get(mesCurveIndex)->Param(i, _PVParam[i]);
             }

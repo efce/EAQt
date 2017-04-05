@@ -466,6 +466,9 @@ QGridLayout* EAQtMainWindow::createLayout()
     _plotLayers.Active = _plotMain->layer("Active");
     this->_plotMain->addLayer("Markers");
     _plotLayers.Markers = _plotMain->layer("Markers");
+    this->_plotMain->addLayer("Measurement");
+    _plotLayers.Measurement = _plotMain->layer("Measurement");
+    _plotLayers.Measurement->setMode(QCPLayer::lmBuffered);
     _plotLayers.Markers->setMode(QCPLayer::lmBuffered);
     this->_plotMain->setInteractions( this->_plotDefaultInteractions );
     this->_rectZoom = new QCPItemRect(_plotMain);
@@ -653,7 +656,7 @@ void EAQtMainWindow::MeasurementUpdate()
     }
 
     this->_plotMain->rescaleAxes();
-    this->_plotMain->replot();
+    this->_plotMain->replot(); //alternatywa : _plotLayers->Measurement->replot();
 }
 
 void EAQtMainWindow::showMessageBox(QString text, QString title)

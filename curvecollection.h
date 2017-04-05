@@ -18,8 +18,8 @@
 #ifndef CURVECOLLECTION_H
 #define CURVECOLLECTION_H
 
-#include "curve.h"
 #include <vector>
+#include "curve.h"
 #include "eaqtuiinterface.h"
 
 /*
