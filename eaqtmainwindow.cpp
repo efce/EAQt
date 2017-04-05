@@ -669,8 +669,8 @@ bool EAQtMainWindow::showQuestionBox(QString text, QString title)
     QMessageBox mb;
     QMessageBox::StandardButton reply;
     reply = mb.question( this,
-                         title,
                          text,
+                         title,
                          QMessageBox::Yes|QMessageBox::No );
 
     if (reply == QMessageBox::Yes) {

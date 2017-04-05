@@ -24,6 +24,7 @@ EAQtData::EAQtData() : QObject(), EAQtDataInterface()
     memset(_TxBuf, 0, NETWORK::TxBufLength*sizeof(char));
     memset(_RxBuf, 0, NETWORK::RxBufLength*sizeof(char));
 
+    _IUE0 = 0;
     _act = SELECT::none;
     _wasLSVMeasurement = 0;
     _conductingMeasurement = 0;
@@ -1496,14 +1497,14 @@ void EAQtData::MesUpdate(uint32_t nNrOfMesCurve, uint32_t nPointFromDevice)
 /*
  *  Calculate final result for LSV
  */
-double EAQtData::CountResultLSV(long ResI)
+double EAQtData::CountResultLSV(int64_t ResI)
 {
     static double dResI;
 
     ResI -= this->_IUE0;
 
     if ( getMesCurves()->get(0)->Param(PARAM::electr) < PARAM::electr_micro ) { //MACRO ELEKTRODA
-        dResI = (double)ResI * MEASUREMENT::scale_micro[getMesCurves()->get(0)->Param(PARAM::crange)] * MEASUREMENT::multiply;
+        dResI = (double)ResI * MEASUREMENT::scale_macro[getMesCurves()->get(0)->Param(PARAM::crange)] * MEASUREMENT::multiply;
     } else {
         dResI = (double)ResI * MEASUREMENT::scale_micro[getMesCurves()->get(0)->Param(PARAM::crange)] * MEASUREMENT::multiply;
     }
@@ -1514,7 +1515,7 @@ double EAQtData::CountResultLSV(long ResI)
 /*
  * Calculate final result for PV
  */
-double EAQtData::CountResultPV(long ResI)
+double EAQtData::CountResultPV(int64_t ResI)
 {
     static double dResI;
 
@@ -1529,7 +1530,7 @@ double EAQtData::CountResultPV(long ResI)
     }
 
     if ( getMesCurves()->get(0)->Param(PARAM::electr) < PARAM::electr_micro ) { //MACRO ELEKTRODA
-        dResI = (double)ResI * MEASUREMENT::scale_micro[getMesCurves()->get(0)->Param(PARAM::crange)] * MEASUREMENT::multiply;
+        dResI = (double)ResI * MEASUREMENT::scale_macro[getMesCurves()->get(0)->Param(PARAM::crange)] * MEASUREMENT::multiply;
     } else {
         dResI = (double)ResI * MEASUREMENT::scale_micro[getMesCurves()->get(0)->Param(PARAM::crange)] * MEASUREMENT::multiply;
     }
