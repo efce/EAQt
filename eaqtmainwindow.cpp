@@ -736,6 +736,10 @@ void EAQtMainWindow::createActionsTopMenu()
     _actSaveCurve->setStatusTip(tr("Add curve(s) to EAQt voltammogram file (.volt)"));
     connect(_actSaveCurve, SIGNAL(triggered(bool)), this, SLOT(saveCurve()));
 
+    this->_actLoadCurve = new QAction(tr("&Load curve"), this);
+    _actLoadCurve->setStatusTip(tr("Load curve(s) from *.volt or *.vol files"));
+    connect(_actLoadCurve, SIGNAL(triggered(bool)), this, SLOT(openFile()));
+
     this->_actExportCurve = new QAction(tr("&Export curve"), this);
     _actExportCurve->setStatusTip(tr("Export curve(s) as *.txt or *.csv"));
     connect(_actExportCurve, SIGNAL(triggered(bool)), this, SLOT(exportCurve()));
@@ -813,6 +817,7 @@ void EAQtMainWindow::createActionsTopMenu()
 void EAQtMainWindow::createMenusTopMenu()
 {
     _menuFile = this->menuBar()->addMenu(tr("&File"));
+    _menuFile->addAction(this->_actLoadCurve);
     _menuFile->addAction(this->_actSaveCurve);
     _menuFile->addAction(this->_actExportCurve);
 
@@ -1018,13 +1023,15 @@ void EAQtMainWindow::showAboutSoftware()
     QLabel* st5 = new QLabel();
     QLabel* st6 = new QLabel();
     QLabel* st7 = new QLabel();
+    QLabel* st8 = new QLabel();
     st1->setText(tr("Electrochemical analyzer software EAQt"));
     st2->setText(tr("The program developed by Filip Ciepiela and Małgorzata Jakubowska"));
     st3->setText(tr("Git version: %1").arg(GIT_CURRENT_SHA1));
     st4->setText(tr("This program is licensed under GPLv3. It makes use of following software:"));
-    st5->setText(tr("- QCustomPlot avaiable at http://www.qcustomplot.com"));
-    st6->setText(tr("- Eigen avaiable at http://eigen.tuxfamily.org/"));
-    st7->setText(tr("- A portable stdint.h avaiable at http://reference.mrpt.org/"));
+    st5->setText(tr("- Qt API avaiable at http://www.qt.io"));
+    st6->setText(tr("- QCustomPlot avaiable at http://www.qcustomplot.com"));
+    st7->setText(tr("- Eigen avaiable at http://eigen.tuxfamily.org/"));
+    st8->setText(tr("- A portable stdint.h avaiable at http://reference.mrpt.org/"));
     QVBoxLayout *vbl = new QVBoxLayout();
     vbl->addWidget(st1);
     vbl->addWidget(st2);
@@ -1033,6 +1040,7 @@ void EAQtMainWindow::showAboutSoftware()
     vbl->addWidget(st5);
     vbl->addWidget(st6);
     vbl->addWidget(st7);
+    vbl->addWidget(st8);
     dialog->setLayout(vbl);
     dialog->exec();
 }

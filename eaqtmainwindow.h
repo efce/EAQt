@@ -123,6 +123,7 @@ private:
     QAction *_actParamSave;
     QAction *_actParamLoad;
 
+    QAction *_actLoadCurve;
     QAction *_actSaveCurve;
     QAction *_actExportCurve;
 
