@@ -459,6 +459,7 @@ QGridLayout* EAQtMainWindow::createLayout()
     this->ui->mainToolBar->addWidget(butRescale);
 
     this->_plotMain = new QCustomPlot();
+    _plotMain->setNoAntialiasingOnDrag(true);
     this->_plotMain->addLayer("Nonactive");
     _plotLayers.NonActive = _plotMain->layer("Nonactive");
     this->_plotMain->addLayer("Active");
