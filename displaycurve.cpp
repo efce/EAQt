@@ -11,7 +11,9 @@ QString DisplayCurve::getHTMLInfo()
     QString pte;
     bool isLSV = (_curve->Param(PARAM::method) == PARAM::method_lsv);
     pte.append( "<h4>" + QApplication::translate("EAQtMainWindow","General") + "</h4>"
+                + "<tr><td style='width: 120px'></td><td style='width:120px'></td></tr>"
                 + "<tr><th>" + QApplication::translate("EAQtMainWindow","name: ") + "</th></tr><tr><td>" + _curve->CName() + "</td></tr>"
+                + "<tr><th>" + QApplication::translate("EAQtMainWindow","comment: ") + "</th></tr><tr><td>" + _curve->Comment() + "</td></tr>"
                 + "<tr><th>" + QApplication::translate("EAQtMainWindow","file: ") + "</th></tr><tr><td>" + _curve->FName() + "</td></tr>"
                 + "<tr><th>" + QApplication::translate("EAQtMainWindow","date: ") + "</th></tr><tr><td>" + QString("%1-%2-%3 %4:%5:%6").arg(_curve->Param(PARAM::date_year))
                                                 .arg(_curve->Param(PARAM::date_month), 2, 10, QChar('0'))
@@ -44,6 +46,7 @@ QString DisplayCurve::getHTMLInfo()
         pte.append(QString("<tr><td>ts: %1 ms</td><td>tw: %2 ms</td></tr>").arg(_curve->Param(PARAM::tp)).arg(_curve->Param(PARAM::tw)));
     }
     pte.append(QString("<tr><td colspan=2>td: %1 ms</td></tr>").arg(_curve->Param(PARAM::td)));
+    pte.append(QString("<tr><td colspan=2>current range: %1</td></tr>").arg(this->getCranage()));
 
     if ( _curve->Param(PARAM::breaknr) > 0 ) {
         pte.append(QApplication::translate("EAQtMainWindow","<tr><th colspan=2>Breaks:</td></tr>"));
