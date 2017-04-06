@@ -378,7 +378,6 @@ bool EAQtData::MDirReadPro(QFile &ff)
     for(uint32_t i = 0;i < curvesInFile;++i) {
         ff.seek(iFilePos);
         uint32_t index = _fileIndex->addNew();
-        getMesCurves()->get(index)->getPlot()->setLayer(_pUI->PlotGetLayers()->NonActive);
         _fileIndex->get(index)->Off(iFilePos);         	// offset krzywej w pliku
         ff.read((char*)(&iAux), sizeof(uint32_t)); // długość krzywej
         iFilePos += iAux;
@@ -737,11 +736,10 @@ void EAQtData::ProcessPacketFromEA(char* packet)
         break;
 
     case EA2PC_RECORDS::recordLSV:
-        //TODO: dlaczego tu sa klasowe zmienne ?
         this->_endOfMes = RxBuf[1];
         DataLen = (RxBuf[2] + 256*RxBuf[3])-8;
         static int32_t firstCycle = (RxBuf[4] + 256*RxBuf[5]);
-        static int32_t averageCounter1 = (RxBuf[6] + 256*RxBuf[7]);
+        //static int32_t averageCounter1 = (RxBuf[6] + 256*RxBuf[7]);
         if ( this->_endOfMes ) {
             _measurementGo = 0;
         }
@@ -751,23 +749,23 @@ void EAQtData::ProcessPacketFromEA(char* packet)
         while ( DataLen > 0 ) {
             currentCurveNr = (RxBuf[i] + 256*RxBuf[i+1]);
             i+= 2;
-            _mesPointNr = (RxBuf[i] + 256*RxBuf[i+1]);
+            currentPointNr = (RxBuf[i] + 256*RxBuf[i+1]);
             i+= 2;
-            _currentResult = ((long)RxBuf[i+3]<<24) | ((long)RxBuf[i+2]<<16) | ((long)RxBuf[i+1]<<8) | ((long)RxBuf[i]);
+            workl = ((long)RxBuf[i+3]<<24) | ((long)RxBuf[i+2]<<16) | ((long)RxBuf[i+1]<<8) | ((long)RxBuf[i]);
             i += 4;
             DataLen -= 8;
             if ( firstCycle ) {
-                *this->getMesCurves()->get(currentCurveNr)->getMesTimePoint(_mesPointNr) += _samplingTime;
-            } else if (*this->getMesCurves()->get(currentCurveNr)->getMesTimePoint(_mesPointNr) == 0) {
-                *this->getMesCurves()->get(currentCurveNr)->getMesTimePoint(_mesPointNr) = _samplingTime;
+                *this->getMesCurves()->get(currentCurveNr)->getMesTimePoint(currentPointNr) += _samplingTime;
+            } else if (*this->getMesCurves()->get(currentCurveNr)->getMesTimePoint(currentPointNr) == 0) {
+                *this->getMesCurves()->get(currentCurveNr)->getMesTimePoint(currentPointNr) = _samplingTime;
             }
             if (this->getMesCurves()->get(currentCurveNr)->Param(PARAM::messc) == PARAM::messc_multicyclic ) {
-                *this->getMesCurves()->get(currentCurveNr)->getMesCurrent1Point(_mesPointNr) = _currentResult;
+                *this->getMesCurves()->get(currentCurveNr)->getMesCurrent1Point(currentPointNr) = workl;
                 //TotalCntr ++;
             } else {
-                *this->getMesCurves()->get(currentCurveNr)->getMesCurrent1Point(_mesPointNr) += _currentResult;
+                *this->getMesCurves()->get(currentCurveNr)->getMesCurrent1Point(currentPointNr) += workl;
             }
-            this->MesUpdate(currentCurveNr,_mesPointNr);
+            this->MesUpdate(currentCurveNr,currentPointNr);
         }
         if ( this->_endOfMes ) {
             this->MesAfter();
@@ -781,8 +779,7 @@ void EAQtData::ProcessPacketFromEA(char* packet)
 
     case EA2PC_RECORDS::recordPause:
         work = (RxBuf[2]<<8) | RxBuf[1];
-        workl = (int64_t)work;
-        _break.currentE = workl;
+        _break.currentE = work;
         _break.targetMin = RxBuf[3] + 256*RxBuf[4];
         _break.targetSec = RxBuf[5] + 256*RxBuf[6];
         _break.currentMin = RxBuf[7] + 256*RxBuf[8];
@@ -2444,10 +2441,10 @@ EAQtSignalProcessing* EAQtData::getProcessing()
 void EAQtData::exportToCSV(QString path)
 {
     QFile *ff = new QFile(path);
-    uint32_t i, k;
+    uint32_t i;
     int* blen;
     blen = new int[_curves->count()];
-    int blenm;
+    //int blenm;
     char* endOfLine = new char[2]{ '\r', '\n' };
     if (this->Act() != SELECT::all) {
         i = this->Act();
@@ -2464,8 +2461,7 @@ void EAQtData::exportToCSV(QString path)
     int pt;
     if (this->Act() == SELECT::all)  // wszystkie aktywne
     {
-
-        QVector<double>* workE=_curves->get(0)->getPotentialVector();
+        //QVector<double>* workE=_curves->get(0)->getPotentialVector();
         int savedCurrentRange = this->getCurrentRange();
 
         for ( int i = 0; i<_curves->count(); ++i) {

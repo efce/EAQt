@@ -28,8 +28,8 @@ int main(int argc, char *argv[])
     QApplication a(argc, argv);
 
     QTranslator translator;
-    bool lt = translator.load("eaqt_pl",":/lang");
-    bool at = a.installTranslator(&translator);
+    translator.load("eaqt_pl",":/lang");
+    a.installTranslator(&translator);
 
     EAQtMainWindow w;
     EAQtData::getInstance().initialUpdate((EAQtUIInterface*)&w);

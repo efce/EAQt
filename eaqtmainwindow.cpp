@@ -352,9 +352,10 @@ QGridLayout* EAQtMainWindow::createLayout()
     _tableCurveMain->verticalHeader()->hide();
     _tableCurveMain->setColumnWidth(0,150);
     _tableCurveMain->setColumnWidth(1,90);
-    _tableCurveMain->setFixedWidth(245);
+    _tableCurveMain->setFixedWidth(257);
     _tableCurveMain->setShowGrid(false);
     _tableCurveMain->setAlternatingRowColors(true);
+    _tableCurveMain->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
     _tableCurveMain->setSelectionBehavior(QAbstractItemView::SelectRows);
     QString tabelStyle = "QTableWidget::item:selected{ background-color: rgb(%1, %2, %3); color: white } ";
     tabelStyle = tabelStyle.arg(COLOR::active.red()).arg(COLOR::active.green()).arg(COLOR::active.blue());

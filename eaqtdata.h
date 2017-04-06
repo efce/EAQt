@@ -191,9 +191,9 @@ private:
    int32_t E1I, E2I, E3I; // calculated potential of first three potential steps //
 
    int32_t _samplingTime;   // sampling time in [ms]
-   int64_t _currentResult;    // current result from A/C
+   int64_t workl;    // current result from A/C
    int32_t _measurementGo;
-   int32_t _mesPointNr;
+   int32_t currentPointNr;
    int _xaxis_type;
 
    struct AnalyzerAccessories {
