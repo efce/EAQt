@@ -231,6 +231,8 @@ private:
     QString _seriesFilePath;
     MesCFG *_pSeriesData;
     // END SERIA
+signals:
+    void actChanged(int act);
 
 };
 #endif // EAQTDATA_H

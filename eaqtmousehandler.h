@@ -28,9 +28,7 @@ class EAQtMouseHandler : public QObject
 
 public:
     EAQtMouseHandler(EAQtDataInterface*, EAQtUIInterface*);
-public:
     ~EAQtMouseHandler(void);
-    void onSelectionChanged();
 
     const struct PlotInteractions {
         QCP::Interactions plotDefaultInteractions = QCP::iRangeZoom | QCP::iRangeDrag | QCP::iSelectPlottables;
@@ -104,6 +102,10 @@ private:
     QVector<EAQtPlotCursor*> _vCursors;
     EAQtDataInterface* _pData;
     EAQtUIInterface* _pUI;
+
+public slots:
+    void onSelectionChanged();
+
 };
 
 #endif // EAQTMOUSEHANDLER_H

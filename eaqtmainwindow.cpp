@@ -49,6 +49,7 @@ void EAQtMainWindow::InitialUpdate(EAQtData& d)
     connect(this->_plotMain,SIGNAL(mouseMove(QMouseEvent*)),this,SLOT(handleMouseMoved(QMouseEvent*)));
     connect(this->_plotMain,SIGNAL(mousePress(QMouseEvent*)), this,SLOT(handleMousePress(QMouseEvent*)));
     connect(this->_plotMain,SIGNAL(mouseRelease(QMouseEvent*)),this,SLOT(handleMouseReleased(QMouseEvent*)));
+    connect(_pEAQtData,SIGNAL(actChanged(int)),_mouseHandler,SLOT(onSelectionChanged()));
 }
 
 void EAQtMainWindow::userStopsMeasurement()
@@ -232,7 +233,7 @@ void EAQtMainWindow::PlotRegenerate()
     }
     this->_plotMain->blockSignals(false);
     this->_plotMain->setUpdatesEnabled(true);
-    this->_plotMain->replot();
+    //this->_plotMain->replot();
 }
 
 void EAQtMainWindow::TableRowSelected()
@@ -251,7 +252,6 @@ void EAQtMainWindow::TableRowSelected()
         row = this->_tableCurveMain->selectedItems().at(0)->row();
     }
     this->_pEAQtData->Act(row);
-    this->_mouseHandler->onSelectionChanged();
     this->PlotDrawSelection();
     this->TableDrawSelection();
 }
@@ -327,7 +327,6 @@ void EAQtMainWindow::PlotSelectionChanged()
         return;
     }
     this->_pEAQtData->Act(selectedGraphID);
-    this->_mouseHandler->onSelectionChanged();
     this->PlotDrawSelection();
     this->TableDrawSelection();
 }
@@ -335,7 +334,6 @@ void EAQtMainWindow::PlotSelectionChanged()
 void EAQtMainWindow::selectAll()
 {
     this->_pEAQtData->Act(SELECT::all);
-    this->_mouseHandler->onSelectionChanged();
     this->TableDrawSelection();
     this->PlotDrawSelection();
 }

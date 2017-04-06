@@ -46,9 +46,19 @@ void EAQtMouseHandler::onSelectionChanged()
             this->_vCursors[cl_movingCursor]->setSnapTo(this->_pData->getCurves()->get(this->_pData->Act())->getPlot());
             this->_vCursors[cl_movingCursor]->move(this->_vCursors[cl_movingCursor]->getX());
             //TODO: update text on lowlabel
+        } else {
+            this->ChangeMouseMode(mm_normal,uf_none);
+        }
+        break;
+    case mm_nearestYonPlot:
+        if ( this->_pData->Act() >= 0 ) {
+            this->_vCursors[cl_snapXonPlot]->setSnapTo(this->_pData->getCurves()->get(this->_pData->Act())->getPlot());
+        } else {
+            this->ChangeMouseMode(mm_normal,uf_none);
         }
         break;
     default:
+        this->ChangeMouseMode(mm_normal,uf_none);
         break;
     }
 }

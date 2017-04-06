@@ -347,11 +347,13 @@ int EAQtData::Act()
 
 void EAQtData::Act(int toAct)
 {
-    if ( (int)getCurves()->count() > toAct ) {
+    if ( (int)getCurves()->count() > toAct
+    || toAct == SELECT::all ) {
         _act = toAct;
     } else {
         _act = SELECT::none;
     }
+    emit actChanged(_act);
 }
 
 // --------------------------------------------------------
