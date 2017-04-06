@@ -94,6 +94,7 @@ private:
     QPushButton *_butCurveInfoToggle;
     QTextEdit *_curveInfoData;
     EAQtUIInterface::PlotLayer _plotLayers;
+    QString _PathInUse;
 
 private:
     void createActionsTopMenu();

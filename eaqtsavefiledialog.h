@@ -30,18 +30,23 @@ class EAQtSaveFiledialog : public QObject
     Q_OBJECT
 
 public:
-    EAQtSaveFiledialog(QWidget* _parent, QString _pathToShow);
+    EAQtSaveFiledialog(QWidget* parent, QString cname, QString ccomment, QString pathToShow = "", QString file = "");
     struct SaveDetails {
         bool wasCanceled;
         QString fileName;
         QString curveName;
         QString curveComment;
-    } _saveDetails;
+    };
     SaveDetails getSaveDetails();
+private:
+    SaveDetails _saveDetails;
     QWidget* _parent;
     QString _pathToShow;
     QLineEdit* _leCurveName;
     QPlainTextEdit* _leCurveComment;
+    QString _cname;
+    QString _ccomment;
+    QString _filename;
 public slots:
     void updateCurveName(QString);
     void updateCurveComment();

@@ -17,21 +17,37 @@
   *******************************************************************************************************************/
 #include <QVBoxLayout>
 #include <QLabel>
+#include <QStandardPaths>
 #include "eaqtsavefiledialog.h"
 
-EAQtSaveFiledialog::EAQtSaveFiledialog(QWidget* parent, QString pathToShow) : QObject()
+EAQtSaveFiledialog::EAQtSaveFiledialog(QWidget* parent, QString cname, QString ccomment, QString pathToShow, QString file) : QObject()
 {
     this->_parent = parent;
     this->_pathToShow = pathToShow;
+    _ccomment = ccomment;
+    _cname = cname;
+    _filename = file;
     _saveDetails.wasCanceled = false;
-    _saveDetails.curveComment = "";
-    _saveDetails.curveName = "";
-    _saveDetails.fileName = "";
+    _saveDetails.curveComment = _ccomment;
+    _saveDetails.curveName = _cname;
+    _saveDetails.fileName = _filename;
 }
 
 EAQtSaveFiledialog::SaveDetails EAQtSaveFiledialog::getSaveDetails()
 {
     QFileDialog* fd = new QFileDialog();
+    if ( _pathToShow.isEmpty() && _filename.isEmpty() ) {
+        fd->setDirectory(QStandardPaths::writableLocation(QStandardPaths::DesktopLocation));
+    }
+    if ( _pathToShow.isEmpty() ) {
+        fd->setDirectory(_pathToShow);
+    }
+    if ( !_filename.isEmpty() ) {
+        QFileInfo fi(_filename);
+        fd->setDirectory(fi.absoluteDir());
+        fd->selectFile(fi.baseName());
+    }
+    fd->selectFile(_filename);
     fd->setModal(true);
     fd->setOption( QFileDialog::DontUseNativeDialog, true );
     fd->setNameFilter("volt (*.volt)");
@@ -40,9 +56,11 @@ EAQtSaveFiledialog::SaveDetails EAQtSaveFiledialog::getSaveDetails()
     this->_leCurveComment = new QPlainTextEdit();
     QFontMetrics *metrics = new QFontMetrics(fd->font());
     this->_leCurveComment->setFixedHeight(2.9*metrics->height() );
+    _leCurveComment->setPlainText(_ccomment);
     QLabel* lbCurveComment = new QLabel(tr("Curve comment:"));
 
     this->_leCurveName = new QLineEdit();
+    _leCurveName->setText(_cname);
     QLabel* lbCurveName = new QLabel(tr("Curve name:"));
 
     lay->addWidget(lbCurveName,0,0,1,1,Qt::AlignRight);

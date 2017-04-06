@@ -37,6 +37,7 @@ EAQtMainWindow::EAQtMainWindow(QWidget *parent) :
     this->createMenusTopMenu();
     this->setWindowTitle(tr("EAQt - electrochemical analyzer software"));
     _isRectangleZoom = false;
+    _PathInUse = "";
     new QShortcut( QKeySequence(Qt::Key_Escape), this, SLOT(userStopsMeasurement()));
     new QShortcut( QKeySequence(Qt::Key_F5), this, SLOT(userStartsMeasurement()));
 }
@@ -684,10 +685,22 @@ bool EAQtMainWindow::showQuestionBox(QString text, QString title)
 
 EAQtSaveFiledialog::SaveDetails EAQtMainWindow::DialogSaveInFile()
 {
-    EAQtSaveFiledialog* sfd = new EAQtSaveFiledialog((QWidget*)this,QString("/home/fc/"));
-    EAQtSaveFiledialog::SaveDetails saveDetails = sfd->getSaveDetails();
+    static bool wasUsed = false;
+    static EAQtSaveFiledialog::SaveDetails sd;
+    if ( !wasUsed ) {
+        wasUsed = true;
+        sd.curveComment = "";
+        sd.curveName = "";
+        sd.wasCanceled = true;
+        sd.fileName = "";
+    }
+    EAQtSaveFiledialog* sfd = new EAQtSaveFiledialog((QWidget*)this,sd.curveName,sd.curveComment,_PathInUse,sd.fileName);
+    EAQtSaveFiledialog::SaveDetails nsd = sfd->getSaveDetails();
+    if ( !nsd.wasCanceled ) {
+        sd = nsd;
+    }
     delete sfd;
-    return saveDetails;
+    return nsd;
 }
 
 void EAQtMainWindow::changeStartButtonText(QString newText)

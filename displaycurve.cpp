@@ -11,7 +11,6 @@ QString DisplayCurve::getHTMLInfo()
     QString pte;
     bool isLSV = (_curve->Param(PARAM::method) == PARAM::method_lsv);
     pte.append( "<h4>" + QApplication::translate("EAQtMainWindow","General") + "</h4>"
-                + "<tr><td style='width: 120px'></td><td style='width:120px'></td></tr>"
                 + "<tr><th>" + QApplication::translate("EAQtMainWindow","name: ") + "</th></tr><tr><td>" + _curve->CName() + "</td></tr>"
                 + "<tr><th>" + QApplication::translate("EAQtMainWindow","comment: ") + "</th></tr><tr><td>" + _curve->Comment() + "</td></tr>"
                 + "<tr><th>" + QApplication::translate("EAQtMainWindow","file: ") + "</th></tr><tr><td>" + _curve->FName() + "</td></tr>"
