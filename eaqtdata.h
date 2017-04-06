@@ -151,8 +151,8 @@ private:
    MDirCollection *_fileIndex;
    EAQtSignalProcessing *_processing;
 
-   char _TxBuf[NETWORK::TxBufLength];
-   char _RxBuf[NETWORK::RxBufLength];
+   unsigned char _TxBuf[NETWORK::TxBufLength];
+   unsigned char _RxBuf[NETWORK::RxBufLength];
    int _act;
    int32_t _mainParam[PARAM::PARAMNUM];	   // parametry pomiaru czytanej/zapisywanej krzywej
    int32_t _PVParam[PARAM::PARAMNUM];

@@ -71,9 +71,9 @@ void EAQtNetwork::connectionError(QAbstractSocket::SocketError error)
     return;
 }
 
-int EAQtNetwork::sendToEA(char* TxBuf, uint32_t bufSize)
+int EAQtNetwork::sendToEA(char* TxBuf)
 {
-    return this->_socket->write(TxBuf,bufSize);
+    return this->_socket->write(TxBuf,NETWORK::TxBufLength);
 }
 
 void EAQtNetwork::processPacket()

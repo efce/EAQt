@@ -816,6 +816,7 @@ void EAQtData::MesStart(bool isLsv)
     if ( !this->_network->connectToEA() ) {
         return;
     }
+    _pUI->MeasurementSetup();
 
     if ( this->_useSeriesFile && !this->_isMesSeries ) {
         // Wczytaj, ale tylko raz
@@ -1281,7 +1282,7 @@ bool EAQtData::sendPVToEA()
     _TxBuf[1] = (unsigned char)(TxN & 0x00ff);
     _TxBuf[2] = (unsigned char)((TxN >> 8) & 0x00ff);
 
-    if ( this->_network->sendToEA(&_TxBuf[0], TxN) > 0 ) {
+    if ( this->_network->sendToEA((char*)&_TxBuf[0]) > 0 ) {
         return true;
     } else {
         return false;
@@ -1318,7 +1319,7 @@ bool EAQtData::sendPVToEA()
 
             QCoreApplication::processEvents(QEventLoop::AllEvents, 100);// sleep
 
-            this->_network->sendToEA(&_TxBuf[0], TxNAlt);
+            this->_network->sendToEA((char*)&_TxBuf[0]);
 
         }
 
@@ -1329,7 +1330,7 @@ void EAQtData::MesStop()
 {
     _stopInfo = 1;
     if (_conductingMeasurement == 0) {
-        this->_pUI->showMessageBox("IDS_info20"); // Pomiar nie został zainicjowany
+        this->_pUI->showMessageBox(tr("Measurement was not initiated.")); // Pomiar nie został zainicjowany
     } else {
         _conductingMeasurement = 0;
         // wyczyszczenie pola textowego
@@ -1337,8 +1338,7 @@ void EAQtData::MesStop()
         //view->UpdateData( FALSE );
         _TxBuf[0] = PC2EA_RECORODS::recordStop;
         //TxN = TxBufLgth;
-        this->_network->sendToEA(&_TxBuf[0],1);
-
+        this->_network->sendToEA((char*)&_TxBuf[0]);
         //		if ( this->bIsSeriaMes == true ) {
         //			this->pMesData->~MesCFG();
         //			this->pMesData = new MesCFG();
@@ -1346,6 +1346,7 @@ void EAQtData::MesStop()
         //		}
 
         //		view->enableAllButtons();
+        _pUI->MeasurementAfter();
     }
 }
 
@@ -1384,7 +1385,7 @@ bool EAQtData::sendLSVToEA()
     _TxBuf[2] = (unsigned char)((TxN >> 8) & 0x00ff);
 
 
-    if ( this->_network->sendToEA(&_TxBuf[0], TxN) > 0 ) {
+    if ( this->_network->sendToEA((char*)&_TxBuf[0]) > 0 ) {
         return true;
     } else {
         return false;
@@ -2198,7 +2199,7 @@ void EAQtData::sendAccessories()
     _TxBuf[TxN] = _accessories.test_valve; TxN++;
     _accessories.test_valve = 0;
 
-    this->_network->sendToEA(&_TxBuf[0], TxN);
+    this->_network->sendToEA((char*)&_TxBuf[0]);
 
     return;
 }

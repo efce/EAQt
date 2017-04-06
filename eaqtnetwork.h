@@ -29,7 +29,7 @@ public:
     ~EAQtNetwork();
 
     bool connectToEA();
-    int sendToEA(char* TxBuf, uint32_t bufSize);
+    int sendToEA(char* TxBuf);
 
     //char TxBuf[NETWORK::TxBufLength];
     char *_pRxBuf;
