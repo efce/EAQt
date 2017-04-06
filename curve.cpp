@@ -290,7 +290,7 @@ void Curve::changeToMesPlot(int electroNum/*=0*/)
         QPen qp = this->getPlot()->pen();
 		switch ( electroNum ) {
 			case 0:
-                qp.setColor(COLOR::regular);
+                qp.setColor(COLOR::measurement);
 				break;
 			case 1:
                 qp.setColor(QColor( 0, 100, 0 ));
@@ -314,7 +314,7 @@ void Curve::changeToMesPlot(int electroNum/*=0*/)
                 qp.setColor(QColor( 100, 0, 100 ));
 				break;
 			default:
-                qp.setColor(COLOR::regular);
+                qp.setColor(COLOR::measurement);
 				break;
 		}
         this->getPlot()->setPen(qp);

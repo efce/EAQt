@@ -23,6 +23,10 @@ EAQtSaveFiledialog::EAQtSaveFiledialog(QWidget* parent, QString pathToShow) : QO
 {
     this->_parent = parent;
     this->_pathToShow = pathToShow;
+    _saveDetails.wasCanceled = false;
+    _saveDetails.curveComment = "";
+    _saveDetails.curveName = "";
+    _saveDetails.fileName = "";
 }
 
 EAQtSaveFiledialog::SaveDetails EAQtSaveFiledialog::getSaveDetails()

@@ -903,6 +903,7 @@ void EAQtData::MesStart(bool isLsv)
             // od tego czy jest cykliczna czy nie
             mesCurveIndex = this->getMesCurves()->addNew(_LSVParam[PARAM::ptnr]);
             getMesCurves()->get(mesCurveIndex)->getPlot()->setLayer(_pUI->PlotGetLayers()->Measurement);
+            getMesCurves()->get(mesCurveIndex)->changeToMesPlot();
             QVector<double> vecMesPotential;
             QVector<double> vecMesTime;
             for (i=0 ; i<PARAM::PARAMNUM ; i++) {
@@ -1068,6 +1069,7 @@ void EAQtData::MesStart(bool isLsv)
             // od tego czy jest cykliczna czy nie
             mesCurveIndex = this->getMesCurves()->addNew(_PVParam[PARAM::ptnr]);
             getMesCurves()->get(mesCurveIndex)->getPlot()->setLayer(_pUI->PlotGetLayers()->Measurement);
+            getMesCurves()->get(mesCurveIndex)->changeToMesPlot();
             for (i=0 ; i<PARAM::PARAMNUM ; i++) {
                 this->getMesCurves()->get(mesCurveIndex)->Param(i, _PVParam[i]);
             }
