@@ -55,7 +55,7 @@ public:
      EAQtUIInterface::PlotLayer* PlotGetLayers();
      void MeasurementSetup();
      void MeasurementAfter();
-     void MeasurementUpdate();
+     void MeasurementUpdate(uint32_t curveNr, uint32_t pointNr);
      void showMessageBox(QString text, QString title = "");
      bool showQuestionBox(QString text, QString title = "");
      EAQtSaveFiledialog::SaveDetails DialogSaveInFile();

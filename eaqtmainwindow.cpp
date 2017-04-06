@@ -607,12 +607,17 @@ void EAQtMainWindow::MeasurementAfter()
     this->_mouseHandler->ChangeMouseMode(EAQtMouseHandler::mm_normal, EAQtMouseHandler::uf_none);
 }
 
-void EAQtMainWindow::MeasurementUpdate()
+void EAQtMainWindow::MeasurementUpdate(uint32_t curveNr, uint32_t pointNr)
 {
     int i = 0;
     Curve* curve;
-    switch ( this->_pEAQtData->getXAxis() ) {
+    setLowLabelText(0,tr("curve #: %1; point #: %2; potential: %3; current %4")
+                                  .arg(curveNr)
+                                  .arg(pointNr)
+                                  .arg(_pEAQtData->dispE(curve->getPotentialVector()->at(pointNr)))
+                                  .arg(_pEAQtData->dispI(curve->Result(pointNr))));
 
+    switch ( this->_pEAQtData->getXAxis() ) {
     case XAXIS::potential:
         while ( (curve=this->_pEAQtData->getMesCurves()->get(i)) != NULL ) {
             curve->getPlot()->setData(
@@ -621,7 +626,6 @@ void EAQtMainWindow::MeasurementUpdate()
                         ,true
                       );
             ++i;
-            //this->labelLowerText->setText(tr("PKT #: %1; FromEA Val: %2; FromEA Time: %3; Curve #: %4").arg(dbl[0]).arg(dbl[1]).arg(dbl[2]).arg(dbl[3]));
         }
         break;
 
@@ -633,7 +637,6 @@ void EAQtMainWindow::MeasurementUpdate()
                         ,true
                       );
             ++i;
-            //this->labelLowerText->setText(tr("PKT #: %1; FromEA Val: %2; FromEA Time: %3; Curve #: %4").arg(dbl[0]).arg(dbl[1]).arg(dbl[2]).arg(dbl[3]));
         }
         break;
 
@@ -647,7 +650,6 @@ void EAQtMainWindow::MeasurementUpdate()
                           );
             }
             ++i;
-            //this->labelLowerText->setText(tr("PKT #: %1; FromEA Val: %2; FromEA Time: %3; Curve #: %4").arg(dbl[0]).arg(dbl[1]).arg(dbl[2]).arg(dbl[3]));
         }
         break;
 

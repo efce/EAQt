@@ -43,6 +43,8 @@ namespace MEASUREMENT {
     // mA, mA, mA, µA , µA, nA, nA
 
     const double multiply = (1.0 / 60.0 * 5000.0 / 32768.0 * 2.5 * -1.0 * 8.0 / 1000000.0 * 2.0);
+
+    const int displayDelay = 60; //Delay display to update every 60 ms (in EAQtData::MesUpdate)
 }
 
 namespace NETWORK {

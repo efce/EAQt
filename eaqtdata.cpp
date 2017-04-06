@@ -1396,13 +1396,14 @@ bool EAQtData::sendLSVToEA()
 
 void EAQtData::MesUpdate(uint32_t nNrOfMesCurve, uint32_t nPointFromDevice)
 {
+    static QTime fromUpdate;
     ///////////////// SETUP //////////////////
     if ( this->_performSetup == true && !this->_endOfMes ) {
         this->_performSetup = false;
         /*
         * zliczanie ilości elektrod w wieloelektrodowym
         */
-
+        fromUpdate.start();
         if ( this->_PVParam[PARAM::electr] == PARAM::electr_multi ) {
             this->_multielectrodeNr = 0;
             uint32_t work;
@@ -1497,7 +1498,10 @@ void EAQtData::MesUpdate(uint32_t nNrOfMesCurve, uint32_t nPointFromDevice)
         }
     }
 
-    this->_pUI->MeasurementUpdate();
+    if ( MEASUREMENT::displayDelay < fromUpdate.msec() ) {
+        this->_pUI->MeasurementUpdate(nNrOfMesCurve, nPointFromDevice);
+        fromUpdate.restart();
+    }
 }
 
 /*
@@ -1587,7 +1591,7 @@ void EAQtData::MesAfter()
     work_act = this->Act();
     // nie wiem czy trzeba: m_nStopInfo = 1;
 
-    this->_pUI->MeasurementUpdate();
+    this->_pUI->MeasurementUpdate(0,0);
 
     if (this->_isMesSeries != true ) // to nie pomiar seryjny
     {
