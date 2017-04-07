@@ -90,9 +90,8 @@ void EAQtNetwork::processPacket()
     static char b[50];
     sprintf(b,"%d",_rcvNum++);
     qDebug(b);
-    int a = _socket->bytesAvailable();
-
     _rxSize += _socket->read(_pRxBuf+_rxSize,NETWORK::RxBufLength-_rxSize);
+    int a = _socket->bytesAvailable();
     if ( _rxSize == NETWORK::RxBufLength ) {
         this->_pData->ProcessPacketFromEA(this->_pRxBuf,_socket->bytesAvailable() );
         _rxSize = 0;

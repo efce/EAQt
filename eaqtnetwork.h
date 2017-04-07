@@ -42,7 +42,6 @@ private:
     int _rxSize;
     int _rcvNum;
 
-
 public slots:
     void processPacket();
     void connectionError(QAbstractSocket::SocketError);
