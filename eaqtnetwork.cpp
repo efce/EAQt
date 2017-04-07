@@ -26,7 +26,7 @@ EAQtNetwork::EAQtNetwork(EAQtDataInterface* di) : QObject()
     this->_socket = new QTcpSocket();
     this->connect( this->_socket, SIGNAL(error(QAbstractSocket::SocketError)),
                    this,         SLOT(connectionError(QAbstractSocket::SocketError)));
-    this->_socket->setReadBufferSize(500*NETWORK::RxBufLength);
+    this->_socket->setReadBufferSize(2*NETWORK::RxBufLength);
     this->_pData = di;
     this->_pRxBuf = new char[NETWORK::RxBufLength];
     memset(this->_pRxBuf,0,NETWORK::RxBufLength);
