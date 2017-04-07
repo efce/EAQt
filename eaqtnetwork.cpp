@@ -15,6 +15,8 @@
   *  along with this program; if not, write to the Free Software Foundation,
   *  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
   *******************************************************************************************************************/
+#include <QtConcurrent/QtConcurrent>
+#include "eaqtdata.h"
 #include "eaqtnetwork.h"
 
 EAQtNetwork::EAQtNetwork(EAQtDataInterface* di) : QObject()
@@ -24,8 +26,12 @@ EAQtNetwork::EAQtNetwork(EAQtDataInterface* di) : QObject()
     this->_socket = new QTcpSocket();
     this->connect( this->_socket, SIGNAL(error(QAbstractSocket::SocketError)),
                    this,         SLOT(connectionError(QAbstractSocket::SocketError)));
+    this->_socket->setReadBufferSize(500*NETWORK::RxBufLength);
     this->_pData = di;
     this->_pRxBuf = new char[NETWORK::RxBufLength];
+    memset(this->_pRxBuf,0,NETWORK::RxBufLength);
+    _rxSize = 0;
+    _rcvNum = 0;
 }
 
 EAQtNetwork::~EAQtNetwork()
@@ -41,6 +47,7 @@ bool EAQtNetwork::connectToEA()
     if ( conSuccess == true ) {
         return true;
     }
+    _socket->setSocketOption(QAbstractSocket::LowDelayOption,true);
     this->_socket->connectToHost(this->_EA_IP,this->_EA_Port);
     this->_socket->waitForConnected();
     conSuccess=(this->_socket->state() == QTcpSocket::ConnectedState);
@@ -74,11 +81,29 @@ void EAQtNetwork::connectionError(QAbstractSocket::SocketError error)
 int EAQtNetwork::sendToEA(char* TxBuf)
 {
     return this->_socket->write(TxBuf,NETWORK::TxBufLength);
+    _rcvNum = 0;
 }
 
 void EAQtNetwork::processPacket()
 {
-    memset(this->_pRxBuf,0,NETWORK::RxBufLength);
-    this->_socket->read(this->_pRxBuf, NETWORK::RxBufLength);
-    this->_pData->ProcessPacketFromEA(this->_pRxBuf);
+    //static QThreadPool pool;
+    static char b[50];
+    sprintf(b,"%d",_rcvNum++);
+    qDebug(b);
+    int a = _socket->bytesAvailable();
+
+    _rxSize += _socket->read(_pRxBuf+_rxSize,NETWORK::RxBufLength-_rxSize);
+    if ( _rxSize == NETWORK::RxBufLength ) {
+        this->_pData->ProcessPacketFromEA(this->_pRxBuf,_socket->bytesAvailable() );
+        _rxSize = 0;
+    }
+}
+
+void EAQtNetwork::paralelProcess(EAQtDataInterface* pd, char* buf, int num)
+{
+    char b[NETWORK::RxBufLength];
+    for ( int i = 0; i<NETWORK::RxBufLength;++i) {
+        b[i] = buf[i];
+    }
+    pd->ProcessPacketFromEA(b,num);
 }

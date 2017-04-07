@@ -27,12 +27,12 @@
 class CurveData
 {
 public:
-	CurveData(int);
-	void addDataPoint(double, double, double, int);
-	void addDataPoint(double current, int pointNumber);
+    CurveData(uint32_t);
+    void addDataPoint(double, double, double, uint32_t);
+    void addDataPoint(double current, uint32_t pointNumber);
 	int getNrOfPoints();
 
-	void allocateProbingData(int nLen ,double dProbingRate);
+    void allocateProbingData(uint32_t nLen ,double dProbingRate);
 	void addProbingDataPoint(float);
     void setProbingData(QVector<double>);
     QVector<double>* getProbingData();
@@ -40,29 +40,32 @@ public:
     QVector<double>* getProbingDataPointNumbers();
 
     QVector<double>* getPotentialVector();
-	double getPotential(int index);
+    double getPotential(uint32_t index);
     void setPotentialVector(QVector<double>);
 
     QVector<double>* getTimeVector();
-	double getTime(int index);
+    double getTime(uint32_t index);
     void setTimeVector(QVector<double>);
 
     QVector<double>* getCurrentVector();
-	double getCurrent(int index);
-	void setCurrent(int index, double value);
+    double getCurrent(uint32_t index);
+    void setCurrent(uint32_t index, double value);
 
-	void setMesCurrent1Point(int, long);
-	long* getMesCurrent1Point(int);
-	void setMesCurrent2Point(int, long);
-	long* getMesCurrent2Point(int);
-	void setMesTimePoint(int, long);
-	long* getMesTimePoint(int);
+    void setMesCurrent1Point(uint32_t, int64_t);
+    void addToMesCurrent1Point(uint32_t, int64_t);
+    int64_t getMesCurrent1Point(uint32_t);
+    void setMesCurrent2Point(uint32_t, int64_t);
+    void addToMesCurrent2Point(uint32_t, int64_t);
+    int64_t getMesCurrent2Point(uint32_t);
+    void setMesTimePoint(uint32_t, int64_t);
+    void addToMesTimePoint(uint32_t, int64_t);
+    int64_t getMesTimePoint(uint32_t);
 
-	void allocateMesArray(int numberOfFields, bool allocateTwoCurrent);
+    void allocateMesArray(uint32_t numberOfFields, bool allocateTwoCurrent);
 
-	long* mesResCurrent1;
-	long* mesResCurrent2;
-	long* mesResTime;
+    int64_t* mesResCurrent1;
+    int64_t* mesResCurrent2;
+    int64_t* mesResTime;
 	bool isMesAllocated;
 	bool allocatedTwoCurrent;
 

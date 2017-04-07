@@ -27,8 +27,8 @@ class Curve
 {
 public:
 	Curve(Curve*);
-    Curve(int nLen);
-    Curve(int nLen, uint32_t nLenProbing, double dProbingRate);
+    Curve(uint32_t nLen);
+    Curve(uint32_t nLen, uint32_t nLenProbing, double dProbingRate);
 
 	~Curve();
 
@@ -51,14 +51,18 @@ public:
     void setPotentialVector(QVector<double>);
     void setTimeVector(QVector<double>);
 
-	double getPotentialPoint(int);
+    double getPotentialPoint(uint32_t);
     QVector<double>* getTimeVector();
-	double getTimePoint(int);
-    int64_t* getMesTimePoint(int index);
-    int64_t* getMesCurrent1Point(int index);
-    int64_t* getMesCurrent2Point(int index);
+    double getTimePoint(uint32_t);
+    int64_t getMesTimePoint(uint32_t index);
+    int64_t getMesCurrent1Point(uint32_t index);
+    int64_t getMesCurrent2Point(uint32_t index);
 
-	void allocateMesArray(int numOfFields, bool twoCurrent);
+    void addToMesTimePoint(uint32_t index, int64_t v);
+    void addToMesCurrent1Point(uint32_t index, int64_t v);
+    void addToMesCurrent2Point(uint32_t index, int64_t v);
+
+    void allocateMesArray(uint32_t numOfFields, bool twoCurrent);
     void allocateMesArray();
 	void allocateProbingData();
     void allocateProbingData(uint32_t newNumber);

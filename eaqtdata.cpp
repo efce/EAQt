@@ -32,6 +32,7 @@ EAQtData::EAQtData() : QObject(), EAQtDataInterface()
     _multielectrodeNr = 0;
     _isMesSeries = false;
     _useSeriesFile = false;
+    _fromUpdate.start();
 
     _vChannelNamesOfMultielectrode.resize(8);
     for ( int a=0; a<_vChannelNamesOfMultielectrode.size(); a++) {
@@ -51,7 +52,7 @@ EAQtData::EAQtData() : QObject(), EAQtDataInterface()
     _break.targetMin=0;
 
     _ptnrFromEss = 0;
-    _prepareEstart = true;
+    _prepareEstart = false;
     _currentRange = PARAM::crange_macro_1uA;
     _xaxis_type = XAXIS::potential;
 
@@ -590,25 +591,25 @@ void EAQtData::deleteAllCurvesFromGraph()
     }
 }
 
-void EAQtData::ProcessPacketFromEA(char* packet)
+void EAQtData::ProcessPacketFromEA(char* packet, int dataNotProcessed)
 {
-    char* RxBuf;
-    RxBuf = packet;
+    uint8_t* RxBuf;
+    RxBuf = (uint8_t*)packet;
 
     int Cmd, i;
     int16_t work;
-    int64_t workl;
-    uint32_t DataLen;
+    int32_t workl;
+    int32_t DataLen;
     int32_t twCounter;
     static int32_t ActSampl1, ActSampl2;
-    static uint32_t previousPointNr, currentPointNr, previousCurveNr;
-    uint32_t currentCurveNr = 0;
+    static int32_t previousPointNr, currentPointNr, previousCurveNr;
+    int32_t currentCurveNr = 0;
 
     Cmd = RxBuf[0];
 
     switch (Cmd) {
     case EA2PC_RECORDS::calibPV:
-        this->_IUE0 = RxBuf[2] + 256*RxBuf[3];
+        _IUE0 = ((uint16_t)RxBuf[2] | ((uint16_t)RxBuf[3]<<8));
         previousPointNr = 0;
         previousCurveNr =0;
         ActSampl1 = 0;
@@ -617,16 +618,16 @@ void EAQtData::ProcessPacketFromEA(char* packet)
         break;
 
     case EA2PC_RECORDS::calibLSV:
-        this->_IUE0 = RxBuf[2] + 256*RxBuf[3];
+        _IUE0 = ((uint16_t)RxBuf[2] | ((uint16_t)RxBuf[3]<<8));
         previousPointNr = 0;
         previousCurveNr =0;
         break;
 
     case EA2PC_RECORDS::recordPV:
-        this->_endOfMes = (uint8_t)RxBuf[1];
-        DataLen = ((uint8_t)RxBuf[2] + 256*(uint8_t)RxBuf[3])-8; // było -6
-        currentPointNr = (uint8_t)RxBuf[4] + 256*(uint8_t)RxBuf[5];
-        currentCurveNr = RxBuf[6] + 256*RxBuf[7];	// prox
+        this->_endOfMes = RxBuf[1];
+        DataLen = ((uint16_t)RxBuf[2] | ((uint16_t)RxBuf[3]<<8))-8;
+        currentPointNr = ((uint16_t)RxBuf[4] | ((uint16_t)RxBuf[5]<<8));
+        currentCurveNr = ((uint16_t)RxBuf[6] | ((uint16_t)RxBuf[7]<<8));
 
         if ( this->_endOfMes ) {
             _measurementGo = 0;
@@ -638,17 +639,17 @@ void EAQtData::ProcessPacketFromEA(char* packet)
             ActSampl2 = 0;
             twCounter = 0;
             _ctnrSQW = 6;	// nr ms w 1. i 2. próbkowaniu
-            this->MesUpdate(previousCurveNr, previousPointNr);
+            this->MesUpdate(previousCurveNr, previousPointNr, (dataNotProcessed!=0));
         }
         i = MEASUREMENT::PVstartData; // == 6
 
         if (this->getMesCurves()->get(currentCurveNr)->Param(PARAM::method) < PARAM::method_sqw ) { // IMPULSOWE (nie SQW, nie LSV)
             while (DataLen > 0) {
+                work = ((uint16_t)RxBuf[i] | ((uint16_t)RxBuf[i+1]<<8));
+                workl = work;
                 twCounter++;
                 if ( this->getMesCurves()->get(currentCurveNr)->Param(PARAM::nonaveragedsampling) != 0 ) {
                     // pomiar idzie dla tp i tw, robimy cos innego
-                    work =  (uint8_t)RxBuf[i] + 256*(uint8_t)RxBuf[i+1];
-                    workl = (long)work;
                     this->getMesCurves()->get(currentCurveNr)->addProbingDataPoint(this->CountResultPV(60L*workl));
                     if ( twCounter <= this->getMesCurves()->get(currentCurveNr)->Param(PARAM::tw) ) {
                         // jestesmy w trakcie tw
@@ -666,56 +667,48 @@ void EAQtData::ProcessPacketFromEA(char* packet)
                         }
                     }
                     if ( (this->getMesCurves()->get(currentCurveNr)->Param(PARAM::sampl) == PARAM::sampl_double)
-                         &&   (ActSampl1 < this->getMesCurves()->get(currentCurveNr)->Param(PARAM::tp)) ) {
-                        *this->getMesCurves()->get(currentCurveNr)->getMesCurrent1Point(currentPointNr) +=  workl;
+                    &&   (ActSampl1 < this->getMesCurves()->get(currentCurveNr)->Param(PARAM::tp)) ) {
+                        this->getMesCurves()->get(currentCurveNr)->addToMesCurrent1Point(currentPointNr, workl);
                         i+= 2;
                         ActSampl1 ++;
                     } else {
-                        *this->getMesCurves()->get(currentCurveNr)->getMesCurrent2Point(currentPointNr) +=  workl;
+                        this->getMesCurves()->get(currentCurveNr)->addToMesCurrent2Point(currentPointNr, workl);
                         i+= 2;
                         ActSampl2 ++;
-                        *this->getMesCurves()->get(currentCurveNr)->getMesTimePoint(currentPointNr) += 1;
+                        this->getMesCurves()->get(currentCurveNr)->addToMesTimePoint(currentPointNr, 1);
                     }
                 } else {
                     if ( (this->getMesCurves()->get(currentCurveNr)->Param(PARAM::sampl) == PARAM::sampl_double)
-                         &&   (ActSampl1 < this->getMesCurves()->get(currentCurveNr)->Param(PARAM::tp)) ) {
-                        work =  (uint8_t)RxBuf[i] + 256*(uint8_t)RxBuf[i+1];
-                        workl = (long)work;
-                        *this->getMesCurves()->get(currentCurveNr)->getMesCurrent1Point(currentPointNr) +=  workl;
+                    &&   (ActSampl1 < this->getMesCurves()->get(currentCurveNr)->Param(PARAM::tp)) ) {
+                        this->getMesCurves()->get(currentCurveNr)->addToMesCurrent1Point(currentPointNr, workl);
                         i+= 2;
                         ActSampl1 ++;
                     } else {
-                        work = (uint8_t)RxBuf[i] + 256*(uint8_t)RxBuf[i+1];// ((RxBuf[i+1]<<8) | (uint8_t)RxBuf[i]);
-                        workl = (long)work;
-                        *this->getMesCurves()->get(currentCurveNr)->getMesCurrent2Point(currentPointNr) +=  workl;
+                        this->getMesCurves()->get(currentCurveNr)->addToMesCurrent2Point(currentPointNr,  workl);
                         i+= 2;
                         ActSampl2 ++;
-                        *this->getMesCurves()->get(currentCurveNr)->getMesTimePoint(currentPointNr) += 1;
+                        this->getMesCurves()->get(currentCurveNr)->addToMesTimePoint(currentPointNr, 1);
                     }
                 }
                 DataLen -= 2;
             }
         } else if (this->getMesCurves()->get(currentCurveNr)->Param(PARAM::method) == PARAM::method_sqw )  {
             while (DataLen > 0) {
+                work = ((uint16_t)RxBuf[i] | ((uint16_t)RxBuf[i+1]<<8));
+                workl = work;
                 if ( (this->getMesCurves()->get(currentCurveNr)->Param(PARAM::sampl) == PARAM::sampl_double)
-                     &&   (ActSampl1 < this->getMesCurves()->get(currentCurveNr)->Param(PARAM::tp))  ) {
-                    work =  (uint8_t)RxBuf[i] + 256*(uint8_t)RxBuf[i+1];
-                    workl = (long)work;
-                    *this->getMesCurves()->get(currentCurveNr)->getMesCurrent1Point(currentPointNr) +=  workl;
+                &&   (ActSampl1 < this->getMesCurves()->get(currentCurveNr)->Param(PARAM::tp))  ) {
+                    this->getMesCurves()->get(currentCurveNr)->addToMesCurrent1Point(currentPointNr,  workl);
                     i+= 2;
                     ActSampl1 ++;
                 } else {
                     if ((_ctnrSQW == 6) || (_ctnrSQW == 4) || (_ctnrSQW == 2)) {
-                        work =  (uint8_t)RxBuf[i] + 256*(uint8_t)RxBuf[i+1];
-                        workl = (long)work;
-                        *this->getMesCurves()->get(currentCurveNr)->getMesCurrent2Point(currentPointNr) +=  workl/3;
+                        this->getMesCurves()->get(currentCurveNr)->addToMesCurrent2Point(currentPointNr,  workl/3);
                     } else {
-                        work =  (uint8_t)RxBuf[i] + 256*(uint8_t)RxBuf[i+1];
-                        workl = (long)work;
-                        *this->getMesCurves()->get(currentCurveNr)->getMesCurrent2Point(currentPointNr) -=  workl/3;
+                        this->getMesCurves()->get(currentCurveNr)->addToMesCurrent2Point(currentPointNr,  workl/3);
                     }
                     if (_ctnrSQW == 6) {
-                        *this->getMesCurves()->get(currentCurveNr)->getMesTimePoint(currentPointNr) += 1;
+                        this->getMesCurves()->get(currentCurveNr)->addToMesTimePoint(currentPointNr, 1);
                     }
                     i+= 2;
                     ActSampl2 ++;
@@ -739,9 +732,8 @@ void EAQtData::ProcessPacketFromEA(char* packet)
 
     case EA2PC_RECORDS::recordLSV:
         this->_endOfMes = RxBuf[1];
-        DataLen = (RxBuf[2] + 256*RxBuf[3])-8;
-        static int32_t firstCycle = (RxBuf[4] + 256*RxBuf[5]);
-        //static int32_t averageCounter1 = (RxBuf[6] + 256*RxBuf[7]);
+        DataLen = ((uint16_t)RxBuf[2] | ((uint16_t)RxBuf[3]<<8))-8;
+        static int32_t firstCycle = ((uint16_t)RxBuf[6] | ((uint16_t)RxBuf[7]<<8));
         if ( this->_endOfMes ) {
             _measurementGo = 0;
         }
@@ -749,25 +741,20 @@ void EAQtData::ProcessPacketFromEA(char* packet)
         i = MEASUREMENT::LSVstartData; // == 8
 
         while ( DataLen > 0 ) {
-            currentCurveNr = (RxBuf[i] + 256*RxBuf[i+1]);
+            currentCurveNr = ((uint16_t)RxBuf[i] | ((uint16_t)RxBuf[i+1]<<8));
             i+= 2;
-            currentPointNr = (RxBuf[i] + 256*RxBuf[i+1]);
+            currentPointNr = ((uint16_t)RxBuf[i] | ((uint16_t)RxBuf[i+1]<<8));
             i+= 2;
-            workl = ((long)RxBuf[i+3]<<24) | ((long)RxBuf[i+2]<<16) | ((long)RxBuf[i+1]<<8) | ((long)RxBuf[i]);
+            workl = ((uint32_t)RxBuf[i] | ((uint32_t)RxBuf[i+1]<<8) | ((uint32_t)RxBuf[i+2]<<16) | ((uint32_t)RxBuf[i+3]<<24));
             i += 4;
             DataLen -= 8;
             if ( firstCycle ) {
-                *this->getMesCurves()->get(currentCurveNr)->getMesTimePoint(currentPointNr) += _samplingTime;
-            } else if (*this->getMesCurves()->get(currentCurveNr)->getMesTimePoint(currentPointNr) == 0) {
-                *this->getMesCurves()->get(currentCurveNr)->getMesTimePoint(currentPointNr) = _samplingTime;
+                this->getMesCurves()->get(currentCurveNr)->addToMesTimePoint(currentPointNr, _samplingTime);
+            } else if (this->getMesCurves()->get(currentCurveNr)->getMesTimePoint(currentPointNr) == 0) {
+                this->getMesCurves()->get(currentCurveNr)->addToMesTimePoint(currentPointNr, _samplingTime);
             }
-            if (this->getMesCurves()->get(currentCurveNr)->Param(PARAM::messc) == PARAM::messc_multicyclic ) {
-                *this->getMesCurves()->get(currentCurveNr)->getMesCurrent1Point(currentPointNr) = workl;
-                //TotalCntr ++;
-            } else {
-                *this->getMesCurves()->get(currentCurveNr)->getMesCurrent1Point(currentPointNr) += workl;
-            }
-            this->MesUpdate(currentCurveNr,currentPointNr);
+            this->getMesCurves()->get(currentCurveNr)->addToMesCurrent1Point(currentPointNr, workl);
+            this->MesUpdate(currentCurveNr,currentPointNr,(dataNotProcessed!=0));
         }
         if ( this->_endOfMes ) {
             this->MesAfter();
@@ -775,34 +762,36 @@ void EAQtData::ProcessPacketFromEA(char* packet)
         break;
 
     case EA2PC_RECORDS::startELSV:
-        _EstartCurrentTime = ((long)RxBuf[4]<<24) | ((long)RxBuf[3]<<16) | ((long)RxBuf[2]<<8) | ((long)RxBuf[1]);
+        _EstartCurrentTime = ((uint32_t)RxBuf[1] | ((uint32_t)RxBuf[2]<<8) | ((uint32_t)RxBuf[3]<<16) | ((uint32_t)RxBuf[4]<<24));
         this->updateELSV();
         break;
 
     case EA2PC_RECORDS::recordPause:
-        work = (RxBuf[2]<<8) | RxBuf[1];
+        work = ((uint16_t)RxBuf[1] | ((uint16_t)RxBuf[2]<<8));
         _break.currentE = work;
-        _break.targetMin = RxBuf[3] + 256*RxBuf[4];
-        _break.targetSec = RxBuf[5] + 256*RxBuf[6];
-        _break.currentMin = RxBuf[7] + 256*RxBuf[8];
-        _break.currentSec = RxBuf[9] + 256*RxBuf[10];
+        _break.targetMin = ((uint16_t)RxBuf[3] | ((uint16_t)RxBuf[4]<<8));
+        _break.targetSec = ((uint16_t)RxBuf[5] | ((uint16_t)RxBuf[6]<<8));
+        _break.currentMin = ((uint16_t)RxBuf[7] | ((uint16_t)RxBuf[8]<<8));
+        _break.currentSec = ((uint16_t)RxBuf[9] | ((uint16_t)RxBuf[10]<<8));
         this->updatePause();
         break;
 
     case EA2PC_RECORDS::recordTestCGMDE:
-        _CGMDETestNr = (RxBuf[2]<<8) | RxBuf[1];
+        _CGMDETestNr = ((uint16_t)RxBuf[1] | ((uint16_t)RxBuf[2]<<8));
         this->updateTestCGMDE();
         break;
 
     default:
         break;
     }
+    if ( dataNotProcessed != 0 ) {
+       _network->processPacket();
+    }
 }
 
 // --------------------------------------------------------------------------------------
 void EAQtData::MesStart(bool isLsv)
 {
-    //this->graphInterface->showMessageBox("Starting Measurement.");
     uint32_t actptnr;
     int32_t nrOfCurvesMeasured = 1;
     uint32_t work;
@@ -909,6 +898,7 @@ void EAQtData::MesStart(bool isLsv)
             for (i=0 ; i<PARAM::PARAMNUM ; i++) {
                 this->getMesCurves()->get(mesCurveIndex)->Param(i, _LSVParam[i]);
             }
+            getMesCurves()->get(mesCurveIndex)->Param(PARAM::method,PARAM::method_lsv);
             this->getMesCurves()->get(mesCurveIndex)->allocateMesArray();
 
             /*
@@ -1394,16 +1384,15 @@ bool EAQtData::sendLSVToEA()
     }
 }
 
-void EAQtData::MesUpdate(uint32_t nNrOfMesCurve, uint32_t nPointFromDevice)
+void EAQtData::MesUpdate(uint32_t nNrOfMesCurve, uint32_t nPointFromDevice, bool freezUI)
 {
-    static QTime fromUpdate;
     ///////////////// SETUP //////////////////
     if ( this->_performSetup == true && !this->_endOfMes ) {
         this->_performSetup = false;
         /*
         * zliczanie ilości elektrod w wieloelektrodowym
         */
-        fromUpdate.start();
+        _fromUpdate.restart();
         if ( this->_PVParam[PARAM::electr] == PARAM::electr_multi ) {
             this->_multielectrodeNr = 0;
             uint32_t work;
@@ -1436,30 +1425,33 @@ void EAQtData::MesUpdate(uint32_t nNrOfMesCurve, uint32_t nPointFromDevice)
     //////////////// END SETUP ////////////////
 
     ///////////////// CHECKS ///////////////////*
-    if ( *this->getMesCurves()->get(nNrOfMesCurve)->getMesTimePoint(nPointFromDevice) == 0 ) {
+    if ( this->getMesCurves()->get(nNrOfMesCurve)->getMesTimePoint(nPointFromDevice) == 0 ) {
         return;
     }
     ////////////// END CHECKS /////////////////////////
 
     ///////////// CALC RESULT ////////////////////
+    double res;
     if ( _wasLSVMeasurement == 0 ) {
         if ( nNrOfMesCurve >= this->_multielectrodeNr ) {
             // powrot cyklicznej ...
+            res =  this->CountResultPV(
+                            (60*(getMesCurves()->get(nNrOfMesCurve)->getMesCurrent2Point(nPointFromDevice)
+                                  - getMesCurves()->get(nNrOfMesCurve)->getMesCurrent1Point(nPointFromDevice))
+                             / getMesCurves()->get(nNrOfMesCurve)->getMesTimePoint(nPointFromDevice))
+                            );
             this->getMesCurves()->get(nNrOfMesCurve)->addDataPoint(
-                        this->CountResultPV(
-                            (60L*(*getMesCurves()->get(nNrOfMesCurve)->getMesCurrent2Point(nPointFromDevice)
-                                  - *getMesCurves()->get(nNrOfMesCurve)->getMesCurrent1Point(nPointFromDevice))
-                             / *getMesCurves()->get(nNrOfMesCurve)->getMesTimePoint(nPointFromDevice))
-                            )
+                        res
                         , nPointFromDevice
                         );
         } else {
+            res =  this->CountResultPV(
+                            (60*(getMesCurves()->get(nNrOfMesCurve)->getMesCurrent2Point(nPointFromDevice)
+                                  - getMesCurves()->get(nNrOfMesCurve)->getMesCurrent1Point(nPointFromDevice))
+                             / getMesCurves()->get(nNrOfMesCurve)->getMesTimePoint(nPointFromDevice))
+                            );
             this->getMesCurves()->get(nNrOfMesCurve)->addDataPoint(
-                        this->CountResultPV(
-                            (60L*(*getMesCurves()->get(nNrOfMesCurve)->getMesCurrent2Point(nPointFromDevice)
-                                  - *getMesCurves()->get(nNrOfMesCurve)->getMesCurrent1Point(nPointFromDevice))
-                             / *getMesCurves()->get(nNrOfMesCurve)->getMesTimePoint(nPointFromDevice))
-                            )
+                        res
                         , nPointFromDevice
                         );
         }
@@ -1469,38 +1461,48 @@ void EAQtData::MesUpdate(uint32_t nNrOfMesCurve, uint32_t nPointFromDevice)
              * When LSV start from Es (not Ep), we need to fillin the fields in potential vector anyway
              */
             _prepareEstart = false;
+            double res1 =  this->CountResultLSV(
+                                (60 * getMesCurves()->get(nNrOfMesCurve)->getMesCurrent1Point(nPointFromDevice)
+                                 / getMesCurves()->get(nNrOfMesCurve)->getMesTimePoint(nPointFromDevice))
+                            );
             for ( int i = 0; i<(getMesCurves()->get(0)->Param(PARAM::ptnr) - this->_ptnrFromEss); ++i ) {
                 this->getMesCurves()->get(nNrOfMesCurve)->addDataPoint(
-                            this->CountResultLSV(
-                                (60L * *getMesCurves()->get(nNrOfMesCurve)->getMesCurrent1Point(nPointFromDevice)
-                                 / *getMesCurves()->get(nNrOfMesCurve)->getMesTimePoint(nPointFromDevice))
-                                )
+                            res1
                             , i
                             );
             }
         }
         if ( nNrOfMesCurve % 2 == 0 ) {
+            res =  this->CountResultLSV(
+                            (60 * getMesCurves()->get(nNrOfMesCurve)->getMesCurrent1Point(nPointFromDevice)
+                             / getMesCurves()->get(nNrOfMesCurve)->getMesTimePoint(nPointFromDevice))
+                            );
             this->getMesCurves()->get(nNrOfMesCurve)->addDataPoint(
-                        this->CountResultLSV(
-                            (60L * *getMesCurves()->get(nNrOfMesCurve)->getMesCurrent1Point(nPointFromDevice)
-                             / *getMesCurves()->get(nNrOfMesCurve)->getMesTimePoint(nPointFromDevice))
-                            )
+                        res
                         , nPointFromDevice
                         );
         } else {
+            res =  this->CountResultLSV(
+                            (60 * getMesCurves()->get(nNrOfMesCurve)->getMesCurrent1Point(nPointFromDevice)
+                             / getMesCurves()->get(nNrOfMesCurve)->getMesTimePoint(nPointFromDevice))
+                            );
             this->getMesCurves()->get(nNrOfMesCurve)->addDataPoint(
-                        this->CountResultLSV(
-                            (60L * *getMesCurves()->get(nNrOfMesCurve)->getMesCurrent1Point(nPointFromDevice)
-                             / *getMesCurves()->get(nNrOfMesCurve)->getMesTimePoint(nPointFromDevice))
-                            )
+                        res
                         , nPointFromDevice
                         );
         }
     }
 
-    if ( MEASUREMENT::displayDelay < fromUpdate.msec() ) {
+    if ( getXAxis() == XAXIS::potential ) {
+        getMesCurves()->get(nNrOfMesCurve)->getPlot()->addData( getMesCurves()->get(nNrOfMesCurve)->getPotentialPoint(nPointFromDevice),res);
+    } else if ( getXAxis() == XAXIS::time ) {
+        getMesCurves()->get(nNrOfMesCurve)->getPlot()->addData( getMesCurves()->get(nNrOfMesCurve)->getTimePoint(nPointFromDevice),res);
+    }
+
+    int msecnow = _fromUpdate.elapsed();
+    if ( !freezUI || MEASUREMENT::displayDelay < msecnow ) {
         this->_pUI->MeasurementUpdate(nNrOfMesCurve, nPointFromDevice);
-        fromUpdate.restart();
+        _fromUpdate.restart();
     }
 }
 
@@ -1562,7 +1564,11 @@ void EAQtData::updateELSV()
  */
 void EAQtData::updatePause()
 {
-    _pUI->setLowLabelText(0,tr("Break: %1 mV  %2:%3 of %3:%4 ").arg(_break.currentE).arg(_break.currentMin).arg(_break.currentSec).arg(_break.targetMin).arg(_break.targetSec));
+    _pUI->setLowLabelText(0,tr("Break: %1 mV    %2:%3 of %4:%5 ").arg(_break.currentE)
+                                                                 .arg(_break.currentMin)
+                                                                 .arg(_break.currentSec,2,10,QChar('0'))
+                                                                 .arg(_break.targetMin)
+                                                                 .arg(_break.targetSec,2,10,QChar('0')) );
     return;
 }
 
@@ -1591,7 +1597,9 @@ void EAQtData::MesAfter()
     work_act = this->Act();
     // nie wiem czy trzeba: m_nStopInfo = 1;
 
-    this->_pUI->MeasurementUpdate(0,0);
+    if ( _mesCurves->count() > 0 && _mesCurves->get(0)->getNrOfDataPoints() > 0 ) {
+        this->_pUI->MeasurementUpdate(0,_mesCurves->get(0)->getPotentialVector()->size()-1);
+    }
 
     if (this->_isMesSeries != true ) // to nie pomiar seryjny
     {

@@ -611,14 +611,16 @@ void EAQtMainWindow::MeasurementUpdate(uint32_t curveNr, uint32_t pointNr)
 {
     int i = 0;
     Curve* curve;
+    curve = _pEAQtData->getMesCurves()->get(curveNr);
     setLowLabelText(0,tr("curve #: %1; point #: %2; potential: %3; current %4")
                                   .arg(curveNr)
                                   .arg(pointNr)
                                   .arg(_pEAQtData->dispE(curve->getPotentialVector()->at(pointNr)))
-                                  .arg(_pEAQtData->dispI(curve->Result(pointNr))));
+                                  .arg(_pEAQtData->dispI(curve->getCurrentVector()->at(pointNr))));
 
     switch ( this->_pEAQtData->getXAxis() ) {
     case XAXIS::potential:
+        /*
         while ( (curve=this->_pEAQtData->getMesCurves()->get(i)) != NULL ) {
             curve->getPlot()->setData(
                         curve->getPotentialVector()->mid(0,curve->getNrOfDataPoints())
@@ -626,10 +628,11 @@ void EAQtMainWindow::MeasurementUpdate(uint32_t curveNr, uint32_t pointNr)
                         ,true
                       );
             ++i;
-        }
+        }*/
         break;
 
     case XAXIS::time:
+        /*
         while ( (curve=this->_pEAQtData->getMesCurves()->get(i)) != NULL ) {
             curve->getPlot()->setData(
                         curve->getTimeVector()->mid(0,curve->getNrOfDataPoints())
@@ -638,6 +641,7 @@ void EAQtMainWindow::MeasurementUpdate(uint32_t curveNr, uint32_t pointNr)
                       );
             ++i;
         }
+        */
         break;
 
     case XAXIS::nonaveraged:

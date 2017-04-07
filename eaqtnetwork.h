@@ -33,15 +33,17 @@ public:
 
     //char TxBuf[NETWORK::TxBufLength];
     char *_pRxBuf;
-
+    static void paralelProcess(EAQtDataInterface *pd, char* buf, int num);
 private:
     QString _EA_IP;
     int _EA_Port;
     QTcpSocket *_socket;
     EAQtDataInterface *_pData;
+    int _rxSize;
+    int _rcvNum;
 
 
-private slots:
+public slots:
     void processPacket();
     void connectionError(QAbstractSocket::SocketError);
 

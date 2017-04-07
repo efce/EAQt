@@ -34,7 +34,7 @@ namespace MEASUREMENT {
     const double LSVtime[14] = { // time [ms]
             120, 120, 60, 20, 20, 20, 5, 5, 5, 1, 1, 1, 1, 1 };
     int const LSVstartData = 8;
-    int const PVstartData = 6;
+    int const PVstartData = 8;
     const double scale_macro[7] = {650.0*1000.0, 80.0*1000.0, 10.0*1000.0,
                                              1250.0, 156.25, 19531.25/1000.0, 2441.4/1000.0};
     // mA, mA, mA, µA , µA, nA, nA
@@ -44,7 +44,7 @@ namespace MEASUREMENT {
 
     const double multiply = (1.0 / 60.0 * 5000.0 / 32768.0 * 2.5 * -1.0 * 8.0 / 1000000.0 * 2.0);
 
-    const int displayDelay = 60; //Delay display to update every 60 ms (in EAQtData::MesUpdate)
+    const int displayDelay = 10; //Delay display to update every 60 ms (in EAQtData::MesUpdate)
 }
 
 namespace NETWORK {

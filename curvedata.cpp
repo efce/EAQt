@@ -17,7 +17,7 @@
   *******************************************************************************************************************/
 #include "curvedata.h"
 
-CurveData::CurveData(int dataSize)
+CurveData::CurveData(uint32_t dataSize)
 {
     this->_vCurrent.resize(dataSize);
     this->_vPotential.resize(dataSize);
@@ -39,7 +39,7 @@ CurveData::~CurveData(void)
 	}
 }
 
-void CurveData::allocateProbingData(int nLen, double dProbingRate)
+void CurveData::allocateProbingData(uint32_t nLen, double dProbingRate)
 {
 	this->_probingRate = dProbingRate;
     this->_vProbingData.resize(nLen);
@@ -50,7 +50,7 @@ void CurveData::allocateProbingData(int nLen, double dProbingRate)
     }
 }
 	
-void CurveData::addDataPoint(double time, double potential, double current, int pointNumber)
+void CurveData::addDataPoint(double time, double potential, double current, uint32_t pointNumber)
 {
 	if ( (pointNumber!= -1) && (pointNumber < this->_nrOfPoints) ) {
 		this->_vCurrent[pointNumber]   = current;
@@ -64,7 +64,7 @@ void CurveData::addDataPoint(double time, double potential, double current, int 
 	}
 }
 
-void CurveData::addDataPoint(double current, int pointNumber)
+void CurveData::addDataPoint(double current, uint32_t pointNumber)
 {
     if ( pointNumber >= this->getPotentialVector()->size() || pointNumber >= this->getTimeVector()->size() ) {
         throw 1;
@@ -118,7 +118,7 @@ void CurveData::setPotentialVector(QVector<double> vecPot)
 	this->_vPotential = vecPot;
 }
 
-double CurveData::getPotential(int index)
+double CurveData::getPotential(uint32_t index)
 {
 	return this->_vPotential[index];
 }
@@ -128,12 +128,12 @@ QVector<double>* CurveData::getCurrentVector()
     return &this->_vCurrent;
 }
 
-double CurveData::getCurrent(int index)
+double CurveData::getCurrent(uint32_t index)
 {
 	return this->_vCurrent[index];
 }
 
-void CurveData::setCurrent(int index, double value)
+void CurveData::setCurrent(uint32_t index, double value)
 {
 	this->_vCurrent[index] = value;
 }
@@ -149,59 +149,74 @@ void CurveData::setTimeVector(QVector<double> vecTime)
 }
 
 
-double CurveData::getTime(int index)
+double CurveData::getTime(uint32_t index)
 {
 	return this->_vTime[index];
 }
 
-void CurveData::setMesCurrent1Point(int nr, long value)
+void CurveData::setMesCurrent1Point(uint32_t nr, int64_t value)
 {
 	this->mesResCurrent1[nr] = value;
 }
 
-void CurveData::setMesCurrent2Point(int nr, long value)
+void CurveData::addToMesCurrent1Point(uint32_t nr, int64_t value)
+{
+    this->mesResCurrent1[nr] += value;
+}
+
+void CurveData::setMesCurrent2Point(uint32_t nr, int64_t value)
 {
 	this->mesResCurrent2[nr] = value;
 }
 
-void CurveData::setMesTimePoint(int nr, long value)
+void CurveData::addToMesCurrent2Point(uint32_t nr, int64_t value)
+{
+    this->mesResCurrent2[nr] += value;
+}
+
+void CurveData::setMesTimePoint(uint32_t nr, int64_t value)
 {
 	this->mesResTime[nr] = value;
 }
 
-long* CurveData::getMesTimePoint(int nr)
+void CurveData::addToMesTimePoint(uint32_t nr, int64_t value)
 {
-	return &this->mesResTime[nr];
+    this->mesResTime[nr] += value;
 }
 
-long* CurveData::getMesCurrent1Point(int nr)
+int64_t CurveData::getMesTimePoint(uint32_t nr)
 {
-	return &this->mesResCurrent1[nr];
+    return this->mesResTime[nr];
 }
 
-long* CurveData::getMesCurrent2Point(int nr)
+int64_t CurveData::getMesCurrent1Point(uint32_t nr)
 {
-	return &this->mesResCurrent2[nr];
+    return this->mesResCurrent1[nr];
 }
 
-void CurveData::allocateMesArray(int numberOfFields, bool allocateTwoCurrent)
+int64_t CurveData::getMesCurrent2Point(uint32_t nr)
+{
+    return this->mesResCurrent2[nr];
+}
+
+void CurveData::allocateMesArray(uint32_t numberOfFields, bool allocateTwoCurrent)
 {
 	this->isMesAllocated = true;
 	this->allocatedTwoCurrent = allocateTwoCurrent;
-	this->mesResCurrent1 = new long[numberOfFields];
+    this->mesResCurrent1 = new int64_t[numberOfFields];
 	for ( int i=0; i<numberOfFields; i++) {
-		this->mesResCurrent1[i] = 0L;
+        this->mesResCurrent1[i] = 0;
 	}
 
-	this->mesResTime = new long[numberOfFields];
+    this->mesResTime = new int64_t[numberOfFields];
 	for ( int i=0; i<numberOfFields; i++) {
-		this->mesResTime[i] = 0L;
+        this->mesResTime[i] = 0;
 	}
 
 	if ( allocateTwoCurrent ) {
-		this->mesResCurrent2 = new long[numberOfFields];
+        this->mesResCurrent2 = new int64_t[numberOfFields];
 		for ( int i=0; i<numberOfFields; i++) {
-			this->mesResCurrent2[i] = 0L;
+            this->mesResCurrent2[i] = 0;
 		}
 	}
 

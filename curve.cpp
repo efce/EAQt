@@ -20,12 +20,12 @@
 #include "curvedata.h"
 #include "eaqtdata.h"
 
-Curve::Curve(int nLen)
+Curve::Curve(uint32_t nLen)
 {
     Initialize(nLen);
 }
 
-Curve::Curve(int nLen, uint32_t nLenProbing, double dProbingRate)
+Curve::Curve(uint32_t nLen, uint32_t nLenProbing, double dProbingRate)
 {
     Initialize(nLen);
 	this->_curveData->allocateProbingData(nLenProbing, dProbingRate);
@@ -128,7 +128,7 @@ void Curve::setPotentialVector(QVector<double> vecPot)
 	this->_curveData->setPotentialVector(vecPot);
 }
 
-double Curve::getPotentialPoint(int index)
+double Curve::getPotentialPoint(uint32_t index)
 {
 	return this->_curveData->getPotential(index);
 }
@@ -144,7 +144,7 @@ void Curve::setTimeVector(QVector<double> vecTime)
 	this->_curveData->setTimeVector(vecTime);
 }
 
-double Curve::getTimePoint(int index)
+double Curve::getTimePoint(uint32_t index)
 {
 	return this->_curveData->getTime(index);
 }
@@ -207,7 +207,7 @@ QString Curve::Comment()
 	return _comment;
 }
 
-void Curve::allocateMesArray(int numOfFields, bool twoCurrent)
+void Curve::allocateMesArray(uint32_t numOfFields, bool twoCurrent)
 {
 	this->_curveData->allocateMesArray(numOfFields, twoCurrent);
 }
@@ -264,19 +264,34 @@ QVector<double>* Curve::getProbingDataPointNumbers()
     return this->_curveData->getProbingDataPointNumbers();
 }
 
-int64_t* Curve::getMesTimePoint(int index)
+int64_t Curve::getMesTimePoint(uint32_t index)
 {
-	return this->_curveData->getMesTimePoint(index);
+    return this->_curveData->getMesTimePoint(index);
 }
 
-int64_t* Curve::getMesCurrent1Point(int index)
+void Curve::addToMesTimePoint(uint32_t index, int64_t v)
+{
+    _curveData->addToMesTimePoint(index,v);
+}
+
+int64_t Curve::getMesCurrent1Point(uint32_t index)
 {
 	return this->_curveData->getMesCurrent1Point(index);
 }
 
-int64_t* Curve::getMesCurrent2Point(int index)
+void Curve::addToMesCurrent1Point(uint32_t index, int64_t v)
+{
+    _curveData->addToMesCurrent1Point(index,v);
+}
+
+int64_t Curve::getMesCurrent2Point(uint32_t index)
 {
 	return this->_curveData->getMesCurrent2Point(index);
+}
+
+void Curve::addToMesCurrent2Point(uint32_t index, int64_t v)
+{
+    _curveData->addToMesCurrent2Point(index,v);
 }
 
 uint32_t Curve::getNrOfDataPoints()

@@ -118,10 +118,10 @@ public:
     void MesStop();
     void MesClear();
     void MesAfter();
-    void MesUpdate(uint32_t, uint32_t);
+    void MesUpdate(uint32_t, uint32_t, bool);
     int  MesSaveAll(QString UserCName, QString UserFName, QString UserComment);
 
-    void ProcessPacketFromEA(char* packet);
+    void ProcessPacketFromEA(char* packet, int dataNotProcessed);
     void sendAccessories();
     void NetworkError(QString);
     void updateELSV();
@@ -150,6 +150,7 @@ private:
    CurveCollection *_mesCurves;
    MDirCollection *_fileIndex;
    EAQtSignalProcessing *_processing;
+   QTime _fromUpdate;
 
    unsigned char _TxBuf[NETWORK::TxBufLength];
    unsigned char _RxBuf[NETWORK::RxBufLength];
@@ -168,7 +169,7 @@ private:
 
    QVector<QString> _vChannelNamesOfMultielectrode {};
 
-   uint16_t _IUE0;          // calibration result: current in uA for E = 0 V //
+   int16_t _IUE0;          // calibration result: current in uA for E = 0 V //
    int32_t _endOfMes;       // measurmenet ended //
    int32_t _stopInfo;		// measurement was stopped //
 

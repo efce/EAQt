@@ -954,8 +954,9 @@ void EAQtParamDialog::saveParams()
                 this->setParam(PARAM::dEdt, i);
                 break;
             }
-            this->setParam(PARAM::multi,0);
         }
+        this->setParam(PARAM::multi,0);
+        this->setParam(PARAM::method, PARAM::method_lsv);
     } else {
         for ( int i = 0; i<_paramMethod.size(); ++i ) {
             if ( this->_paramMethod[i]->isChecked() ) {
