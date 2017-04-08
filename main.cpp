@@ -31,7 +31,10 @@ int main(int argc, char *argv[])
     translator.load("eaqt_pl",":/lang");
     a.installTranslator(&translator);
 
+    QThread thread;
     EAQtMainWindow w;
+    EAQtData::getInstance().moveToThread(&thread);
+    thread.start();
     EAQtData::getInstance().initialUpdate((EAQtUIInterface*)&w);
     w.InitialUpdate(EAQtData::getInstance());
     w.show();
