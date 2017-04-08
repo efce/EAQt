@@ -67,6 +67,7 @@ void EAQtMouseHandler::setDefaults()
 {
     this->_pUI->enableAll();
     this->_pUI->PlotSetInteraction(_plotInteractions.plotDefaultInteractions);
+    _pUI->PlotConnectMouse();
     this->_timesPressed = 0;
     this->_activeMode = this->mm_normal;
     this->_userFunction = this->uf_none;
@@ -231,6 +232,8 @@ void EAQtMouseHandler::ChangeMouseMode(mouseMode mm, userFunctions uf)
     case mm_measurement:
         this->_pUI->disableButtonsAndTable();
         this->_pUI->PlotSetInteraction(this->_plotInteractions.plotNoInteractions);
+        this->_pUI->PlotDisconnectMouse();
+        _pUI->PlotDisconnectMouse();
         //this->pUI->MeasurementSetup();
         break;
     }

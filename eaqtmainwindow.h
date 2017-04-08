@@ -105,6 +105,8 @@ private:
     void TableRegenerate();
     void TableDrawSelection();
     void PlotDrawSelection();
+    void PlotDisconnectMouse();
+    void PlotConnectMouse();
 
     QGridLayout *createLayout();
 

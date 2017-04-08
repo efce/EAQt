@@ -2492,7 +2492,7 @@ void EAQtData::exportToCSV(QString path)
                 }
                 tmp = this->dispEforTXT(_curves->get(i)->getPotentialPoint(pt)).toStdString();
                 ff->write(tmp.data(),tmp.size());
-            } else {
+            } else if (this->getXAxis() == XAXIS::time ) {
                 for ( pt = 0; pt < _curves->get(i)->Param(PARAM::ptnr)-1; ++pt ) {
                     tmp = this->dispTIMEforTXT(_curves->get(i)->getTimeVector()->at(pt)).toStdString();
                     tmp.append(",");
@@ -2500,17 +2500,38 @@ void EAQtData::exportToCSV(QString path)
                 }
                 tmp = this->dispTIMEforTXT(_curves->get(i)->getTimeVector()->at(pt)).toStdString();
                 ff->write(tmp.data(),tmp.size());
+            } else if ( this->getXAxis() == XAXIS::nonaveraged ) {
+                for ( pt = 0; pt < _curves->get(i)->getNumberOfProbingPoints()-1; ++pt ) {
+                    tmp = this->dispNR(pt).toStdString();
+                    tmp.append(",");
+                    ff->write(tmp.data(),tmp.size());
+                }
+                tmp = this->dispNR(pt).toStdString();
+                ff->write(tmp.data(),tmp.size());
             }
             ff->write(endOfLine,2);
 
-            for ( pt = 0; pt < _curves->get(i)->Param(PARAM::ptnr)-1; ++pt ) {
+            if ( getXAxis() != XAXIS::nonaveraged ) {
+                for ( pt = 0; pt < _curves->get(i)->Param(PARAM::ptnr)-1; ++pt ) {
+                    tmp = this->dispIforTXT(_curves->get(i)->Result(pt)).toStdString();
+                    tmp.append(",");
+                    ff->write(tmp.data(),tmp.size());
+                }
                 tmp = this->dispIforTXT(_curves->get(i)->Result(pt)).toStdString();
-                tmp.append(",");
+                ff->write(tmp.data(),tmp.size());
+            } else {
+                for ( pt = 0; pt < _curves->get(i)->getNrOfDataPoints()-1; ++pt ) {
+                    tmp = this->dispIforTXT(_curves->get(i)->getProbingData()->at(pt)).toStdString();
+                    tmp.append(",");
+                    ff->write(tmp.data(),tmp.size());
+                }
+                tmp = this->dispIforTXT(_curves->get(i)->getProbingData()->at(pt)).toStdString();
                 ff->write(tmp.data(),tmp.size());
             }
-            tmp = this->dispIforTXT(_curves->get(i)->Result(pt)).toStdString();
-            ff->write(tmp.data(),tmp.size());
-            ff->write(endOfLine,2);
+            if ( i != _curves->count() -1 ) {
+                // Ostatnia linia bez crlf
+                ff->write(endOfLine,2);
+            }
         }
         this->setCurrentRange(savedCurrentRange);
     } else { // jedna aktywna
@@ -2524,7 +2545,7 @@ void EAQtData::exportToCSV(QString path)
             }
             tmp = this->dispEforTXT(_curves->get(i)->getPotentialPoint(pt)).toStdString();
             ff->write(tmp.data(),tmp.size());
-        } else {
+        } else if (getXAxis() == XAXIS::time ) {
             for ( pt = 0; pt < (_curves->get(i)->Param(PARAM::ptnr)-1); ++pt ) {
                 tmp = this->dispTIMEforTXT(_curves->get(i)->getTimeVector()->at(pt)).toStdString();
                 tmp.append(",");
@@ -2532,19 +2553,33 @@ void EAQtData::exportToCSV(QString path)
             }
             tmp = this->dispTIMEforTXT(_curves->get(i)->getTimeVector()->at(pt)).toStdString();
             ff->write(tmp.data(),tmp.size());
+        } else if ( getXAxis() == XAXIS::nonaveraged ) {
+            for ( pt = 0; pt < _curves->get(i)->getNumberOfProbingPoints()-1; ++pt ) {
+                tmp = this->dispNR(pt).toStdString();
+                tmp.append(",");
+                ff->write(tmp.data(),tmp.size());
+            }
+            tmp = this->dispNR(pt).toStdString();
+            ff->write(tmp.data(),tmp.size());
         }
         ff->write(endOfLine,2);
 
-        for ( pt = 0; pt < _curves->get(i)->Param(PARAM::ptnr)-1; ++pt ) {
+        if ( getXAxis() != XAXIS::nonaveraged ) {
+            for ( pt = 0; pt < _curves->get(i)->Param(PARAM::ptnr)-1; ++pt ) {
+                tmp = this->dispIforTXT(_curves->get(i)->Result(pt)).toStdString();
+                tmp.append(",");
+                ff->write(tmp.data(),tmp.size());
+            }
             tmp = this->dispIforTXT(_curves->get(i)->Result(pt)).toStdString();
-            tmp.append(",");
             ff->write(tmp.data(),tmp.size());
-        }
-        tmp = this->dispIforTXT(_curves->get(i)->Result(pt)).toStdString();
-        ff->write(tmp.data(),tmp.size());
-        if ( i != _curves->count() -1 ) {
-            // Ostatnia linia bez crlf
-            ff->write(endOfLine,2);
+        } else {
+            for ( pt = 0; pt < _curves->get(i)->getNrOfDataPoints()-1; ++pt ) {
+                tmp = this->dispIforTXT(_curves->get(i)->getProbingData()->at(pt)).toStdString();
+                tmp.append(",");
+                ff->write(tmp.data(),tmp.size());
+            }
+            tmp = this->dispIforTXT(_curves->get(i)->getProbingData()->at(pt)).toStdString();
+            ff->write(tmp.data(),tmp.size());
         }
     }
     ff->close();
