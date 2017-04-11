@@ -121,7 +121,7 @@ public:
     void MesUpdate(uint32_t, uint32_t, bool);
     int  MesSaveAll(QString UserCName, QString UserFName, QString UserComment);
 
-    void ProcessPacketFromEA(char* packet, int dataNotProcessed);
+    void ProcessPacketFromEA(char* packet, bool nextPacketReady);
     void sendAccessories();
     void NetworkError(QString);
     void updateELSV();
@@ -130,6 +130,8 @@ public:
     double CountResultPV(int64_t value);
     double CountResultLSV(int64_t value);
     MDirCollection* getMDir();
+
+    bool getWasLSV();
 
     QVector<QString> getChannelsNames();
     std::vector<bool> getChannelsEnabled();

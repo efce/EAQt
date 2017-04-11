@@ -272,6 +272,7 @@ void EAQtMainWindow::PlotDrawSelection()
         } else {
             curve->getPlot()->setPen(QPen(COLOR::regular));
             curve->getPlot()->setLayer(_plotLayers.NonActive);
+            curve->getPlot()->setSelection(QCPDataSelection());
         }
         ++i;
     }
@@ -297,6 +298,8 @@ void EAQtMainWindow::TableDrawSelection()
             if ( i == this->_pEAQtData->Act() ) {
                 this->_tableCurveMain->item(i,0)->setSelected(true);
                 this->_tableCurveMain->item(i,1)->setSelected(true);
+                _tableCurveMain->scrollToItem(_tableCurveMain->item(i,0));
+                _tableCurveMain->setCurrentItem(_tableCurveMain->item(i,0));
             } else {
                 this->_tableCurveMain->item(i,0)->setSelected(false);
                 this->_tableCurveMain->item(i,1)->setSelected(false);
@@ -590,7 +593,7 @@ void EAQtMainWindow::enableAll()
 
 void EAQtMainWindow::userStartsMeasurement()
 {
-    this->_pEAQtData->MesStart();
+    this->_pEAQtData->MesStart(this->_pEAQtData->getWasLSV());
 }
 
 void EAQtMainWindow::MeasurementSetup()

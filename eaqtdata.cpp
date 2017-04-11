@@ -591,7 +591,7 @@ void EAQtData::deleteAllCurvesFromGraph()
     }
 }
 
-void EAQtData::ProcessPacketFromEA(char* packet, int dataNotProcessed)
+void EAQtData::ProcessPacketFromEA(char* packet, bool nextPacketReady)
 {
     uint8_t* RxBuf;
     RxBuf = (uint8_t*)packet;
@@ -639,7 +639,7 @@ void EAQtData::ProcessPacketFromEA(char* packet, int dataNotProcessed)
             ActSampl2 = 0;
             twCounter = 0;
             _ctnrSQW = 6;	// nr ms w 1. i 2. próbkowaniu
-            this->MesUpdate(previousCurveNr, previousPointNr, (dataNotProcessed!=0));
+            this->MesUpdate(previousCurveNr, previousPointNr, nextPacketReady);
         }
         i = MEASUREMENT::PVstartData; // == 6
 
@@ -754,7 +754,7 @@ void EAQtData::ProcessPacketFromEA(char* packet, int dataNotProcessed)
                 this->getMesCurves()->get(currentCurveNr)->addToMesTimePoint(currentPointNr, _samplingTime);
             }
             this->getMesCurves()->get(currentCurveNr)->addToMesCurrent1Point(currentPointNr, workl);
-            this->MesUpdate(currentCurveNr,currentPointNr,(dataNotProcessed!=0));
+            this->MesUpdate(currentCurveNr,currentPointNr, nextPacketReady);
         }
         if ( this->_endOfMes ) {
             this->MesAfter();
@@ -784,7 +784,9 @@ void EAQtData::ProcessPacketFromEA(char* packet, int dataNotProcessed)
     default:
         break;
     }
-    if ( dataNotProcessed != 0 ) {
+
+
+    if ( nextPacketReady ) {
        _network->processPacket();
     }
 }
@@ -2608,4 +2610,9 @@ void EAQtData::exportToTXT(QString path)
     ff->close();
     delete[] blen;
     delete ff;
+}
+
+bool EAQtData::getWasLSV()
+{
+    return _wasLSVMeasurement;
 }
