@@ -58,7 +58,7 @@ void EAQtMouseHandler::onSelectionChanged()
         }
         break;
     default:
-        this->ChangeMouseMode(mm_normal,uf_none);
+        //this->ChangeMouseMode(mm_normal,uf_none);
         break;
     }
 }
