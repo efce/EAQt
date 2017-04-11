@@ -2266,40 +2266,40 @@ QString EAQtData::dispI(double dNumber) {
     QString ret;
     switch (this->_currentRange) {
     case PARAM::crange_micro_5uA + PARAM::crange_macro_100nA + 1:
-        ret = tr("%1 µA").arg(dNumber,0,'f', 4);
+        ret = tr("%1 µA").arg(dNumber,0,'f', 5);
         break;
     case PARAM::crange_micro_500nA + PARAM::crange_macro_100nA + 1:
-        ret = tr("%1 nA").arg(dNumber*1000,0,'f', 2);
-        break;
-    case PARAM::crange_micro_50nA + PARAM::crange_macro_100nA + 1:
         ret = tr("%1 nA").arg(dNumber*1000,0,'f', 3);
         break;
-    case PARAM::crange_micro_5nA + PARAM::crange_macro_100nA + 1:
+    case PARAM::crange_micro_50nA + PARAM::crange_macro_100nA + 1:
         ret = tr("%1 nA").arg(dNumber*1000,0,'f', 4);
         break;
-    case PARAM::crange_macro_100mA:
-        ret = tr("%1 mA").arg(dNumber/1000,0,'f', 2);
+    case PARAM::crange_micro_5nA + PARAM::crange_macro_100nA + 1:
+        ret = tr("%1 nA").arg(dNumber*1000,0,'f', 5);
         break;
-    case PARAM::crange_macro_10mA:
+    case PARAM::crange_macro_100mA:
         ret = tr("%1 mA").arg(dNumber/1000,0,'f', 3);
         break;
-    case PARAM::crange_macro_1mA:
+    case PARAM::crange_macro_10mA:
         ret = tr("%1 mA").arg(dNumber/1000,0,'f', 4);
         break;
-    case PARAM::crange_macro_100uA:
-        ret = tr("%1 µA").arg(dNumber,0,'f', 2);
+    case PARAM::crange_macro_1mA:
+        ret = tr("%1 mA").arg(dNumber/1000,0,'f', 5);
         break;
-    case PARAM::crange_macro_10uA:
+    case PARAM::crange_macro_100uA:
         ret = tr("%1 µA").arg(dNumber,0,'f', 3);
         break;
-    case PARAM::crange_macro_1uA:
+    case PARAM::crange_macro_10uA:
         ret = tr("%1 µA").arg(dNumber,0,'f', 4);
+        break;
+    case PARAM::crange_macro_1uA:
+        ret = tr("%1 µA").arg(dNumber,0,'f', 5);
         break;
     case PARAM::crange_macro_100nA:
-        ret = tr("%1 nA").arg(dNumber*1000,0,'f', 2);
+        ret = tr("%1 nA").arg(dNumber*1000,0,'f', 3);
         break;
     default:
-        ret = tr("%1 µA").arg(dNumber,0,'f', 4);
+        ret = tr("%1 µA").arg(dNumber,0,'f', 5);
         break;
     }
     return ret;
@@ -2309,40 +2309,40 @@ QString EAQtData::dispIforTXT(double dNumber) {
     static QString ret;
     switch (this->_currentRange) {
     case PARAM::crange_micro_5uA + PARAM::crange_macro_100nA + 1:
-        ret = QString("%1").arg(dNumber,0,'f', 4);
+        ret = QString("%1").arg(dNumber,0,'f', 5);
         break;
     case PARAM::crange_micro_500nA + PARAM::crange_macro_100nA + 1:
-        ret = QString("%1").arg(dNumber*1000,0,'f', 2);
-        break;
-    case PARAM::crange_micro_50nA + PARAM::crange_macro_100nA + 1:
         ret = QString("%1").arg(dNumber*1000,0,'f', 3);
         break;
-    case PARAM::crange_micro_5nA + PARAM::crange_macro_100nA + 1:
+    case PARAM::crange_micro_50nA + PARAM::crange_macro_100nA + 1:
         ret = QString("%1").arg(dNumber*1000,0,'f', 4);
         break;
-    case PARAM::crange_macro_100mA:
-        ret = QString("%1").arg(dNumber/1000,0,'f', 2);
+    case PARAM::crange_micro_5nA + PARAM::crange_macro_100nA + 1:
+        ret = QString("%1").arg(dNumber*1000,0,'f', 5);
         break;
-    case PARAM::crange_macro_10mA:
+    case PARAM::crange_macro_100mA:
         ret = QString("%1").arg(dNumber/1000,0,'f', 3);
         break;
-    case PARAM::crange_macro_1mA:
+    case PARAM::crange_macro_10mA:
         ret = QString("%1").arg(dNumber/1000,0,'f', 4);
         break;
-    case PARAM::crange_macro_100uA:
-        ret = QString("%1").arg(dNumber,0,'f', 2);
+    case PARAM::crange_macro_1mA:
+        ret = QString("%1").arg(dNumber/1000,0,'f', 5);
         break;
-    case PARAM::crange_macro_10uA:
+    case PARAM::crange_macro_100uA:
         ret = QString("%1").arg(dNumber,0,'f', 3);
         break;
-    case PARAM::crange_macro_1uA:
+    case PARAM::crange_macro_10uA:
         ret = QString("%1").arg(dNumber,0,'f', 4);
+        break;
+    case PARAM::crange_macro_1uA:
+        ret = QString("%1").arg(dNumber,0,'f', 5);
         break;
     case PARAM::crange_macro_100nA:
-        ret = QString("%1").arg(dNumber*1000,0,'f', 2);
+        ret = QString("%1").arg(dNumber*1000,0,'f', 3);
         break;
     default:
-        ret = QString("%1").arg(dNumber,0,'f', 4);
+        ret = QString("%1").arg(dNumber,0,'f', 5);
         break;
     }
     return ret;
