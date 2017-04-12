@@ -40,6 +40,7 @@ EAQtMainWindow::EAQtMainWindow(QWidget *parent) :
     _PathInUse = "";
     new QShortcut( QKeySequence(Qt::Key_Escape), this, SLOT(userStopsMeasurement()));
     new QShortcut( QKeySequence(Qt::Key_F5), this, SLOT(userStartsMeasurement()));
+    new QShortcut( QKeySequence(Qt::Key_Delete), this, SLOT(deleteActive()));
 }
 
 void EAQtMainWindow::InitialUpdate(EAQtData& d)
