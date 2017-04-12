@@ -760,9 +760,11 @@ void EAQtParamDialog::prepareDialog()
     if ( this->getParam(PARAM::electr) >= PARAM::electr_micro ) {
         this->microelectrodeChanged(true);
         this->_paramCrangeMicro[this->getParam(PARAM::crange)]->setChecked(true);
+        _checkboxIsMicro->setChecked(true);
     } else {
         this->microelectrodeChanged(false);
         this->_paramCrangeMacro[this->getParam(PARAM::crange)]->setChecked(true);
+        _checkboxIsMicro->setChecked(false);
     }
 //    if ( this->getParam(PARAM::electr) == PARAM::electr_dme ) {
 //        this->checkboxIsMicro->setChecked(false);
