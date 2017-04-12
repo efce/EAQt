@@ -784,11 +784,6 @@ void EAQtData::ProcessPacketFromEA(char* packet, bool nextPacketReady)
     default:
         break;
     }
-
-
-    if ( nextPacketReady ) {
-       _network->processPacket();
-    }
 }
 
 // --------------------------------------------------------------------------------------

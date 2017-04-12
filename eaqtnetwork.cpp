@@ -92,13 +92,11 @@ void EAQtNetwork::processPacket()
     }
     //static char b[50];
     static char test;
-    _rxSize += _socket->read(_pRxBuf,NETWORK::RxBufLength);
-    int a = _socket->bytesAvailable();
-    //sprintf(b,"bytes: %d; rxSize: %d",a, _rxSize);
-    //qDebug(b);
-    bool nextPacketReady = ( _socket->peek(&test,1) == 1 );
-    _rxSize = 0;
-    this->_pData->ProcessPacketFromEA(this->_pRxBuf, nextPacketReady);
+    while ( _socket->bytesAvailable() >= NETWORK::RxBufLength ) {
+        _rxSize = _socket->read(_pRxBuf,NETWORK::RxBufLength);
+        bool nextPacketReady = ( _socket->peek(&test,1) == 1 );
+        this->_pData->ProcessPacketFromEA(this->_pRxBuf, nextPacketReady);
+    }
 }
 
 void EAQtNetwork::paralelProcess(EAQtDataInterface* pd, char* buf, int num)
