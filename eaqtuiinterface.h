@@ -41,6 +41,7 @@ public:
         QCPLayer* Markers;
     };
     virtual PlotLayer* PlotGetLayers() = 0;
+    virtual void PlotSetInverted(bool) = 0;
 
     virtual void MeasurementSetup() = 0;
     virtual void MeasurementUpdate(uint32_t curveNr, uint32_t pointNr) = 0;

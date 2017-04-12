@@ -53,6 +53,7 @@ public:
      void PlotSetInteraction(QCP::Interactions) ;
      QCPItemStraightLine* PlotAddLine();
      EAQtUIInterface::PlotLayer* PlotGetLayers();
+     void PlotSetInverted(bool);
      void MeasurementSetup();
      void MeasurementAfter();
      void MeasurementUpdate(uint32_t curveNr, uint32_t pointNr);

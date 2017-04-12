@@ -1117,3 +1117,8 @@ EAQtUIInterface::PlotLayer* EAQtMainWindow::PlotGetLayers()
 {
     return &_plotLayers;
 }
+
+void EAQtMainWindow::PlotSetInverted(bool inverted)
+{
+    _plotMain->xAxis->setRangeReversed(inverted);
+}

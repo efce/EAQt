@@ -636,7 +636,7 @@ void EAQtParamDialog::onlEditchanged(QString text)
     if ( EpVal == EkVal ) {
         if ( this->_isLsv ) {
             QMessageBox mb;
-            mb.setText(tr("Ep cannot be equal Ek in LSV mode."));
+            mb.setText(tr("Ep cannot be equal to Ek in LSV mode."));
         } else {
             this->_lineEdits[lid_points]->setDisabled(false);
             this->_lineEdits[lid_Estep]->setDisabled(true);

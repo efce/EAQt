@@ -351,6 +351,15 @@ void EAQtData::Act(int toAct)
     if ( (int)getCurves()->count() > toAct
     || toAct == SELECT::all ) {
         _act = toAct;
+        Curve* c = getCurves()->get(_act);
+        if ( c != NULL ) {
+            setCurrentRange(c->Param(PARAM::crange), c->Param(PARAM::electr));
+            if ( getXAxis() == XAXIS::potential ) {
+                _pUI->PlotSetInverted( (c->Param(PARAM::Ek) < c->Param(PARAM::Ep)) );
+            } else {
+                _pUI->PlotSetInverted(false);
+            }
+        }
     } else {
         _act = SELECT::none;
     }
@@ -1128,7 +1137,6 @@ void EAQtData::MesStart(bool isLsv)
             this->getMesCurves()->get(mesCurveIndex)->allocateMesArray();
         }
 
-        setCurrentRange(_PVParam[PARAM::crange],_PVParam[PARAM::electr]);
         initEca();
         initPtime();
         //ilpw = this->getMesCurves()->get(0)->Param(PARAM::aver);
@@ -1169,6 +1177,14 @@ void EAQtData::MesStart(bool isLsv)
 
     _stopInfo = 0;
     _conductingMeasurement = 1;
+    setCurrentRange(getMesCurves()->get(0)->Param(PARAM::crange)
+                    ,getMesCurves()->get(0)->Param(PARAM::electr) );
+
+    if ( getXAxis() == XAXIS::potential ) {
+        _pUI->PlotSetInverted( (getMesCurves()->get(0)->Param(PARAM::Ek) < getMesCurves()->get(0)->Param(PARAM::Ep)) );
+    } else {
+        _pUI->PlotSetInverted(false);
+    }
 
     if ( _wasLSVMeasurement == 0 ){
         if ( sendPVToEA() ) {
@@ -2233,6 +2249,9 @@ int EAQtData::getXAxis()
 void EAQtData::setXAxis(int newtype)
 {
     this->_xaxis_type = newtype;
+    if ( _xaxis_type != XAXIS::potential ) {
+        _pUI->PlotSetInverted(false);
+    }
     this->_pUI->updateAll();
 }
 
