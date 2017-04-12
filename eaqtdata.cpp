@@ -1505,13 +1505,13 @@ void EAQtData::MesUpdate(uint32_t nNrOfMesCurve, uint32_t nPointFromDevice, bool
                         );
         }
     }
-
+/*
     if ( getXAxis() == XAXIS::potential ) {
         getMesCurves()->get(nNrOfMesCurve)->getPlot()->addData( getMesCurves()->get(nNrOfMesCurve)->getPotentialPoint(nPointFromDevice),res);
     } else if ( getXAxis() == XAXIS::time ) {
         getMesCurves()->get(nNrOfMesCurve)->getPlot()->addData( getMesCurves()->get(nNrOfMesCurve)->getTimePoint(nPointFromDevice),res);
     }
-
+*/
     int msecnow = _fromUpdate.elapsed();
     if ( !freezUI || MEASUREMENT::displayDelay < msecnow ) {
         this->_pUI->MeasurementUpdate(nNrOfMesCurve, nPointFromDevice);
