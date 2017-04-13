@@ -26,6 +26,10 @@
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
+    QFont f(":/fonts/fonts/LiberationSans-Regular.ttf");
+    f.setPixelSize(13);
+    f.setKerning(true);
+    a.setFont(f);
 
     QTranslator translator;
     translator.load("eaqt_pl",":/lang");

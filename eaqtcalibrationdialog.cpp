@@ -25,6 +25,55 @@ EAQtCalibrationDialog::EAQtCalibrationDialog(QVector<double> calY)
         throw 1;
     }
     _signals = calY;
+    QString cdot = QChar(0x00B7);
+    QString sup1 = QChar(0x207B);
+    sup1.append(QChar(0x00B9));
+
+    vVolumes.push_back(multipliers{ 1.0, "L"});
+    vVolumes.push_back(multipliers{ 0.01, "cL"});
+    vVolumes.push_back(multipliers{ 0.001, "mL"});
+    vVolumes.push_back(multipliers{ 0.000001, "µL"});
+
+    vConcs.push_back( multipliers{1.0,"g" + cdot + "L" + sup1} );
+    vConcs.push_back( multipliers{0.001,"mg" + cdot+ "L" + sup1} );
+    vConcs.push_back( multipliers{0.000001,"µg" + cdot + "L" + sup1} );
+    vConcs.push_back( multipliers{0.000000001,"ng" + cdot + "L" + sup1} );
+    vConcs.push_back( multipliers{1.0,"mg" + cdot + "mL" + sup1} );
+    vConcs.push_back( multipliers{0.001,"µg" + cdot + "mL" + sup1} );
+    vConcs.push_back( multipliers{0.000001,"ng" + cdot + "mL" + sup1} );
+
+    _cAdditionVolumeUnits = new QComboBox();
+    for ( int i=0; i<vVolumes.size(); ++i) {
+        _cAdditionVolumeUnits->addItem(vVolumes[i].name);
+        if ( vVolumes[i].name.compare("uL") == 0 ) {
+            _cAdditionVolumeUnits->setCurrentIndex(i);
+        }
+    }
+
+    _cSampleVolumeUnits = new QComboBox();
+    for ( int i=0; i<vVolumes.size(); ++i) {
+        _cSampleVolumeUnits->addItem(vVolumes[i].name);
+        if ( vVolumes[i].name.compare("mL") == 0 ) {
+            _cSampleVolumeUnits->setCurrentIndex(i);
+        }
+    }
+
+    _cStandardConcUnits = new QComboBox();
+    for ( int i=0; i<vConcs.size(); ++i) {
+        _cStandardConcUnits->addItem(vConcs[i].name);
+        if ( vConcs[i].name.compare("mg/L") == 0 ) {
+            _cStandardConcUnits->setCurrentIndex(i);
+        }
+    }
+
+    _cSampleConcUnits = new QComboBox();
+    for ( int i=0; i<vConcs.size(); ++i) {
+        _cSampleConcUnits->addItem(vConcs[i].name);
+        if ( vConcs[i].name.compare("µg/L") == 0 ) {
+            _cSampleConcUnits->setCurrentIndex(i);
+        }
+    }
+
     QGridLayout *gl = new QGridLayout();
     QGridLayout *glm = new QGridLayout();
     QScrollArea *sa = new QScrollArea();
@@ -40,11 +89,14 @@ EAQtCalibrationDialog::EAQtCalibrationDialog(QVector<double> calY)
     lname->setFont(*fontLabel);
     QLabel *lcurr = new QLabel(tr("Current"));
     lcurr->setFont(*fontLabel);
+    QVBoxLayout* cb = new QVBoxLayout();
     QLabel *lconc = new QLabel(tr("Concentration"));
+    cb->addWidget(lconc);
+    cb->addWidget(_cSampleConcUnits);
     lconc->setFont(*fontLabel);
     gl->addWidget(lname,0,0,1,1);
     gl->addWidget(lcurr,0,1,1,1);
-    gl->addWidget(lconc,0,2,1,1);
+    gl->addLayout(cb,0,2,1,1);
     for ( i = 0; i<calY.size(); ++i ) {
         QLabel *l1 = new QLabel(EAQtData::getInstance().getCurves()->get(i)->CName() + ": ");
         QLabel *l2 = new QLabel(EAQtData::getInstance().dispI(calY[i]) + " ");
@@ -101,6 +153,7 @@ void EAQtCalibrationDialog::drawCalibration()
     if ( _calibrationPlot->yAxis->range().lower > 0 ) {
         _calibrationPlot->yAxis->setRangeLower(0);
     }
+    _calibrationPlot->xAxis->setLabel("c / " + _cSampleConcUnits->currentText());
     double spanx = _calibrationPlot->xAxis->range().upper - _calibrationPlot->xAxis->range().lower;
     _calibrationPlot->xAxis->setRangeLower(_calibrationPlot->xAxis->range().lower - (0.1*spanx));
     _calibrationPlot->xAxis->setRangeUpper(_calibrationPlot->xAxis->range().upper + (0.1*spanx));
@@ -132,13 +185,29 @@ QWidget* EAQtCalibrationDialog::preparePlot()
     _calibrationPlot->setVisible(false);
     _calibrationPlot->setMinimumWidth(500);
     _calibrationPlot->setMinimumHeight(450);
+    //connect(_calibrationPlot,SIGNAL(beforeReplot()),this,SLOT(beforeReplot()));
+    QPen pen;
+    pen.setColor(COLOR::measurement);
+    pen.setWidth(1);
+    _calibrationPlot->xAxis->grid()->setZeroLinePen(pen);
+    _calibrationPlot->yAxis->grid()->setZeroLinePen(pen);
     _calibrationLine = new QCPItemStraightLine(_calibrationPlot);
+    _calibrationLine->setPen(QPen(QColor(COLOR::active)));
     _calibrationPoints = _calibrationPlot->addGraph();
     _calibrationPoints->setLineStyle(QCPGraph::lsNone);
     _calibrationPoints->setScatterStyle(QCPScatterStyle::ssCircle);
+    _calibrationPoints->setPen(QPen(COLOR::regular));
     gl->addWidget(_calibrationPlot,0,0,1,2);
     gl->addWidget(_calibrationEq,1,0,1,1);
     gl->addWidget(_calibrationR,1,1,1,1);
     w->setLayout(gl);
     return w;
+}
+
+void EAQtCalibrationDialog::beforeReplot()
+{
+    int pxx = _calibrationPlot->yAxis->coordToPixel(0);
+    int pxy = _calibrationPlot->xAxis->coordToPixel(0);
+    _calibrationPlot->xAxis->setOffset(-_calibrationPlot->axisRect()->height()-_calibrationPlot->axisRect()->top()+pxx);
+    _calibrationPlot->yAxis->setOffset(_calibrationPlot->axisRect()->left()-pxy);
 }

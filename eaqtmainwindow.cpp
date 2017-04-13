@@ -172,6 +172,7 @@ void EAQtMainWindow::updateAll(bool rescale)
         this->_plotMain->xAxis->setLabel("sample no.");
         break;
     }
+    setLowLabelText(3,tr("curves: %1").arg(_pEAQtData->getCurves()->count()));
     this->_plotMain->yAxis->setLabel("i / µA");
     this->_comboOnXAxis->blockSignals(true);
     this->_comboOnXAxis->setCurrentIndex(this->_pEAQtData->getXAxis());
@@ -182,8 +183,9 @@ void EAQtMainWindow::updateAll(bool rescale)
     this->PlotDrawSelection();
     if ( rescale ) {
         PlotRescaleAxes();
+    } else {
+        PlotReplot();
     }
-    PlotReplot();
 }
 
 void EAQtMainWindow::TableRegenerate()
@@ -235,7 +237,6 @@ void EAQtMainWindow::PlotRegenerate()
     }
     this->_plotMain->blockSignals(false);
     this->_plotMain->setUpdatesEnabled(true);
-    //this->_plotMain->replot();
 }
 
 void EAQtMainWindow::TableRowSelected()

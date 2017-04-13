@@ -7,4 +7,7 @@
         <file>eaqt_pl.qm</file>
         <file>eaqt_pl.ts</file>
     </qresource>
+    <qresource prefix="/fonts">
+        <file>fonts/LiberationSans-Regular.ttf</file>
+    </qresource>
 </RCC>

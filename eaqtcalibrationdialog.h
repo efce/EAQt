@@ -30,8 +30,25 @@ public:
     void exec();
 
 private:
+    struct multipliers {
+        double multiply;
+        QString name;
+    };
+    QVector<multipliers> vVolumes;
+    QVector<multipliers> vConcs;
+
     QDialog *_dialog;
+    QCheckBox *_calculateConc;
     QVector<QLineEdit*> _leConcentrations;
+    QVector<QLineEdit*> _leAddVolumes;
+    QLineEdit *_leSampleVolume;
+    QLineEdit *_leStandardConc;
+
+    QComboBox *_cSampleVolumeUnits;
+    QComboBox *_cAdditionVolumeUnits;
+    QComboBox *_cStandardConcUnits;
+    QComboBox *_cSampleConcUnits;
+
     QCustomPlot *_calibrationPlot;
     QVector<double> _signals;
     QCPItemStraightLine* _calibrationLine;
@@ -42,6 +59,7 @@ private:
 
 private slots:
     void drawCalibration();
+    void beforeReplot();
 };
 
 #endif // EAQTCALIBRATIONDIALOG_H
