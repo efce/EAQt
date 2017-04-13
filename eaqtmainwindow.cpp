@@ -40,6 +40,7 @@ EAQtMainWindow::EAQtMainWindow(QWidget *parent) :
     _PathInUse = "";
     new QShortcut( QKeySequence(Qt::Key_Escape), this, SLOT(userStopsMeasurement()));
     new QShortcut( QKeySequence(Qt::Key_F5), this, SLOT(userStartsMeasurement()));
+    new QShortcut( QKeySequence(Qt::Key_Delete), this, SLOT(deleteActive()));
 }
 
 void EAQtMainWindow::InitialUpdate(EAQtData& d)
@@ -171,6 +172,7 @@ void EAQtMainWindow::updateAll(bool rescale)
         this->_plotMain->xAxis->setLabel("sample no.");
         break;
     }
+    setLowLabelText(3,tr("curves: %1").arg(_pEAQtData->getCurves()->count()));
     this->_plotMain->yAxis->setLabel("i / µA");
     this->_comboOnXAxis->blockSignals(true);
     this->_comboOnXAxis->setCurrentIndex(this->_pEAQtData->getXAxis());
@@ -180,9 +182,10 @@ void EAQtMainWindow::updateAll(bool rescale)
     this->TableDrawSelection();
     this->PlotDrawSelection();
     if ( rescale ) {
-        this->_plotMain->rescaleAxes();
+        PlotRescaleAxes();
+    } else {
+        PlotReplot();
     }
-    this->_plotMain->replot();
 }
 
 void EAQtMainWindow::TableRegenerate()
@@ -234,7 +237,6 @@ void EAQtMainWindow::PlotRegenerate()
     }
     this->_plotMain->blockSignals(false);
     this->_plotMain->setUpdatesEnabled(true);
-    //this->_plotMain->replot();
 }
 
 void EAQtMainWindow::TableRowSelected()
@@ -272,6 +274,7 @@ void EAQtMainWindow::PlotDrawSelection()
         } else {
             curve->getPlot()->setPen(QPen(COLOR::regular));
             curve->getPlot()->setLayer(_plotLayers.NonActive);
+            curve->getPlot()->setSelection(QCPDataSelection());
         }
         ++i;
     }
@@ -297,6 +300,8 @@ void EAQtMainWindow::TableDrawSelection()
             if ( i == this->_pEAQtData->Act() ) {
                 this->_tableCurveMain->item(i,0)->setSelected(true);
                 this->_tableCurveMain->item(i,1)->setSelected(true);
+                _tableCurveMain->scrollToItem(_tableCurveMain->item(i,0));
+                _tableCurveMain->setCurrentItem(_tableCurveMain->item(i,0));
             } else {
                 this->_tableCurveMain->item(i,0)->setSelected(false);
                 this->_tableCurveMain->item(i,1)->setSelected(false);
@@ -549,7 +554,7 @@ QCPGraph* EAQtMainWindow::PlotAddGraph()
 
 void EAQtMainWindow::PlotRescaleAxes()
 {
-    this->_plotMain->rescaleAxes();
+    this->_plotMain->rescaleAxes(true);
     this->_plotMain->replot();
 }
 
@@ -590,20 +595,18 @@ void EAQtMainWindow::enableAll()
 
 void EAQtMainWindow::userStartsMeasurement()
 {
-    this->_pEAQtData->MesStart();
+    this->_pEAQtData->MesStart(this->_pEAQtData->getWasLSV());
 }
 
 void EAQtMainWindow::MeasurementSetup()
 {
-    this->_plotMain->rescaleAxes();
-    this->_plotMain->replot();
+    PlotRescaleAxes();
     this->_mouseHandler->ChangeMouseMode(EAQtMouseHandler::mm_measurement, EAQtMouseHandler::uf_none );
 }
 
 void EAQtMainWindow::MeasurementAfter()
 {
-    this->_plotMain->rescaleAxes();
-    this->_plotMain->replot();
+    PlotRescaleAxes();
     this->_mouseHandler->ChangeMouseMode(EAQtMouseHandler::mm_normal, EAQtMouseHandler::uf_none);
 }
 
@@ -620,7 +623,6 @@ void EAQtMainWindow::MeasurementUpdate(uint32_t curveNr, uint32_t pointNr)
 
     switch ( this->_pEAQtData->getXAxis() ) {
     case XAXIS::potential:
-        /*
         while ( (curve=this->_pEAQtData->getMesCurves()->get(i)) != NULL ) {
             curve->getPlot()->setData(
                         curve->getPotentialVector()->mid(0,curve->getNrOfDataPoints())
@@ -628,11 +630,10 @@ void EAQtMainWindow::MeasurementUpdate(uint32_t curveNr, uint32_t pointNr)
                         ,true
                       );
             ++i;
-        }*/
+        }
         break;
 
     case XAXIS::time:
-        /*
         while ( (curve=this->_pEAQtData->getMesCurves()->get(i)) != NULL ) {
             curve->getPlot()->setData(
                         curve->getTimeVector()->mid(0,curve->getNrOfDataPoints())
@@ -641,7 +642,6 @@ void EAQtMainWindow::MeasurementUpdate(uint32_t curveNr, uint32_t pointNr)
                       );
             ++i;
         }
-        */
         break;
 
     case XAXIS::nonaveraged:
@@ -661,8 +661,7 @@ void EAQtMainWindow::MeasurementUpdate(uint32_t curveNr, uint32_t pointNr)
         throw 1;
     }
 
-    this->_plotMain->rescaleAxes();
-    this->_plotMain->replot(); //alternatywa : _plotLayers->Measurement->replot();
+    PlotRescaleAxes();
 }
 
 void EAQtMainWindow::showMessageBox(QString text, QString title)
@@ -1113,4 +1112,9 @@ void EAQtMainWindow::startSmooth()
 EAQtUIInterface::PlotLayer* EAQtMainWindow::PlotGetLayers()
 {
     return &_plotLayers;
+}
+
+void EAQtMainWindow::PlotSetInverted(bool inverted)
+{
+    _plotMain->xAxis->setRangeReversed(inverted);
 }

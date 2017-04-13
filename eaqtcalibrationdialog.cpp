@@ -25,14 +25,98 @@ EAQtCalibrationDialog::EAQtCalibrationDialog(QVector<double> calY)
         throw 1;
     }
     _signals = calY;
+    QString cdot = QChar(0x00B7);
+    QString sup1 = QChar(0x207B);
+    sup1.append(QChar(0x00B9));
+
+    vVolumes.push_back(multipliers{ 1.0, "L"});
+    vVolumes.push_back(multipliers{ 0.01, "cL"});
+    vVolumes.push_back(multipliers{ 0.001, "mL"});
+    vVolumes.push_back(multipliers{ 0.000001, "µL"});
+
+    vConcs.push_back( multipliers{1.0,"g" + cdot + "L" + sup1} );
+    vConcs.push_back( multipliers{0.001,"mg" + cdot+ "L" + sup1} );
+    vConcs.push_back( multipliers{0.000001,"µg" + cdot + "L" + sup1} );
+    vConcs.push_back( multipliers{0.000000001,"ng" + cdot + "L" + sup1} );
+    vConcs.push_back( multipliers{1.0,"mg" + cdot + "mL" + sup1} );
+    vConcs.push_back( multipliers{0.001,"µg" + cdot + "mL" + sup1} );
+    vConcs.push_back( multipliers{0.000001,"ng" + cdot + "mL" + sup1} );
+
+    _cAdditionVolumeUnits = new QComboBox();
+    for ( int i=0; i<vVolumes.size(); ++i) {
+        _cAdditionVolumeUnits->addItem(vVolumes[i].name);
+        if ( vVolumes[i].name.compare("µL") == 0 ) {
+            _cAdditionVolumeUnits->setCurrentIndex(i);
+        }
+    }
+
+    _cSampleVolumeUnits = new QComboBox();
+    for ( int i=0; i<vVolumes.size(); ++i) {
+        _cSampleVolumeUnits->addItem(vVolumes[i].name);
+        if ( vVolumes[i].name.compare("mL") == 0 ) {
+            _cSampleVolumeUnits->setCurrentIndex(i);
+        }
+    }
+
+    _cStandardConcUnits = new QComboBox();
+    for ( int i=0; i<vConcs.size(); ++i) {
+        _cStandardConcUnits->addItem(vConcs[i].name);
+        if ( vConcs[i].name.compare("mg"+ cdot+"L"+sup1) == 0 ) {
+            _cStandardConcUnits->setCurrentIndex(i);
+        }
+    }
+
+    _cSampleConcUnits = new QComboBox();
+    for ( int i=0; i<vConcs.size(); ++i) {
+        _cSampleConcUnits->addItem(vConcs[i].name);
+        if ( vConcs[i].name.compare("µg" + cdot + "L" + sup1) == 0 ) {
+            _cSampleConcUnits->setCurrentIndex(i);
+        }
+    }
+
+    _calculateBox = new QGroupBox();
+    QGridLayout *calcLayout = new QGridLayout();
+    _calculateConc = new QCheckBox(tr("Calculate concentrations"));
+    _calculateConc->setChecked(false);
+    _calculateConc->setVisible(true);
+    calcLayout->addWidget(_calculateConc,0,0,1,3);
+    _lSampleVolume = new QLabel(tr("Sample volume: "));
+    _lSampleVolume->setVisible(false);
+    _leSampleVolume = new QLineEdit();
+    _leSampleVolume->setText("0.0");
+    _leSampleVolume->setValidator(new QDoubleValidator(0.0,999999.9,10));
+    _leSampleVolume->setVisible(false);
+    connect(_leSampleVolume,SIGNAL(textChanged(QString)), this, SLOT(recalculateConc()));
+    _cSampleVolumeUnits->setVisible(false);
+    connect(_cSampleVolumeUnits,SIGNAL(currentIndexChanged(int)), this, SLOT(recalculateConc()));
+    calcLayout->addWidget(_lSampleVolume,1,0,1,1);
+    calcLayout->addWidget(_leSampleVolume,1,1,1,1);
+    calcLayout->addWidget(_cSampleVolumeUnits,1,2,1,1);
+    _lStandardConc = new QLabel(tr("Standard conc: "));
+    _lStandardConc->setVisible(false);
+    _leStandardConc = new QLineEdit();
+    _leStandardConc->setText("0.0");
+    _leStandardConc->setValidator(new QDoubleValidator(0.0,999999.9,10));
+    _leStandardConc->setVisible(false);
+    connect(_leStandardConc,SIGNAL(textChanged(QString)), this, SLOT(recalculateConc()));
+    _cStandardConcUnits->setVisible(false);
+    connect(_cStandardConcUnits,SIGNAL(currentIndexChanged(int)), this, SLOT(recalculateConc()));
+    calcLayout->addWidget(_lStandardConc,2,0,1,1);
+    calcLayout->addWidget(_leStandardConc,2,1,1,1);
+    calcLayout->addWidget(_cStandardConcUnits,2,2,1,1);
+    _calculateBox->setLayout(calcLayout);
+    connect(_calculateConc,SIGNAL(toggled(bool)),this,SLOT(toggleCalculateConc(bool)));
+
+
     QGridLayout *gl = new QGridLayout();
     QGridLayout *glm = new QGridLayout();
     QScrollArea *sa = new QScrollArea();
     sa->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
-    sa->setFixedWidth(300);
-    sa->setMaximumHeight(500);
+    sa->setFixedWidth(400);
+    sa->setMaximumHeight(600);
     this->_dialog = new QDialog();
     this->_leConcentrations.resize(calY.size());
+    this->_leAdditionVolumes.resize(calY.size());
     uint i;
     QFont *fontLabel = new QFont(_dialog->font());
     fontLabel->setBold(true);
@@ -40,11 +124,28 @@ EAQtCalibrationDialog::EAQtCalibrationDialog(QVector<double> calY)
     lname->setFont(*fontLabel);
     QLabel *lcurr = new QLabel(tr("Current"));
     lcurr->setFont(*fontLabel);
+
+    QVBoxLayout* cb1 = new QVBoxLayout();
     QLabel *lconc = new QLabel(tr("Concentration"));
+    cb1->addWidget(lconc);
+    connect(_cStandardConcUnits,SIGNAL(currentIndexChanged(int)), this, SLOT(recalculateConc()));
+    cb1->addWidget(_cSampleConcUnits);
+    lconc->setFont(*fontLabel);
+
+    QVBoxLayout* cb2 = new QVBoxLayout();
+    _labelAddition = new QLabel(tr("Addition"));
+    _labelAddition->setFont(*fontLabel);
+    _labelAddition->setVisible(false);
+    cb2->addWidget(_labelAddition);
+    connect(_cAdditionVolumeUnits,SIGNAL(currentIndexChanged(int)), this, SLOT(recalculateConc()));
+    _cAdditionVolumeUnits->setVisible(false);
+    cb2->addWidget(_cAdditionVolumeUnits);
+
     lconc->setFont(*fontLabel);
     gl->addWidget(lname,0,0,1,1);
     gl->addWidget(lcurr,0,1,1,1);
-    gl->addWidget(lconc,0,2,1,1);
+    gl->addLayout(cb1,0,2,1,1);
+    gl->addLayout(cb2,0,3,1,1);
     for ( i = 0; i<calY.size(); ++i ) {
         QLabel *l1 = new QLabel(EAQtData::getInstance().getCurves()->get(i)->CName() + ": ");
         QLabel *l2 = new QLabel(EAQtData::getInstance().dispI(calY[i]) + " ");
@@ -53,21 +154,33 @@ EAQtCalibrationDialog::EAQtCalibrationDialog(QVector<double> calY)
         this->_leConcentrations[i]->setText("0.0");
         this->_leConcentrations[i]->setMaxLength(12);
         this->_leConcentrations[i]->setFixedWidth(QFontMetrics(_dialog->font()).width("9999999999"));
+
+        this->_leAdditionVolumes[i] = new QLineEdit();
+        this->_leAdditionVolumes[i]->setValidator(new QDoubleValidator(0.0,999999.9,10));
+        this->_leAdditionVolumes[i]->setText("0.0");
+        this->_leAdditionVolumes[i]->setMaxLength(12);
+        this->_leAdditionVolumes[i]->setFixedWidth(QFontMetrics(_dialog->font()).width("9999999999"));
+        this->_leAdditionVolumes[i]->setVisible(false);
+        connect(_leAdditionVolumes[i], SIGNAL(textChanged(QString)), this, SLOT(recalculateConc()));
+
         gl->addWidget(l1,i+1,0,1,1,Qt::AlignRight);
         gl->addWidget(l2,i+1,1,1,1);
         gl->addWidget(this->_leConcentrations[i],i+1,2,1,1);
+        gl->addWidget(_leAdditionVolumes[i],i+1,3,1,1);
     }
-    QWidget *saw = new QWidget();
-    saw->setLayout(gl);
+    _scrollAreaWidget = new QWidget();
+    _scrollAreaWidget->setLayout(gl);
+    _scrollAreaWidget->setFixedWidth(300);
     sa->setLayout(new QVBoxLayout);
-    sa->setWidget(saw);
-    glm->addWidget(sa,0,0,1,2);
+    sa->setWidget(_scrollAreaWidget);
+    glm->addWidget(_calculateBox,0,0,1,2);
+    glm->addWidget(sa,1,0,1,2);
     QPushButton *butCal = new QPushButton(tr("Plot calibration"));
     QPushButton *butCancel = new QPushButton(tr("Cancel"));
-    glm->addWidget(butCal,1,0,1,1);
-    glm->addWidget(butCancel,1,1,1,1);
+    glm->addWidget(butCal,2,0,1,1);
+    glm->addWidget(butCancel,2,1,1,1);
     QWidget* qw = preparePlot();
-    glm->addWidget(qw,0,2,2,1);
+    glm->addWidget(qw,0,2,3,1);
     connect(butCancel,SIGNAL(clicked(bool)),this->_dialog,SLOT(close()));
     connect(butCal,SIGNAL(clicked(bool)), this,SLOT(drawCalibration()));
     this->_dialog->setLayout(glm);
@@ -101,6 +214,7 @@ void EAQtCalibrationDialog::drawCalibration()
     if ( _calibrationPlot->yAxis->range().lower > 0 ) {
         _calibrationPlot->yAxis->setRangeLower(0);
     }
+    _calibrationPlot->xAxis->setLabel("c / " + _cSampleConcUnits->currentText());
     double spanx = _calibrationPlot->xAxis->range().upper - _calibrationPlot->xAxis->range().lower;
     _calibrationPlot->xAxis->setRangeLower(_calibrationPlot->xAxis->range().lower - (0.1*spanx));
     _calibrationPlot->xAxis->setRangeUpper(_calibrationPlot->xAxis->range().upper + (0.1*spanx));
@@ -132,13 +246,60 @@ QWidget* EAQtCalibrationDialog::preparePlot()
     _calibrationPlot->setVisible(false);
     _calibrationPlot->setMinimumWidth(500);
     _calibrationPlot->setMinimumHeight(450);
+    //connect(_calibrationPlot,SIGNAL(beforeReplot()),this,SLOT(beforeReplot()));
+    QPen pen;
+    pen.setColor(COLOR::measurement);
+    pen.setWidth(1);
+    _calibrationPlot->xAxis->grid()->setZeroLinePen(pen);
+    _calibrationPlot->yAxis->grid()->setZeroLinePen(pen);
     _calibrationLine = new QCPItemStraightLine(_calibrationPlot);
+    _calibrationLine->setPen(QPen(QColor(COLOR::active)));
     _calibrationPoints = _calibrationPlot->addGraph();
     _calibrationPoints->setLineStyle(QCPGraph::lsNone);
     _calibrationPoints->setScatterStyle(QCPScatterStyle::ssCircle);
+    _calibrationPoints->setPen(QPen(COLOR::regular));
     gl->addWidget(_calibrationPlot,0,0,1,2);
     gl->addWidget(_calibrationEq,1,0,1,1);
     gl->addWidget(_calibrationR,1,1,1,1);
     w->setLayout(gl);
     return w;
+}
+
+void EAQtCalibrationDialog::beforeReplot()
+{
+    int pxx = _calibrationPlot->yAxis->coordToPixel(0);
+    int pxy = _calibrationPlot->xAxis->coordToPixel(0);
+    _calibrationPlot->xAxis->setOffset(-_calibrationPlot->axisRect()->height()-_calibrationPlot->axisRect()->top()+pxx);
+    _calibrationPlot->yAxis->setOffset(_calibrationPlot->axisRect()->left()-pxy);
+}
+
+void EAQtCalibrationDialog::toggleCalculateConc(bool status)
+{
+    for ( int i = 0; i<_leConcentrations.size(); ++i) {
+        _leConcentrations[i]->setDisabled(status);
+        _leAdditionVolumes[i]->setVisible(status);
+    }
+    _lSampleVolume->setVisible(status);
+    _leSampleVolume->setVisible(status);
+    _cSampleVolumeUnits->setVisible(status);
+
+    _lStandardConc->setVisible(status);
+    _leStandardConc->setVisible(status);
+    _cStandardConcUnits->setVisible(status);
+
+    _labelAddition->setVisible(status);
+    _cAdditionVolumeUnits->setVisible(status);
+
+    if ( status ) {
+        recalculateConc();
+        _scrollAreaWidget->setFixedWidth(380);
+    } else {
+        _scrollAreaWidget->setFixedWidth(300);
+    }
+
+}
+
+void EAQtCalibrationDialog::recalculateConc()
+{
+    return;
 }

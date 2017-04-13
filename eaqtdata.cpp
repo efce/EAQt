@@ -351,6 +351,15 @@ void EAQtData::Act(int toAct)
     if ( (int)getCurves()->count() > toAct
     || toAct == SELECT::all ) {
         _act = toAct;
+        Curve* c = getCurves()->get(_act);
+        if ( c != NULL ) {
+            setCurrentRange(c->Param(PARAM::crange), c->Param(PARAM::electr));
+            if ( getXAxis() == XAXIS::potential ) {
+                _pUI->PlotSetInverted( (c->Param(PARAM::Ek) < c->Param(PARAM::Ep)) );
+            } else {
+                _pUI->PlotSetInverted(false);
+            }
+        }
     } else {
         _act = SELECT::none;
     }
@@ -591,7 +600,7 @@ void EAQtData::deleteAllCurvesFromGraph()
     }
 }
 
-void EAQtData::ProcessPacketFromEA(char* packet, int dataNotProcessed)
+void EAQtData::ProcessPacketFromEA(char* packet, bool nextPacketReady)
 {
     uint8_t* RxBuf;
     RxBuf = (uint8_t*)packet;
@@ -639,7 +648,7 @@ void EAQtData::ProcessPacketFromEA(char* packet, int dataNotProcessed)
             ActSampl2 = 0;
             twCounter = 0;
             _ctnrSQW = 6;	// nr ms w 1. i 2. próbkowaniu
-            this->MesUpdate(previousCurveNr, previousPointNr, (dataNotProcessed!=0));
+            this->MesUpdate(previousCurveNr, previousPointNr, nextPacketReady);
         }
         i = MEASUREMENT::PVstartData; // == 6
 
@@ -754,7 +763,7 @@ void EAQtData::ProcessPacketFromEA(char* packet, int dataNotProcessed)
                 this->getMesCurves()->get(currentCurveNr)->addToMesTimePoint(currentPointNr, _samplingTime);
             }
             this->getMesCurves()->get(currentCurveNr)->addToMesCurrent1Point(currentPointNr, workl);
-            this->MesUpdate(currentCurveNr,currentPointNr,(dataNotProcessed!=0));
+            this->MesUpdate(currentCurveNr,currentPointNr, nextPacketReady);
         }
         if ( this->_endOfMes ) {
             this->MesAfter();
@@ -783,9 +792,6 @@ void EAQtData::ProcessPacketFromEA(char* packet, int dataNotProcessed)
 
     default:
         break;
-    }
-    if ( dataNotProcessed != 0 ) {
-       _network->processPacket();
     }
 }
 
@@ -1131,7 +1137,6 @@ void EAQtData::MesStart(bool isLsv)
             this->getMesCurves()->get(mesCurveIndex)->allocateMesArray();
         }
 
-        setCurrentRange(_PVParam[PARAM::crange],_PVParam[PARAM::electr]);
         initEca();
         initPtime();
         //ilpw = this->getMesCurves()->get(0)->Param(PARAM::aver);
@@ -1172,6 +1177,14 @@ void EAQtData::MesStart(bool isLsv)
 
     _stopInfo = 0;
     _conductingMeasurement = 1;
+    setCurrentRange(getMesCurves()->get(0)->Param(PARAM::crange)
+                    ,getMesCurves()->get(0)->Param(PARAM::electr) );
+
+    if ( getXAxis() == XAXIS::potential ) {
+        _pUI->PlotSetInverted( (getMesCurves()->get(0)->Param(PARAM::Ek) < getMesCurves()->get(0)->Param(PARAM::Ep)) );
+    } else {
+        _pUI->PlotSetInverted(false);
+    }
 
     if ( _wasLSVMeasurement == 0 ){
         if ( sendPVToEA() ) {
@@ -1492,13 +1505,13 @@ void EAQtData::MesUpdate(uint32_t nNrOfMesCurve, uint32_t nPointFromDevice, bool
                         );
         }
     }
-
+/*
     if ( getXAxis() == XAXIS::potential ) {
         getMesCurves()->get(nNrOfMesCurve)->getPlot()->addData( getMesCurves()->get(nNrOfMesCurve)->getPotentialPoint(nPointFromDevice),res);
     } else if ( getXAxis() == XAXIS::time ) {
         getMesCurves()->get(nNrOfMesCurve)->getPlot()->addData( getMesCurves()->get(nNrOfMesCurve)->getTimePoint(nPointFromDevice),res);
     }
-
+*/
     int msecnow = _fromUpdate.elapsed();
     if ( !freezUI || MEASUREMENT::displayDelay < msecnow ) {
         this->_pUI->MeasurementUpdate(nNrOfMesCurve, nPointFromDevice);
@@ -2236,7 +2249,30 @@ int EAQtData::getXAxis()
 void EAQtData::setXAxis(int newtype)
 {
     this->_xaxis_type = newtype;
-    this->_pUI->updateAll();
+    if ( _xaxis_type != XAXIS::potential ) {
+        _pUI->PlotSetInverted(false);
+    } else {
+        Curve* c;
+        if ( _measurementGo ) {
+            if ( getMesCurves()->get(0) != NULL ) {
+                c = getMesCurves()->get(0);
+            } else {
+                return;
+            }
+        } else {
+            c = getCurves()->get(Act());
+            if ( c == NULL ) {
+                this->_pUI->updateAll();
+                return;
+            }
+        }
+        if ( c->Param(PARAM::Ek) < c->Param(PARAM::Ep) ) {
+            _pUI->PlotSetInverted(true);
+        }
+    }
+    if ( _measurementGo == 0 ) {
+        this->_pUI->updateAll();
+    }
 }
 
 QString EAQtData::dispE(int nNumber) {
@@ -2264,40 +2300,40 @@ QString EAQtData::dispI(double dNumber) {
     QString ret;
     switch (this->_currentRange) {
     case PARAM::crange_micro_5uA + PARAM::crange_macro_100nA + 1:
-        ret = tr("%1 µA").arg(dNumber,0,'f', 4);
+        ret = tr("%1 µA").arg(dNumber,0,'f', 5);
         break;
     case PARAM::crange_micro_500nA + PARAM::crange_macro_100nA + 1:
-        ret = tr("%1 nA").arg(dNumber*1000,0,'f', 2);
-        break;
-    case PARAM::crange_micro_50nA + PARAM::crange_macro_100nA + 1:
         ret = tr("%1 nA").arg(dNumber*1000,0,'f', 3);
         break;
-    case PARAM::crange_micro_5nA + PARAM::crange_macro_100nA + 1:
+    case PARAM::crange_micro_50nA + PARAM::crange_macro_100nA + 1:
         ret = tr("%1 nA").arg(dNumber*1000,0,'f', 4);
         break;
-    case PARAM::crange_macro_100mA:
-        ret = tr("%1 mA").arg(dNumber/1000,0,'f', 2);
+    case PARAM::crange_micro_5nA + PARAM::crange_macro_100nA + 1:
+        ret = tr("%1 nA").arg(dNumber*1000,0,'f', 5);
         break;
-    case PARAM::crange_macro_10mA:
+    case PARAM::crange_macro_100mA:
         ret = tr("%1 mA").arg(dNumber/1000,0,'f', 3);
         break;
-    case PARAM::crange_macro_1mA:
+    case PARAM::crange_macro_10mA:
         ret = tr("%1 mA").arg(dNumber/1000,0,'f', 4);
         break;
-    case PARAM::crange_macro_100uA:
-        ret = tr("%1 µA").arg(dNumber,0,'f', 2);
+    case PARAM::crange_macro_1mA:
+        ret = tr("%1 mA").arg(dNumber/1000,0,'f', 5);
         break;
-    case PARAM::crange_macro_10uA:
+    case PARAM::crange_macro_100uA:
         ret = tr("%1 µA").arg(dNumber,0,'f', 3);
         break;
-    case PARAM::crange_macro_1uA:
+    case PARAM::crange_macro_10uA:
         ret = tr("%1 µA").arg(dNumber,0,'f', 4);
+        break;
+    case PARAM::crange_macro_1uA:
+        ret = tr("%1 µA").arg(dNumber,0,'f', 5);
         break;
     case PARAM::crange_macro_100nA:
-        ret = tr("%1 nA").arg(dNumber*1000,0,'f', 2);
+        ret = tr("%1 nA").arg(dNumber*1000,0,'f', 3);
         break;
     default:
-        ret = tr("%1 µA").arg(dNumber,0,'f', 4);
+        ret = tr("%1 µA").arg(dNumber,0,'f', 5);
         break;
     }
     return ret;
@@ -2307,40 +2343,40 @@ QString EAQtData::dispIforTXT(double dNumber) {
     static QString ret;
     switch (this->_currentRange) {
     case PARAM::crange_micro_5uA + PARAM::crange_macro_100nA + 1:
-        ret = QString("%1").arg(dNumber,0,'f', 4);
+        ret = QString("%1").arg(dNumber,0,'f', 5);
         break;
     case PARAM::crange_micro_500nA + PARAM::crange_macro_100nA + 1:
-        ret = QString("%1").arg(dNumber*1000,0,'f', 2);
-        break;
-    case PARAM::crange_micro_50nA + PARAM::crange_macro_100nA + 1:
         ret = QString("%1").arg(dNumber*1000,0,'f', 3);
         break;
-    case PARAM::crange_micro_5nA + PARAM::crange_macro_100nA + 1:
+    case PARAM::crange_micro_50nA + PARAM::crange_macro_100nA + 1:
         ret = QString("%1").arg(dNumber*1000,0,'f', 4);
         break;
-    case PARAM::crange_macro_100mA:
-        ret = QString("%1").arg(dNumber/1000,0,'f', 2);
+    case PARAM::crange_micro_5nA + PARAM::crange_macro_100nA + 1:
+        ret = QString("%1").arg(dNumber*1000,0,'f', 5);
         break;
-    case PARAM::crange_macro_10mA:
+    case PARAM::crange_macro_100mA:
         ret = QString("%1").arg(dNumber/1000,0,'f', 3);
         break;
-    case PARAM::crange_macro_1mA:
+    case PARAM::crange_macro_10mA:
         ret = QString("%1").arg(dNumber/1000,0,'f', 4);
         break;
-    case PARAM::crange_macro_100uA:
-        ret = QString("%1").arg(dNumber,0,'f', 2);
+    case PARAM::crange_macro_1mA:
+        ret = QString("%1").arg(dNumber/1000,0,'f', 5);
         break;
-    case PARAM::crange_macro_10uA:
+    case PARAM::crange_macro_100uA:
         ret = QString("%1").arg(dNumber,0,'f', 3);
         break;
-    case PARAM::crange_macro_1uA:
+    case PARAM::crange_macro_10uA:
         ret = QString("%1").arg(dNumber,0,'f', 4);
+        break;
+    case PARAM::crange_macro_1uA:
+        ret = QString("%1").arg(dNumber,0,'f', 5);
         break;
     case PARAM::crange_macro_100nA:
-        ret = QString("%1").arg(dNumber*1000,0,'f', 2);
+        ret = QString("%1").arg(dNumber*1000,0,'f', 3);
         break;
     default:
-        ret = QString("%1").arg(dNumber,0,'f', 4);
+        ret = QString("%1").arg(dNumber,0,'f', 5);
         break;
     }
     return ret;
@@ -2643,4 +2679,9 @@ void EAQtData::exportToTXT(QString path)
     ff->close();
     delete[] blen;
     delete ff;
+}
+
+bool EAQtData::getWasLSV()
+{
+    return _wasLSVMeasurement;
 }

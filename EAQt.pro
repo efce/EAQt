@@ -389,7 +389,10 @@ DISTFILES += \
     Qcustomplot/changelog.txt \
     Qcustomplot/GPL.txt \
     Eigen/CMakeLists.txt \
-    README.md
+    README.md \
+    fonts/LiberationSans-Regular.ttf \
+    fonts/DejaVuSans.ttf \
+    fonts/SIL Open Font License.txt
 
 RESOURCES += \
     ./eaqt_resource.qrc

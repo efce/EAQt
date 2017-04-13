@@ -636,7 +636,7 @@ void EAQtParamDialog::onlEditchanged(QString text)
     if ( EpVal == EkVal ) {
         if ( this->_isLsv ) {
             QMessageBox mb;
-            mb.setText(tr("Ep cannot be equal Ek in LSV mode."));
+            mb.setText(tr("Ep cannot be equal to Ek in LSV mode."));
         } else {
             this->_lineEdits[lid_points]->setDisabled(false);
             this->_lineEdits[lid_Estep]->setDisabled(true);
@@ -760,9 +760,11 @@ void EAQtParamDialog::prepareDialog()
     if ( this->getParam(PARAM::electr) >= PARAM::electr_micro ) {
         this->microelectrodeChanged(true);
         this->_paramCrangeMicro[this->getParam(PARAM::crange)]->setChecked(true);
+        _checkboxIsMicro->setChecked(true);
     } else {
         this->microelectrodeChanged(false);
         this->_paramCrangeMacro[this->getParam(PARAM::crange)]->setChecked(true);
+        _checkboxIsMicro->setChecked(false);
     }
 //    if ( this->getParam(PARAM::electr) == PARAM::electr_dme ) {
 //        this->checkboxIsMicro->setChecked(false);

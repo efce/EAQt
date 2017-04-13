@@ -26,7 +26,7 @@ EAQtNetwork::EAQtNetwork(EAQtDataInterface* di) : QObject()
     this->_socket = new QTcpSocket();
     this->connect( this->_socket, SIGNAL(error(QAbstractSocket::SocketError)),
                    this,         SLOT(connectionError(QAbstractSocket::SocketError)));
-    this->_socket->setReadBufferSize(2*NETWORK::RxBufLength);
+    this->_socket->setReadBufferSize(1000*NETWORK::RxBufLength);
     this->_pData = di;
     this->_pRxBuf = new char[NETWORK::RxBufLength];
     memset(this->_pRxBuf,0,NETWORK::RxBufLength);
@@ -87,14 +87,18 @@ int EAQtNetwork::sendToEA(char* TxBuf)
 void EAQtNetwork::processPacket()
 {
     //static QThreadPool pool;
+    if ( _socket->bytesAvailable() < NETWORK::RxBufLength ) {
+        return;
+    }
     static char b[50];
-    sprintf(b,"%d",_rcvNum++);
-    qDebug(b);
-    _rxSize += _socket->read(_pRxBuf+_rxSize,NETWORK::RxBufLength-_rxSize);
-    int a = _socket->bytesAvailable();
-    if ( _rxSize == NETWORK::RxBufLength ) {
-        this->_pData->ProcessPacketFromEA(this->_pRxBuf,_socket->bytesAvailable() );
-        _rxSize = 0;
+    static int ba;
+    static char test;
+    while ( (ba=_socket->bytesAvailable()) >= NETWORK::RxBufLength ) {
+        _rxSize = _socket->read(_pRxBuf,NETWORK::RxBufLength);
+        //sprintf(b,"bytes read: %d;bytes avail: %d;",_rxSize,ba);
+        //qDebug(b);
+        bool nextPacketReady = ( _socket->peek(&test,1) == 1 );
+        this->_pData->ProcessPacketFromEA(this->_pRxBuf, nextPacketReady);
     }
 }
 
