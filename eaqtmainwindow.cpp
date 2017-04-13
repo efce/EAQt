@@ -181,9 +181,9 @@ void EAQtMainWindow::updateAll(bool rescale)
     this->TableDrawSelection();
     this->PlotDrawSelection();
     if ( rescale ) {
-        this->_plotMain->rescaleAxes();
+        PlotRescaleAxes();
     }
-    this->_plotMain->replot();
+    PlotReplot();
 }
 
 void EAQtMainWindow::TableRegenerate()
@@ -553,7 +553,7 @@ QCPGraph* EAQtMainWindow::PlotAddGraph()
 
 void EAQtMainWindow::PlotRescaleAxes()
 {
-    this->_plotMain->rescaleAxes();
+    this->_plotMain->rescaleAxes(true);
     this->_plotMain->replot();
 }
 
@@ -599,15 +599,13 @@ void EAQtMainWindow::userStartsMeasurement()
 
 void EAQtMainWindow::MeasurementSetup()
 {
-    this->_plotMain->rescaleAxes();
-    this->_plotMain->replot();
+    PlotRescaleAxes();
     this->_mouseHandler->ChangeMouseMode(EAQtMouseHandler::mm_measurement, EAQtMouseHandler::uf_none );
 }
 
 void EAQtMainWindow::MeasurementAfter()
 {
-    this->_plotMain->rescaleAxes();
-    this->_plotMain->replot();
+    PlotRescaleAxes();
     this->_mouseHandler->ChangeMouseMode(EAQtMouseHandler::mm_normal, EAQtMouseHandler::uf_none);
 }
 
@@ -662,8 +660,7 @@ void EAQtMainWindow::MeasurementUpdate(uint32_t curveNr, uint32_t pointNr)
         throw 1;
     }
 
-    this->_plotMain->rescaleAxes();
-    this->_plotMain->replot(); //alternatywa : _plotLayers->Measurement->replot();
+    PlotRescaleAxes();
 }
 
 void EAQtMainWindow::showMessageBox(QString text, QString title)

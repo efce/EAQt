@@ -2251,8 +2251,28 @@ void EAQtData::setXAxis(int newtype)
     this->_xaxis_type = newtype;
     if ( _xaxis_type != XAXIS::potential ) {
         _pUI->PlotSetInverted(false);
+    } else {
+        Curve* c;
+        if ( _measurementGo ) {
+            if ( getMesCurves()->get(0) != NULL ) {
+                c = getMesCurves()->get(0);
+            } else {
+                return;
+            }
+        } else {
+            c = getCurves()->get(Act());
+            if ( c == NULL ) {
+                this->_pUI->updateAll();
+                return;
+            }
+        }
+        if ( c->Param(PARAM::Ek) < c->Param(PARAM::Ep) ) {
+            _pUI->PlotSetInverted(true);
+        }
     }
-    this->_pUI->updateAll();
+    if ( _measurementGo == 0 ) {
+        this->_pUI->updateAll();
+    }
 }
 
 QString EAQtData::dispE(int nNumber) {
