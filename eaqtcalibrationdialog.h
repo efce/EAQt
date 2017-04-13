@@ -40,14 +40,19 @@ private:
     QDialog *_dialog;
     QCheckBox *_calculateConc;
     QVector<QLineEdit*> _leConcentrations;
-    QVector<QLineEdit*> _leAddVolumes;
-    QLineEdit *_leSampleVolume;
-    QLineEdit *_leStandardConc;
+    QVector<QLineEdit*> _leAdditionVolumes;
 
+    QGroupBox *_calculateBox;
+    QLineEdit *_leSampleVolume;
+    QLabel *_lSampleVolume;
+    QLineEdit *_leStandardConc;
+    QLabel *_lStandardConc;
     QComboBox *_cSampleVolumeUnits;
     QComboBox *_cAdditionVolumeUnits;
     QComboBox *_cStandardConcUnits;
     QComboBox *_cSampleConcUnits;
+    QLabel *_labelAddition;
+    QWidget *_scrollAreaWidget;
 
     QCustomPlot *_calibrationPlot;
     QVector<double> _signals;
@@ -60,6 +65,8 @@ private:
 private slots:
     void drawCalibration();
     void beforeReplot();
+    void recalculateConc();
+    void toggleCalculateConc(bool);
 };
 
 #endif // EAQTCALIBRATIONDIALOG_H
