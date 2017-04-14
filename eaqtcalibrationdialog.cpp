@@ -128,7 +128,7 @@ EAQtCalibrationDialog::EAQtCalibrationDialog(QVector<double> calY)
     QVBoxLayout* cb1 = new QVBoxLayout();
     QLabel *lconc = new QLabel(tr("Concentration"));
     cb1->addWidget(lconc);
-    connect(_cStandardConcUnits,SIGNAL(currentIndexChanged(int)), this, SLOT(recalculateConc()));
+    connect(_cSampleConcUnits,SIGNAL(currentIndexChanged(int)), this, SLOT(recalculateConc()));
     cb1->addWidget(_cSampleConcUnits);
     lconc->setFont(*fontLabel);
 
@@ -301,5 +301,51 @@ void EAQtCalibrationDialog::toggleCalculateConc(bool status)
 
 void EAQtCalibrationDialog::recalculateConc()
 {
-    return;
+    if ( !_calculateConc->isChecked() ) {
+        return;
+    }
+    int i;
+    double volSample = _leSampleVolume->text().toDouble();
+    for ( i=0; i<vVolumes.size(); ++i ) {
+        if ( _cSampleVolumeUnits->currentText().compare(vVolumes[i].name) == 0 ) {
+            volSample *= vVolumes[i].multiply;
+            break;
+        }
+    }
+
+    double stdConc = _leStandardConc->text().toDouble();
+    for ( i=0; i<vConcs.size(); ++i ) {
+        if ( _cStandardConcUnits->currentText().compare(vConcs[i].name) == 0 ) {
+            stdConc *= vConcs[i].multiply;
+            break;
+        }
+    }
+
+    double multiplyConc = 1;
+    for ( i=0; i<vConcs.size(); ++i ) {
+        if ( _cSampleConcUnits->currentText().compare(vConcs[i].name) == 0 ) {
+            multiplyConc = vConcs[i].multiply;
+            break;
+        }
+    }
+
+    double multiplyVol = 1;
+    for ( i=0; i<vVolumes.size(); ++i ) {
+        if ( _cAdditionVolumeUnits->currentText().compare(vVolumes[i].name) == 0 ) {
+            multiplyVol *= vVolumes[i].multiply;
+            break;
+        }
+    }
+
+    double work;
+    double v;
+    for ( i=0; i<_leConcentrations.size(); ++i ) {
+        v = _leAdditionVolumes[i]->text().toDouble() * multiplyVol;
+        if ( (v + volSample) == 0 ) {
+            work = 0.0;
+        } else {
+            work = (v*stdConc) / (v+volSample);
+        }
+        _leConcentrations[i]->setText(tr("%1").arg(work/multiplyConc, 0, 'f', 6));
+    }
 }

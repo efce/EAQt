@@ -232,9 +232,7 @@ void EAQtMouseHandler::ChangeMouseMode(mouseMode mm, userFunctions uf)
     case mm_measurement:
         this->_pUI->disableButtonsAndTable();
         this->_pUI->PlotSetInteraction(this->_plotInteractions.plotNoInteractions);
-        this->_pUI->PlotDisconnectMouse();
         _pUI->PlotDisconnectMouse();
-        //this->pUI->MeasurementSetup();
         break;
     }
 }

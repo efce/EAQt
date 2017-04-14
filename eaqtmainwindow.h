@@ -54,6 +54,8 @@ public:
      QCPItemStraightLine* PlotAddLine();
      EAQtUIInterface::PlotLayer* PlotGetLayers();
      void PlotSetInverted(bool);
+     void PlotDisconnectMouse();
+     void PlotConnectMouse();
      void MeasurementSetup();
      void MeasurementAfter();
      void MeasurementUpdate(uint32_t curveNr, uint32_t pointNr);
@@ -106,8 +108,6 @@ private:
     void TableRegenerate();
     void TableDrawSelection();
     void PlotDrawSelection();
-    void PlotDisconnectMouse();
-    void PlotConnectMouse();
 
     QGridLayout *createLayout();
 

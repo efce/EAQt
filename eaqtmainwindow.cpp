@@ -48,10 +48,21 @@ void EAQtMainWindow::InitialUpdate(EAQtData& d)
     this->_pEAQtData = &d;
     this->_mouseHandler = new EAQtMouseHandler(this->_pEAQtData, this);
     this->_mouseHandler->ChangeMouseMode(EAQtMouseHandler::mm_normal, EAQtMouseHandler::uf_none);
-    connect(this->_plotMain,SIGNAL(mouseMove(QMouseEvent*)),this,SLOT(handleMouseMoved(QMouseEvent*)));
-    connect(this->_plotMain,SIGNAL(mousePress(QMouseEvent*)), this,SLOT(handleMousePress(QMouseEvent*)));
-    connect(this->_plotMain,SIGNAL(mouseRelease(QMouseEvent*)),this,SLOT(handleMouseReleased(QMouseEvent*)));
     connect(_pEAQtData,SIGNAL(actChanged(int)),_mouseHandler,SLOT(onSelectionChanged()));
+}
+
+void EAQtMainWindow::PlotConnectMouse()
+{
+    connect(this->_plotMain,SIGNAL(mouseMove(QMouseEvent*)),this,SLOT(handleMouseMoved(QMouseEvent*)), Qt::UniqueConnection);
+    connect(this->_plotMain,SIGNAL(mousePress(QMouseEvent*)), this,SLOT(handleMousePress(QMouseEvent*)), Qt::UniqueConnection);
+    connect(this->_plotMain,SIGNAL(mouseRelease(QMouseEvent*)),this,SLOT(handleMouseReleased(QMouseEvent*)), Qt::UniqueConnection);
+}
+
+void EAQtMainWindow::PlotDisconnectMouse()
+{
+    disconnect(this->_plotMain,SIGNAL(mouseMove(QMouseEvent*)),this,SLOT(handleMouseMoved(QMouseEvent*)));
+    disconnect(this->_plotMain,SIGNAL(mousePress(QMouseEvent*)), this,SLOT(handleMousePress(QMouseEvent*)));
+    disconnect(this->_plotMain,SIGNAL(mouseRelease(QMouseEvent*)),this,SLOT(handleMouseReleased(QMouseEvent*)));
 }
 
 void EAQtMainWindow::userStopsMeasurement()
