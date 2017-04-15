@@ -154,6 +154,7 @@ EAQtCalibrationDialog::EAQtCalibrationDialog(QVector<double> calY)
         this->_leConcentrations[i]->setText("0.0");
         this->_leConcentrations[i]->setMaxLength(12);
         this->_leConcentrations[i]->setFixedWidth(QFontMetrics(_dialog->font()).width("9999999999"));
+        _leConcentrations[i]->setStyleSheet(":enabled { background-color: white; color: black; } :disabled {background-color: light gray; color: black }" );
 
         this->_leAdditionVolumes[i] = new QLineEdit();
         this->_leAdditionVolumes[i]->setValidator(new QDoubleValidator(0.0,999999.9,10));
