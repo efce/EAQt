@@ -202,9 +202,8 @@ void EAQtSignalProcessing::generateBackground(uint32_t r1, uint32_t r2, uint32_t
         bkg_curveY[i] = coeff[3]*pow(bkg_curveX[i],3) + coeff[2]*pow(bkg_curveX[i],2) + coeff[1]*bkg_curveX[i] + coeff[0];
     }
 
-    bkg_curveX.append(bx);
-    bkg_curveY.append(by);
-
+//    bkg_curveX.append(bx);
+//    bkg_curveY.append(by);
 
     _graph->setData(bkg_curveX, bkg_curveY);
     _graph->setVisible(true);
