@@ -165,11 +165,35 @@ void EAQtSignalProcessing::generateBackground(uint32_t r1, uint32_t r2, uint32_t
     bkg_curveX = c->getXVector();
     QVector<double> bx;
     QVector<double> by;
-    bx = c->getXVector().mid(r1,r2);
-    bx.append(c->getXVector().mid(r3,r4));
+    uint32_t rs[4];
+    rs[0] = r1;
+    rs[1] = r2;
+    rs[2] = r3;
+    rs[3] = r4;
+    bool sorted = false;
+    while ( !sorted ) {
+        sorted = true;
+        for ( int i = 0; i<3; ++i) {
+            if ( rs[i] > rs[i+1] ) {
+                uint32_t t = rs[i];
+                rs[i] = rs[i+1];
+                rs[i+1] = t;
+                sorted = false;
+            }
+        }
+    }
+    r1 = rs[0];
+    r2 = rs[1];
+    r3 = rs[2];
+    r4 = rs[3];
 
-    by=c->getYVector().mid(r1,r2);
-    by.append(c->getYVector().mid(r3,r4));
+
+
+    bx = c->getXVector().mid(r1,(r2-r1));
+    bx.append(c->getXVector().mid(r3,(r4-r3)));
+
+    by=c->getYVector().mid(r1,(r2-r1));
+    by.append(c->getYVector().mid(r3,(r4-r3)));
 
     QVector<double> coeff;
     polynomialFit(bx,by,3,&coeff);
@@ -177,6 +201,10 @@ void EAQtSignalProcessing::generateBackground(uint32_t r1, uint32_t r2, uint32_t
     for ( int i = 0; i<c->getXVector().size(); ++i ) {
         bkg_curveY[i] = coeff[3]*pow(bkg_curveX[i],3) + coeff[2]*pow(bkg_curveX[i],2) + coeff[1]*bkg_curveX[i] + coeff[0];
     }
+
+    bkg_curveX.append(bx);
+    bkg_curveY.append(by);
+
 
     _graph->setData(bkg_curveX, bkg_curveY);
     _graph->setVisible(true);
