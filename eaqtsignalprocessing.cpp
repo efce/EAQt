@@ -126,9 +126,17 @@ void EAQtSignalProcessing::sgSmooth(QVector<double> *y, int order, int span)
     QVector<double> img;
     QVector<double> freq;
     QVector<double> afteridft;
-    dft(1,y,&freq,&real,&img);
+    dft(1,*y,freq,real,img);
+    /*
+    for ( int i = 20; i<freq.size()/2; ++i ) {
+        real[i] = 0;
+        img[i] = 0;
+        real[real.size()-i+1] = 0;
+        img[img.size()-i+1] = 0;
+    }
+    */
 
-    idft(&img,&real,&afteridft);
+    idft(img,real,afteridft);
 
     for ( int i=0; i<y->size(); ++i ) {
         y->replace(i, afteridft[i]); // moc w dB
@@ -270,12 +278,12 @@ void EAQtSignalProcessing::correlation(QVector<double> x, QVector<double> y, dou
     *correlationCoef = sumtop/sqrt(wx*wy);
 }
 
-void EAQtSignalProcessing::dft(double samplingFrequency, QVector<double> *values, QVector<double> *frequency, QVector<double> *freqReal, QVector<double> *freqImg)
+void EAQtSignalProcessing::dft(double samplingFrequency, const QVector<double>& values, QVector<double>& frequency, QVector<double>& freqReal, QVector<double>& freqImg)
 {
-    int N = values->size();
-    freqImg->resize( N );
-    freqReal->resize( N );
-    frequency->resize( N );
+    int N = values.size();
+    freqImg.resize( N );
+    freqReal.resize( N );
+    frequency.resize( N );
     /*
      * Exponential solution //
      *
@@ -298,21 +306,21 @@ void EAQtSignalProcessing::dft(double samplingFrequency, QVector<double> *values
     // Sinusoidal solution //
     double angle;
     for ( int k = 0; k<N; ++k ) {
-        freqImg->replace(k,0);
-        freqReal->replace(k,0);
-        frequency->replace(k,k);
+        freqImg.replace(k,0);
+        freqReal.replace(k,0);
+        frequency.replace(k, samplingFrequency*(double)k/(double)N  );
         for ( int n = 0; n<N; ++n ) {
             angle = -2.0 * _PI * (double)k * (double)n / (double)N;
-            freqImg->replace(k, freqImg->at(k)+ values->at(n)*sin(angle));
-            freqReal->replace(k, freqReal->at(k)+ values->at(n)*cos(angle));
+            freqImg[k] += values[n]*sin(angle);//freqImg->replace(k, freqImg->at(k)+ values->at(n)*sin(angle));
+            freqReal[k] += values[n]*cos(angle);
         }
     }
 }
 
-void EAQtSignalProcessing::idft(QVector<double> *freqImg, QVector<double> *freqReal, QVector<double> *values)
+void EAQtSignalProcessing::idft(const QVector<double>& freqImg, const QVector<double>& freqReal, QVector<double>& values)
 {
-    int N = freqImg->size();
-    values->resize(N);
+    int N = freqImg.size();
+    values.resize(N);
 
     /*
      * Exponential solution
@@ -346,10 +354,10 @@ void EAQtSignalProcessing::idft(QVector<double> *freqImg, QVector<double> *freqR
         iv = 0;
         for ( int k=0; k<N; ++k ) {
             angle = -2.0*_PI*(double)k*(double)n/(double)N;
-            img += freqImg->at(k) * sin(angle);
-            real += freqReal->at(k) * cos(angle);
+            img += freqImg.at(k) * sin(angle);
+            real += freqReal.at(k) * cos(angle);
         }
         iv = (img + real)/(double)N;
-        values->replace(n, iv);
+        values.replace(n, iv);
     }
 }
