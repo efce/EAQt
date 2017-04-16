@@ -272,11 +272,13 @@ void EAQtSignalProcessing::correlation(QVector<double> x, QVector<double> y, dou
 
 void EAQtSignalProcessing::dft(double samplingFrequency, QVector<double> *values, QVector<double> *frequency, QVector<double> *freqReal, QVector<double> *freqImg)
 {
-    //double angle;
     int N = values->size();
     freqImg->resize( N );
     freqReal->resize( N );
     frequency->resize( N );
+    /*
+     * Exponential solution //
+     *
     std::vector<std::complex<double>> X;
     X.resize(N);
     std::complex<double> i;
@@ -291,8 +293,10 @@ void EAQtSignalProcessing::dft(double samplingFrequency, QVector<double> *values
         freqReal->replace(k, X[k].real());
         freqImg->replace(k, X[k].imag());
     }
+    */
 
-    /*
+    // Sinusoidal solution //
+    double angle;
     for ( int k = 0; k<N; ++k ) {
         freqImg->replace(k,0);
         freqReal->replace(k,0);
@@ -303,35 +307,49 @@ void EAQtSignalProcessing::dft(double samplingFrequency, QVector<double> *values
             freqReal->replace(k, freqReal->at(k)+ values->at(n)*cos(angle));
         }
     }
-    */
-
 }
 
 void EAQtSignalProcessing::idft(QVector<double> *freqImg, QVector<double> *freqReal, QVector<double> *values)
 {
     int N = freqImg->size();
+    values->resize(N);
+
+    /*
+     * Exponential solution
+     */
+    /*
     std::complex<double> i;
     i = -1;
     i = sqrt(i);
     complex<double> Wn = exp(i*(complex<double>)2.0*_PI/(complex<double>)N);
-
-    double img, real;
     complex<double> iv;
-    double w = (freqReal->at(0)-freqReal->at(ceil(N/2))) /N;
-    values->resize(N);
     for ( int n =0; n<N; ++n ) {
-        img = 0;
-        real = 0;
         iv = 0;
         for ( int k=0; k<N; ++k ) {
             complex<double> tmp;
             tmp = (complex<double>)freqReal->at(k) + (complex<double>)freqImg->at(k)*i;
             iv += tmp * pow(Wn,k*n) / (complex<double>)N;
-            //img += freqImg->at(k) * sin(2.0*_PI*(double)k*(double)n/(double)N);
-            //real += freqReal->at(k) * cos(2.0*_PI*(double)k*(double)n/(double)N);
         }
-        //iv = 2.0/(double)N * (img + real);// - w;
-        //iv = 1.0/(double)N * (real+img);// - w;
         values->replace(n, iv.real());
+    }
+    return;
+*/
+
+    /*
+     * Sinusoidal solution
+     */
+
+    double img, real, iv, angle;
+    for ( int n =0; n<N; ++n ) {
+        img = 0;
+        real = 0;
+        iv = 0;
+        for ( int k=0; k<N; ++k ) {
+            angle = -2.0*_PI*(double)k*(double)n/(double)N;
+            img += freqImg->at(k) * sin(angle);
+            real += freqReal->at(k) * cos(angle);
+        }
+        iv = (img + real)/(double)N;
+        values->replace(n, iv);
     }
 }
