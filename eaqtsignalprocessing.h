@@ -34,6 +34,8 @@ public:
     static void linearRegression(QVector<double> x, QVector<double> y, double* slope, double* intercept);
     static void correlation(QVector<double> x, QVector<double> y, double* correlationCoef);
     static void polynomialFit(QVector<double> x, QVector<double> y, int order, QVector<double>* coeff);
+    static void dft(double samplingFrequency, QVector<double>* values, QVector<double>* frequency, QVector<double>* freqReal, QVector<double>* freqImg);
+    static void idft(QVector<double>* freqImg, QVector<double>* freqReal, QVector<double>* values);
     static void sgSmooth(QVector<double>* y, int order, int span);
 private:
     CurveCollection* _curves;
@@ -48,6 +50,8 @@ private:
     int nn;
     int bkg_flag;
     int _interParam[10];
+    static double _PI;
+    static double _TINY;
 };
 
 #endif // EAQTSIGNALPROCESSING_H

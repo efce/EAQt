@@ -20,9 +20,8 @@
 #include "eaqtsignalprocessing.h"
 #include "eaqtcalibrationdialog.h"
 
-extern double testF95[22], testF99[20];
-double expshift;
-#define TINY 1.0e-20;
+double EAQtSignalProcessing::_TINY = 1.0e-20;
+double EAQtSignalProcessing::_PI = 2*asin(1.0);
 
 EAQtSignalProcessing::EAQtSignalProcessing(CurveCollection *cc, QCPGraph *graph) : QObject()
 {
@@ -123,6 +122,20 @@ void EAQtSignalProcessing::polynomialFit(QVector<double> x, QVector<double> y, i
 
 void EAQtSignalProcessing::sgSmooth(QVector<double> *y, int order, int span)
 {
+    QVector<double> real;
+    QVector<double> img;
+    QVector<double> freq;
+    QVector<double> afteridft;
+    dft(1,y,&freq,&real,&img);
+
+    idft(&img,&real,&afteridft);
+
+    for ( int i=0; i<y->size(); ++i ) {
+        y->replace(i, afteridft[i]); // moc w dB
+    }
+
+    return;
+
     QVector<double>x(span);
     for ( int i =0; i<span; ++i ) {
         x[i]=i+1;
@@ -186,8 +199,6 @@ void EAQtSignalProcessing::generateBackground(uint32_t r1, uint32_t r2, uint32_t
     r2 = rs[1];
     r3 = rs[2];
     r4 = rs[3];
-
-
 
     bx = c->getXVector().mid(r1,(r2-r1));
     bx.append(c->getXVector().mid(r3,(r4-r3)));
@@ -257,4 +268,70 @@ void EAQtSignalProcessing::correlation(QVector<double> x, QVector<double> y, dou
     }
 
     *correlationCoef = sumtop/sqrt(wx*wy);
+}
+
+void EAQtSignalProcessing::dft(double samplingFrequency, QVector<double> *values, QVector<double> *frequency, QVector<double> *freqReal, QVector<double> *freqImg)
+{
+    //double angle;
+    int N = values->size();
+    freqImg->resize( N );
+    freqReal->resize( N );
+    frequency->resize( N );
+    std::vector<std::complex<double>> X;
+    X.resize(N);
+    std::complex<double> i;
+    i = -1;
+    i = sqrt(i);
+    complex<double> Wn = exp(i*(complex<double>)2.0*_PI/(complex<double>)N);
+    for ( int k = 0; k<N; ++k) {
+        X[k] = 0;
+        for ( int n=0; n<N;++n) {
+            X[k] += values->at(n) * pow(Wn, (complex<double>)(-k*n));
+        }
+        freqReal->replace(k, X[k].real());
+        freqImg->replace(k, X[k].imag());
+    }
+
+    /*
+    for ( int k = 0; k<N; ++k ) {
+        freqImg->replace(k,0);
+        freqReal->replace(k,0);
+        frequency->replace(k,k);
+        for ( int n = 0; n<N; ++n ) {
+            angle = -2.0 * _PI * (double)k * (double)n / (double)N;
+            freqImg->replace(k, freqImg->at(k)+ values->at(n)*sin(angle));
+            freqReal->replace(k, freqReal->at(k)+ values->at(n)*cos(angle));
+        }
+    }
+    */
+
+}
+
+void EAQtSignalProcessing::idft(QVector<double> *freqImg, QVector<double> *freqReal, QVector<double> *values)
+{
+    int N = freqImg->size();
+    std::complex<double> i;
+    i = -1;
+    i = sqrt(i);
+    complex<double> Wn = exp(i*(complex<double>)2.0*_PI/(complex<double>)N);
+
+    double img, real;
+    complex<double> iv;
+    double w = (freqReal->at(0)-freqReal->at(ceil(N/2))) /N;
+    values->resize(N);
+    for ( int n =0; n<N; ++n ) {
+        img = 0;
+        real = 0;
+        iv = 0;
+        for ( int k=0; k<N; ++k ) {
+            complex<double> tmp;
+            tmp = (complex<double>)freqReal->at(k) + (complex<double>)freqImg->at(k)*i;
+            iv += tmp * pow(Wn,k*n) / (complex<double>)N;
+            //img += freqImg->at(k) * sin(2.0*_PI*(double)k*(double)n/(double)N);
+            //real += freqReal->at(k) * cos(2.0*_PI*(double)k*(double)n/(double)N);
+        }
+        //iv = 2.0/(double)N * (img + real);// - w;
+        //iv = 1.0/(double)N * (real+img);// - w;
+        values->replace(n, iv.real());
+    }
 }
