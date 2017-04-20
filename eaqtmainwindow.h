@@ -137,6 +137,7 @@ private:
     QAction *_actRelativeValues;
     QAction *_actMoveUpDown;
     QAction *_actSmooth;
+    QAction *_actAdvSmooth;
 
     QAction *_actSoftware;
     QAction *_actReportIssues;
@@ -169,6 +170,7 @@ private slots:
     void startRelativeValues();
     void startMoveUpDown();
     void startSmooth();
+    void showAdvancedSmooth();
     void showAboutSoftware();
     void showGithubIssues();
     void showGithub();

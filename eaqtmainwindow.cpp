@@ -21,6 +21,7 @@
 #include "eaqtopenfiledialog.h"
 #include "eaqtparamdialog.h"
 #include "eaqtaccessoriesdialog.h"
+#include "eaqtadvancedsmoothdialog.h"
 
 EAQtMainWindow::EAQtMainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -829,6 +830,10 @@ void EAQtMainWindow::createActionsTopMenu()
     this->_actSmooth->setStatusTip(tr("Savitzky golay smoothing"));
     connect(_actSmooth, SIGNAL(triggered(bool)),this,SLOT(startSmooth()));
 
+    this->_actAdvSmooth = new QAction(tr("Advanced smoothing"), this);
+    this->_actAdvSmooth->setStatusTip(tr("Advanced smoothing dialog"));
+    connect(_actAdvSmooth, SIGNAL(triggered(bool)),this,SLOT(showAdvancedSmooth()));
+
     _actSoftware = new QAction(tr("Software"),this);
     _actSoftware->setStatusTip(tr("Show information about the software"));
     connect(_actSoftware,SIGNAL(triggered(bool)),this,SLOT(showAboutSoftware()));
@@ -866,6 +871,7 @@ void EAQtMainWindow::createMenusTopMenu()
     _menuAnalysis->addAction(this->_actRelativeValues);
     _menuAnalysis->addAction(this->_actMoveUpDown);
     _menuAnalysis->addAction(this->_actSmooth);
+    _menuAnalysis->addAction(this->_actAdvSmooth);
 
     _menuAbout = this->menuBar()->addMenu(tr("About"));
     _menuAbout->addAction(_actSoftware);
@@ -1128,4 +1134,12 @@ EAQtUIInterface::PlotLayer* EAQtMainWindow::PlotGetLayers()
 void EAQtMainWindow::PlotSetInverted(bool inverted)
 {
     _plotMain->xAxis->setRangeReversed(inverted);
+}
+
+void EAQtMainWindow::showAdvancedSmooth()
+{
+    std::vector<double> x;
+    EAQtAdvancedSmoothDialog* adv = new EAQtAdvancedSmoothDialog(0,x);
+    adv->exec();
+    delete adv;
 }
