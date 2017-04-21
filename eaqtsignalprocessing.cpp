@@ -96,7 +96,7 @@ void EAQtSignalProcessing::kissFFT(double samplingFrequency,
     vector<cpx_type> inbuf(N);
     vector<cpx_type> outbuf(N);
     for (int k=0;k<N;++k) {
-        inbuf[k]= cpx_type((T)values[k],(T)0);
+        inbuf[k]= cpx_type(values[k],0.0);
     }
 
     fft.transform( &inbuf[0] , &outbuf[0] );
@@ -109,6 +109,33 @@ void EAQtSignalProcessing::kissFFT(double samplingFrequency,
         freqImg[i] = outbuf[i].imag();
         freqReal[i] = outbuf[i].real();
         frequency[i] = samplingFrequency*(double)i/(double)N;
+    }
+}
+
+void EAQtSignalProcessing::kissIFFT(const QVector<double> &freqImg,
+                                    const QVector<double> &freqReal,
+                                    QVector<double> &values
+                                   )
+{
+    int N = freqReal.size();
+
+    typedef double T;
+
+    typedef kissfft<T> FFT;
+    typedef std::complex<T> cpx_type;
+
+    FFT fft(N,true);
+    vector<cpx_type> inbuf(N);
+    vector<cpx_type> outbuf(N);
+    for (int k=0;k<N;++k) {
+        inbuf[k]= cpx_type(freqReal[k],freqImg[k]);
+    }
+
+    fft.transform( &inbuf[0] , &outbuf[0] );
+
+    values.resize(N);
+    for ( int i = 0; i<N; ++i ) {
+        values[i] = outbuf[i].real();
     }
 }
 

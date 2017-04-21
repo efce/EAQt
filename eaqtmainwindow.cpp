@@ -208,6 +208,8 @@ void EAQtMainWindow::TableRegenerate()
     _tableCurveMain->setRowCount(this->_pEAQtData->getCurves()->count());
     Curve* curve;
     int i = 0;
+    QFont striked = _tableCurveMain->font();
+    striked.setStrikeOut(true);
     while ( (curve=this->_pEAQtData->getCurves()->get(i)) != NULL ) {
         int charRight;
         QString prepend;
@@ -226,6 +228,12 @@ void EAQtMainWindow::TableRegenerate()
         qtiname->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
         qtiname->setSelected(false);
         qtiname->setTextAlignment(Qt::AlignRight);
+        if ( _pEAQtData->getXAxis() == XAXIS::nonaveraged ) {
+            if ( curve->Param(PARAM::nonaveragedsampling) == 0 ) {
+                qtifile->setFont(striked);
+                qtiname->setFont(striked);
+            }
+        }
         this->_tableCurveMain->setItem(i,0,qtifile);
         this->_tableCurveMain->setItem(i,1,qtiname);
         ++i;
