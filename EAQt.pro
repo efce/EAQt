@@ -378,9 +378,9 @@ HEADERS  += \
     Eigen/SVD \
     Eigen/UmfPackSupport \
     pstdin/pstdin.h \
-    displaycurve.h \
     eaqtadvancedsmoothdialog.h \
-    kiss_fft130/kissfft.hh
+    kiss_fft130/kissfft.hh \
+    displaycurveinfo.h
 
 FORMS    += mainwindow.ui
 

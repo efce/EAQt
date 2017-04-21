@@ -29,7 +29,7 @@
 #include "eaqtdata.h"
 #include "eaqtplotcursor.h"
 #include "eaqtmousehandler.h"
-#include "displaycurve.h"
+#include "displaycurveinfo.h"
 
 namespace Ui {
 class MainWindow;

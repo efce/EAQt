@@ -1,4 +1,4 @@
-#include "displaycurve.h"
+#include "displaycurveinfo.h"
 
 DisplayCurveInfo::DisplayCurveInfo(Curve* c)
 {
