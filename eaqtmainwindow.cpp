@@ -1057,32 +1057,21 @@ void EAQtMainWindow::PlotRectangleZoom()
 
 void EAQtMainWindow::showAboutSoftware()
 {
+    QFile f(":/README.md");
+    f.open(QIODevice::ReadOnly);
+    QTextStream stream(&f);
+    QString content = stream.readAll();
+    f.close();
+
+    QVBoxLayout* vbl = new QVBoxLayout();
     QDialog *dialog = new QDialog();
-    QLabel* st1 = new QLabel();
-    QLabel* st2 = new QLabel();
-    QLabel* st3 = new QLabel();
-    QLabel* st4 = new QLabel();
-    QLabel* st5 = new QLabel();
-    QLabel* st6 = new QLabel();
-    QLabel* st7 = new QLabel();
-    QLabel* st8 = new QLabel();
-    st1->setText(tr("Electrochemical analyzer software EAQt"));
-    st2->setText(tr("The program developed by Filip Ciepiela and Małgorzata Jakubowska"));
-    st3->setText(tr("Git version: %1").arg(GIT_CURRENT_SHA1));
-    st4->setText(tr("This program is licensed under GPLv3. It makes use of following software:"));
-    st5->setText(tr("- Qt API avaiable at http://www.qt.io"));
-    st6->setText(tr("- QCustomPlot avaiable at http://www.qcustomplot.com"));
-    st7->setText(tr("- Eigen avaiable at http://eigen.tuxfamily.org/"));
-    st8->setText(tr("- A portable stdint.h avaiable at http://reference.mrpt.org/"));
-    QVBoxLayout *vbl = new QVBoxLayout();
-    vbl->addWidget(st1);
-    vbl->addWidget(st2);
-    vbl->addWidget(st3);
-    vbl->addWidget(st4);
-    vbl->addWidget(st5);
-    vbl->addWidget(st6);
-    vbl->addWidget(st7);
-    vbl->addWidget(st8);
+    QLabel *l;
+    l = new QLabel();
+    //l->setTextFormat();
+    l->setText(content);
+    l->setFixedWidth(700);
+    l->setWordWrap(true);
+    vbl->addWidget(l);
     dialog->setLayout(vbl);
     dialog->exec();
 }
