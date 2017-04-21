@@ -3,10 +3,10 @@
 
 #include "curve.h"
 
-class DisplayCurve
+class DisplayCurveInfo
 {
 public:
-    DisplayCurve(Curve* c);
+    DisplayCurveInfo(Curve* c);
     QString getGeneralInfo();
     QString getCrangeInfo();
     QString getEl23Info();

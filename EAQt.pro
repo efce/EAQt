@@ -48,8 +48,8 @@ SOURCES += main.cpp\
     curvecollection.cpp \
     mdircollection.cpp \
     eaqtsignalprocessing.cpp \
-    displaycurve.cpp \
-    eaqtadvancedsmoothdialog.cpp
+    eaqtadvancedsmoothdialog.cpp \
+    displaycurveinfo.cpp
 
 HEADERS  += \
     Qcustomplot/qcustomplot.h \
