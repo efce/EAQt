@@ -3,11 +3,12 @@ This software is designed to be used with MTM-ANKO M161, and 8KCA electrochemica
 It uses its own file extenstion for handling the measurement result ".volt". The VOLT file
 format is described in seperate file (VOLT_File.md). However, it is able to load .vol file
 of EALab and EAGraph. This program makes use of following software:
-- Qt API (LGPLv3 license).
+- Qt API (https://www.qt.io) (LGPLv3 license).
 - QCustomPlot (http://www.qcustomplot.com) library for displaying plots (GPLv3 license).
-- Eigen library (http://eigen.tuxfamily.org/) for matrix operations and signals processing (revised BSD license).
+- Eigen library (http://eigen.tuxfamily.org) for matrix operations and signals processing (MPL 2.0 license).
 - kissFFT (https://sourceforge.net/projects/kissfft/) for FFT and iFFT (revised BSD license).
-- pstdin.h  for compatibilty on Windows (revised BSD license).
+- pstdin.h (http://mrpt.sourceforge.net/reference/0.6.5/pstdint_8h-source.html) for compatibilty on Windows (revised BSD license).
+- LiberationSans font (https://pagure.io/liberation-fonts/) (SIL OPEN FONT license).
 
 # Developement and compilation
 This program is developed with QtCreator for Qt >= 5.8. Every dependiency is included
