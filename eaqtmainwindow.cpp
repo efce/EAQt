@@ -1106,7 +1106,7 @@ void EAQtMainWindow::updateCurveInfo()
         _curveInfoData->setText("");
         return;
     }
-    DisplayCurve *dc = new DisplayCurve(c);
+    DisplayCurveInfo *dc = new DisplayCurveInfo(c);
     _curveInfoData->setText(dc->getHTMLInfo());
     delete dc;
 }

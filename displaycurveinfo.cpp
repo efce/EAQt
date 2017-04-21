@@ -1,11 +1,11 @@
 #include "displaycurve.h"
 
-DisplayCurve::DisplayCurve(Curve* c)
+DisplayCurveInfo::DisplayCurveInfo(Curve* c)
 {
     _curve = c;
 }
 
-QString DisplayCurve::getHTMLInfo()
+QString DisplayCurveInfo::getHTMLInfo()
 {
     //TODO for total revamp ...
     QString pte;
@@ -61,7 +61,7 @@ QString DisplayCurve::getHTMLInfo()
     return pte;
 }
 
-QString DisplayCurve::getGeneralInfo()
+QString DisplayCurveInfo::getGeneralInfo()
 {
     QString info;
     info =    getMespv() + ", "
@@ -71,22 +71,22 @@ QString DisplayCurve::getGeneralInfo()
     return info;
 }
 
-QString DisplayCurve::getCrangeInfo()
+QString DisplayCurveInfo::getCrangeInfo()
 {
     return getCranage();
 }
 
-QString DisplayCurve::getEl23Info()
+QString DisplayCurveInfo::getEl23Info()
 {
     return getEl32();
 }
 
-QString DisplayCurve::getElectrInfo()
+QString DisplayCurveInfo::getElectrInfo()
 {
     return getElectr();
 }
 
-inline QString DisplayCurve::getMethod()
+inline QString DisplayCurveInfo::getMethod()
 {
     QString method;
     switch ( _curve->Param(PARAM::method) ) {
@@ -110,7 +110,7 @@ inline QString DisplayCurve::getMethod()
     return method;
 }
 
-inline QString DisplayCurve::getSampl()
+inline QString DisplayCurveInfo::getSampl()
 {
     QString sampl;
     switch( _curve->Param(PARAM::sampl) ) {
@@ -125,7 +125,7 @@ inline QString DisplayCurve::getSampl()
     return sampl;
 }
 
-inline QString DisplayCurve::getEl32()
+inline QString DisplayCurveInfo::getEl32()
 {
     QString el23;
     switch ( _curve->Param(PARAM::el23) ) {
@@ -143,7 +143,7 @@ inline QString DisplayCurve::getEl32()
     return el23;
 }
 
-inline QString DisplayCurve::getMessc()
+inline QString DisplayCurveInfo::getMessc()
 {
     QString messc;
     switch ( _curve->Param(PARAM::messc) ) {
@@ -161,7 +161,7 @@ inline QString DisplayCurve::getMessc()
     return messc;
 }
 
-inline QString DisplayCurve::getCranage()
+inline QString DisplayCurveInfo::getCranage()
 {
     QString crange;
     if ( _curve->Param(PARAM::electr) < PARAM::electr_micro ) { // macroelectrode
@@ -209,7 +209,7 @@ inline QString DisplayCurve::getCranage()
     return crange;
 }
 
-inline QString DisplayCurve::getMespv()
+inline QString DisplayCurveInfo::getMespv()
 {
     QString mespv;
     switch (_curve->Param(PARAM::mespv) ) {
@@ -224,7 +224,7 @@ inline QString DisplayCurve::getMespv()
     return mespv;
 }
 
-inline QString DisplayCurve::getElectr()
+inline QString DisplayCurveInfo::getElectr()
 {
     QString electr;
     switch ( _curve->Param(PARAM::electr) ) {
