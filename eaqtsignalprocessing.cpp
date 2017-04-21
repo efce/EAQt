@@ -16,6 +16,7 @@
   *  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
   *******************************************************************************************************************/
 #include "./Eigen/Dense"
+#include "./kiss_fft130/kissfft.hh"
 #include "eaqtdata.h"
 #include "eaqtsignalprocessing.h"
 #include "eaqtcalibrationdialog.h"
@@ -77,6 +78,40 @@ void EAQtSignalProcessing::calibrationData(uint32_t a1, uint32_t a2)
     delete cd;
 }
 
+void EAQtSignalProcessing::kissFFT(double samplingFrequency,
+                                   const QVector<double> &values,
+                                   QVector<double> &frequency,
+                                   QVector<double> &freqReal,
+                                   QVector<double> &freqImg
+                                  )
+{
+    int N = values.size();
+
+    typedef double T;
+
+    typedef kissfft<T> FFT;
+    typedef std::complex<T> cpx_type;
+
+    FFT fft(N,false);
+    vector<cpx_type> inbuf(N);
+    vector<cpx_type> outbuf(N);
+    for (int k=0;k<N;++k) {
+        inbuf[k]= cpx_type((T)values[k],(T)0);
+    }
+
+    fft.transform( &inbuf[0] , &outbuf[0] );
+
+    freqImg.resize(N);
+    freqReal.resize(N);
+    frequency.resize(N);
+
+    for ( int i =0; i<N; ++i ) {
+        freqImg[i] = outbuf[i].imag();
+        freqReal[i] = outbuf[i].real();
+        frequency[i] = samplingFrequency*(double)i/(double)N;
+    }
+}
+
 void EAQtSignalProcessing::linearRegression(QVector<double> x, QVector<double> y, double* slope, double* intercept)
 {
     Eigen::MatrixXd A;
@@ -122,28 +157,6 @@ void EAQtSignalProcessing::polynomialFit(QVector<double> x, QVector<double> y, i
 
 void EAQtSignalProcessing::sgSmooth(QVector<double> *y, int order, int span)
 {
-    QVector<double> real;
-    QVector<double> img;
-    QVector<double> freq;
-    QVector<double> afteridft;
-    dft(1,*y,freq,real,img);
-    /*
-    for ( int i = 20; i<freq.size()/2; ++i ) {
-        real[i] = 0;
-        img[i] = 0;
-        real[real.size()-i+1] = 0;
-        img[img.size()-i+1] = 0;
-    }
-    */
-
-    idft(img,real,afteridft);
-
-    for ( int i=0; i<y->size(); ++i ) {
-        y->replace(i, afteridft[i]); // moc w dB
-    }
-
-    return;
-
     QVector<double>x(span);
     for ( int i =0; i<span; ++i ) {
         x[i]=i+1;

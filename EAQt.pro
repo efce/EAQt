@@ -379,7 +379,8 @@ HEADERS  += \
     Eigen/UmfPackSupport \
     pstdin/pstdin.h \
     displaycurve.h \
-    eaqtadvancedsmoothdialog.h
+    eaqtadvancedsmoothdialog.h \
+    kiss_fft130/kissfft.hh
 
 FORMS    += mainwindow.ui
 
@@ -394,7 +395,12 @@ DISTFILES += \
     README.md \
     fonts/LiberationSans-Regular.ttf \
     fonts/DejaVuSans.ttf \
-    fonts/SIL Open Font License.txt
+    fonts/SIL Open Font License.txt \
+    template-fft/LICENSE \
+    template-fft/url \
+    template-fft/README.md \
+    kiss_fft130/COPYING \
+    kiss_fft130/README
 
 RESOURCES += \
     ./eaqt_resource.qrc

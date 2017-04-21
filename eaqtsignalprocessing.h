@@ -31,6 +31,7 @@ public:
     void hideBackground();
     void calibrationData(uint32_t a1, uint32_t a2);
     void shiftCurve(double dY);
+    static void kissFFT(double samplingFrequency, const QVector<double>& values, QVector<double>& frequency, QVector<double>& freqReal, QVector<double>& freqImg);
     static void linearRegression(QVector<double> x, QVector<double> y, double* slope, double* intercept);
     static void correlation(QVector<double> x, QVector<double> y, double* correlationCoef);
     static void polynomialFit(QVector<double> x, QVector<double> y, int order, QVector<double>* coeff);

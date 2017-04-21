@@ -129,7 +129,8 @@ void EAQtAdvancedSmoothDialog::updateFrequencyPlot()
     QVector<double> img;
     QVector<double> real;
 
-    EAQtSignalProcessing::dft(samplingFreq,c->getYVector(),frequencies,real,img);
+    //EAQtSignalProcessing::dft(samplingFreq,c->getYVector(),frequencies,real,img);
+    EAQtSignalProcessing::kissFFT(samplingFreq,c->getYVector(),frequencies,real,img);
 
     QVector<double> power;
     power.resize(real.size());
