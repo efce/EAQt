@@ -17,9 +17,24 @@ licText="
   *  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
   *******************************************************************************************************************/"
 
+licTest=$(echo "${licText}" | head -n3 | tail -n1)
+
 for f in ./*.h; do
-	mv "${f}" "${f}.tmp"
-	echo "${licText}" > $f
-	cat "${f}.tmp" >> $f
-	rm "${f}.tmp"
+	tt=$(head -n3 "${f}" | tail -n1)
+	if [ "$tt" == "$licTest" ]; then
+		echo License is in  $f
+	else 
+		echo License is not in $f -- copying
+		mv "${f}" "${f}.tmp" && echo "${licText}" > $f && cat "${f}.tmp" >> $f && rm "${f}.tmp"
+	fi
+done
+
+for f in ./*.cpp; do
+	tt=$(head -n3 "${f}" | tail -n1)
+	if [ "$tt" == "$licTest" ]; then
+		echo License is in  $f
+	else 
+		echo License is not in $f -- copying
+		mv "${f}" "${f}.tmp" && echo "${licText}" > $f && cat "${f}.tmp" >> $f && rm "${f}.tmp"
+	fi
 done
