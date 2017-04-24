@@ -56,6 +56,8 @@ void EAQtSignalProcessing::shiftCurve(double dY)
 
 void EAQtSignalProcessing::calibrationData(uint32_t a1, uint32_t a2)
 {
+    static QVector<double> oldConc;
+    static QHash<QString,QString> oldSettings;
     QVector<double> calY;
     calY.resize(_curves->count());
     for ( uint i = 0; i<_curves->count(); ++i ) {
@@ -73,7 +75,7 @@ void EAQtSignalProcessing::calibrationData(uint32_t a1, uint32_t a2)
         }
         calY[i] = max - min;
     }
-    EAQtCalibrationDialog *cd = new EAQtCalibrationDialog(calY);
+    EAQtCalibrationDialog *cd = new EAQtCalibrationDialog(calY, &oldSettings, &oldConc);
     cd->exec();
     delete cd;
 }

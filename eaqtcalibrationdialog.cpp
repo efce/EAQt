@@ -19,12 +19,16 @@
 #include "eaqtdata.h"
 #include "eaqtsignalprocessing.h"
 
-EAQtCalibrationDialog::EAQtCalibrationDialog(QVector<double> calY)
+EAQtCalibrationDialog::EAQtCalibrationDialog(QVector<double> calY, QHash<QString,QString>* oldSettings, QVector<double>* oldConc)
 {
     if ( calY.size() != EAQtData::getInstance().getCurves()->count() ) {
         throw 1;
     }
+    if ( calY.size() != oldConc->size() ) {
+        oldConc->clear();
+    }
     _signals = calY;
+    _concentrations = oldConc;
     QString cdot = QChar(0x00B7);
     QString sup1 = QChar(0x207B);
     sup1.append(QChar(0x00B9));
@@ -42,10 +46,20 @@ EAQtCalibrationDialog::EAQtCalibrationDialog(QVector<double> calY)
     vConcs.push_back( multipliers{0.001,"µg" + cdot + "mL" + sup1} );
     vConcs.push_back( multipliers{0.000001,"ng" + cdot + "mL" + sup1} );
 
+    if ( oldSettings->size() != 4 ) {
+        oldSettings->reserve(4);
+        oldSettings->insert("avu",vVolumes[3].name);
+        oldSettings->insert("svu",vVolumes[2].name);
+        oldSettings->insert("stdcu", vConcs[1].name);
+        oldSettings->insert("samcu", vConcs[2].name);
+    }
+
+    _settings = oldSettings;
+
     _cAdditionVolumeUnits = new QComboBox();
     for ( int i=0; i<vVolumes.size(); ++i) {
         _cAdditionVolumeUnits->addItem(vVolumes[i].name);
-        if ( vVolumes[i].name.compare("µL") == 0 ) {
+        if ( vVolumes[i].name.compare(oldSettings->value("avu")) == 0 ) {
             _cAdditionVolumeUnits->setCurrentIndex(i);
         }
     }
@@ -53,7 +67,7 @@ EAQtCalibrationDialog::EAQtCalibrationDialog(QVector<double> calY)
     _cSampleVolumeUnits = new QComboBox();
     for ( int i=0; i<vVolumes.size(); ++i) {
         _cSampleVolumeUnits->addItem(vVolumes[i].name);
-        if ( vVolumes[i].name.compare("mL") == 0 ) {
+        if ( vVolumes[i].name.compare(oldSettings->value("scu")) == 0 ) {
             _cSampleVolumeUnits->setCurrentIndex(i);
         }
     }
@@ -61,7 +75,7 @@ EAQtCalibrationDialog::EAQtCalibrationDialog(QVector<double> calY)
     _cStandardConcUnits = new QComboBox();
     for ( int i=0; i<vConcs.size(); ++i) {
         _cStandardConcUnits->addItem(vConcs[i].name);
-        if ( vConcs[i].name.compare("mg"+ cdot+"L"+sup1) == 0 ) {
+        if ( vConcs[i].name.compare(oldSettings->value("stdcu")) == 0 ) {
             _cStandardConcUnits->setCurrentIndex(i);
         }
     }
@@ -69,7 +83,7 @@ EAQtCalibrationDialog::EAQtCalibrationDialog(QVector<double> calY)
     _cSampleConcUnits = new QComboBox();
     for ( int i=0; i<vConcs.size(); ++i) {
         _cSampleConcUnits->addItem(vConcs[i].name);
-        if ( vConcs[i].name.compare("µg" + cdot + "L" + sup1) == 0 ) {
+        if ( vConcs[i].name.compare(oldSettings->value("samcu")) == 0 ) {
             _cSampleConcUnits->setCurrentIndex(i);
         }
     }
@@ -151,7 +165,11 @@ EAQtCalibrationDialog::EAQtCalibrationDialog(QVector<double> calY)
         QLabel *l2 = new QLabel(EAQtData::getInstance().dispI(calY[i]) + " ");
         this->_leConcentrations[i] = new QLineEdit();
         this->_leConcentrations[i]->setValidator(new QDoubleValidator(0.0,999999.9,10));
-        this->_leConcentrations[i]->setText("0.0");
+        if ( oldConc->size() == calY.size() ) {
+            _leConcentrations[i]->setText(tr("%1").arg(oldConc->at(i),0,'f',8));
+        } else {
+            this->_leConcentrations[i]->setText("0.0");
+        }
         this->_leConcentrations[i]->setMaxLength(12);
         this->_leConcentrations[i]->setFixedWidth(QFontMetrics(_dialog->font()).width("9999999999"));
         _leConcentrations[i]->setStyleSheet(":enabled { background-color: white; color: black; } :disabled {background-color: light gray; color: black }" );
@@ -194,17 +212,17 @@ void EAQtCalibrationDialog::exec()
 
 void EAQtCalibrationDialog::drawCalibration()
 {
-    QVector<double> conc;
-    conc.resize(_leConcentrations.size());
-    for ( int i = 0; i<conc.size(); ++i) {
-        conc[i] = _leConcentrations[i]->text().toDouble();
+    _concentrations->resize(_leConcentrations.size());
+    int csize = _concentrations->size();
+    for ( int i = 0; i<csize; ++i) {
+        _concentrations->replace(i,_leConcentrations[i]->text().toDouble());
     }
     double correlationCoef;
-    EAQtSignalProcessing::correlation(conc,_signals, &correlationCoef);
+    EAQtSignalProcessing::correlation(*_concentrations,_signals, &correlationCoef);
     double slope, intercept;
-    EAQtSignalProcessing::linearRegression(conc,_signals,&slope,&intercept);
+    EAQtSignalProcessing::linearRegression(*_concentrations,_signals,&slope,&intercept);
     _calibrationPlot->setVisible(true);
-    _calibrationPoints->setData(conc,_signals,false);
+    _calibrationPoints->setData(*_concentrations,_signals,false);
     double x0 = -intercept/slope;
     _calibrationLine->point1->setCoords(1,slope*1+intercept);
     _calibrationLine->point2->setCoords(x0, 0);
@@ -302,6 +320,12 @@ void EAQtCalibrationDialog::toggleCalculateConc(bool status)
 
 void EAQtCalibrationDialog::recalculateConc()
 {
+    _settings->insert("avu",_cAdditionVolumeUnits->currentText());
+    _settings->insert("svu",_cSampleVolumeUnits->currentText());
+    _settings->insert("stdcu",_cStandardConcUnits->currentText());
+    _settings->insert("samcu",_cSampleConcUnits->currentText());
+    _concentrations->resize(_leConcentrations.size());
+
     if ( !_calculateConc->isChecked() ) {
         return;
     }
