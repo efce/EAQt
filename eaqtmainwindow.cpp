@@ -42,6 +42,8 @@ EAQtMainWindow::EAQtMainWindow(QWidget *parent) :
     new QShortcut( QKeySequence(Qt::Key_Escape), this, SLOT(userStopsMeasurement()));
     new QShortcut( QKeySequence(Qt::Key_F5), this, SLOT(userStartsMeasurement()));
     new QShortcut( QKeySequence(Qt::Key_Delete), this, SLOT(deleteActive()));
+    new QShortcut( QKeySequence(Qt::CTRL + Qt::Key_X), this, SLOT(deleteActive()));
+    new QShortcut( QKeySequence(Qt::CTRL + Qt::Key_A), this,SLOT(selectAll()));
 }
 
 void EAQtMainWindow::InitialUpdate(EAQtData& d)
@@ -206,28 +208,20 @@ void EAQtMainWindow::TableRegenerate()
     this->_tableCurveMain->blockSignals(true);
     this->_tableCurveMain->clear();
     _tableCurveMain->setRowCount(this->_pEAQtData->getCurves()->count());
+    _tableCurveMain->setColumnCount(2);
     Curve* curve;
     int i = 0;
     QFont striked = _tableCurveMain->font();
     striked.setStrikeOut(true);
     while ( (curve=this->_pEAQtData->getCurves()->get(i)) != NULL ) {
-        int charRight;
-        QString prepend;
-        if ( curve->FName().size() > 40 ) {
-            charRight = 37;
-            prepend = "...";
-        } else {
-            charRight = curve->FName().size();
-            prepend = "";
-        }
-        QTableWidgetItem* qtifile = new QTableWidgetItem(prepend + curve->FName().right(charRight));
+        QTableWidgetItem *qtifile = new QTableWidgetItem(curve->FName());
         qtifile->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
         qtifile->setSelected(false);
-        qtifile->setTextAlignment(Qt::AlignRight);
-        QTableWidgetItem* qtiname = new QTableWidgetItem(curve->CName());
+        qtifile->setTextAlignment(Qt::AlignRight + Qt::AlignCenter);
+        QTableWidgetItem *qtiname = new QTableWidgetItem(curve->CName());
         qtiname->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
         qtiname->setSelected(false);
-        qtiname->setTextAlignment(Qt::AlignRight);
+        qtiname->setTextAlignment(Qt::AlignRight + Qt::AlignCenter);
         if ( _pEAQtData->getXAxis() == XAXIS::nonaveraged ) {
             if ( curve->Param(PARAM::nonaveragedsampling) == 0 ) {
                 qtifile->setFont(striked);
@@ -329,6 +323,8 @@ void EAQtMainWindow::TableDrawSelection()
             ++i;
         }
     }
+    _tableCurveMain->resizeColumnToContents(0);
+    _tableCurveMain->horizontalScrollBar()->setValue(_tableCurveMain->horizontalScrollBar()->maximum());
     this->_tableCurveMain->blockSignals(false);
     _tableCurveMain->setUpdatesEnabled(true);
 }
@@ -374,12 +370,13 @@ QGridLayout* EAQtMainWindow::createLayout()
     _tableCurveMain->setRowCount(0);
     _tableCurveMain->horizontalHeader()->hide();
     _tableCurveMain->verticalHeader()->hide();
-    _tableCurveMain->setColumnWidth(0,150);
-    _tableCurveMain->setColumnWidth(1,90);
+    _tableCurveMain->setAutoScroll(false);
+    _tableCurveMain->setColumnWidth(1,100);
     _tableCurveMain->setFixedWidth(257);
     _tableCurveMain->setShowGrid(false);
     _tableCurveMain->setAlternatingRowColors(true);
     _tableCurveMain->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
+    _tableCurveMain->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
     _tableCurveMain->setSelectionBehavior(QAbstractItemView::SelectRows);
     QString tabelStyle = "QTableWidget::item:selected{ background-color: rgb(%1, %2, %3); color: white } ";
     tabelStyle = tabelStyle.arg(COLOR::active.red()).arg(COLOR::active.green()).arg(COLOR::active.blue());
@@ -774,6 +771,7 @@ void EAQtMainWindow::createActionsTopMenu()
     connect(_actSaveCurve, SIGNAL(triggered(bool)), this, SLOT(saveCurve()));
 
     this->_actLoadCurve = new QAction(tr("&Load curve"), this);
+    _actLoadCurve->setShortcut(QKeySequence::Open);
     _actLoadCurve->setStatusTip(tr("Load curve(s) from *.volt or *.vol files"));
     connect(_actLoadCurve, SIGNAL(triggered(bool)), this, SLOT(openFile()));
 
