@@ -101,6 +101,8 @@ namespace SELECT {
 namespace PARAM {
     enum : int32_t {
         PARAMNUM = 64,
+        VOL_CMAX = 50, // maximum number of curves in ".vol" file (not in .volt)
+        VOL_PMAX = 62, // number of parameters of each curve in ".vol" file
 
         method = 0, //measurment method
         method_scv = 0,

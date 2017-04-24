@@ -107,9 +107,13 @@ public:
     void setTestHammer(bool);
     void setTestCGMDEValve(bool);
 
-    int CurReadCurvePro(QFile &ff, QString pCName);
+    int CurReadCurvePro(QFile &ff, QString CName);
     bool MDirReadPro(QFile &ff);
     void CurReadFilePro(QString *FileName, int PosNr);
+    int CurReadCurveOld(QFile &ff, QString CName);
+    void ParamReadOld(QFile &ff);
+    bool MDirReadOld(QFile &ff);
+    void CurReadFileOld(QString *FileName, int PosNr);
     int safeAppend(QString pFileName, Curve* CurveToAppend);
     void exportToTXT(QString path);
     void exportToCSV(QString path);

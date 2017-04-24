@@ -25,7 +25,7 @@ EAQtOpenFileDialog::EAQtOpenFileDialog(EAQtData* pData) : QObject()
     this->_pData = pData;
     this->_fd = new QFileDialog();
     _fd->setOption( QFileDialog::DontUseNativeDialog, true );
-    _fd->setNameFilter("volt (*.volt)");
+    _fd->setNameFilter("volt (*.volt);;vol (*.vol)");
     QGridLayout* l = (QGridLayout*) _fd->layout();
     this->_curvesInFileList = new QListWidget();
     _curvesInFileList->setFixedWidth(QFontMetrics(_fd->font()).width("WWWWWWWWWWWWWWW"));
@@ -55,16 +55,32 @@ void EAQtOpenFileDialog::updateList(QString fileToShow)
     }
     this->_fileSelected = fileToShow;
     QFile *file = new QFile(fileToShow);
-    file->open(QIODevice::ReadOnly);
-    this->_pData->MDirReadPro(*file);
-    MDirCollection* vDir = this->_pData->getMDir();
-    file->close();
-    delete file;
-    delete fileinfo;
-    this->_curvesInFileList->clear();
-    if ( vDir->count() > 0 ) {
-        for (uint i = 0; i<vDir->count(); ++i) {
-            this->_curvesInFileList->addItem(vDir->get(i)->CName());
+    if ( !file->open(QIODevice::ReadOnly) ) {
+        return;
+    }
+    if ( file->fileName().right(4).compare(".vol",Qt::CaseInsensitive) == 0 ) {
+        this->_pData->MDirReadOld(*file);
+        MDirCollection* vDir = this->_pData->getMDir();
+        file->close();
+        delete file;
+        delete fileinfo;
+        this->_curvesInFileList->clear();
+        if ( vDir->count() > 0 ) {
+            for (uint i = 0; i<vDir->count(); ++i) {
+                this->_curvesInFileList->addItem(vDir->get(i)->CName());
+            }
+        }
+    } else {
+        this->_pData->MDirReadPro(*file);
+        MDirCollection* vDir = this->_pData->getMDir();
+        file->close();
+        delete file;
+        delete fileinfo;
+        this->_curvesInFileList->clear();
+        if ( vDir->count() > 0 ) {
+            for (uint i = 0; i<vDir->count(); ++i) {
+                this->_curvesInFileList->addItem(vDir->get(i)->CName());
+            }
         }
     }
 }

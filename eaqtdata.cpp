@@ -404,6 +404,30 @@ bool EAQtData::MDirReadPro(QFile &ff)
     return true;
 }
 
+bool EAQtData::MDirReadOld(QFile &ff)
+{
+    short iAux;
+    char cAux[10];
+
+    _fileIndex->clear();
+
+    bool hascurves = false;
+    ff.seek(0);
+    ff.read((char*)&iAux, sizeof(int16_t));
+    for(int i = 0;i < PARAM::VOL_CMAX;i++) // nie zmieniać cmax (słownik vol)
+    {
+        ff.read(cAux, 10);
+        ff.read((char*)&iAux, sizeof(int16_t));
+        uint32_t index = _fileIndex->addNew();
+        _fileIndex->get(index)->Off(iAux);
+        _fileIndex->get(index)->CName(QString(cAux));
+        if ( !_fileIndex->get(index)->CName().isEmpty() ) {
+            hascurves = true;
+        }
+    }
+    return hascurves;
+}
+
 MDirCollection* EAQtData::getMDir()
 {
     return _fileIndex;
@@ -420,8 +444,8 @@ void EAQtData::CurReadFilePro(QString *FileName, int PosNr)
 
     if( !ff.open(QIODevice::ReadOnly) ) {
         ff.close();
-        //this->ShowMessage("File is empty.");
-        return; // plik jest pusty
+        _pUI->showMessageBox(tr("File is empty"),tr("Error"));
+        return;
     }
 
     if ( !MDirReadPro(ff) )
@@ -431,6 +455,7 @@ void EAQtData::CurReadFilePro(QString *FileName, int PosNr)
         for (uint32_t i=0 ; i<_fileIndex->count() ; ++i) {
             if ( (j = CurReadCurvePro(ff, _fileIndex->get(i)->CName())) < 0) {
                 ff.close();
+                _pUI->showMessageBox(tr("Error while reading the file"), tr("Error"));
                 //AfxMessageBox(IDS_info4, MB_OK);
                 return;  // niepoprawna nazwa krzywej
             } else if ( this->Act() != SELECT::all ) {
@@ -439,7 +464,46 @@ void EAQtData::CurReadFilePro(QString *FileName, int PosNr)
         }
     } else if ( (j = CurReadCurvePro(ff, _fileIndex->get(PosNr-1)->CName())) < 0 ) {
         ff.close();
-        //AfxMessageBox(IDS_info4, MB_OK);
+        _pUI->showMessageBox(tr("Error while reading the file"), tr("Error"));
+        return;  // niepoprawna nazwa krzywej
+    } else if ( this->Act() != SELECT::all )  {
+        this->Act(j);
+    }
+
+    ff.close();
+    this->_pUI->updateAll();
+    this->_pUI->PlotRescaleAxes();
+}
+
+void EAQtData::CurReadFileOld(QString *FileName, int PosNr)
+{
+    QFile ff(*FileName);
+
+    int j;
+
+    if( !ff.open(QIODevice::ReadOnly) ) {
+        ff.close();
+        _pUI->showMessageBox(tr("File is empty"),tr("Error"));
+        return;
+    }
+
+    if ( !MDirReadOld(ff) )
+        return;
+
+    if (PosNr == 0) {
+        for (uint32_t i=0 ; i<_fileIndex->count() ; ++i) {
+            if ( (j = CurReadCurveOld(ff, _fileIndex->get(i)->CName())) < 0) {
+                ff.close();
+                _pUI->showMessageBox(tr("Error while reading the file"), tr("Error"));
+                //AfxMessageBox(IDS_info4, MB_OK);
+                return;  // niepoprawna nazwa krzywej
+            } else if ( this->Act() != SELECT::all ) {
+                this->Act(j);
+            }
+        }
+    } else if ( (j = CurReadCurveOld(ff, _fileIndex->get(PosNr-1)->CName())) < 0 ) {
+        ff.close();
+        _pUI->showMessageBox(tr("Error while reading the file"), tr("Error"));
         return;  // niepoprawna nazwa krzywej
     } else if ( this->Act() != SELECT::all )  {
         this->Act(j);
@@ -561,9 +625,137 @@ int EAQtData::CurReadCurvePro(QFile &ff, QString pCName)
     return(j1);
 }
 
+int EAQtData::CurReadCurveOld(QFile &ff, QString CName)
+{
+    //TODO: na razie bez wsparcia potencjału startowego LSV ! //
+    uint32_t j1, j2;
+    uint32_t cntr, i;
+    int16_t fparam, ix;
+    int startadr, work;
+    char buf[256];
+    double dwork;
+
+    MDirReadOld(ff);
+    if (_fileIndex->count() == 0)
+        return -1;
+
+    for (i=0 ; i<_fileIndex->count() ; i++) {
+        if (CName.compare(_fileIndex->get(i)->CName(),Qt::CaseSensitive) == 0) {
+            break;
+        }
+    }
+    if ( i == _fileIndex->count() ) {
+        return -2;
+    }
+
+    // i numer krzywej
+    ff.seek(_fileIndex->get(i)->Off());
+    for (i=0 ; i<_fileIndex->count() ; ++i) {
+        if (CName.compare(_fileIndex->get(i)->CName(),Qt::CaseSensitive) == 0) {
+            break;
+        }
+    }
+    if ( i == _fileIndex->count() ) {
+        return -2;
+    }
+
+    ParamReadOld(ff);
+
+    startadr = sizeof(int16_t) + PARAM::VOL_CMAX*12 + (PARAM::VOL_PMAX-2)*sizeof(int); // nie zmieniać cmax i pmax (słownik vol)
+    for (int16_t ii=0; ii<i; ii++) {
+        startadr += _fileIndex->get(ii)->Off();
+    }
+    ff.seek(startadr);
+
+    j1 = getCurves()->addNew(_mainParam[PARAM::ptnr]);
+    getCurves()->get(j1)->getPlot()->setLayer(_pUI->PlotGetLayers()->NonActive);
+
+    for (int ii=0 ; ii<(PARAM::VOL_PMAX-2) ; ii++) { // nie zmieniać pmax (słownik vol)
+        getCurves()->get(j1)->Param(ii, _mainParam[ii]);
+    }
+
+
+    ff.read((char*)&cntr, sizeof(int16_t)*1);			// numer krzywej
+    ff.read(buf, sizeof(char)*10);		// nazwa krzywej
+    getCurves()->get(j1)->CName(QString(buf));
+    ff.read(buf, sizeof(char)*50);	// komentarz
+    getCurves()->get(j1)->Comment(QString(buf));
+    ff.read((char*)&fparam, sizeof(int16_t)*1);		// liczba ró¿nych parametrów
+    if (fparam>0) {
+        for (i=0 ; i<fparam ; i++) {
+            ff.read((char*)&ix, sizeof(int16_t)*1); // numer parametru
+            ff.read((char*)&work,sizeof(int32_t)*1); // wartoœæ
+            getCurves()->get(j1)->Param(ix, work);
+        }
+    }
+
+    //getCurves->get(j1)->reinitializeCurveData(this->Curve(j1)->Param(ptnr));
+    getCurves()->get(j1)->Param(PARAM::multi, 0);
+    getCurves()->get(j1)->Param(PARAM::nonaveragedsampling, 0);
+    getCurves()->get(j1)->Param(PARAM::pro, 0);
+
+    // wyniki
+    uint32_t time = 0;
+    int timestep = 1;
+    if ( getCurves()->get(j1)->Param(PARAM::method) != PARAM::method_lsv ) {
+        timestep = 2*this->getCurves()->get(j1)->Param(PARAM::tp) + 2*this->getCurves()->get(j1)->Param(PARAM::tw);
+    } else {
+        timestep = MEASUREMENT::LSVtime[this->getCurves()->get(j1)->Param(PARAM::dEdt)];
+    }
+    double potential = this->getCurves()->get(j1)->Param(PARAM::Ep);
+    double estep = ( this->getCurves()->get(j1)->Param(PARAM::Ek) - this->getCurves()->get(j1)->Param(PARAM::Ep) ) / this->getCurves()->get(j1)->Param(PARAM::ptnr);
+    for (i=0 ; i<this->getCurves()->get(j1)->Param(PARAM::ptnr) ; i++) {
+        ff.read((char*)&dwork, sizeof(double));
+        this->getCurves()->get(j1)->addDataPoint(time, potential, dwork);
+        potential +=estep;
+        time += timestep;
+    }
+    this->setCurrentRange(getCurves()->get(j1)->Param(PARAM::crange),this->getCurves()->get(j1)->Param(PARAM::electr));
+    this->getCurves()->get(j1)->FName(ff.fileName());
+    if ( this->getCurves()->get(j1)->Param(PARAM::messc) >= PARAM::messc_cyclic ) { // krzywa cykliczna
+        j2 = this->getCurves()->addNew(_mainParam[PARAM::ptnr]);
+        this->getCurves()->get(j2)->CName(this->getCurves()->get(j1)->CName());
+        this->getCurves()->get(j2)->Comment(this->getCurves()->get(j1)->Comment());
+        this->getCurves()->get(j2)->FName(ff.fileName());
+
+        for (i=0 ; i<(PARAM::VOL_PMAX-2) ; i++) { // nie zmieniać pmax (słownik vol)
+            this->getCurves()->get(j2)->Param(i, this->getCurves()->get(j1)->Param(i));
+        }
+
+        double potential = this->getCurves()->get(j1)->Param(PARAM::Ep);
+        double time = timestep*2*this->getCurves()->get(j2)->Param(PARAM::ptnr);
+        for (i=0 ; i<this->getCurves()->get(j2)->Param(PARAM::ptnr) ; i++) {
+            ff.read((char*)&dwork, sizeof(double));
+            //this->vCurves[j2]->Result(i, dwork);
+            this->getCurves()->get(j2)->addDataPoint(time, potential, dwork);
+            potential +=estep;
+            time -= timestep;
+        }
+    }
+    if (this->getCurves()->get(j1)->Param(PARAM::messc) >= PARAM::messc_cyclic) {
+        return(2);
+    } else {
+        return(1);
+    }
+    return(1);
+}
+
+// --------------------------------------------------------
+// Czytaj g³ówne parametry pomiaru z pliku ff
+// --------------------------------------------------------
+void EAQtData::ParamReadOld(QFile &ff)
+{
+    ff.seek(sizeof(int16_t) + PARAM::VOL_CMAX*12); // nie zmieniać cmax i pmax (słownik vol)
+    ff.read((char*)_mainParam, sizeof(int32_t)*(PARAM::VOL_PMAX-2));
+}
+
 void EAQtData::openFile(QString *filePath, int nrPos)
 {
-    this->CurReadFilePro(filePath, nrPos);
+    if ( filePath->right(4).compare(".vol",Qt::CaseInsensitive) == 0 ) {
+        this->CurReadFileOld(filePath,nrPos);
+    } else {
+        this->CurReadFilePro(filePath, nrPos);
+    }
 }
 
 void EAQtData::deleteActiveCurveFromGraph()

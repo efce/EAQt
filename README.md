@@ -20,7 +20,7 @@ As for the moment no official binary form is available, as the software is under
 and possibly contains bugs, which may result in the loss of data.
 
 # License
-EAQt is licensed under GPLv3. Licensed are avaiable in About->Licenses, or with the source code.
+EAQt is licensed under GPLv3. Licenses are avaiable in About->Licenses, or with the source code.
 
 # Author
 This program is mainly developed by Filip Ciepiela <filip.ciepiela@agh.edu.pl> and Małgorzata Jakubowska <jakubows@agh.edu.pl>, however every commit is welcome.
