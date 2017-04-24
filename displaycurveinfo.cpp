@@ -41,12 +41,17 @@ QString DisplayCurveInfo::getHTMLInfo()
                 + "<h4>" + QApplication::translate("EAQtMainWindow","Measurement") + "</h4>"
                 + "<table><tr><th colspan=2>" + QApplication::translate("EAQtMainWindow","setup: ") + "</th></tr><tr><td colspan=2>" + getEl32() + "</td></tr>"
                 + "<tr><th colspan=2>" + QApplication::translate("EAQtMainWindow","type: ") + "</th></tr><tr><td colspan=2>" + getMespv() + ", "
-                                                                     + getMethod() + ", "
-                                                                     + (isLSV?","+getSampl():"")
+                                                                     + getMethod()
+                                                                     + (!isLSV?","+getSampl():"")
                                                                      + "</td></tr>"
                 + "<tr><th>" + QApplication::translate("EAQtMainWindow","electrode: ") +"</th><td>" + getElectr() + "</td></tr>"
                 + "<tr><th>" + QApplication::translate("EAQtMainWindow","cyclic: ") + "</th><td>" + getMessc() + "</td></tr>"
                 + "<tr><td>" + QApplication::translate("EAQtMainWindow","Ep: %1 mV</td><td>Ek: %2 mV").arg(_curve->Param(PARAM::Ep)).arg(_curve->Param(PARAM::Ek)) + "</td></tr>" );
+    if ( _curve->Param(PARAM::method) == PARAM::method_dpv || _curve->Param(PARAM::method) == PARAM::method_sqw ) {
+        pte.append(QApplication::translate("EAQtMainWindow","<tr><td colspan=2>dE: %1 mV</td></tr>").arg(_curve->Param(PARAM::dE)));
+    } else if (_curve->Param(PARAM::method) == PARAM::method_npv) {
+        pte.append(QApplication::translate("EAQtMainWindow","<tr><td colspan=2>E0: %1 mV</td></tr>").arg(_curve->Param(PARAM::E0)));
+    }
     if ( isLSV ) {
         pte.append("<tr><td colspan=2>dE/dt: ");
         double speed = MEASUREMENT::LSVstepE[_curve->Param(PARAM::dEdt)]/MEASUREMENT::LSVtime[_curve->Param(PARAM::dEdt)];
@@ -58,17 +63,17 @@ QString DisplayCurveInfo::getHTMLInfo()
             pte.append("%1 V/s").arg(speed,0,'f',0);
         pte.append("</td></tr>");
     } else {
-        pte.append(QString("<tr><td colspan=2>Estep: %1 mV</td></tr>").arg(_curve->Param(PARAM::Estep)));
-        pte.append(QString("<tr><td>ts: %1 ms</td><td>tw: %2 ms</td></tr>").arg(_curve->Param(PARAM::tp)).arg(_curve->Param(PARAM::tw)));
+        pte.append(QApplication::translate("EAQtMainWindow", "<tr><td colspan=2>Estep: %1 mV</td></tr>").arg(_curve->Param(PARAM::Estep)));
+        pte.append(QApplication::translate("EAQtMainWindow", "<tr><td>ts: %1 ms</td><td>tw: %2 ms</td></tr>").arg(_curve->Param(PARAM::tp)).arg(_curve->Param(PARAM::tw)));
     }
-    pte.append(QString("<tr><td colspan=2>td: %1 ms</td></tr>").arg(_curve->Param(PARAM::td)));
-    pte.append(QString("<tr><td colspan=2>current range: %1</td></tr>").arg(this->getCranage()));
+    pte.append(QApplication::translate("EAQtMainWindow","<tr><td colspan=2>td: %1 ms</td></tr>").arg(_curve->Param(PARAM::td)));
+    pte.append(QApplication::translate("EAQtMainWindow","<tr><td colspan=2>current range: %1</td></tr>").arg(this->getCranage()));
 
     if ( _curve->Param(PARAM::breaknr) > 0 ) {
         pte.append(QApplication::translate("EAQtMainWindow","<tr><th colspan=2>Breaks:</td></tr>"));
         pte.append(QApplication::translate("EAQtMainWindow","<tr><th>E [mV]</th><th>t [min:sec]</th></tr>"));
         for ( int i=0; i<_curve->Param(PARAM::breaknr); ++i ) {
-            pte.append(QString("<tr><td>%1</td><td>%2:%3</td></tr>").arg(_curve->Param(PARAM::breakE+i))
+            pte.append(QApplication::translate("EAQtMainWindow", "<tr><td>%1</td><td>%2:%3</td></tr>").arg(_curve->Param(PARAM::breakE+i))
                                                                     .arg(_curve->Param(PARAM::breakmin+i), 2, 10, QChar('0'))
                                                                     .arg(_curve->Param(PARAM::breaksec+i), 2, 10, QChar('0'))
                        );
