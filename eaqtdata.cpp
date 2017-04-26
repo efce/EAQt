@@ -1705,7 +1705,7 @@ void EAQtData::MesUpdate(uint32_t nNrOfMesCurve, uint32_t nPointFromDevice, bool
     }
 */
     int msecnow = _fromUpdate.elapsed();
-    if ( !freezUI || MEASUREMENT::displayDelay < msecnow ) {
+    if ( !freezUI && MEASUREMENT::displayDelay < msecnow ) {
         this->_pUI->MeasurementUpdate(nNrOfMesCurve, nPointFromDevice);
         _fromUpdate.restart();
     }
