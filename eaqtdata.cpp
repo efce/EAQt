@@ -785,7 +785,8 @@ void EAQtData::deleteAllCurvesFromGraph()
 {
     if ( this->_pUI->showQuestionBox(
              tr("Delete all curves?"),
-             tr("Are you sure")) ) {
+             tr("Are you sure"),
+             false) ) {
         this->getCurves()->clear();;
         this->Act(SELECT::none);
         this->_pUI->updateAll();
@@ -1809,7 +1810,8 @@ void EAQtData::MesAfter()
     if (this->_isMesSeries != true ) // to nie pomiar seryjny
     {
         if ( this->_pUI->showQuestionBox( tr("Save dialog"),
-                                                 tr("Do you want to save the result?")) ) {
+                                          tr("Do you want to save the result?"),
+                                          true ) ) {
             err = -1;
             while (err < 0)
             {

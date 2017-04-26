@@ -978,7 +978,8 @@ void EAQtMainWindow::exportCurve()
     QFileInfo fi(savePath);
     if ( fi.isFile() ) {
         if ( !showQuestionBox(tr("This will overwrite existing file. Are you sure ?")
-                             ,tr("Warning")) ) {
+                             ,tr("Warning")
+                             ,false) ) {
             return;
         }
     }
