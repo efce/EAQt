@@ -801,7 +801,7 @@ void EAQtData::ProcessPacketFromEA(char* packet, bool nextPacketReady)
     int16_t work;
     int32_t workl;
     int32_t DataLen;
-    int32_t twCounter;
+    static int32_t twCounter;
     static int32_t ActSampl1, ActSampl2;
     static int32_t previousPointNr, currentPointNr, previousCurveNr;
     int32_t currentCurveNr = 0;

@@ -52,7 +52,7 @@ public:
     virtual void disableButtonsOnly() = 0;
     virtual void disableButtonsAndTable() = 0;
     virtual void showMessageBox(QString text, QString title = "") = 0;
-    virtual bool showQuestionBox(QString text, QString title = "") = 0;
+    virtual bool showQuestionBox(QString text, QString title = "", bool defaultIsYes = true) = 0;
     virtual EAQtSaveFiledialog::SaveDetails DialogSaveInFile() = 0;
     virtual void changeStartButtonText(QString) = 0;
     virtual void setLowLabelText(int n, QString text) = 0;

@@ -146,6 +146,13 @@ public:
     QString getMesSeriesFile();
     void setMesSeriesFile(QString);
 
+   struct TestCGMDE {
+       int32_t GP;				// test CGMDE - czas otwarcia zaworu
+       int32_t BT;				// test CGMDE - czas przerwy
+       int32_t ElPot;			// test CGMDE - potecjał elektrody podczas testu
+       int32_t ChPot;			// test CGMDE - inf. czy przykładać potencjał
+   } _testCGMDE;
+
 /* ------------
  * VARIABLES
  ------------*/
@@ -216,14 +223,6 @@ private:
    int32_t _singleStepTime;		// time in ms of one point
    int32_t _ctnrSQW;    // Counter for Oysteryoung SQW measuremnet
    int32_t _trValue;    // Donno
-
-   struct TestCGMDE {
-       int32_t GP;				// test CGMDE - czas otwarcia zaworu
-       int32_t BT;				// test CGMDE - czas przerwy
-       int32_t ElPot;			// test CGMDE - potecjał elektrody podczas testu
-       int32_t ChPot;			// test CGMDE - inf. czy przykładać potencjał
-   } _testCGMDE;
-
 
    int32_t _wasLSVMeasurement;	// informacja, które parametry pomiaru były ostatnio przetwarzane
                                 // 0 - techniki impulsowe, 1 - LSV

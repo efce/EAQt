@@ -689,18 +689,21 @@ void EAQtMainWindow::showMessageBox(QString text, QString title)
     msgBox.exec();
 }
 
-bool EAQtMainWindow::showQuestionBox(QString text, QString title)
+bool EAQtMainWindow::showQuestionBox(QString text, QString title, bool defaultIsYes)
 {
-    QMessageBox mb;
-    QMessageBox::StandardButton reply;
-    reply = mb.question( this,
-                         text,
-                         title,
-                         QMessageBox::Yes|QMessageBox::No );
-
-    if (reply == QMessageBox::Yes) {
-        return true;
+    QMessageBox msgBox;
+    msgBox.setWindowTitle(title);
+    msgBox.setText(text);
+    msgBox.setStandardButtons(QMessageBox::Yes);
+    msgBox.addButton(QMessageBox::No);
+    if ( defaultIsYes ) {
+        msgBox.setDefaultButton(QMessageBox::Yes);
     } else {
+        msgBox.setDefaultButton(QMessageBox::No);
+    }
+    if(msgBox.exec() == QMessageBox::Yes){
+        return true;
+    }else {
         return false;
     }
 }

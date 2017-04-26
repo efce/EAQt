@@ -49,7 +49,8 @@ SOURCES += main.cpp\
     mdircollection.cpp \
     eaqtsignalprocessing.cpp \
     eaqtadvancedsmoothdialog.cpp \
-    displaycurveinfo.cpp
+    displaycurveinfo.cpp \
+    eaqttestcgmdedialog.cpp
 
 HEADERS  += \
     Qcustomplot/qcustomplot.h \
@@ -380,7 +381,8 @@ HEADERS  += \
     pstdin/pstdin.h \
     eaqtadvancedsmoothdialog.h \
     kiss_fft130/kissfft.hh \
-    displaycurveinfo.h
+    displaycurveinfo.h \
+    eaqttestcgmdedialog.h
 
 FORMS    += mainwindow.ui
 
