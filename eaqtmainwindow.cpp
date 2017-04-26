@@ -22,6 +22,7 @@
 #include "eaqtparamdialog.h"
 #include "eaqtaccessoriesdialog.h"
 #include "eaqtadvancedsmoothdialog.h"
+#include "eaqttestcgmdedialog.h"
 
 EAQtMainWindow::EAQtMainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -798,9 +799,9 @@ void EAQtMainWindow::createActionsTopMenu()
     this->_actAccessories->setStatusTip(tr("Setup accessories"));
     connect(_actAccessories, SIGNAL(triggered(bool)),this,SLOT(showAccessoriesDialog()));
 
-    this->_actCGMDEsettings = new QAction(tr("CGMDE settings"), this);
-    this->_actCGMDEsettings->setStatusTip(tr("Setup CMDE"));
-    connect(_actCGMDEsettings, SIGNAL(triggered(bool)),this,SLOT(showParamDialogLSV()));
+    this->_actCGMDEsettings = new QAction(tr("Test CGMDE"), this);
+    this->_actCGMDEsettings->setStatusTip(tr("Test CMDE"));
+    connect(_actCGMDEsettings, SIGNAL(triggered(bool)),this,SLOT(showTestCGMDE()));
 
     this->_actParamCopy = new QAction(tr("Copy settings"), this);
     this->_actParamCopy->setStatusTip(tr("Copy selected curve measurement parameteres"));
@@ -1141,4 +1142,11 @@ void EAQtMainWindow::showAdvancedSmooth()
     EAQtAdvancedSmoothDialog* adv = new EAQtAdvancedSmoothDialog(0,x);
     adv->exec();
     delete adv;
+}
+
+void EAQtMainWindow::showTestCGMDE()
+{
+    EAQtTestCGMDEDialog* tcd = new EAQtTestCGMDEDialog();
+    tcd->exec();
+    delete tcd;
 }

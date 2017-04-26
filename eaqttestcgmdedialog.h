@@ -12,6 +12,7 @@ class EAQtTestCGMDEDialog : public QObject
 
 public:
     EAQtTestCGMDEDialog();
+    void exec();
 
 private:
     QDialog *_dialog;

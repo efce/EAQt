@@ -153,6 +153,7 @@ private slots:
     void showParamDialogPV();
     void showParamDialogLSV();
     void showAccessoriesDialog();
+    void showTestCGMDE();
     void deleteActive();
     void deleteNonactive();
     void deleteAll();
