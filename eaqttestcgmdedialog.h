@@ -26,6 +26,13 @@ private:
     QLineEdit *_lePulseNum;
     QCheckBox *_cbUsePotential;
 
+    int _testsNum;
+    int _averageResult;
+    int _stardardDev;
+    int _pulseNum;
+
+    void resetResults();
+
 };
 
 #endif // EAQTTESTCGMDEDIALOG_H
