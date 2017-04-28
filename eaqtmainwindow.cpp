@@ -516,7 +516,7 @@ QGridLayout* EAQtMainWindow::createLayout()
     _curveInfoMain = new QWidget();
     _curveInfoData = new QTextEdit();
     _curveInfoData->setReadOnly(true);
-    _curveInfoData->setFixedWidth(200);
+    _curveInfoData->setFixedWidth(250);
     _curveInfoData->setContentsMargins(0,0,0,0);
     _curveInfoData->setVisible(false);
     _curveInfoData->setStyleSheet(".curveInfo { margin: 0px; padding: 0px; border: solid 1px black; }");

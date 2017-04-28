@@ -46,7 +46,7 @@ EAQtTestCGMDEDialog::EAQtTestCGMDEDialog() : QObject()
     QLabel *lTestsNum = new QLabel(tr("Number of tests: "));
     _leTestsNum = new QLineEdit();
     _leTestsNum->setReadOnly(true);
-    _leTestsNum->setText(values->);
+    //_leTestsNum->setText(values->);
     //_leTestsNum->setText());
 
     _dialog->setLayout(mainLay);

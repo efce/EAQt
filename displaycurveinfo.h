@@ -20,8 +20,10 @@
 
 #include "curve.h"
 
-class DisplayCurveInfo
+class DisplayCurveInfo : QObject
 {
+    Q_OBJECT
+
 public:
     DisplayCurveInfo(Curve* c);
     QString getGeneralInfo();

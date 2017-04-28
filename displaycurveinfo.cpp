@@ -17,7 +17,7 @@
   *******************************************************************************************************************/
 #include "displaycurveinfo.h"
 
-DisplayCurveInfo::DisplayCurveInfo(Curve* c)
+DisplayCurveInfo::DisplayCurveInfo(Curve* c) : QObject()
 {
     _curve = c;
 }
@@ -26,7 +26,78 @@ QString DisplayCurveInfo::getHTMLInfo()
 {
     //TODO for total revamp ...
     QString pte;
+    int width = 240;
+
     bool isLSV = (_curve->Param(PARAM::method) == PARAM::method_lsv);
+    QString sweepRate = "";
+    if ( isLSV ) {
+        double speed = MEASUREMENT::LSVstepE[_curve->Param(PARAM::dEdt)]/MEASUREMENT::LSVtime[_curve->Param(PARAM::dEdt)];
+        if ( speed < 0.025 )
+            sweepRate = tr("%1 mV/s").arg(speed*1000,0,'f',1);
+        else if ( speed < 1 )
+            sweepRate = tr("%1 mV/s").arg(speed*1000,0,'f',0);
+        else
+            sweepRate = tr("%1 V/s").arg(speed,0,'f',0);
+    }
+
+    QString breaks = "";
+    if ( _curve->Param(PARAM::breaknr) > 0 ) {
+        breaks=tr("<table><tr><th>E&nbsp;[mV]</th><th>t&nbsp;[min:sec]</th></tr>");
+        for ( int i = 0; i<_curve->Param(PARAM::breaknr) ; ++i ) {
+            breaks.append(tr("<tr><td>%1</td><td>%2:%3</td></tr>").arg(_curve->Param(PARAM::breakE+i))
+                                                                   .arg(_curve->Param(PARAM::breakmin+i), 2, 10, QChar('0'))
+                                                                   .arg(_curve->Param(PARAM::breaksec+i), 2, 10, QChar('0'))
+                       );
+        }
+    }
+
+    pte = tr("<b>General</b><hr>")
+          + tr("<table width=%1 style='border: 1px gray solid'>").arg(width)
+          + tr("<tr><th width=45 align=left>Date: </th><td>%1-%2-%3&nbsp;%4:%5:%6</td></tr>")
+                                                .arg(_curve->Param(PARAM::date_year))
+                                                .arg(_curve->Param(PARAM::date_month), 2, 10, QChar('0'))
+                                                .arg(_curve->Param(PARAM::date_day), 2, 10, QChar('0'))
+                                                .arg(_curve->Param(PARAM::date_hour), 2, 10, QChar('0'))
+                                                .arg(_curve->Param(PARAM::date_minutes), 2, 10, QChar('0'))
+                                                .arg(_curve->Param(PARAM::date_seconds), 2, 10, QChar('0'))
+          + tr("<tr><th width=45 align=left>Name: </th><td>%1</td></tr>").arg(_curve->CName())
+          + tr("<tr><th colspan=2>Comment:</th></tr>")
+          + tr("<tr><td colspan=2><div style='height:70px'>%1</div></td></tr>").arg(_curve->Comment())
+          + tr("<tr><th colspan=2>File:</th></tr>")
+          + tr("<tr><td colspan=2><div style='height:70px'>%1</div></td></tr>").arg(_curve->FName())
+          + tr("</table>")
+          + tr("<hr><b>Measurement</b><hr>")
+          + tr("<table>")
+          + tr("<tr><td colspan=2><b>Type:</b></td></tr>")
+          + tr("<tr><td colspan=2><div style='height:30px'>%1</div></td></tr>").arg( getMespv() +","+getMethod() + (!isLSV?","+getSampl():"") )
+          + tr("<tr><td width=%1><b>Ep:</b>&nbsp;%2&nbsp;mV</td><td width=%3><b>Ek:</b>&nbsp;%4&nbsp;mV</td></tr>")
+                                .arg(width/2)
+                                .arg(_curve->Param(PARAM::Ep))
+                                .arg(width/2)
+                                .arg(_curve->Param(PARAM::Ek))
+          + (isLSV?
+              tr("<tr><td colspan=2><b>Sweep rate:</b>&nbsp%1&nbsp;mV/s</td></tr>").arg(sweepRate)
+            : tr("<tr><td><b>Estep:</b>&nbsp;%1&nbsp;mV</td>").arg(_curve->Param(PARAM::Estep))
+                   + ((_curve->Param(PARAM::method)==PARAM::method_dpv)||(_curve->Param(PARAM::method)==PARAM::method_sqw)?
+                          tr("<td><b>dE:</b>&nbsp;%1&nbsp;mV</td></tr>").arg(_curve->Param(PARAM::dE))
+                        : ((_curve->Param(PARAM::method)==PARAM::method_npv)?
+                              tr("<td><b>E0:</b>&nbsp;%1&nbsp;mV<td></tr>")
+                            : tr("<td></td></tr>")
+                           )
+                      )
+                  + tr("<tr><td><b>tp:</b>&nbsp;%1&nbsp;ms</td><td><b>tw:</b>&nbsp;%2&nbsp;ms</td></tr>").arg(_curve->Param(PARAM::tp)).arg(_curve->Param(PARAM::tw))
+             )
+          + tr("<tr><td><b>td:</b>&nbsp;%1&nbsp;ms</td><td></td></tr>").arg(_curve->Param(PARAM::td))
+          + tr("<tr><td colspan=2><b>Multielectrode setup:</b>&nbsp;%1</td></tr>").arg(_curve->Param(PARAM::multi),8,2)
+          + (_curve->Param(PARAM::breaknr)>0?
+                 tr("<tr><td colspan=2><b>Breaks:</b></td></tr>")
+               + tr("<tr><td colspan=2>%1</td></tr>").arg(breaks)
+             : tr("")
+            );
+
+    return pte;
+
+
     pte.append( "<h4>" + QApplication::translate("EAQtMainWindow","General") + "</h4>"
                 + "<tr><th>" + QApplication::translate("EAQtMainWindow","name: ") + "</th></tr><tr><td>" + _curve->CName() + "</td></tr>"
                 + "<tr><th>" + QApplication::translate("EAQtMainWindow","comment: ") + "</th></tr><tr><td>" + _curve->Comment() + "</td></tr>"
