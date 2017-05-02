@@ -19,16 +19,18 @@
 #include "eaqtdata.h"
 #include "eaqtsignalprocessing.h"
 
-EAQtCalibrationDialog::EAQtCalibrationDialog(QVector<double> calY, QHash<QString,QString>* oldSettings, QVector<double>* oldConc)
+EAQtCalibrationDialog::EAQtCalibrationDialog(EAQtDataInterface::CalibrationData& cd, QHash<QString,QString>* oldSettings)
 {
-    if ( calY.size() != EAQtData::getInstance().getCurves()->count() ) {
+    if ( cd.yvalues.size() != cd.curves->count() ) {
         throw 1;
     }
-    if ( calY.size() != oldConc->size() ) {
-        oldConc->clear();
+
+    if ( cd.yvalues.size() != cd.xvalues.size() ) {
+        cd.xvalues.clear();
     }
-    _signals = calY;
-    _concentrations = oldConc;
+
+    _cd = &cd;
+
     QString cdot = QChar(0x00B7);
     QString sup1 = QChar(0x207B);
     sup1.append(QChar(0x00B9));
@@ -121,7 +123,6 @@ EAQtCalibrationDialog::EAQtCalibrationDialog(QVector<double> calY, QHash<QString
     _calculateBox->setLayout(calcLayout);
     connect(_calculateConc,SIGNAL(toggled(bool)),this,SLOT(toggleCalculateConc(bool)));
 
-
     QGridLayout *gl = new QGridLayout();
     QGridLayout *glm = new QGridLayout();
     QScrollArea *sa = new QScrollArea();
@@ -129,8 +130,8 @@ EAQtCalibrationDialog::EAQtCalibrationDialog(QVector<double> calY, QHash<QString
     sa->setFixedWidth(400);
     sa->setMaximumHeight(600);
     this->_dialog = new QDialog();
-    this->_leConcentrations.resize(calY.size());
-    this->_leAdditionVolumes.resize(calY.size());
+    this->_leConcentrations.resize(_cd->yvalues.size());
+    this->_leAdditionVolumes.resize(_cd->yvalues.size());
     uint i;
     QFont *fontLabel = new QFont(_dialog->font());
     fontLabel->setBold(true);
@@ -160,13 +161,13 @@ EAQtCalibrationDialog::EAQtCalibrationDialog(QVector<double> calY, QHash<QString
     gl->addWidget(lcurr,0,1,1,1);
     gl->addLayout(cb1,0,2,1,1);
     gl->addLayout(cb2,0,3,1,1);
-    for ( i = 0; i<calY.size(); ++i ) {
-        QLabel *l1 = new QLabel(EAQtData::getInstance().getCurves()->get(i)->CName() + ": ");
-        QLabel *l2 = new QLabel(EAQtData::getInstance().dispI(calY[i]) + " ");
+    for ( i = 0; i<_cd->yvalues.size(); ++i ) {
+        QLabel *l1 = new QLabel(_cd->curves->get(i)->CName() + ": ");
+        QLabel *l2 = new QLabel(EAQtData::getInstance().dispI(_cd->yvalues[i]) + " ");
         this->_leConcentrations[i] = new QLineEdit();
         this->_leConcentrations[i]->setValidator(new QDoubleValidator(0.0,999999.9,10));
-        if ( oldConc->size() == calY.size() ) {
-            _leConcentrations[i]->setText(tr("%1").arg(oldConc->at(i),0,'f',8));
+        if ( _cd->xvalues.size() == _cd->yvalues.size() ) {
+            _leConcentrations[i]->setText(tr("%1").arg(_cd->xvalues[i],0,'f',8));
         } else {
             this->_leConcentrations[i]->setText("0.0");
         }
@@ -212,19 +213,18 @@ void EAQtCalibrationDialog::exec()
 
 void EAQtCalibrationDialog::drawCalibration()
 {
-    _concentrations->resize(_leConcentrations.size());
-    int csize = _concentrations->size();
+    _cd->xvalues.resize(_leConcentrations.size());
+    int csize = _cd->xvalues.size();
     for ( int i = 0; i<csize; ++i) {
-        _concentrations->replace(i,_leConcentrations[i]->text().toDouble());
+        _cd->xvalues.replace(i,_leConcentrations[i]->text().toDouble());
     }
-    double correlationCoef;
-    EAQtSignalProcessing::correlation(*_concentrations,_signals, &correlationCoef);
-    double slope, intercept;
-    EAQtSignalProcessing::linearRegression(*_concentrations,_signals,&slope,&intercept);
+    EAQtSignalProcessing::correlation(_cd->xvalues,_cd->yvalues, &(_cd->calibrationCoeff));
+    EAQtSignalProcessing::linearRegression(_cd->xvalues,_cd->yvalues,&(_cd->slope),&(_cd->intercept));
+    _cd->wasFitted = true;
     _calibrationPlot->setVisible(true);
-    _calibrationPoints->setData(*_concentrations,_signals,false);
-    double x0 = -intercept/slope;
-    _calibrationLine->point1->setCoords(1,slope*1+intercept);
+    _calibrationPoints->setData(_cd->xvalues,_cd->yvalues,false);
+    double x0 = -_cd->intercept/_cd->slope;
+    _calibrationLine->point1->setCoords(1,_cd->slope*1+_cd->intercept);
     _calibrationLine->point2->setCoords(x0, 0);
     _calibrationPlot->rescaleAxes();
     if ( _calibrationPlot->xAxis->range().lower > x0 ) {
@@ -241,8 +241,8 @@ void EAQtCalibrationDialog::drawCalibration()
     _calibrationPlot->yAxis->setRangeLower(_calibrationPlot->yAxis->range().lower - (0.1*spany));
     _calibrationPlot->yAxis->setRangeUpper(_calibrationPlot->yAxis->range().upper + (0.1*spany));
     _calibrationPlot->replot();
-    _calibrationR->setText(tr("r = %1").arg(correlationCoef,0,'f',4));
-    _calibrationEq->setText(tr("i = %1c + %2").arg(slope,0,'f',4).arg(intercept,0,'f',4));
+    _calibrationR->setText(tr("r = %1").arg(_cd->calibrationCoeff,0,'f',4));
+    _calibrationEq->setText(tr("i = %1c + %2").arg(_cd->slope,0,'f',4).arg(_cd->intercept,0,'f',4));
     _calibrationEq->setVisible(true);
     _calibrationR->setVisible(true);
 }
@@ -324,7 +324,7 @@ void EAQtCalibrationDialog::recalculateConc()
     _settings->insert("svu",_cSampleVolumeUnits->currentText());
     _settings->insert("stdcu",_cStandardConcUnits->currentText());
     _settings->insert("samcu",_cSampleConcUnits->currentText());
-    _concentrations->resize(_leConcentrations.size());
+    _cd->xvalues.resize(_leConcentrations.size());
 
     if ( !_calculateConc->isChecked() ) {
         return;

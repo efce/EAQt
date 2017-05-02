@@ -56,10 +56,9 @@ void EAQtSignalProcessing::shiftCurve(double dY)
 
 void EAQtSignalProcessing::calibrationData(uint32_t a1, uint32_t a2)
 {
-    static QVector<double> oldConc;
+    static EAQtDataInterface::CalibrationData calibration = {false, 0, 0, 0, 0, 0, QVector<double>(0), QVector<double>(0), EAQtData::getInstance().getCurves() };
     static QHash<QString,QString> oldSettings;
-    QVector<double> calY;
-    calY.resize(_curves->count());
+    calibration.yvalues.resize(_curves->count());
     for ( uint i = 0; i<_curves->count(); ++i ) {
         Curve *curve;
         curve = _curves->get(i);
@@ -73,9 +72,9 @@ void EAQtSignalProcessing::calibrationData(uint32_t a1, uint32_t a2)
                 min = values[pos];
             }
         }
-        calY[i] = max - min;
+        calibration.yvalues[i] = max - min;
     }
-    EAQtCalibrationDialog *cd = new EAQtCalibrationDialog(calY, &oldSettings, &oldConc);
+    EAQtCalibrationDialog *cd = new EAQtCalibrationDialog(calibration, &oldSettings);
     cd->exec();
     delete cd;
 }
@@ -141,7 +140,7 @@ void EAQtSignalProcessing::kissIFFT(const QVector<double> &freqImg,
     }
 }
 
-void EAQtSignalProcessing::linearRegression(QVector<double> x, QVector<double> y, double* slope, double* intercept)
+void EAQtSignalProcessing::linearRegression(const QVector<double>& x, const QVector<double>& y, double* slope, double* intercept)
 {
     Eigen::MatrixXd A;
     A.resize(x.size(),2);
@@ -159,7 +158,7 @@ void EAQtSignalProcessing::linearRegression(QVector<double> x, QVector<double> y
     *slope = leastSquare(1);
 }
 
-void EAQtSignalProcessing::polynomialFit(QVector<double> x, QVector<double> y, int order, QVector<double> *coeff)
+void EAQtSignalProcessing::polynomialFit(const QVector<double>& x, const QVector<double>& y, int order, QVector<double> *coeff)
 {
     Eigen::MatrixXd A(x.size(), order+1);
     Eigen::VectorXd y_mapped = Eigen::VectorXd::Map(&y.front(), y.size());
@@ -285,7 +284,7 @@ void EAQtSignalProcessing::hideBackground()
     _graph->setVisible(false);
 }
 
-void EAQtSignalProcessing::correlation(QVector<double> x, QVector<double> y, double* correlationCoef)
+void EAQtSignalProcessing::correlation(const QVector<double>& x, const QVector<double>& y, double* correlationCoef)
 {
     double w;
     w = 0;

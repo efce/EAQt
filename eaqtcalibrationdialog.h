@@ -26,7 +26,7 @@ class EAQtCalibrationDialog : QObject
     Q_OBJECT
 
 public:
-    EAQtCalibrationDialog(QVector<double>, QHash<QString,QString>* oldSettings, QVector<double>*);
+    EAQtCalibrationDialog(EAQtDataInterface::CalibrationData& cd, QHash<QString,QString>* oldSettings);
     void exec();
 
 private:
@@ -37,7 +37,7 @@ private:
     QVector<multipliers> vVolumes;
     QVector<multipliers> vConcs;
     QHash<QString,QString>* _settings;
-    QVector<double>* _concentrations;
+    EAQtDataInterface::CalibrationData* _cd;
 
     QDialog *_dialog;
     QCheckBox *_calculateConc;

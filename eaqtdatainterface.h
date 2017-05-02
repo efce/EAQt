@@ -59,6 +59,18 @@ public:
     virtual QString getMesSeriesFile() = 0;
     virtual void setMesSeriesFile(QString) = 0;
     virtual EAQtSignalProcessing* getProcessing() = 0;
+
+    struct CalibrationData {
+        bool wasFitted;
+        double slope;
+        double slopeStdDev;
+        double intercept;
+        double interceptStdDev;
+        double calibrationCoeff;
+        QVector<double> xvalues;
+        QVector<double> yvalues;
+        CurveCollection *curves;
+    };
 };
 
 #endif // EAQTDATAINTERFACE_H
