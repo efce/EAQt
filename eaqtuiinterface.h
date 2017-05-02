@@ -57,6 +57,7 @@ public:
     virtual void changeStartButtonText(QString) = 0;
     virtual void setLowLabelText(int n, QString text) = 0;
     virtual void setStatusText(QString str) = 0;
+    virtual void updateCGMDETest() = 0;
 };
 
 #endif // GRAPHINTERFACE_H

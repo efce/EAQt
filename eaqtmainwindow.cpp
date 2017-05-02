@@ -22,7 +22,6 @@
 #include "eaqtparamdialog.h"
 #include "eaqtaccessoriesdialog.h"
 #include "eaqtadvancedsmoothdialog.h"
-#include "eaqttestcgmdedialog.h"
 
 EAQtMainWindow::EAQtMainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -53,6 +52,8 @@ void EAQtMainWindow::InitialUpdate(EAQtData& d)
     this->_mouseHandler = new EAQtMouseHandler(this->_pEAQtData, this);
     this->_mouseHandler->ChangeMouseMode(EAQtMouseHandler::mm_normal, EAQtMouseHandler::uf_none);
     connect(_pEAQtData,SIGNAL(actChanged(int)),_mouseHandler,SLOT(onSelectionChanged()));
+
+    _dialogTestCGMDE = new EAQtTestCGMDEDialog();
 }
 
 void EAQtMainWindow::PlotConnectMouse()
@@ -84,6 +85,7 @@ EAQtMainWindow::~EAQtMainWindow()
     delete ui;
     delete _timeOfMouse;
     delete _mouseHandler;
+    delete _dialogTestCGMDE;
 }
 
 void EAQtMainWindow::handleMouseDoubleClick(QMouseEvent *me)
@@ -1146,7 +1148,10 @@ void EAQtMainWindow::showAdvancedSmooth()
 
 void EAQtMainWindow::showTestCGMDE()
 {
-    EAQtTestCGMDEDialog* tcd = new EAQtTestCGMDEDialog();
-    tcd->exec();
-    delete tcd;
+    _dialogTestCGMDE->show();
+}
+
+void EAQtMainWindow::updateCGMDETest()
+{
+    _dialogTestCGMDE->updateTest();
 }

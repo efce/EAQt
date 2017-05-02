@@ -341,6 +341,16 @@ void EAQtData::ParamLSV(int32_t num, int32_t val)
     _LSVParam[num] = val;
 }
 
+int32_t EAQtData::ParamMain(int32_t num)
+{
+    return _mainParam[num];
+}
+
+void EAQtData::ParamMain(int32_t num, int32_t val)
+{
+    _mainParam[num] = val;
+}
+
 int EAQtData::Act()
 {
     return _act;
@@ -986,6 +996,11 @@ void EAQtData::ProcessPacketFromEA(char* packet, bool nextPacketReady)
     default:
         break;
     }
+}
+
+bool EAQtData::isMeasurement()
+{
+    return (bool)_measurementGo;
 }
 
 // --------------------------------------------------------------------------------------
@@ -1785,6 +1800,7 @@ void EAQtData::updateTestCGMDE()
 {
     //TODO dialog window
     //_pUI->setLowLabelText(0,tr("CGMDE test: %1").arg(_testCGMDE));
+    _pUI->updateCGMDETest();
     return;
 }
 
@@ -2423,6 +2439,61 @@ void EAQtData::sendAccessories()
     this->_network->sendToEA((char*)&_TxBuf[0]);
 
     return;
+}
+
+int32_t EAQtData::getCGMDETestNum()
+{
+    return _CGMDETestNr;
+}
+
+void EAQtData::sendTestCGMDEStop()
+{
+    _TxBuf[0] = PC2EA_RECORODS::recordCGMDEstop;
+    _network->sendToEA((char*)&_TxBuf[0]);
+    _measurementGo = 0;
+}
+
+bool EAQtData::sendTestCGMDE()
+{
+    if ( !this->_network->connectToEA() ) {
+        return false;
+    }
+
+    int16_t work;
+
+    int32_t TxN = 0;
+
+    _TxBuf[TxN++] = PC2EA_RECORODS::recordCGMDE;
+
+    work = ParamPV(PARAM::kp);
+    _TxBuf[TxN++] = (unsigned char)(work & 0x00ff);
+    _TxBuf[TxN++] = (unsigned char)((work >> 8) & 0x00ff);
+
+    work = ParamPV(PARAM::kpt);
+    _TxBuf[TxN++] = (unsigned char)(work & 0x00ff);
+    _TxBuf[TxN++] = (unsigned char)((work >> 8) & 0x00ff);
+
+    //generation pulse
+    _TxBuf[TxN++] = (unsigned char)(_testCGMDE.GP & 0x00ff);
+    _TxBuf[TxN++] = (unsigned char)((_testCGMDE.GP >> 8) & 0x00ff);
+
+    //break time
+    _TxBuf[TxN++] = (unsigned char)(_testCGMDE.BT & 0x00ff);
+    _TxBuf[TxN++] = (unsigned char)((_testCGMDE.BT >> 8) & 0x00ff);
+
+    //potential
+    _TxBuf[TxN++] = (unsigned char)(_testCGMDE.ElPot & 0x00ff);
+    _TxBuf[TxN++] = (unsigned char)((_testCGMDE.ElPot >> 8) & 0x00ff);
+
+    //potential info   0 - no potential
+    _TxBuf[TxN++] = (unsigned char)(_testCGMDE.ChPot & 0x00ff);
+
+    if ( _network->sendToEA((char*)&_TxBuf[0])>0 ) {
+        _measurementGo = 1;
+        return true;
+    } else {
+        return false;
+    }
 }
 
 void EAQtData::setTestHammer(bool v)

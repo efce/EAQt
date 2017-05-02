@@ -30,6 +30,7 @@
 #include "eaqtplotcursor.h"
 #include "eaqtmousehandler.h"
 #include "displaycurveinfo.h"
+#include "eaqttestcgmdedialog.h"
 
 namespace Ui {
 class MainWindow;
@@ -68,6 +69,7 @@ public:
      void disableButtonsOnly();
      void disableButtonsAndTable();
      void enableAll();
+     void updateCGMDETest();
 public slots:
      void PlotRescaleAxes();
 
@@ -98,6 +100,7 @@ private:
     QTextEdit *_curveInfoData;
     EAQtUIInterface::PlotLayer _plotLayers;
     QString _PathInUse;
+    EAQtTestCGMDEDialog *_dialogTestCGMDE;
 
 private:
     void createActionsTopMenu();

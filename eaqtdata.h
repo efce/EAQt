@@ -100,12 +100,16 @@ public:
     int32_t ParamPV(int32_t);
     void ParamLSV(int32_t, int32_t);
     int32_t ParamLSV(int32_t);
+    void ParamMain(int32_t, int32_t);
+    int32_t ParamMain(int32_t);
+
     int32_t isGasOn();
     void setGas(int32_t);
     int32_t isMixerOn();
     void setMixer(int32_t);
     void setTestHammer(bool);
     void setTestCGMDEValve(bool);
+    int32_t getCGMDETestNum();
 
     int CurReadCurvePro(QFile &ff, QString CName);
     bool MDirReadPro(QFile &ff);
@@ -124,9 +128,12 @@ public:
     void MesAfter();
     void MesUpdate(uint32_t, uint32_t, bool);
     int  MesSaveAll(QString UserCName, QString UserFName, QString UserComment);
+    bool isMeasurement();
 
     void ProcessPacketFromEA(char* packet, bool nextPacketReady);
     void sendAccessories();
+    bool sendTestCGMDE();
+    void sendTestCGMDEStop();
     void NetworkError(QString);
     void updateELSV();
     void updatePause();
