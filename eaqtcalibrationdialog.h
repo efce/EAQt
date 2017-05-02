@@ -26,7 +26,7 @@ class EAQtCalibrationDialog : QObject
     Q_OBJECT
 
 public:
-    EAQtCalibrationDialog(EAQtDataInterface::CalibrationData& cd, QHash<QString,QString>* oldSettings);
+    EAQtCalibrationDialog(EAQtDataInterface::CalibrationData *cd, QHash<QString,QString>* oldSettings);
     void exec();
 
 private:

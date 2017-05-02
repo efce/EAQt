@@ -19,17 +19,17 @@
 #include "eaqtdata.h"
 #include "eaqtsignalprocessing.h"
 
-EAQtCalibrationDialog::EAQtCalibrationDialog(EAQtDataInterface::CalibrationData& cd, QHash<QString,QString>* oldSettings)
+EAQtCalibrationDialog::EAQtCalibrationDialog(EAQtDataInterface::CalibrationData *cd, QHash<QString,QString>* oldSettings)
 {
-    if ( cd.yvalues.size() != cd.curves->count() ) {
+    if ( cd->yvalues.size() != cd->curves->count() ) {
         throw 1;
     }
 
-    if ( cd.yvalues.size() != cd.xvalues.size() ) {
-        cd.xvalues.clear();
+    if ( cd->yvalues.size() != cd->xvalues.size() ) {
+        cd->xvalues.clear();
     }
 
-    _cd = &cd;
+    _cd = cd;
 
     QString cdot = QChar(0x00B7);
     QString sup1 = QChar(0x207B);

@@ -74,7 +74,7 @@ void EAQtSignalProcessing::calibrationData(uint32_t a1, uint32_t a2)
         }
         calibration.yvalues[i] = max - min;
     }
-    EAQtCalibrationDialog *cd = new EAQtCalibrationDialog(calibration, &oldSettings);
+    EAQtCalibrationDialog *cd = new EAQtCalibrationDialog(&calibration, &oldSettings);
     cd->exec();
     delete cd;
 }
