@@ -72,6 +72,8 @@ void EAQtData::initialUpdate(EAQtUIInterface *wp)
     _fileIndex = new MDirCollection();
     _network = new EAQtNetwork(this);
     _processing = new EAQtSignalProcessing(_curves, wp->PlotAddGraph());
+
+    __calibration = {false, 0, 0, 0, 0, 0, QVector<double>(0), QVector<double>(0), _curves };
 }
 
 EAQtData::~EAQtData()

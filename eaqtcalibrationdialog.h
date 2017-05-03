@@ -62,6 +62,7 @@ private:
     QCPGraph* _calibrationPoints;
     QLineEdit *_calibrationEq;
     QLineEdit *_calibrationR;
+    QLineEdit *_additionResult;
     QWidget *preparePlot();
 
 private slots:

@@ -70,7 +70,7 @@ public:
         QVector<double> xvalues;
         QVector<double> yvalues;
         CurveCollection *curves;
-    };
+    } __calibration;
 };
 
 #endif // EAQTDATAINTERFACE_H

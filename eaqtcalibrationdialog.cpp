@@ -213,13 +213,15 @@ void EAQtCalibrationDialog::exec()
 
 void EAQtCalibrationDialog::drawCalibration()
 {
+    //TODO: confidence intervals instead of standard deviation
+    double x0StdDev = -1;
     _cd->xvalues.resize(_leConcentrations.size());
     int csize = _cd->xvalues.size();
     for ( int i = 0; i<csize; ++i) {
         _cd->xvalues.replace(i,_leConcentrations[i]->text().toDouble());
     }
     EAQtSignalProcessing::correlation(_cd->xvalues,_cd->yvalues, &(_cd->calibrationCoeff));
-    EAQtSignalProcessing::linearRegression(_cd->xvalues,_cd->yvalues,&(_cd->slope),&(_cd->intercept));
+    EAQtSignalProcessing::linearRegression(_cd->xvalues,_cd->yvalues,&(_cd->slope),&(_cd->slopeStdDev),&(_cd->intercept),&(_cd->interceptStdDev),&(x0StdDev));
     _cd->wasFitted = true;
     _calibrationPlot->setVisible(true);
     _calibrationPoints->setData(_cd->xvalues,_cd->yvalues,false);
@@ -242,7 +244,13 @@ void EAQtCalibrationDialog::drawCalibration()
     _calibrationPlot->yAxis->setRangeUpper(_calibrationPlot->yAxis->range().upper + (0.1*spany));
     _calibrationPlot->replot();
     _calibrationR->setText(tr("r = %1").arg(_cd->calibrationCoeff,0,'f',4));
-    _calibrationEq->setText(tr("i = %1c + %2").arg(_cd->slope,0,'f',4).arg(_cd->intercept,0,'f',4));
+    _calibrationEq->setText(tr("i = %1(±%2)c + %3(±%4)").arg(_cd->slope,0,'f',4).arg(_cd->slopeStdDev,0,'f',4).arg(_cd->intercept,0,'f',4).arg(_cd->interceptStdDev,0,'f',4));
+    if ( x0StdDev > -1 ) {
+        _additionResult->setText(tr("result: (%1±%2) %3").arg(-x0,0,'f',4).arg(x0StdDev,0,'f',4).arg(_cSampleConcUnits->currentText()));
+        _additionResult->setVisible(true);
+    } else {
+        _additionResult->setVisible(false);
+    }
     _calibrationEq->setVisible(true);
     _calibrationR->setVisible(true);
 }
@@ -259,6 +267,10 @@ QWidget* EAQtCalibrationDialog::preparePlot()
     _calibrationR->setVisible(false);
     _calibrationR->setReadOnly(true);
     _calibrationR->setAlignment(Qt::AlignCenter);
+    _additionResult = new QLineEdit();
+    _additionResult->setVisible(false);
+    _additionResult->setReadOnly(true);
+    _additionResult->setAlignment(Qt::AlignCenter);
     _calibrationPlot = new QCustomPlot();
     _calibrationPlot->xAxis->setLabel(tr("c"));
     _calibrationPlot->yAxis->setLabel(tr("i / µA"));
@@ -277,9 +289,10 @@ QWidget* EAQtCalibrationDialog::preparePlot()
     _calibrationPoints->setLineStyle(QCPGraph::lsNone);
     _calibrationPoints->setScatterStyle(QCPScatterStyle::ssCircle);
     _calibrationPoints->setPen(QPen(COLOR::regular));
-    gl->addWidget(_calibrationPlot,0,0,1,2);
+    gl->addWidget(_calibrationPlot,0,0,1,1);
     gl->addWidget(_calibrationEq,1,0,1,1);
-    gl->addWidget(_calibrationR,1,1,1,1);
+    gl->addWidget(_calibrationR,2,0,1,1);
+    gl->addWidget(_additionResult,3,0,1,1);
     w->setLayout(gl);
     return w;
 }

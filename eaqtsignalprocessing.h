@@ -33,7 +33,7 @@ public:
     void shiftCurve(double dY);
     static void kissFFT(double samplingFrequency, const QVector<double>& values, QVector<double>& frequency, QVector<double>& freqReal, QVector<double>& freqImg);
     static void kissIFFT(const QVector<double>& freqImg, const QVector<double>& freqReal, QVector<double>& values);
-    static void linearRegression(const QVector<double>& x, const QVector<double>& y, double* slope, double* intercept);
+    static void linearRegression(const QVector<double>& x, const QVector<double>& y, double* slope, double* slopeStdDev, double* intercept, double* interceptStdDev, double *x0StdDev);
     static void correlation(const QVector<double>& x, const QVector<double>& y, double* correlationCoef);
     static void polynomialFit(const QVector<double>& x, const QVector<double>& y, int order, QVector<double>* coeff);
     static void dft(double samplingFrequency, const QVector<double>& values, QVector<double>& frequency, QVector<double>& freqReal, QVector<double>& freqImg);

@@ -56,9 +56,9 @@ void EAQtSignalProcessing::shiftCurve(double dY)
 
 void EAQtSignalProcessing::calibrationData(uint32_t a1, uint32_t a2)
 {
-    static EAQtDataInterface::CalibrationData calibration = {false, 0, 0, 0, 0, 0, QVector<double>(0), QVector<double>(0), EAQtData::getInstance().getCurves() };
+    EAQtDataInterface::CalibrationData *calibration = &(EAQtData::getInstance().__calibration);
     static QHash<QString,QString> oldSettings;
-    calibration.yvalues.resize(_curves->count());
+    calibration->yvalues.resize(_curves->count());
     for ( uint i = 0; i<_curves->count(); ++i ) {
         Curve *curve;
         curve = _curves->get(i);
@@ -72,9 +72,9 @@ void EAQtSignalProcessing::calibrationData(uint32_t a1, uint32_t a2)
                 min = values[pos];
             }
         }
-        calibration.yvalues[i] = max - min;
+        calibration->yvalues[i] = max - min;
     }
-    EAQtCalibrationDialog *cd = new EAQtCalibrationDialog(&calibration, &oldSettings);
+    EAQtCalibrationDialog *cd = new EAQtCalibrationDialog(calibration, &oldSettings);
     cd->exec();
     delete cd;
 }
@@ -140,22 +140,56 @@ void EAQtSignalProcessing::kissIFFT(const QVector<double> &freqImg,
     }
 }
 
-void EAQtSignalProcessing::linearRegression(const QVector<double>& x, const QVector<double>& y, double* slope, double* intercept)
+void EAQtSignalProcessing::linearRegression(const QVector<double>& x, const QVector<double>& y, double* slope, double* slopeStdDev, double* intercept, double* interceptStdDev, double* x0StdDev)
 {
     Eigen::MatrixXd A;
-    A.resize(x.size(),2);
-    for ( int i = 0; i<x.size(); ++i ) {
+    uint n = y.size();
+    uint i = 0;
+    A.resize(n,2);
+    for ( int i = 0; i<n; ++i ) {
         A(i,0) = 1;
         A(i,1) = x[i];
     }
     Eigen::VectorXd b;
-    b.resize(y.size());
-    for ( int i = 0; i<y.size();++i ) {
+    b.resize(n);
+    for ( int i = 0; i<n;++i ) {
         b(i) = y[i];
     }
     Eigen::VectorXd leastSquare = A.jacobiSvd(Eigen::ComputeThinU | Eigen::ComputeThinV).solve(b);
     *intercept = leastSquare(0);
     *slope = leastSquare(1);
+
+    double sxx = 0, sr = 0, sumx2 = 0, xavg = 0, yavg = 0;
+    QVector<double> ypred(n);
+    for ( i = 0; i< n; ++i) {
+        ypred[i] = (*slope)*x[i] + (*intercept);
+        xavg += x[i];
+        yavg += y[i];
+        sumx2 += pow(x[i],2);
+    }
+    xavg/=n;
+    yavg/=n;
+    for ( i =0; i<n;++i ) {
+        sr += pow(((y[i]-ypred[i])/(n-2)),2);
+        sxx += pow((x[i]-xavg),2);
+    }
+    sr = sqrt(sr);
+
+    *interceptStdDev = sqrt(pow(sr,2)/sxx);
+    *slopeStdDev = sqrt((pow(sr,2)*sumx2)/(n*sxx));
+
+    int y0Index = -1;
+    for ( i=0; i<n;++i) {
+        if ( x[i]==0.0 ) {
+            y0Index = i;
+            break;
+        }
+    }
+    if ( y0Index > -1 ) {
+        *x0StdDev = sr/(*intercept) * sqrt( 1+(1/n)+(pow(y[y0Index]-yavg,2)/(pow((*intercept),2)*sumx2)) );
+    } else {
+        *x0StdDev = -1;
+    }
 }
 
 void EAQtSignalProcessing::polynomialFit(const QVector<double>& x, const QVector<double>& y, int order, QVector<double> *coeff)
