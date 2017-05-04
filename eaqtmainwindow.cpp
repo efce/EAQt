@@ -822,10 +822,6 @@ void EAQtMainWindow::createActionsTopMenu()
     this->_actDataCursor->setStatusTip(tr("Show data cursor"));
     connect(_actDataCursor, SIGNAL(triggered(bool)),this,SLOT(showDataCursor()));
 
-    this->_actCalibration = new QAction(tr("Calibration"), this);
-    this->_actCalibration->setStatusTip(tr("Perform calibration / standard addition analysis"));
-    connect(_actCalibration, SIGNAL(triggered(bool)),this,SLOT(startCalibration()));
-
     this->_actBkgCorrection = new QAction(tr("Fit background"), this);
     this->_actBkgCorrection->setStatusTip(tr("Perform background correction"));
     connect(_actBkgCorrection, SIGNAL(triggered(bool)),this,SLOT(startBackgroundCorrection()));
@@ -845,6 +841,27 @@ void EAQtMainWindow::createActionsTopMenu()
     this->_actAdvSmooth = new QAction(tr("Advanced smoothing"), this);
     this->_actAdvSmooth->setStatusTip(tr("Advanced smoothing dialog"));
     connect(_actAdvSmooth, SIGNAL(triggered(bool)),this,SLOT(showAdvancedSmooth()));
+
+    //TODO: tutaj wszystko
+    this->_actCalibrationData = new QAction(tr("Select range"), this);
+    this->_actCalibrationData->setStatusTip(tr("Perform calibration / standard addition analysis"));
+    connect(_actCalibrationData, SIGNAL(triggered(bool)),this,SLOT(startCalibration()));
+
+    this->_actCalibrationClear = new QAction(tr("Clear"), this);
+    this->_actCalibrationClear->setStatusTip(tr("Clear calibration data"));
+    connect(_actCalibrationClear, SIGNAL(triggered(bool)),this,SLOT(clearCalibration()));
+
+    this->_actCalibrationLoad = new QAction(tr("Load"), this);
+    this->_actCalibrationLoad->setStatusTip(tr("Load calibration"));
+    connect(_actCalibrationLoad, SIGNAL(triggered(bool)),this,SLOT(loadCalibration()));
+
+    this->_actCalibrationShow = new QAction(tr("Show"), this);
+    this->_actCalibrationShow->setStatusTip(tr("Show current calibration"));
+    connect(_actCalibrationShow, SIGNAL(triggered(bool)),this,SLOT(showCalibration()));
+
+    this->_actCalibrationResult = new QAction(tr("Result"), this);
+    this->_actCalibrationResult->setStatusTip(tr("Calculate result"));
+    connect(_actCalibrationResult, SIGNAL(triggered(bool)),this,SLOT(resultCalibration()));
 
     _actSoftware = new QAction(tr("Software"),this);
     _actSoftware->setStatusTip(tr("Show information about the software"));
@@ -878,12 +895,19 @@ void EAQtMainWindow::createMenusTopMenu()
 
     _menuAnalysis = this->menuBar()->addMenu(tr("&Analysis"));
     _menuAnalysis->addAction(this->_actDataCursor);
-    _menuAnalysis->addAction(this->_actCalibration);
+    _menuAnalysis->addAction(this->_actCalibrationData);
     _menuAnalysis->addAction(this->_actBkgCorrection);
     _menuAnalysis->addAction(this->_actRelativeValues);
     _menuAnalysis->addAction(this->_actMoveUpDown);
     _menuAnalysis->addAction(this->_actSmooth);
     _menuAnalysis->addAction(this->_actAdvSmooth);
+
+    _menuCalibration = this->menuBar()->addMenu(tr("Calibration"));
+    _menuCalibration->addAction(this->_actCalibrationData);
+    _menuCalibration->addAction(this->_actCalibrationShow);
+    _menuCalibration->addAction(this->_actCalibrationClear);
+    _menuCalibration->addAction(this->_actCalibrationLoad);
+    _menuCalibration->addAction(this->_actCalibrationResult);
 
     _menuAbout = this->menuBar()->addMenu(tr("About"));
     _menuAbout->addAction(_actSoftware);
@@ -1047,6 +1071,39 @@ void EAQtMainWindow::startCalibration()
         this->_mouseHandler->ChangeMouseMode(EAQtMouseHandler::mm_place2markers,
                                          EAQtMouseHandler::uf_calibration_data);
     }
+}
+
+void EAQtMainWindow::loadCalibration()
+{
+    QFileDialog *fd;
+    fd = new QFileDialog(0,tr("Load calibration"),"",tr("eacal (.eacal)"));
+    //fd->setModal(true);
+    QString fileName = fd->getOpenFileName();
+    if ( !fileName.isEmpty() ) {
+        QFile f(fileName);
+        if ( !f.open(QIODevice::ReadOnly) ) {
+            return;
+        }
+        bool a;
+        EAQtDataInterface::readCalibration(&f,_pEAQtData->_calibration, a);
+        f.close();
+    }
+}
+
+void EAQtMainWindow::clearCalibration()
+{
+    EAQtDataInterface::CalibrationData cd = {false, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, QVector<double>(0),QString(), QVector<double>(0), QString(), _pEAQtData->getCurves() };
+    _pEAQtData->_calibration = cd;
+}
+
+void EAQtMainWindow::showCalibration()
+{
+    //TODO:
+}
+
+void EAQtMainWindow::resultCalibration()
+{
+    //TODO:
 }
 
 void EAQtMainWindow::PlotReplot()

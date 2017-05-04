@@ -73,7 +73,7 @@ void EAQtData::initialUpdate(EAQtUIInterface *wp)
     _network = new EAQtNetwork(this);
     _processing = new EAQtSignalProcessing(_curves, wp->PlotAddGraph());
 
-    __calibration = {false, 0, 0, 0, 0, 0, QVector<double>(0), QVector<double>(0), _curves };
+    _calibration = {false, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, QVector<double>(0),QString(), QVector<double>(0), QString(), _curves };
 }
 
 EAQtData::~EAQtData()

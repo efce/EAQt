@@ -34,8 +34,8 @@ private:
         double multiply;
         QString name;
     };
-    QVector<multipliers> vVolumes;
-    QVector<multipliers> vConcs;
+    QVector<multipliers> _vVolumes;
+    QVector<multipliers> _vConcs;
     QHash<QString,QString>* _settings;
     EAQtDataInterface::CalibrationData* _cd;
 
@@ -65,11 +65,16 @@ private:
     QLineEdit *_additionResult;
     QWidget *preparePlot();
 
+    QFileDialog *_fd; // Save calibration as
+    QCheckBox *_cbIncludeCurves; // Checkbox in save as dialog
+
 private slots:
     void drawCalibration();
     void beforeReplot();
     void recalculateConc();
     void toggleCalculateConc(bool);
+    void saveCalibration();
+    void saveInFile(QString);
 };
 
 #endif // EAQTCALIBRATIONDIALOG_H

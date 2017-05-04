@@ -135,12 +135,17 @@ private:
     QAction *_actExportCurve;
 
     QAction *_actDataCursor;
-    QAction *_actCalibration;
     QAction *_actBkgCorrection;
     QAction *_actRelativeValues;
     QAction *_actMoveUpDown;
     QAction *_actSmooth;
     QAction *_actAdvSmooth;
+
+    QAction *_actCalibrationData;
+    QAction *_actCalibrationLoad;
+    QAction *_actCalibrationResult;
+    QAction *_actCalibrationShow;
+    QAction *_actCalibrationClear;
 
     QAction *_actSoftware;
     QAction *_actReportIssues;
@@ -169,12 +174,16 @@ private slots:
     void paramLoad();
     void exportCurve();
     void showDataCursor();
-    void startCalibration();
     void startBackgroundCorrection();
     void startRelativeValues();
     void startMoveUpDown();
     void startSmooth();
     void showAdvancedSmooth();
+    void startCalibration();
+    void loadCalibration();
+    void clearCalibration();
+    void showCalibration();
+    void resultCalibration();
     void showAboutSoftware();
     void showGithubIssues();
     void showGithub();

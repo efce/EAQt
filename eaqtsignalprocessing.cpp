@@ -56,7 +56,7 @@ void EAQtSignalProcessing::shiftCurve(double dY)
 
 void EAQtSignalProcessing::calibrationData(uint32_t a1, uint32_t a2)
 {
-    EAQtDataInterface::CalibrationData *calibration = &(EAQtData::getInstance().__calibration);
+    EAQtDataInterface::CalibrationData *calibration = &(EAQtData::getInstance()._calibration);
     static QHash<QString,QString> oldSettings;
     calibration->yvalues.resize(_curves->count());
     for ( uint i = 0; i<_curves->count(); ++i ) {

@@ -35,57 +35,57 @@ EAQtCalibrationDialog::EAQtCalibrationDialog(EAQtDataInterface::CalibrationData 
     QString sup1 = QChar(0x207B);
     sup1.append(QChar(0x00B9));
 
-    vVolumes.push_back(multipliers{ 1.0, "L"});
-    vVolumes.push_back(multipliers{ 0.01, "cL"});
-    vVolumes.push_back(multipliers{ 0.001, "mL"});
-    vVolumes.push_back(multipliers{ 0.000001, "µL"});
+    _vVolumes.push_back(multipliers{ 1.0, "L"});
+    _vVolumes.push_back(multipliers{ 0.01, "cL"});
+    _vVolumes.push_back(multipliers{ 0.001, "mL"});
+    _vVolumes.push_back(multipliers{ 0.000001, "µL"});
 
-    vConcs.push_back( multipliers{1.0,"g" + cdot + "L" + sup1} );
-    vConcs.push_back( multipliers{0.001,"mg" + cdot+ "L" + sup1} );
-    vConcs.push_back( multipliers{0.000001,"µg" + cdot + "L" + sup1} );
-    vConcs.push_back( multipliers{0.000000001,"ng" + cdot + "L" + sup1} );
-    vConcs.push_back( multipliers{1.0,"mg" + cdot + "mL" + sup1} );
-    vConcs.push_back( multipliers{0.001,"µg" + cdot + "mL" + sup1} );
-    vConcs.push_back( multipliers{0.000001,"ng" + cdot + "mL" + sup1} );
+    _vConcs.push_back( multipliers{1.0,"g" + cdot + "L" + sup1} );
+    _vConcs.push_back( multipliers{0.001,"mg" + cdot+ "L" + sup1} );
+    _vConcs.push_back( multipliers{0.000001,"µg" + cdot + "L" + sup1} );
+    _vConcs.push_back( multipliers{0.000000001,"ng" + cdot + "L" + sup1} );
+    _vConcs.push_back( multipliers{1.0,"mg" + cdot + "mL" + sup1} );
+    _vConcs.push_back( multipliers{0.001,"µg" + cdot + "mL" + sup1} );
+    _vConcs.push_back( multipliers{0.000001,"ng" + cdot + "mL" + sup1} );
 
     if ( oldSettings->size() != 4 ) {
         oldSettings->reserve(4);
-        oldSettings->insert("avu",vVolumes[3].name);
-        oldSettings->insert("svu",vVolumes[2].name);
-        oldSettings->insert("stdcu", vConcs[1].name);
-        oldSettings->insert("samcu", vConcs[2].name);
+        oldSettings->insert("avu",_vVolumes[3].name);
+        oldSettings->insert("svu",_vVolumes[2].name);
+        oldSettings->insert("stdcu", _vConcs[1].name);
+        oldSettings->insert("samcu", _vConcs[2].name);
     }
 
     _settings = oldSettings;
 
     _cAdditionVolumeUnits = new QComboBox();
-    for ( int i=0; i<vVolumes.size(); ++i) {
-        _cAdditionVolumeUnits->addItem(vVolumes[i].name);
-        if ( vVolumes[i].name.compare(oldSettings->value("avu")) == 0 ) {
+    for ( int i=0; i<_vVolumes.size(); ++i) {
+        _cAdditionVolumeUnits->addItem(_vVolumes[i].name);
+        if ( _vVolumes[i].name.compare(oldSettings->value("avu")) == 0 ) {
             _cAdditionVolumeUnits->setCurrentIndex(i);
         }
     }
 
     _cSampleVolumeUnits = new QComboBox();
-    for ( int i=0; i<vVolumes.size(); ++i) {
-        _cSampleVolumeUnits->addItem(vVolumes[i].name);
-        if ( vVolumes[i].name.compare(oldSettings->value("scu")) == 0 ) {
+    for ( int i=0; i<_vVolumes.size(); ++i) {
+        _cSampleVolumeUnits->addItem(_vVolumes[i].name);
+        if ( _vVolumes[i].name.compare(oldSettings->value("scu")) == 0 ) {
             _cSampleVolumeUnits->setCurrentIndex(i);
         }
     }
 
     _cStandardConcUnits = new QComboBox();
-    for ( int i=0; i<vConcs.size(); ++i) {
-        _cStandardConcUnits->addItem(vConcs[i].name);
-        if ( vConcs[i].name.compare(oldSettings->value("stdcu")) == 0 ) {
+    for ( int i=0; i<_vConcs.size(); ++i) {
+        _cStandardConcUnits->addItem(_vConcs[i].name);
+        if ( _vConcs[i].name.compare(oldSettings->value("stdcu")) == 0 ) {
             _cStandardConcUnits->setCurrentIndex(i);
         }
     }
 
     _cSampleConcUnits = new QComboBox();
-    for ( int i=0; i<vConcs.size(); ++i) {
-        _cSampleConcUnits->addItem(vConcs[i].name);
-        if ( vConcs[i].name.compare(oldSettings->value("samcu")) == 0 ) {
+    for ( int i=0; i<_vConcs.size(); ++i) {
+        _cSampleConcUnits->addItem(_vConcs[i].name);
+        if ( _vConcs[i].name.compare(oldSettings->value("samcu")) == 0 ) {
             _cSampleConcUnits->setCurrentIndex(i);
         }
     }
@@ -220,7 +220,7 @@ void EAQtCalibrationDialog::drawCalibration()
     for ( int i = 0; i<csize; ++i) {
         _cd->xvalues.replace(i,_leConcentrations[i]->text().toDouble());
     }
-    EAQtSignalProcessing::correlation(_cd->xvalues,_cd->yvalues, &(_cd->calibrationCoeff));
+    EAQtSignalProcessing::correlation(_cd->xvalues,_cd->yvalues, &(_cd->correlationCoef));
     EAQtSignalProcessing::linearRegression(_cd->xvalues,_cd->yvalues,&(_cd->slope),&(_cd->slopeStdDev),&(_cd->intercept),&(_cd->interceptStdDev),&(x0StdDev));
     _cd->wasFitted = true;
     _calibrationPlot->setVisible(true);
@@ -243,7 +243,7 @@ void EAQtCalibrationDialog::drawCalibration()
     _calibrationPlot->yAxis->setRangeLower(_calibrationPlot->yAxis->range().lower - (0.1*spany));
     _calibrationPlot->yAxis->setRangeUpper(_calibrationPlot->yAxis->range().upper + (0.1*spany));
     _calibrationPlot->replot();
-    _calibrationR->setText(tr("r = %1").arg(_cd->calibrationCoeff,0,'f',4));
+    _calibrationR->setText(tr("r = %1").arg(_cd->correlationCoef,0,'f',4));
     _calibrationEq->setText(tr("i = %1(±%2)c + %3(±%4)").arg(_cd->slope,0,'f',4).arg(_cd->slopeStdDev,0,'f',4).arg(_cd->intercept,0,'f',4).arg(_cd->interceptStdDev,0,'f',4));
     if ( x0StdDev > -1 ) {
         _additionResult->setText(tr("result: (%1±%2) %3").arg(-x0,0,'f',4).arg(x0StdDev,0,'f',4).arg(_cSampleConcUnits->currentText()));
@@ -289,10 +289,13 @@ QWidget* EAQtCalibrationDialog::preparePlot()
     _calibrationPoints->setLineStyle(QCPGraph::lsNone);
     _calibrationPoints->setScatterStyle(QCPScatterStyle::ssCircle);
     _calibrationPoints->setPen(QPen(COLOR::regular));
+    QPushButton* butSave = new QPushButton(tr("Save calibration"));
+    connect(butSave,SIGNAL(clicked(bool)),this,SLOT(saveCalibration()));
     gl->addWidget(_calibrationPlot,0,0,1,1);
     gl->addWidget(_calibrationEq,1,0,1,1);
     gl->addWidget(_calibrationR,2,0,1,1);
     gl->addWidget(_additionResult,3,0,1,1);
+    gl->addWidget(butSave,4,0,1,1);
     w->setLayout(gl);
     return w;
 }
@@ -344,33 +347,33 @@ void EAQtCalibrationDialog::recalculateConc()
     }
     int i;
     double volSample = _leSampleVolume->text().toDouble();
-    for ( i=0; i<vVolumes.size(); ++i ) {
-        if ( _cSampleVolumeUnits->currentText().compare(vVolumes[i].name) == 0 ) {
-            volSample *= vVolumes[i].multiply;
+    for ( i=0; i<_vVolumes.size(); ++i ) {
+        if ( _cSampleVolumeUnits->currentText().compare(_vVolumes[i].name) == 0 ) {
+            volSample *= _vVolumes[i].multiply;
             break;
         }
     }
 
     double stdConc = _leStandardConc->text().toDouble();
-    for ( i=0; i<vConcs.size(); ++i ) {
-        if ( _cStandardConcUnits->currentText().compare(vConcs[i].name) == 0 ) {
-            stdConc *= vConcs[i].multiply;
+    for ( i=0; i<_vConcs.size(); ++i ) {
+        if ( _cStandardConcUnits->currentText().compare(_vConcs[i].name) == 0 ) {
+            stdConc *= _vConcs[i].multiply;
             break;
         }
     }
 
     double multiplyConc = 1;
-    for ( i=0; i<vConcs.size(); ++i ) {
-        if ( _cSampleConcUnits->currentText().compare(vConcs[i].name) == 0 ) {
-            multiplyConc = vConcs[i].multiply;
+    for ( i=0; i<_vConcs.size(); ++i ) {
+        if ( _cSampleConcUnits->currentText().compare(_vConcs[i].name) == 0 ) {
+            multiplyConc = _vConcs[i].multiply;
             break;
         }
     }
 
     double multiplyVol = 1;
-    for ( i=0; i<vVolumes.size(); ++i ) {
-        if ( _cAdditionVolumeUnits->currentText().compare(vVolumes[i].name) == 0 ) {
-            multiplyVol *= vVolumes[i].multiply;
+    for ( i=0; i<_vVolumes.size(); ++i ) {
+        if ( _cAdditionVolumeUnits->currentText().compare(_vVolumes[i].name) == 0 ) {
+            multiplyVol *= _vVolumes[i].multiply;
             break;
         }
     }
@@ -386,4 +389,30 @@ void EAQtCalibrationDialog::recalculateConc()
         }
         _leConcentrations[i]->setText(tr("%1").arg(work/multiplyConc, 0, 'f', 6));
     }
+}
+
+void EAQtCalibrationDialog::saveCalibration()
+{
+    _fd = new QFileDialog(0,tr("Save Calibration"),"",tr(".eacal (.eacal)"));
+    _fd->setModal(true);
+    _fd->setOption(QFileDialog::DontUseNativeDialog);
+    QGridLayout* l = (QGridLayout*) _fd->layout();
+    _cbIncludeCurves = new QCheckBox(tr("Include original curves"));
+    _cbIncludeCurves->setChecked(false);
+    l->addWidget(_cbIncludeCurves,4,0,1,4);
+    connect(_fd,SIGNAL(fileSelected(QString)),this,SLOT(saveInFile(QString)));
+    _fd->exec();
+}
+
+void EAQtCalibrationDialog::saveInFile(QString fileName)
+{
+    if ( fileName.right(6).compare(".eacal",Qt::CaseInsensitive) != 0 ) {
+        fileName.append(".eacal");
+    }
+    QFile f(fileName);
+    if ( !f.open(QIODevice::ReadWrite) ) {
+        //TODO: error
+    }
+    bool includeCurves = _cbIncludeCurves->isChecked();
+    EAQtDataInterface::saveCalibration(&f,*_cd,includeCurves);
 }
