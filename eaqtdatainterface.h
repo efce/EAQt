@@ -90,7 +90,7 @@ public:
         file->write((char*)cd.yvalues.data(),sizeof(double)*n);
         l = cd.yUnits.toLatin1().size();
         file->write((char*)&l,sizeof(int));
-        file->write((char*)cd.xUnits.toLatin1());
+        file->write(cd.xUnits.toLatin1());
         wrt = (char)cd.wasFitted;
         file->write((char*)&wrt,1);
         file->write((char*)&(cd.slope),sizeof(double));

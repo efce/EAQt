@@ -282,12 +282,31 @@ void EAQtSignalProcessing::generateBackground(uint32_t r1, uint32_t r2, uint32_t
     r2 = rs[1];
     r3 = rs[2];
     r4 = rs[3];
+#if QT_VERSION < 0x050500
+    bx = c->getXVector().mid(r1,(r2-r1));
+    QVector<double> tmp = c->getXVector().mid(r3,(r4-r3));
+    int newsize = bx.size()+tmp.size();
+    int oldsize = bx.size();
+    bx.resize(newsize);
+    for ( int i=oldsize; i<newsize;++i) {
+        bx[i] = tmp[i-oldsize];
+    }
 
+    by=c->getYVector().mid(r1,(r2-r1));
+    tmp = c->getYVector().mid(r3,(r4-r3));
+    newsize = by.size()+tmp.size();
+    oldsize = by.size();
+    by.resize(newsize);
+    for ( int i=oldsize; i<newsize;++i) {
+        by[i] = tmp[i-oldsize];
+    }
+#else
     bx = c->getXVector().mid(r1,(r2-r1));
     bx.append(c->getXVector().mid(r3,(r4-r3)));
 
     by=c->getYVector().mid(r1,(r2-r1));
     by.append(c->getYVector().mid(r3,(r4-r3)));
+#endif
 
     QVector<double> coeff;
     polynomialFit(bx,by,3,&coeff);
