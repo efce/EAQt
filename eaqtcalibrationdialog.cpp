@@ -251,8 +251,11 @@ void EAQtCalibrationDialog::drawCalibration()
     } else {
         _additionResult->setVisible(false);
     }
+    _cd->xUnits = _cSampleConcUnits->currentText();
+    _cd->yUnits = "µA";
     _calibrationEq->setVisible(true);
     _calibrationR->setVisible(true);
+    _butSaveCal->setVisible(true);
 }
 
 QWidget* EAQtCalibrationDialog::preparePlot()
@@ -289,13 +292,14 @@ QWidget* EAQtCalibrationDialog::preparePlot()
     _calibrationPoints->setLineStyle(QCPGraph::lsNone);
     _calibrationPoints->setScatterStyle(QCPScatterStyle::ssCircle);
     _calibrationPoints->setPen(QPen(COLOR::regular));
-    QPushButton* butSave = new QPushButton(tr("Save calibration"));
-    connect(butSave,SIGNAL(clicked(bool)),this,SLOT(saveCalibration()));
+    _butSaveCal = new QPushButton(tr("Save calibration"));
+    _butSaveCal->setVisible(false);
+    connect(_butSaveCal,SIGNAL(clicked(bool)),this,SLOT(saveCalibration()));
     gl->addWidget(_calibrationPlot,0,0,1,1);
     gl->addWidget(_calibrationEq,1,0,1,1);
     gl->addWidget(_calibrationR,2,0,1,1);
     gl->addWidget(_additionResult,3,0,1,1);
-    gl->addWidget(butSave,4,0,1,1);
+    gl->addWidget(_butSaveCal,4,0,1,1);
     w->setLayout(gl);
     return w;
 }
@@ -396,6 +400,7 @@ void EAQtCalibrationDialog::saveCalibration()
     _fd = new QFileDialog(0,tr("Save Calibration"),"",tr(".eacal (.eacal)"));
     _fd->setModal(true);
     _fd->setOption(QFileDialog::DontUseNativeDialog);
+    _fd->setLabelText( QFileDialog::Accept, tr("Save"));
     QGridLayout* l = (QGridLayout*) _fd->layout();
     _cbIncludeCurves = new QCheckBox(tr("Include original curves"));
     _cbIncludeCurves->setChecked(false);

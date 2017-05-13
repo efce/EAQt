@@ -55,6 +55,7 @@ private:
     QComboBox *_cSampleConcUnits;
     QLabel *_labelAddition;
     QWidget *_scrollAreaWidget;
+    QPushButton *_butSaveCal;
 
     QCustomPlot *_calibrationPlot;
     QVector<double> _signals;
