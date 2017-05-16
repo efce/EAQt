@@ -1085,15 +1085,17 @@ void EAQtMainWindow::loadCalibration()
             return;
         }
         bool a;
-        EAQtDataInterface::readCalibration(&f,_pEAQtData->_calibration, a);
+        delete _pEAQtData->_calibration;
+        _pEAQtData->_calibration = new CalibrationData();
+        _pEAQtData->_calibration->load(&f);
         f.close();
     }
 }
 
 void EAQtMainWindow::clearCalibration()
 {
-    EAQtDataInterface::CalibrationData cd = {false, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, QVector<double>(0),QString(), QVector<double>(0), QString(), _pEAQtData->getCurves() };
-    _pEAQtData->_calibration = cd;
+    delete _pEAQtData->_calibration;
+    _pEAQtData->_calibration = new CalibrationData;
 }
 
 void EAQtMainWindow::showCalibration()

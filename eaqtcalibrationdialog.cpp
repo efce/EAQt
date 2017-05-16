@@ -19,14 +19,14 @@
 #include "eaqtdata.h"
 #include "eaqtsignalprocessing.h"
 
-EAQtCalibrationDialog::EAQtCalibrationDialog(EAQtDataInterface::CalibrationData *cd, QHash<QString,QString>* oldSettings)
+EAQtCalibrationDialog::EAQtCalibrationDialog(CalibrationData *cd, QHash<QString,QString>* oldSettings)
 {
-    if ( cd->yvalues.size() != cd->curves->count() ) {
+    if ( cd->yValues.size() != cd->curves->count() ) {
         throw 1;
     }
 
-    if ( cd->yvalues.size() != cd->xvalues.size() ) {
-        cd->xvalues.clear();
+    if ( cd->yValues.size() != cd->xValues.size() ) {
+        cd->xValues.clear();
     }
 
     _cd = cd;
@@ -130,8 +130,8 @@ EAQtCalibrationDialog::EAQtCalibrationDialog(EAQtDataInterface::CalibrationData 
     sa->setFixedWidth(400);
     sa->setMaximumHeight(600);
     this->_dialog = new QDialog();
-    this->_leConcentrations.resize(_cd->yvalues.size());
-    this->_leAdditionVolumes.resize(_cd->yvalues.size());
+    this->_leConcentrations.resize(_cd->yValues.size());
+    this->_leAdditionVolumes.resize(_cd->yValues.size());
     uint i;
     QFont *fontLabel = new QFont(_dialog->font());
     fontLabel->setBold(true);
@@ -161,13 +161,13 @@ EAQtCalibrationDialog::EAQtCalibrationDialog(EAQtDataInterface::CalibrationData 
     gl->addWidget(lcurr,0,1,1,1);
     gl->addLayout(cb1,0,2,1,1);
     gl->addLayout(cb2,0,3,1,1);
-    for ( i = 0; i<_cd->yvalues.size(); ++i ) {
+    for ( i = 0; i<_cd->yValues.size(); ++i ) {
         QLabel *l1 = new QLabel(_cd->curves->get(i)->CName() + ": ");
-        QLabel *l2 = new QLabel(EAQtData::getInstance().dispI(_cd->yvalues[i]) + " ");
+        QLabel *l2 = new QLabel(EAQtData::getInstance().dispI(_cd->yValues[i]) + " ");
         this->_leConcentrations[i] = new QLineEdit();
         this->_leConcentrations[i]->setValidator(new QDoubleValidator(0.0,999999.9,10));
-        if ( _cd->xvalues.size() == _cd->yvalues.size() ) {
-            _leConcentrations[i]->setText(tr("%1").arg(_cd->xvalues[i],0,'f',8));
+        if ( _cd->xValues.size() == _cd->yValues.size() ) {
+            _leConcentrations[i]->setText(tr("%1").arg(_cd->xValues[i],0,'f',8));
         } else {
             this->_leConcentrations[i]->setText("0.0");
         }
@@ -215,16 +215,16 @@ void EAQtCalibrationDialog::drawCalibration()
 {
     //TODO: confidence intervals instead of standard deviation
     double x0StdDev = -1;
-    _cd->xvalues.resize(_leConcentrations.size());
-    int csize = _cd->xvalues.size();
+    _cd->xValues.resize(_leConcentrations.size());
+    int csize = _cd->xValues.size();
     for ( int i = 0; i<csize; ++i) {
-        _cd->xvalues.replace(i,_leConcentrations[i]->text().toDouble());
+        _cd->xValues.replace(i,_leConcentrations[i]->text().toDouble());
     }
-    EAQtSignalProcessing::correlation(_cd->xvalues,_cd->yvalues, &(_cd->correlationCoef));
-    EAQtSignalProcessing::linearRegression(_cd->xvalues,_cd->yvalues,&(_cd->slope),&(_cd->slopeStdDev),&(_cd->intercept),&(_cd->interceptStdDev),&(x0StdDev));
+    EAQtSignalProcessing::correlation(_cd->xValues,_cd->yValues, &(_cd->correlationCoef));
+    EAQtSignalProcessing::linearRegression(_cd->xValues,_cd->yValues,&(_cd->slope),&(_cd->slopeStdDev),&(_cd->intercept),&(_cd->interceptStdDev),&(x0StdDev));
     _cd->wasFitted = true;
     _calibrationPlot->setVisible(true);
-    _calibrationPoints->setData(_cd->xvalues,_cd->yvalues,false);
+    _calibrationPoints->setData(_cd->xValues,_cd->yValues,false);
     double x0 = -_cd->intercept/_cd->slope;
     _calibrationLine->point1->setCoords(1,_cd->slope*1+_cd->intercept);
     _calibrationLine->point2->setCoords(x0, 0);
@@ -344,7 +344,7 @@ void EAQtCalibrationDialog::recalculateConc()
     _settings->insert("svu",_cSampleVolumeUnits->currentText());
     _settings->insert("stdcu",_cStandardConcUnits->currentText());
     _settings->insert("samcu",_cSampleConcUnits->currentText());
-    _cd->xvalues.resize(_leConcentrations.size());
+    _cd->xValues.resize(_leConcentrations.size());
 
     if ( !_calculateConc->isChecked() ) {
         return;
@@ -419,5 +419,6 @@ void EAQtCalibrationDialog::saveInFile(QString fileName)
         //TODO: error
     }
     bool includeCurves = _cbIncludeCurves->isChecked();
-    EAQtDataInterface::saveCalibration(&f,*_cd,includeCurves);
+    _cd->save(&f,includeCurves);
+    f.close();
 }

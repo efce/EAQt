@@ -20,13 +20,14 @@
 
 #include <QObject>
 #include "eaqtdatainterface.h"
+#include "calibrationdata.h"
 
 class EAQtCalibrationDialog : QObject
 {
     Q_OBJECT
 
 public:
-    EAQtCalibrationDialog(EAQtDataInterface::CalibrationData *cd, QHash<QString,QString>* oldSettings);
+    EAQtCalibrationDialog(CalibrationData *cd, QHash<QString,QString>* oldSettings);
     void exec();
 
 private:
@@ -37,7 +38,7 @@ private:
     QVector<multipliers> _vVolumes;
     QVector<multipliers> _vConcs;
     QHash<QString,QString>* _settings;
-    EAQtDataInterface::CalibrationData* _cd;
+    CalibrationData* _cd;
 
     QDialog *_dialog;
     QCheckBox *_calculateConc;

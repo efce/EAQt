@@ -29,6 +29,7 @@
 #include "curvecollection.h"
 #include "mescfg.h"
 #include "eaqtsignalprocessing.h"
+#include "calibrationdata.h"
 
 /*
  * EAQtData is a singleton, which holds all data and data operations,
@@ -160,6 +161,7 @@ public:
        int32_t ChPot;			// test CGMDE - inf. czy przykładać potencjał
    } _testCGMDE;
 
+   CalibrationData *_calibration;
 /* ------------
  * VARIABLES
  ------------*/

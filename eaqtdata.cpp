@@ -60,6 +60,7 @@ EAQtData::EAQtData() : QObject(), EAQtDataInterface()
     this->_displayCurveNr = 0;
     this->_currentPointOnCurve = 0;
 
+
     initParam();
     initParamLSV();
 }
@@ -72,8 +73,7 @@ void EAQtData::initialUpdate(EAQtUIInterface *wp)
     _fileIndex = new MDirCollection();
     _network = new EAQtNetwork(this);
     _processing = new EAQtSignalProcessing(_curves, wp->PlotAddGraph());
-
-    _calibration = {false, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, QVector<double>(0),QString(), QVector<double>(0), QString(), _curves };
+    _calibration = new CalibrationData();
 }
 
 EAQtData::~EAQtData()
