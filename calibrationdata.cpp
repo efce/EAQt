@@ -6,13 +6,16 @@ CalibrationData::CalibrationData()
     xUnits = "";
     yUnits = "";
     xValues.resize(0);
-    yValues.reserve(0);
+    yValues.resize(0);
     slope = 0;
     slopeStdDev = -1;
     intercept = 0;
     interceptStdDev = -1;
     x0StdDev = -1;
+    x0value = 0;
     correlationCoef = 0;
+    pointEnd = 0;
+    pointStart = 0;
 }
 
 void CalibrationData::save(QFile *file, bool includeCurves)
@@ -37,6 +40,7 @@ void CalibrationData::save(QFile *file, bool includeCurves)
     file->write((char*)&(this->slopeStdDev),sizeof(double));
     file->write((char*)&(this->intercept),sizeof(double));
     file->write((char*)&(this->interceptStdDev),sizeof(double));
+    file->write((char*)&(this->x0value),sizeof(double));
     file->write((char*)&(this->x0StdDev),sizeof(double));
     file->write((char*)&(this->correlationCoef),sizeof(double));
 }
@@ -67,6 +71,7 @@ void CalibrationData::load(QFile *file)
     file->read((char*)&(this->slopeStdDev),sizeof(double));
     file->read((char*)&(this->intercept),sizeof(double));
     file->read((char*)&(this->interceptStdDev),sizeof(double));
+    file->read((char*)&(this->x0value),sizeof(double));
     file->read((char*)&(this->x0StdDev),sizeof(double));
     file->read((char*)&(this->correlationCoef),sizeof(double));
 }

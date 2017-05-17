@@ -21,6 +21,7 @@
 #include <QObject>
 #include "eaqtdatainterface.h"
 #include "calibrationdata.h"
+#include "calibrationplot.h"
 
 class EAQtCalibrationDialog : QObject
 {
@@ -58,13 +59,8 @@ private:
     QWidget *_scrollAreaWidget;
     QPushButton *_butSaveCal;
 
-    QCustomPlot *_calibrationPlot;
     QVector<double> _signals;
-    QCPItemStraightLine* _calibrationLine;
-    QCPGraph* _calibrationPoints;
-    QLineEdit *_calibrationEq;
-    QLineEdit *_calibrationR;
-    QLineEdit *_additionResult;
+    CalibrationPlot *_calibrationPlot;
     QWidget *preparePlot();
 
     QFileDialog *_fd; // Save calibration as
@@ -72,7 +68,6 @@ private:
 
 private slots:
     void drawCalibration();
-    void beforeReplot();
     void recalculateConc();
     void toggleCalculateConc(bool);
     void saveCalibration();

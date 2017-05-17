@@ -1084,7 +1084,6 @@ void EAQtMainWindow::loadCalibration()
         if ( !f.open(QIODevice::ReadOnly) ) {
             return;
         }
-        bool a;
         delete _pEAQtData->_calibration;
         _pEAQtData->_calibration = new CalibrationData();
         _pEAQtData->_calibration->load(&f);
@@ -1105,7 +1104,19 @@ void EAQtMainWindow::showCalibration()
 
 void EAQtMainWindow::resultCalibration()
 {
-    //TODO:
+    if ( _pEAQtData->_calibration->wasFitted == true ) {
+        CalibrationData* cd = _pEAQtData->_calibration;
+        Curve* c = _pEAQtData->getCurves()->get(_pEAQtData->Act());
+        if ( c == NULL || c->getNrOfDataPoints() < cd->pointEnd ) {
+            showMessageBox(tr("Cannot use curve in calibration -- points out of range."), tr("Error"));
+            return;
+        }
+        double signal = EAQtSignalProcessing::relativeHeight(c,cd->pointStart,cd->pointEnd);
+        double conc = (signal - cd->intercept) / cd->slope;
+        showMessageBox(tr("Result of calibration: %1 %2").arg(conc,0,'f',5).arg(cd->xUnits),tr("Result"));
+    } else {
+        showMessageBox(tr("Calibration is not prepared."), tr("Error"));
+    }
 }
 
 void EAQtMainWindow::PlotReplot()

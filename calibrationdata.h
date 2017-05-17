@@ -17,8 +17,11 @@ public:
     double slopeStdDev;
     double intercept;
     double interceptStdDev;
+    double x0value;
     double x0StdDev;
     double correlationCoef;
+    uint32_t pointStart;
+    uint32_t pointEnd;
     QVector<double> xValues;
     QString xUnits;
     QVector<double> yValues;

@@ -60,24 +60,29 @@ void EAQtSignalProcessing::calibrationData(uint32_t a1, uint32_t a2)
     static QHash<QString,QString> oldSettings;
     calibration->yValues.resize(_curves->count());
     for ( uint i = 0; i<_curves->count(); ++i ) {
-        Curve *curve;
-        curve = _curves->get(i);
-        QVector<double> values = curve->getYVector();
-        double min = values[a1];
-        double max = values[a2];
-        for ( uint32_t pos=a1; pos<=a2; ++pos ) {
+        calibration->yValues[i] = relativeHeight(_curves->get(i), a1,a2);
+    }
+    calibration->pointStart = a1;
+    calibration->pointEnd = a2;
+    calibration->curves = _curves;
+    EAQtCalibrationDialog *cd = new EAQtCalibrationDialog(calibration, &oldSettings);
+    cd->exec();
+    delete cd;
+}
+
+double EAQtSignalProcessing::relativeHeight(Curve *c, uint32_t start, uint32_t end)
+{
+        QVector<double> values = c->getYVector();
+        double min = values[start];
+        double max = values[end];
+        for ( uint32_t pos=start; pos<=end; ++pos ) {
             if ( values[pos] > max ) {
                 max = values[pos];
             } else if ( values[pos] < min ) {
                 min = values[pos];
             }
         }
-        calibration->yValues[i] = max - min;
-    }
-    calibration->curves = _curves;
-    EAQtCalibrationDialog *cd = new EAQtCalibrationDialog(calibration, &oldSettings);
-    cd->exec();
-    delete cd;
+        return (max - min);
 }
 
 void EAQtSignalProcessing::kissFFT(double samplingFrequency,

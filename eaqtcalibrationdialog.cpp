@@ -199,8 +199,15 @@ EAQtCalibrationDialog::EAQtCalibrationDialog(CalibrationData *cd, QHash<QString,
     QPushButton *butCancel = new QPushButton(tr("Cancel"));
     glm->addWidget(butCal,2,0,1,1);
     glm->addWidget(butCancel,2,1,1,1);
-    QWidget* qw = preparePlot();
-    glm->addWidget(qw,0,2,3,1);
+    _calibrationPlot = new CalibrationPlot(_cd);
+    _calibrationPlot->setVisible(false);
+    glm->addWidget(_calibrationPlot,0,2,2,1);
+
+    _butSaveCal = new QPushButton(tr("Save calibration"));
+    _butSaveCal->setVisible(false);
+    connect(_butSaveCal,SIGNAL(clicked(bool)),this,SLOT(saveCalibration()));
+    glm->addWidget(_butSaveCal,2,2,1,1);
+
     connect(butCancel,SIGNAL(clicked(bool)),this->_dialog,SLOT(close()));
     connect(butCal,SIGNAL(clicked(bool)), this,SLOT(drawCalibration()));
     this->_dialog->setLayout(glm);
@@ -214,102 +221,20 @@ void EAQtCalibrationDialog::exec()
 void EAQtCalibrationDialog::drawCalibration()
 {
     //TODO: confidence intervals instead of standard deviation
-    double x0StdDev = -1;
     _cd->xValues.resize(_leConcentrations.size());
     int csize = _cd->xValues.size();
     for ( int i = 0; i<csize; ++i) {
         _cd->xValues.replace(i,_leConcentrations[i]->text().toDouble());
     }
     EAQtSignalProcessing::correlation(_cd->xValues,_cd->yValues, &(_cd->correlationCoef));
-    EAQtSignalProcessing::linearRegression(_cd->xValues,_cd->yValues,&(_cd->slope),&(_cd->slopeStdDev),&(_cd->intercept),&(_cd->interceptStdDev),&(x0StdDev));
+    EAQtSignalProcessing::linearRegression(_cd->xValues,_cd->yValues,&(_cd->slope),&(_cd->slopeStdDev),&(_cd->intercept),&(_cd->interceptStdDev),&(_cd->x0StdDev));
     _cd->wasFitted = true;
-    _calibrationPlot->setVisible(true);
-    _calibrationPoints->setData(_cd->xValues,_cd->yValues,false);
-    double x0 = -_cd->intercept/_cd->slope;
-    _calibrationLine->point1->setCoords(1,_cd->slope*1+_cd->intercept);
-    _calibrationLine->point2->setCoords(x0, 0);
-    _calibrationPlot->rescaleAxes();
-    if ( _calibrationPlot->xAxis->range().lower > x0 ) {
-        _calibrationPlot->xAxis->setRangeLower(x0);
-    }
-    if ( _calibrationPlot->yAxis->range().lower > 0 ) {
-        _calibrationPlot->yAxis->setRangeLower(0);
-    }
-    _calibrationPlot->xAxis->setLabel("c / " + _cSampleConcUnits->currentText());
-    double spanx = _calibrationPlot->xAxis->range().upper - _calibrationPlot->xAxis->range().lower;
-    _calibrationPlot->xAxis->setRangeLower(_calibrationPlot->xAxis->range().lower - (0.1*spanx));
-    _calibrationPlot->xAxis->setRangeUpper(_calibrationPlot->xAxis->range().upper + (0.1*spanx));
-    double spany = _calibrationPlot->yAxis->range().upper - _calibrationPlot->yAxis->range().lower;
-    _calibrationPlot->yAxis->setRangeLower(_calibrationPlot->yAxis->range().lower - (0.1*spany));
-    _calibrationPlot->yAxis->setRangeUpper(_calibrationPlot->yAxis->range().upper + (0.1*spany));
-    _calibrationPlot->replot();
-    _calibrationR->setText(tr("r = %1").arg(_cd->correlationCoef,0,'f',4));
-    _calibrationEq->setText(tr("i = %1(±%2)c + %3(±%4)").arg(_cd->slope,0,'f',4).arg(_cd->slopeStdDev,0,'f',4).arg(_cd->intercept,0,'f',4).arg(_cd->interceptStdDev,0,'f',4));
-    if ( x0StdDev > -1 ) {
-        _additionResult->setText(tr("result: (%1±%2) %3").arg(-x0,0,'f',4).arg(x0StdDev,0,'f',4).arg(_cSampleConcUnits->currentText()));
-        _additionResult->setVisible(true);
-    } else {
-        _additionResult->setVisible(false);
-    }
     _cd->xUnits = _cSampleConcUnits->currentText();
     _cd->yUnits = "µA";
-    _calibrationEq->setVisible(true);
-    _calibrationR->setVisible(true);
+    _cd->x0value = _cd->intercept/_cd->slope;
+    _calibrationPlot->update();
+    _calibrationPlot->setVisible(true);
     _butSaveCal->setVisible(true);
-}
-
-QWidget* EAQtCalibrationDialog::preparePlot()
-{
-    QWidget* w = new QWidget();
-    QGridLayout *gl = new QGridLayout();
-    _calibrationEq = new QLineEdit();
-    _calibrationEq->setReadOnly(true);
-    _calibrationEq->setVisible(false);
-    _calibrationEq->setAlignment(Qt::AlignCenter);
-    _calibrationR = new QLineEdit();
-    _calibrationR->setVisible(false);
-    _calibrationR->setReadOnly(true);
-    _calibrationR->setAlignment(Qt::AlignCenter);
-    _additionResult = new QLineEdit();
-    _additionResult->setVisible(false);
-    _additionResult->setReadOnly(true);
-    _additionResult->setAlignment(Qt::AlignCenter);
-    _calibrationPlot = new QCustomPlot();
-    _calibrationPlot->xAxis->setLabel(tr("c"));
-    _calibrationPlot->yAxis->setLabel(tr("i / µA"));
-    _calibrationPlot->setVisible(false);
-    _calibrationPlot->setMinimumWidth(500);
-    _calibrationPlot->setMinimumHeight(450);
-    //connect(_calibrationPlot,SIGNAL(beforeReplot()),this,SLOT(beforeReplot()));
-    QPen pen;
-    pen.setColor(COLOR::measurement);
-    pen.setWidth(1);
-    _calibrationPlot->xAxis->grid()->setZeroLinePen(pen);
-    _calibrationPlot->yAxis->grid()->setZeroLinePen(pen);
-    _calibrationLine = new QCPItemStraightLine(_calibrationPlot);
-    _calibrationLine->setPen(QPen(QColor(COLOR::active)));
-    _calibrationPoints = _calibrationPlot->addGraph();
-    _calibrationPoints->setLineStyle(QCPGraph::lsNone);
-    _calibrationPoints->setScatterStyle(QCPScatterStyle::ssCircle);
-    _calibrationPoints->setPen(QPen(COLOR::regular));
-    _butSaveCal = new QPushButton(tr("Save calibration"));
-    _butSaveCal->setVisible(false);
-    connect(_butSaveCal,SIGNAL(clicked(bool)),this,SLOT(saveCalibration()));
-    gl->addWidget(_calibrationPlot,0,0,1,1);
-    gl->addWidget(_calibrationEq,1,0,1,1);
-    gl->addWidget(_calibrationR,2,0,1,1);
-    gl->addWidget(_additionResult,3,0,1,1);
-    gl->addWidget(_butSaveCal,4,0,1,1);
-    w->setLayout(gl);
-    return w;
-}
-
-void EAQtCalibrationDialog::beforeReplot()
-{
-    int pxx = _calibrationPlot->yAxis->coordToPixel(0);
-    int pxy = _calibrationPlot->xAxis->coordToPixel(0);
-    _calibrationPlot->xAxis->setOffset(-_calibrationPlot->axisRect()->height()-_calibrationPlot->axisRect()->top()+pxx);
-    _calibrationPlot->yAxis->setOffset(_calibrationPlot->axisRect()->left()-pxy);
 }
 
 void EAQtCalibrationDialog::toggleCalculateConc(bool status)

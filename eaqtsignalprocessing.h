@@ -39,6 +39,7 @@ public:
     static void dft(double samplingFrequency, const QVector<double>& values, QVector<double>& frequency, QVector<double>& freqReal, QVector<double>& freqImg);
     static void idft(const QVector<double>& freqImg, const QVector<double>& freqReal, QVector<double>& values);
     static void sgSmooth(QVector<double>* y, int order, int span);
+    static double relativeHeight(Curve* c, uint32_t start, uint32_t end);
 private:
     CurveCollection* _curves;
     QCPGraph* _graph;
