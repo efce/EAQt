@@ -22,6 +22,7 @@
 #include "eaqtparamdialog.h"
 #include "eaqtaccessoriesdialog.h"
 #include "eaqtadvancedsmoothdialog.h"
+#include "calibrationplot.h"
 
 EAQtMainWindow::EAQtMainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -1099,7 +1100,20 @@ void EAQtMainWindow::clearCalibration()
 
 void EAQtMainWindow::showCalibration()
 {
-    //TODO:
+    if ( _pEAQtData->_calibration->wasFitted ) {
+        QDialog *dialog = new QDialog();
+        dialog->setWindowTitle(tr("Calibration"));
+        QVBoxLayout *l = new QVBoxLayout();
+        CalibrationPlot *cp = new CalibrationPlot(_pEAQtData->_calibration);
+        QPushButton *bp = new QPushButton(tr("Close"));
+        connect(bp,SIGNAL(clicked(bool)),dialog,SLOT(close()));
+        l->addWidget(cp);
+        l->addWidget(bp);
+        dialog->setLayout(l);
+        cp->update();
+        cp->setVisible(true);
+        dialog->exec();
+    }
 }
 
 void EAQtMainWindow::resultCalibration()
