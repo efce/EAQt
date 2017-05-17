@@ -161,11 +161,13 @@ EAQtCalibrationDialog::EAQtCalibrationDialog(CalibrationData *cd, QHash<QString,
     gl->addWidget(lcurr,0,1,1,1);
     gl->addLayout(cb1,0,2,1,1);
     gl->addLayout(cb2,0,3,1,1);
+    QDoubleValidator *validator = new QDoubleValidator(0.0,999999.9,7);
+    validator->setNotation(QDoubleValidator::StandardNotation);
     for ( i = 0; i<_cd->yValues.size(); ++i ) {
         QLabel *l1 = new QLabel(_cd->curves->get(i)->CName() + ": ");
         QLabel *l2 = new QLabel(EAQtData::getInstance().dispI(_cd->yValues[i]) + " ");
         this->_leConcentrations[i] = new QLineEdit();
-        this->_leConcentrations[i]->setValidator(new QDoubleValidator(0.0,999999.9,10));
+        this->_leConcentrations[i]->setValidator(validator);
         if ( _cd->xValues.size() == _cd->yValues.size() ) {
             _leConcentrations[i]->setText(tr("%1").arg(_cd->xValues[i],0,'f',8));
         } else {
@@ -176,7 +178,7 @@ EAQtCalibrationDialog::EAQtCalibrationDialog(CalibrationData *cd, QHash<QString,
         _leConcentrations[i]->setStyleSheet(":enabled { background-color: white; color: black; } :disabled {background-color: light gray; color: black }" );
 
         this->_leAdditionVolumes[i] = new QLineEdit();
-        this->_leAdditionVolumes[i]->setValidator(new QDoubleValidator(0.0,999999.9,10));
+        this->_leAdditionVolumes[i]->setValidator(validator);
         this->_leAdditionVolumes[i]->setText("0.0");
         this->_leAdditionVolumes[i]->setMaxLength(12);
         this->_leAdditionVolumes[i]->setFixedWidth(QFontMetrics(_dialog->font()).width("9999999999"));
