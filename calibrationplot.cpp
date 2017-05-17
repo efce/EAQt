@@ -14,7 +14,7 @@ void CalibrationPlot::setupPlot()
 {
     _plot = new QCustomPlot();
     _plot->xAxis->setLabel(tr("c / %1").arg(_cd->xUnits));
-    _plot->yAxis->setLabel(tr("i / µA"));
+    _plot->yAxis->setLabel(tr("i / %1").arg(_cd->yUnits));
     _plot->setVisible(true);
     _plot->setMinimumWidth(500);
     _plot->setMinimumHeight(450);
