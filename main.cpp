@@ -26,6 +26,7 @@
 int main(int argc, char *argv[])
 {
     QLocale::setDefault(QLocale("en_US"));
+
     QApplication a(argc, argv);
     QFont f(":/fonts/fonts/LiberationSans-Regular.ttf");
     f.setPixelSize(13);

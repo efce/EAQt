@@ -134,12 +134,14 @@ private:
     QAction *_actSaveCurve;
     QAction *_actExportCurve;
 
+    QAction *_actAverage;
     QAction *_actDataCursor;
     QAction *_actBkgCorrection;
     QAction *_actRelativeValues;
     QAction *_actMoveUpDown;
     QAction *_actSmooth;
     QAction *_actAdvSmooth;
+    QAction *_actRecalculateCurve; // Change tp and tw based on nonaveraged measurement
 
     QAction *_actCalibrationData;
     QAction *_actCalibrationLoad;
@@ -173,12 +175,14 @@ private slots:
     void paramSave();
     void paramLoad();
     void exportCurve();
+    void showAverage();
     void showDataCursor();
     void startBackgroundCorrection();
     void startRelativeValues();
     void startMoveUpDown();
     void startSmooth();
     void showAdvancedSmooth();
+    void showRecalculateCurve();
     void startCalibration();
     void loadCalibration();
     void clearCalibration();

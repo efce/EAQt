@@ -22,7 +22,9 @@
 #include "eaqtparamdialog.h"
 #include "eaqtaccessoriesdialog.h"
 #include "eaqtadvancedsmoothdialog.h"
+#include "eaqtrecalculatecurvedialog.h"
 #include "calibrationplot.h"
+#include "eaqtaveragedialog.h"
 
 EAQtMainWindow::EAQtMainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -819,6 +821,10 @@ void EAQtMainWindow::createActionsTopMenu()
     this->_actParamSave->setStatusTip(tr("Save current measurement parameteres to file"));
     connect(_actParamSave, SIGNAL(triggered(bool)),this,SLOT(paramSave()));
 
+    this->_actAverage = new QAction(tr("Averaging"), this);
+    this->_actAverage->setStatusTip(tr("Show dialog to average curves"));
+    connect(_actAverage, SIGNAL(triggered(bool)),this,SLOT(showAverage()));
+
     this->_actDataCursor = new QAction(tr("Data cursor"), this);
     this->_actDataCursor->setStatusTip(tr("Show data cursor"));
     connect(_actDataCursor, SIGNAL(triggered(bool)),this,SLOT(showDataCursor()));
@@ -843,7 +849,10 @@ void EAQtMainWindow::createActionsTopMenu()
     this->_actAdvSmooth->setStatusTip(tr("Advanced smoothing dialog"));
     connect(_actAdvSmooth, SIGNAL(triggered(bool)),this,SLOT(showAdvancedSmooth()));
 
-    //TODO: tutaj wszystko
+    this->_actRecalculateCurve = new QAction(tr("Recalculate curve"), this);
+    this->_actRecalculateCurve->setStatusTip(tr("Reculculate curve's current values based on non-averaged measurement"));
+    connect(_actRecalculateCurve, SIGNAL(triggered(bool)),this,SLOT(showRecalculateCurve()));
+
     this->_actCalibrationData = new QAction(tr("Select range"), this);
     this->_actCalibrationData->setStatusTip(tr("Perform calibration / standard addition analysis"));
     connect(_actCalibrationData, SIGNAL(triggered(bool)),this,SLOT(startCalibration()));
@@ -895,6 +904,7 @@ void EAQtMainWindow::createMenusTopMenu()
     _menuMeasurement->addAction(this->_actParamSave);
 
     _menuAnalysis = this->menuBar()->addMenu(tr("&Analysis"));
+    _menuAnalysis->addAction(this->_actAverage);
     _menuAnalysis->addAction(this->_actDataCursor);
     _menuAnalysis->addAction(this->_actCalibrationData);
     _menuAnalysis->addAction(this->_actBkgCorrection);
@@ -902,6 +912,7 @@ void EAQtMainWindow::createMenusTopMenu()
     _menuAnalysis->addAction(this->_actMoveUpDown);
     _menuAnalysis->addAction(this->_actSmooth);
     _menuAnalysis->addAction(this->_actAdvSmooth);
+    _menuAnalysis->addAction(this->_actRecalculateCurve);
 
     _menuCalibration = this->menuBar()->addMenu(tr("Calibration"));
     _menuCalibration->addAction(this->_actCalibrationData);
@@ -1066,6 +1077,13 @@ void EAQtMainWindow::showDataCursor()
     }
 }
 
+void EAQtMainWindow::showAverage()
+{
+    EAQtAverageDialog *ad = new EAQtAverageDialog(this);
+    ad->exec();
+    delete ad;
+}
+
 void EAQtMainWindow::startCalibration()
 {
     if ( _pEAQtData->getCurves()->count() > 1 ) {
@@ -1210,6 +1228,12 @@ void EAQtMainWindow::startSmooth()
         c->Param(PARAM::inf_smooth,PARAM::inf_smooth_yes);
         updateAll();
     }
+}
+
+void EAQtMainWindow::showRecalculateCurve()
+{
+    EAQtRecalculateCurveDialog *dialog = new EAQtRecalculateCurveDialog();
+    delete dialog;
 }
 
 EAQtUIInterface::PlotLayer* EAQtMainWindow::PlotGetLayers()

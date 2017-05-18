@@ -52,7 +52,9 @@ SOURCES += main.cpp\
     displaycurveinfo.cpp \
     eaqttestcgmdedialog.cpp \
     calibrationdata.cpp \
-    calibrationplot.cpp
+    calibrationplot.cpp \
+    eaqtrecalculatecurvedialog.cpp \
+    eaqtaveragedialog.cpp
 
 HEADERS  += \
     Qcustomplot/qcustomplot.h \
@@ -386,7 +388,9 @@ HEADERS  += \
     displaycurveinfo.h \
     eaqttestcgmdedialog.h \
     calibrationdata.h \
-    calibrationplot.h
+    calibrationplot.h \
+    eaqtrecalculatecurvedialog.h \
+    eaqtaveragedialog.h
 
 FORMS    += mainwindow.ui
 
