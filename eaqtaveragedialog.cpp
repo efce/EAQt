@@ -5,6 +5,7 @@
 EAQtAverageDialog::EAQtAverageDialog(EAQtUIInterface* pui) : QObject()
 {
     CurveCollection* cc = EAQtData::getInstance().getCurves();
+    _dialog = new QDialog();
     if ( cc->count() <= 0 ) {
         //TODO: error
         return;
@@ -53,6 +54,9 @@ EAQtAverageDialog::~EAQtAverageDialog()
 
 void EAQtAverageDialog::exec()
 {
+    if ( _list.size() == 0 ) {
+        return;
+    }
     _dialog->exec();
 }
 
