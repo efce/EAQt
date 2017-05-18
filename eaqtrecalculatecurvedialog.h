@@ -6,6 +6,7 @@
 #include <QLineEdit>
 #include <QPushButton>
 #include "eaqtuiinterface.h"
+#include "curve.h"
 
 class EAQtRecalculateCurveDialog : public QObject
 {
@@ -23,6 +24,7 @@ private:
     QLineEdit *_leTW;
     EAQtUIInterface* _pUI;
     int _tpplustw;
+    void recalculateCurve(Curve* c, int tp, int tw);
 private slots:
     void recalculate();
 };

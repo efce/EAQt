@@ -32,7 +32,7 @@ EAQtRecalculateCurveDialog::EAQtRecalculateCurveDialog(EAQtUIInterface *pui) : Q
         }
 
         _leTP = new QLineEdit();
-        _leTP->setValidator(new QIntValidator(0,_tpplustw));
+        _leTP->setValidator(new QIntValidator(1,_tpplustw));
         _leTW = new QLineEdit();
         _leTW->setValidator(new QIntValidator(0,_tpplustw));
 
@@ -50,6 +50,7 @@ EAQtRecalculateCurveDialog::EAQtRecalculateCurveDialog(EAQtUIInterface *pui) : Q
         _leTW->setValidator(new QIntValidator(0,_tpplustw));
     }
 
+    _dialog = new QDialog();
     QLabel *lDesc = new QLabel(tr("tp + tw has to be lower than: %1 ms").arg(_tpplustw));
     QLabel *lTp = new QLabel(tr("New tp value [ms]: "));
     QLabel *lTw = new QLabel(tr("New tw value [ms]: "));
@@ -90,29 +91,38 @@ void EAQtRecalculateCurveDialog::recalculate()
         CurveCollection *cc = EAQtData::getInstance().getCurves();
         for ( uint32_t nc = 0; nc<cc->count(); ++nc ) {
             Curve *c = EAQtData::getInstance().getCurves()->get(nc);
-            double wrk = 0;
-            QVector<double>* v = c->getProbingData();
-            for ( uint32_t i =0; i<c->getNrOfDataPoints(); ++i ) {
-                wrk = 0;
-                for ( int ii=0; ii<newTp; ++ii ) {
-                    wrk += v->at(ii+newTw+_tpplustw*i);
-                }
-                wrk /= newTp;
-                c->Result(i,wrk);
-            }
+            recalculateCurve(c,newTp,newTw);
+            c->FName(tr("not saved)"));
         }
     } else {
         Curve *c = EAQtData::getInstance().getCurves()->get(EAQtData::getInstance().Act());
-        double wrk = 0;
-        QVector<double>* v = c->getProbingData();
-        for ( uint32_t i =0; i<c->getNrOfDataPoints(); ++i ) {
-            wrk = 0;
-            for ( int ii=0; ii<newTp; ++ii ) {
-                wrk += v->at(ii+newTw+_tpplustw*i);
-            }
-            wrk /= newTp;
-            c->Result(i,wrk);
-        }
+        recalculateCurve(c,newTp,newTw);
+        c->FName(tr("not saved)"));
     }
-    _pUI->updateAll(false);
+    _pUI->updateAll(true);
+}
+
+void EAQtRecalculateCurveDialog::recalculateCurve(Curve *c, int tp, int tw)
+{
+    double wrk = 0;
+    QVector<double>* v = c->getProbingData();
+    for ( uint32_t i =0; i<c->getNrOfDataPoints(); ++i ) {
+        switch (c->Param(PARAM::method)) {
+        case PARAM::method_dpv:
+        case PARAM::method_sqw:
+            for ( uint32_t p=0; p<c->getNrOfDataPoints(); ++p ) {
+                wrk = 0;
+                for ( int i=0; i<tp; ++i ) {
+                    wrk += v->at(i+tw+_tpplustw+(2*_tpplustw*p));
+                    wrk -= v->at(i+tw+(2*_tpplustw*p));
+                }
+                wrk /= (double)tp;
+                c->Result(p,wrk);
+            }
+            break;
+        default:
+            break;
+        }
+
+    }
 }
