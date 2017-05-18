@@ -1232,7 +1232,8 @@ void EAQtMainWindow::startSmooth()
 
 void EAQtMainWindow::showRecalculateCurve()
 {
-    EAQtRecalculateCurveDialog *dialog = new EAQtRecalculateCurveDialog();
+    EAQtRecalculateCurveDialog *dialog = new EAQtRecalculateCurveDialog(this);
+    dialog->exec();
     delete dialog;
 }
 
