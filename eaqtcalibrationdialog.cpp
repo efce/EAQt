@@ -133,30 +133,30 @@ EAQtCalibrationDialog::EAQtCalibrationDialog(CalibrationData *cd, QHash<QString,
     this->_leConcentrations.resize(_cd->yValues.size());
     this->_leAdditionVolumes.resize(_cd->yValues.size());
     uint i;
-    QFont *fontLabel = new QFont(_dialog->font());
-    fontLabel->setBold(true);
+    _fontLabel = new QFont(_dialog->font());
+    _fontLabel->setBold(true);
     QLabel *lname = new QLabel(tr("Name"));
-    lname->setFont(*fontLabel);
+    lname->setFont(*_fontLabel);
     QLabel *lcurr = new QLabel(tr("Current"));
-    lcurr->setFont(*fontLabel);
+    lcurr->setFont(*_fontLabel);
 
     QVBoxLayout* cb1 = new QVBoxLayout();
     QLabel *lconc = new QLabel(tr("Concentration"));
     cb1->addWidget(lconc);
     connect(_cSampleConcUnits,SIGNAL(currentIndexChanged(int)), this, SLOT(recalculateConc()));
     cb1->addWidget(_cSampleConcUnits);
-    lconc->setFont(*fontLabel);
+    lconc->setFont(*_fontLabel);
 
     QVBoxLayout* cb2 = new QVBoxLayout();
     _labelAddition = new QLabel(tr("Addition"));
-    _labelAddition->setFont(*fontLabel);
+    _labelAddition->setFont(*_fontLabel);
     _labelAddition->setVisible(false);
     cb2->addWidget(_labelAddition);
     connect(_cAdditionVolumeUnits,SIGNAL(currentIndexChanged(int)), this, SLOT(recalculateConc()));
     _cAdditionVolumeUnits->setVisible(false);
     cb2->addWidget(_cAdditionVolumeUnits);
 
-    lconc->setFont(*fontLabel);
+    lconc->setFont(*_fontLabel);
     gl->addWidget(lname,0,0,1,1);
     gl->addWidget(lcurr,0,1,1,1);
     gl->addLayout(cb1,0,2,1,1);
@@ -213,6 +213,12 @@ EAQtCalibrationDialog::EAQtCalibrationDialog(CalibrationData *cd, QHash<QString,
     connect(butCancel,SIGNAL(clicked(bool)),this->_dialog,SLOT(close()));
     connect(butCal,SIGNAL(clicked(bool)), this,SLOT(drawCalibration()));
     this->_dialog->setLayout(glm);
+}
+
+EAQtCalibrationDialog::~EAQtCalibrationDialog()
+{
+    delete _dialog;
+    delete _fontLabel;
 }
 
 void EAQtCalibrationDialog::exec()

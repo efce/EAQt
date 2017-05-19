@@ -26,6 +26,7 @@ class CalibrationPlot: public QWidget
 {
 public:
     CalibrationPlot(CalibrationData* cd);
+    ~CalibrationPlot();
     void update();
 
 private:

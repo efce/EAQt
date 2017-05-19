@@ -58,6 +58,7 @@ private:
 
 public:
     EAQtAdvancedSmoothDialog(int lastUsed, const std::vector<double>& params);
+    ~EAQtAdvancedSmoothDialog();
     void exec();
     void hide();
 

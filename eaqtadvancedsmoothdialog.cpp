@@ -31,6 +31,11 @@ EAQtAdvancedSmoothDialog::EAQtAdvancedSmoothDialog(int lastUsed, const std::vect
     updateFrequencyPlot();
 }
 
+EAQtAdvancedSmoothDialog::~EAQtAdvancedSmoothDialog()
+{
+    delete _dialog;
+}
+
 
 QGridLayout* EAQtAdvancedSmoothDialog::generateLayout(int select)
 {

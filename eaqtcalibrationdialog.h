@@ -19,6 +19,7 @@
 #define EAQTCALIBRATIONDIALOG_H
 
 #include <QObject>
+#include <QFont>
 #include "eaqtdatainterface.h"
 #include "calibrationdata.h"
 #include "calibrationplot.h"
@@ -29,6 +30,7 @@ class EAQtCalibrationDialog : QObject
 
 public:
     EAQtCalibrationDialog(CalibrationData *cd, QHash<QString,QString>* oldSettings);
+    ~EAQtCalibrationDialog();
     void exec();
 
 private:
@@ -40,6 +42,7 @@ private:
     QVector<multipliers> _vConcs;
     QHash<QString,QString>* _settings;
     CalibrationData* _cd;
+    QFont *_fontLabel;
 
     QDialog *_dialog;
     QCheckBox *_calculateConc;

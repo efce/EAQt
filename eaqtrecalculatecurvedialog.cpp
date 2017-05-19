@@ -52,9 +52,9 @@ EAQtRecalculateCurveDialog::EAQtRecalculateCurveDialog(EAQtUIInterface *pui) : Q
         }
 
         _leTP = new QLineEdit();
-        _leTP->setValidator(new QIntValidator(1,_tpplustw));
+        _leTP->setValidator(new QIntValidator(1,_tpplustw,_leTP));
         _leTW = new QLineEdit();
-        _leTW->setValidator(new QIntValidator(0,_tpplustw));
+        _leTW->setValidator(new QIntValidator(0,_tpplustw,_leTW));
 
     } else {
         Curve *c = cc->get(EAQtData::getInstance().Act());
@@ -65,9 +65,9 @@ EAQtRecalculateCurveDialog::EAQtRecalculateCurveDialog(EAQtUIInterface *pui) : Q
         _tpplustw = c->Param(PARAM::tp) + c->Param(PARAM::tw);
 
         _leTP = new QLineEdit();
-        _leTP->setValidator(new QIntValidator(0,_tpplustw));
+        _leTP->setValidator(new QIntValidator(0,_tpplustw,_leTP));
         _leTW = new QLineEdit();
-        _leTW->setValidator(new QIntValidator(0,_tpplustw));
+        _leTW->setValidator(new QIntValidator(0,_tpplustw,_leTW));
     }
 
     _dialog = new QDialog();

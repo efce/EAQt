@@ -36,6 +36,11 @@ EAQtMouseHandler::EAQtMouseHandler(EAQtDataInterface* pd, EAQtUIInterface* pui) 
 
 EAQtMouseHandler::~EAQtMouseHandler(void)
 {
+    if ( _vCursors.size() > 0 ) {
+        for ( int i = 0; i< _vCursors.size(); ++i ) {
+            delete _vCursors[i];
+        }
+    }
 }
 
 void EAQtMouseHandler::onSelectionChanged()

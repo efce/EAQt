@@ -50,6 +50,13 @@ void CalibrationPlot::setupPlot()
     _layout->addWidget(_plot);
 }
 
+CalibrationPlot::~CalibrationPlot()
+{
+    delete _plot;
+    delete _te;
+    delete _layout;
+}
+
 void CalibrationPlot::setupTextEdit()
 {
     _te = new QTextEdit();

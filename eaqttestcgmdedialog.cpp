@@ -38,13 +38,13 @@ EAQtTestCGMDEDialog::EAQtTestCGMDEDialog() : QObject()
     QLabel *lValveTime = new QLabel(tr("Valve time [ms]: "));
     _leValveTime = new QLineEdit();
     _leValveTime->setText(tr("%1").arg(_values->GP));
-    _leValveTime->setValidator(new QIntValidator(0,999));
+    _leValveTime->setValidator(new QIntValidator(0,999,_dialog));
     glparams->addWidget(lValveTime,0,0,1,1);
     glparams->addWidget(_leValveTime,0,1,1,1);
     QLabel *lBreakTime = new QLabel(tr("Break time [ms]: "));
     _leBreakTime = new QLineEdit();
     _leBreakTime->setText(tr("%1").arg(_values->BT));
-    _leBreakTime->setValidator(new QIntValidator(0,9999));
+    _leBreakTime->setValidator(new QIntValidator(0,9999,_dialog));
     glparams->addWidget(lBreakTime,1,0,1,1);
     glparams->addWidget(_leBreakTime,1,1,1,1);
     _lePotential = new QLineEdit();
