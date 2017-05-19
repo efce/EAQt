@@ -117,7 +117,7 @@ void EAQtRecalculateCurveDialog::recalculateCurve(Curve *c, int tp, int tw)
     for ( uint32_t i =0; i<c->getNrOfDataPoints(); ++i ) {
         switch (c->Param(PARAM::method)) {
         case PARAM::method_dpv:
-        case PARAM::method_sqw:
+        case PARAM::method_npv:
             for ( uint32_t p=0; p<c->getNrOfDataPoints(); ++p ) {
                 wrk = 0;
                 for ( int i=0; i<tp; ++i ) {
@@ -129,6 +129,7 @@ void EAQtRecalculateCurveDialog::recalculateCurve(Curve *c, int tp, int tw)
             }
             break;
         default:
+            _pUI->showMessageBox(tr("Only supported methods are DPV and NPV"), tr("Error"));
             break;
         }
 
