@@ -1097,7 +1097,7 @@ void EAQtMainWindow::loadCalibration()
     QFileDialog *fd;
     fd = new QFileDialog(0,tr("Load calibration"),"",tr("eacal (.eacal)"));
     //fd->setModal(true);
-    QString fileName = fd->getOpenFileName();
+    QString fileName = fd->getOpenFileName(this,tr("Load calibration"),"",QString("eacal (*.eacal)"));
     if ( !fileName.isEmpty() ) {
         QFile f(fileName);
         if ( !f.open(QIODevice::ReadOnly) ) {

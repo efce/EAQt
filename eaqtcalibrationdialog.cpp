@@ -324,7 +324,7 @@ void EAQtCalibrationDialog::recalculateConc()
 
 void EAQtCalibrationDialog::saveCalibration()
 {
-    _fd = new QFileDialog(0,tr("Save Calibration"),"",tr(".eacal (.eacal)"));
+    _fd = new QFileDialog(0,tr("Save Calibration"),"",QString(".eacal (*.eacal)"));
     _fd->setModal(true);
     _fd->setOption(QFileDialog::DontUseNativeDialog);
     _fd->setLabelText( QFileDialog::Accept, tr("Save"));
