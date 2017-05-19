@@ -25,6 +25,7 @@ private:
     EAQtUIInterface* _pUI;
     int _tpplustw;
     void recalculateCurve(Curve* c, int tp, int tw);
+    bool _wasInitialized;
 private slots:
     void recalculate();
 };
