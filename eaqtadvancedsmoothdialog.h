@@ -23,6 +23,7 @@
 #include <QRadioButton>
 #include <QPushButton>
 #include "./Qcustomplot/qcustomplot.h"
+#include "curve.h"
 
 class EAQtAdvancedSmoothDialog : public QObject
 {
@@ -38,7 +39,7 @@ private:
     QPushButton *_butCancel;
     QPushButton *_butShowFrequency;
     QCustomPlot *_plotFreq;
-    QCPGraph *_graph;
+    QVector<QCPGraph*> _graphs;
     std::vector<double> _params;
     enum method {
         method_sg,
@@ -53,6 +54,7 @@ private:
 
     QGridLayout* generateLayout(int select);
     void updateFrequencyPlot();
+    void updateCurveFrequency(Curve* c);
 
 public:
     EAQtAdvancedSmoothDialog(int lastUsed, const std::vector<double>& params);

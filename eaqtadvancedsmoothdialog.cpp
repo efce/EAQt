@@ -93,9 +93,6 @@ QGridLayout* EAQtAdvancedSmoothDialog::generateLayout(int select)
     _plotFreq->setMinimumHeight(500);
     _plotFreq->setMinimumWidth(500);
     _plotFreq->setInteractions(QCP::iRangeZoom | QCP::iRangeDrag);
-    _graph = _plotFreq->addGraph();
-    _graph->setPen(QPen(COLOR::regular));
-    _graph->setVisible(false);
     gl->addWidget(_plotFreq,0,2,vpos,1);
 
     return gl;
@@ -120,14 +117,47 @@ void EAQtAdvancedSmoothDialog::methodChanged()
 
 void EAQtAdvancedSmoothDialog::updateFrequencyPlot()
 {
-    int sel = 0;
-    if ( EAQtData::getInstance().Act() >= 0 ) {
-        sel = EAQtData::getInstance().Act();
-    }
-    Curve* c = EAQtData::getInstance().getCurves()->get(sel);
-    if ( c == NULL ) {
+    CurveCollection* cc = EAQtData::getInstance().getCurves();
+    if ( EAQtData::getInstance().Act() == SELECT::none
+    || cc->count() < 1 ) {
         return;
     }
+    _plotFreq->clearGraphs();
+    if ( _graphs.size() > 0 ) {
+        for ( int i = 0; i<_graphs.size(); ++i ) {
+            delete _graphs[i];
+        }
+    }
+    _graphs.resize(0);
+
+    if ( EAQtData::getInstance().Act() == SELECT::all ) {
+        for ( uint32_t i = 0; i< cc->count(); ++i ) {
+            updateCurveFrequency(cc->get(i));
+        }
+    } else {
+        updateCurveFrequency(cc->get(EAQtData::getInstance().Act()));
+    }
+    _plotFreq->xAxis->rescale();
+    _plotFreq->yAxis->rescale();
+    _plotFreq->replot();
+}
+
+void EAQtAdvancedSmoothDialog::exec()
+{
+    _dialog->exec();
+}
+
+void EAQtAdvancedSmoothDialog::hide()
+{
+    _dialog->hide();
+}
+
+void EAQtAdvancedSmoothDialog::updateCurveFrequency(Curve* c)
+{
+    int index = _graphs.size();
+    _graphs.push_back(_plotFreq->addGraph());
+    _graphs[index]->setPen(QPen(COLOR::regular));
+    _graphs[index]->setVisible(false);
 
     double samplingFreq;
     if ( EAQtData::getInstance().getXAxis() != XAXIS::nonaveraged ) {
@@ -155,19 +185,6 @@ void EAQtAdvancedSmoothDialog::updateFrequencyPlot()
         power[i] = log(pow(real[i],2) + pow(img[i],2));
     }
     int half = ceil(frequencies.size()/2);
-    _graph->setData(frequencies.mid(0,half-1),power.mid(0,half-1));
-    _graph->setVisible(true);
-    _plotFreq->xAxis->rescale();
-    _plotFreq->yAxis->rescale();
-    _plotFreq->replot();
-}
-
-void EAQtAdvancedSmoothDialog::exec()
-{
-    _dialog->exec();
-}
-
-void EAQtAdvancedSmoothDialog::hide()
-{
-    _dialog->hide();
+    _graphs[index]->setData(frequencies.mid(0,half-1),power.mid(0,half-1));
+    _graphs[index]->setVisible(true);
 }
