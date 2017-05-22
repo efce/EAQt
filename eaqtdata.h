@@ -130,6 +130,8 @@ public:
     void MesUpdate(uint32_t, uint32_t, bool);
     int  MesSaveAll(QString UserCName, QString UserFName, QString UserComment);
     bool isMeasurement();
+    const QVector<int16_t>& getPotentialProgram();
+    void setPotentialProgram(QVector<int16_t> pp);
 
     void ProcessPacketFromEA(char* packet, bool nextPacketReady);
     void sendAccessories();
@@ -162,6 +164,7 @@ public:
    } _testCGMDE;
 
    CalibrationData *_calibration;
+
 /* ------------
  * VARIABLES
  ------------*/
@@ -179,8 +182,8 @@ private:
    int _act;
    int32_t _mainParam[PARAM::PARAMNUM];	   // parametry pomiaru czytanej/zapisywanej krzywej
    int32_t _PVParam[PARAM::PARAMNUM];
-   QVector<double> _PVParam_PotentialProgram {};
    int32_t _LSVParam[PARAM::PARAMNUM];
+   QVector<int16_t> _PVParam_PotentialProgram {};
 
    int _currentRange;
    int _ptnrFromEss;

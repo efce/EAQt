@@ -60,7 +60,6 @@ EAQtData::EAQtData() : QObject(), EAQtDataInterface()
     this->_displayCurveNr = 0;
     this->_currentPointOnCurve = 0;
 
-
     initParam();
     initParamLSV();
 }
@@ -2951,4 +2950,14 @@ void EAQtData::exportToTXT(QString path)
 bool EAQtData::getWasLSV()
 {
     return _wasLSVMeasurement;
+}
+
+const QVector<int16_t>& EAQtData::getPotentialProgram()
+{
+    return _PVParam_PotentialProgram;
+}
+
+void EAQtData::setPotentialProgram(QVector<int16_t> pp)
+{
+    _PVParam_PotentialProgram = pp;
 }

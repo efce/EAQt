@@ -18,6 +18,7 @@
 #include "eaqtparamdialog.h"
 #include "eaqtparamcgmde.h"
 #include "eaqtparambreaks.h"
+#include "eaqtparampotentialprogram.h"
 
 EAQtParamDialog::EAQtParamDialog(EAQtDataInterface *pd, bool isLsv)
 {
@@ -419,8 +420,7 @@ QGroupBox *EAQtParamDialog::createMesTypeGroup()
         _butProgramPotential->setText(tr("Program E"));
         _butProgramPotential->setFixedHeight(30);
         _checkboxIsPro = new QCheckBox(tr("Potential change program"));
-
-        //connect(ProgramPotential,SIGNAL(clicked()),this,SLOT(showProgramPotential()));
+        connect(_butProgramPotential,SIGNAL(clicked()),this,SLOT(showPotentialProgram()));
         connect(_checkboxIsPro,SIGNAL(clicked(bool)),_butProgramPotential,SLOT(setEnabled(bool)));
 
         QVBoxLayout *vbox = new QVBoxLayout;
@@ -1010,4 +1010,11 @@ void EAQtParamDialog::methodChanged()
         _lineEdits[lid_E0_dE]->setEnabled(true);
         _lineLabels[lid_E0_dE]->setText("dE [mV]:");
     }
+}
+
+void EAQtParamDialog::showPotentialProgram()
+{
+    EAQtParamPotentialProgram *ppp = new EAQtParamPotentialProgram(_dialog);
+    ppp->exec();
+    delete ppp;
 }

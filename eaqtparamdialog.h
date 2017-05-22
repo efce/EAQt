@@ -62,6 +62,7 @@ public slots:
     void toggleAdvanced();
     void setSeriaFile();
     void methodChanged();
+    void showPotentialProgram();
 
 private:
     QHBoxLayout* generateLayout();
