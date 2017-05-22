@@ -16,6 +16,7 @@
   *  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
   *******************************************************************************************************************/
 #include <QTimer>
+#include <algorithm>
 #include "ui_mainwindow.h"
 #include "eaqtmainwindow.h"
 #include "eaqtopenfiledialog.h"
@@ -249,7 +250,7 @@ void EAQtMainWindow::PlotRegenerate()
     this->_plotMain->blockSignals(true);
     Curve* curve;
     while ( (curve=this->_pEAQtData->getCurves()->get(i)) != NULL ) {
-        curve->getPlot()->setData(curve->getXVector(), curve->getYVector());
+        curve->getPlot()->setData(curve->getXVector(), curve->getYVector(),true);
         curve->getPlot()->setPen(QPen(COLOR::regular));
         curve->getPlot()->setLayer(_plotLayers.NonActive);
         curve->getPlot()->setSelection(QCPDataSelection());
@@ -577,8 +578,61 @@ QCPGraph* EAQtMainWindow::PlotAddGraph()
 
 void EAQtMainWindow::PlotRescaleAxes()
 {
-    this->_plotMain->rescaleAxes(true);
-    this->_plotMain->replot();
+    CurveCollection* cc = _pEAQtData->getCurves();
+    if ( cc->count() > 0 ) {
+        uint32_t sizecc = cc->count();
+        double minx = *std::min_element(cc->get(0)->getXVector().constBegin(),cc->get(0)->getXVector().constEnd());
+        double maxx = *std::max_element(cc->get(0)->getXVector().constBegin(),cc->get(0)->getXVector().constEnd());
+        double miny = *std::min_element(cc->get(0)->getYVector().constBegin(),cc->get(0)->getYVector().constEnd());
+        double maxy = *std::max_element(cc->get(0)->getYVector().constBegin(),cc->get(0)->getYVector().constEnd());
+        for ( uint32_t i = 0; i<sizecc; ++i ) {
+            static double lmaxx, lminx, lmaxy, lminy;
+            lminx = *std::min_element(cc->get(i)->getXVector().constBegin(),cc->get(i)->getXVector().constEnd());
+            lmaxx = *std::max_element(cc->get(i)->getXVector().constBegin(),cc->get(i)->getXVector().constEnd());
+            lminy = *std::min_element(cc->get(i)->getYVector().constBegin(),cc->get(i)->getYVector().constEnd());
+            lmaxy = *std::max_element(cc->get(i)->getYVector().constBegin(),cc->get(i)->getYVector().constEnd());
+            if ( lminx < minx ) {
+                minx = lminx;
+            }
+            if ( lmaxx > maxx ) {
+                maxx = lmaxx;
+            }
+            if ( lminy < miny ) {
+                miny = lminy;
+            }
+            if ( lmaxy > maxy ) {
+                maxy = lmaxy;
+            }
+        }
+        _plotMain->xAxis->setRangeLower(minx);
+        _plotMain->xAxis->setRangeUpper(maxx);
+        _plotMain->yAxis->setRangeLower(miny);
+        _plotMain->yAxis->setRangeUpper(maxy);
+        _plotMain->replot();
+    } else {
+        return;
+    }
+}
+
+void EAQtMainWindow::PlotMesRescaleAxes(Curve* c)
+{
+    double minx = *std::min_element(c->getXVector().constBegin(),c->getXVector().constEnd());
+    double maxx = *std::max_element(c->getXVector().constBegin(),c->getXVector().constEnd());
+    double miny = *std::min_element(c->getYVector().constBegin(),c->getYVector().constEnd());
+    double maxy = *std::max_element(c->getYVector().constBegin(),c->getYVector().constEnd());
+    if ( _plotMain->xAxis->range().lower > minx) {
+        _plotMain->xAxis->setRangeLower(minx);
+    }
+    if ( _plotMain->xAxis->range().upper < maxx) {
+        _plotMain->xAxis->setRangeUpper(maxx);
+    }
+    if ( _plotMain->yAxis->range().lower > miny ) {
+        _plotMain->yAxis->setRangeLower(miny);
+    }
+    if ( _plotMain->yAxis->range().upper < maxy ) {
+        _plotMain->yAxis->setRangeUpper(maxy);
+    }
+    _plotMain->replot();
 }
 
 void EAQtMainWindow::showParamDialogPV()
@@ -683,8 +737,9 @@ void EAQtMainWindow::MeasurementUpdate(uint32_t curveNr, uint32_t pointNr)
     default:
         throw 1;
     }
-
-    PlotRescaleAxes();
+    //PlotMesRescaleAxes(curve);
+    _plotMain->rescaleAxes();//DO NOT USE ANYWHERE ELSE !
+    _plotMain->replot();
 }
 
 void EAQtMainWindow::showMessageBox(QString text, QString title)

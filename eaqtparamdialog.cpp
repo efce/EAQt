@@ -893,6 +893,7 @@ int EAQtParamDialog::getBreaks(int n)
 void EAQtParamDialog::saveParams()
 {
     _wasSaved = false;
+    this->setParam(PARAM::pro,PARAM::pro_no);
     if ( _checkboxIsPro->isChecked() ) {
         if ( EAQtData::getInstance().getPotentialProgram().size() < 3 ) {
             QMessageBox mb(_dialog);

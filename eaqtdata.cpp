@@ -1285,19 +1285,20 @@ void EAQtData::MesStart(bool isLsv)
                 //
                 // TYLKO DLA Programowania potencjalu
                 //
-                getMesCurves()->get(mesCurveIndex)->reinitializeCurveData(this->_pSeriesData->Mes_PotentialProgramLength());
+                int prsize = _PVParam_PotentialProgram.size();
+                getMesCurves()->get(mesCurveIndex)->reinitializeCurveData(prsize);
                 QVector<double> vecP;
                 QVector<double> vecT;
                 if ( _PVParam[PARAM::messc] == PARAM::messc_cyclic && nrOfElectrodes <= mesCurveIndex ) {
                     //powrot cyklicznej
-                    for ( int y=this->_pSeriesData->Mes_PotentialProgramLength()-1; y<=0; y-- ) {
-                        vecP.append(this->_pSeriesData->Mes_PotentialProgram()[y]);
-                        vecT.append( (2*this->_pSeriesData->Mes_PotentialProgramLength()-(y+1))*2*(_PVParam[PARAM::tp]+_PVParam[PARAM::tw]));
+                    for ( int y=prsize-1; y<=0; y-- ) {
+                        vecP.append(_PVParam_PotentialProgram[y]);
+                        vecT.append( (2*prsize-(y+1))*2*(_PVParam[PARAM::tp]+_PVParam[PARAM::tw]));
                     }
                 } else {
                     // normalny pomiar
-                    for (int y=0; y<this->_pSeriesData->Mes_PotentialProgramLength();y++) {
-                        vecP.append(this->_pSeriesData->Mes_PotentialProgram()[y]);
+                    for (int y=0; y<prsize;y++) {
+                        vecP.append(this->_PVParam_PotentialProgram[y]);
                         vecT.append( (y+1)*2*(_PVParam[PARAM::tp]+_PVParam[PARAM::tw]) );
                     }
                 }
@@ -1307,11 +1308,11 @@ void EAQtData::MesStart(bool isLsv)
                 getMesCurves()->get(mesCurveIndex)->Param(PARAM::Ep, 0);
                 getMesCurves()->get(mesCurveIndex)->Param(PARAM::Estep, 1);
                 if ( getMesCurves()->get(mesCurveIndex)->Param(PARAM::sampl) == PARAM::sampl_single ) {
-                    getMesCurves()->get(mesCurveIndex)->Param(PARAM::ptnr,this->_pSeriesData->Mes_PotentialProgramLength());
-                    getMesCurves()->get(mesCurveIndex)->Param(PARAM::Ek,this->_pSeriesData->Mes_PotentialProgramLength());
+                    getMesCurves()->get(mesCurveIndex)->Param(PARAM::ptnr,prsize);
+                    getMesCurves()->get(mesCurveIndex)->Param(PARAM::Ek,prsize);
                 } else {
-                    getMesCurves()->get(mesCurveIndex)->Param(PARAM::ptnr,this->_pSeriesData->Mes_PotentialProgramLength()/2);
-                    getMesCurves()->get(mesCurveIndex)->Param(PARAM::Ek,this->_pSeriesData->Mes_PotentialProgramLength()/2);
+                    getMesCurves()->get(mesCurveIndex)->Param(PARAM::ptnr,prsize/2);
+                    getMesCurves()->get(mesCurveIndex)->Param(PARAM::Ek,prsize/2);
                 }
 
             } else {
@@ -1501,9 +1502,7 @@ bool EAQtData::sendPVToEA()
     _TxBuf[1] = (unsigned char)(TxN & 0x00ff);
     _TxBuf[2] = (unsigned char)((TxN >> 8) & 0x00ff);
 
-    if ( this->_network->sendToEA((char*)&_TxBuf[0]) > 0 ) {
-        return true;
-    } else {
+    if ( this->_network->sendToEA((char*)&_TxBuf[0]) <= 0 ) {
         return false;
     }
 
@@ -1543,6 +1542,7 @@ bool EAQtData::sendPVToEA()
         }
 
     }
+    return true;
 }
 
 void EAQtData::MesStop()
