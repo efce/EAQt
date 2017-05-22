@@ -19,6 +19,7 @@
 #include "eaqtparamcgmde.h"
 #include "eaqtparambreaks.h"
 #include "eaqtparampotentialprogram.h"
+#include "eaqtdata.h"
 
 EAQtParamDialog::EAQtParamDialog(EAQtDataInterface *pd, bool isLsv)
 {
@@ -209,9 +210,9 @@ QGroupBox* EAQtParamDialog::createMeasurement()
     this->_paramMessc.resize(3);
     QGroupBox *messcSelection = new QGroupBox(tr("Measurement"));
     QVBoxLayout *vbmessc = new QVBoxLayout();
-    _paramMessc[PARAM::messc_single] = new QRadioButton(tr("single"));
-    _paramMessc[PARAM::messc_cyclic] = new QRadioButton(tr("cyclic"));
-    _paramMessc[PARAM::messc_multicyclic] = new QRadioButton(tr("multicyclic"));
+    _paramMessc[PARAM::messc_single] = new QRadioButton(tr("single","MESSC"));
+    _paramMessc[PARAM::messc_cyclic] = new QRadioButton(tr("cyclic","MESSC"));
+    _paramMessc[PARAM::messc_multicyclic] = new QRadioButton(tr("multicyclic","MESSC"));
     connect(_paramMessc[PARAM::messc_multicyclic],SIGNAL(toggled(bool)),this,SLOT(multicyclicChanged(bool)));
     if ( !this->_isLsv ) {
         _paramMessc[PARAM::messc_multicyclic]->setVisible(false);
@@ -422,12 +423,12 @@ QGroupBox *EAQtParamDialog::createMesTypeGroup()
         _checkboxIsPro = new QCheckBox(tr("Potential change program"));
         connect(_butProgramPotential,SIGNAL(clicked()),this,SLOT(showPotentialProgram()));
         connect(_checkboxIsPro,SIGNAL(clicked(bool)),_butProgramPotential,SLOT(setEnabled(bool)));
+        connect(_checkboxIsPro,SIGNAL(toggled(bool)),this,SLOT(checkPotentialProgram()));
 
         QVBoxLayout *vbox = new QVBoxLayout;
         vbox->addWidget(_checkboxIsPro);
         vbox->addWidget(_butProgramPotential);
         for ( int i = 0; i<_paramMethod.size(); ++i ) {
-            connect(_checkboxIsPro,SIGNAL(clicked(bool)),_paramMethod[i],SLOT(setDisabled(bool)));
             vbox->addWidget(_paramMethod[i]);
         }
         vbox->addStretch(0);
@@ -492,8 +493,8 @@ QGroupBox* EAQtParamDialog::createProbingGroup()
     this->_paramSampl.resize(2);
     QGroupBox *samplSelection = new QGroupBox(tr("Probing"));
     QVBoxLayout *vbsampl = new QVBoxLayout();
-    _paramSampl[PARAM::sampl_single] = new QRadioButton(tr("single"));
-    _paramSampl[PARAM::sampl_double] = new QRadioButton(tr("double"));
+    _paramSampl[PARAM::sampl_single] = new QRadioButton(tr("single","SAMPL"));
+    _paramSampl[PARAM::sampl_double] = new QRadioButton(tr("double","SAMPL"));
     vbsampl->addWidget(_paramSampl[0]);
     vbsampl->addWidget(_paramSampl[1]);
     vbsampl->addStretch(0);
@@ -794,18 +795,6 @@ void EAQtParamDialog::prepareDialog()
             _lineEdits[lid_E0_dE]->setDisabled(true);
         }
 
-        if ( this->getParam(PARAM::pro) == PARAM::pro_yes ) { // potencjał programowany
-            _checkboxIsPro->setChecked(true);
-            _butProgramPotential->setEnabled(true);
-            for ( int i = 0; i<_paramMethod.size(); ++i )
-                _paramMethod[i]->setEnabled(false);
-        } else {
-            _checkboxIsPro->setChecked(false);
-            _butProgramPotential->setEnabled(false);
-            for ( int i = 0; i<_paramMethod.size(); ++i )
-                _paramMethod[i]->setEnabled(true);
-        }
-
         if ( this->getParam(PARAM::method) == PARAM::method_npv ) {
             _lineLabels[lid_E0_dE]->setText(tr("E0 [mV]:"));
         } else {
@@ -814,6 +803,16 @@ void EAQtParamDialog::prepareDialog()
         if ( this->getParam(PARAM::Ep) != this->getParam(PARAM::Ek) ) {
             _lineEdits[lid_points]->setDisabled(true);
         }
+
+        if ( this->getParam(PARAM::pro) == PARAM::pro_yes ) { // potencjał programowany
+            _checkboxIsPro->setChecked(true);
+            _butProgramPotential->setEnabled(true);
+        } else {
+            _checkboxIsPro->setChecked(false);
+            _butProgramPotential->setEnabled(false);
+        }
+
+        this->checkPotentialProgram();
         this->methodChanged();
     }
 }
@@ -831,12 +830,18 @@ void EAQtParamDialog::cancelAndQuit()
 void EAQtParamDialog::saveAndQuit()
 {
     this->saveParams();
+    if ( !_wasSaved ) {
+        return;
+    }
     this->_dialog->close();
 }
 
 void EAQtParamDialog::saveAndStart()
 {
     this->saveParams();
+    if ( !_wasSaved ) {
+        return;
+    }
     this->_dialog->close();
     this->_pData->MesStart(this->_isLsv);
 }
@@ -887,6 +892,18 @@ int EAQtParamDialog::getBreaks(int n)
 
 void EAQtParamDialog::saveParams()
 {
+    _wasSaved = false;
+    if ( _checkboxIsPro->isChecked() ) {
+        if ( EAQtData::getInstance().getPotentialProgram().size() < 3 ) {
+            QMessageBox mb(_dialog);
+            mb.setWindowTitle(tr("Error"));
+            mb.setText(tr("Potential program requires at least three points."));
+            mb.exec();
+            return;
+        } else {
+            this->setParam(PARAM::pro,PARAM::pro_yes);
+        }
+    }
     this->setParam(PARAM::aver, this->_lineEdits[lid_aver]->text().toInt());
     this->setParam(PARAM::breaknr, this->_lineEdits[lid_breaks]->text().toInt());
     this->setParam(PARAM::dE, this->_lineEdits[lid_E0_dE]->text().toInt());
@@ -993,22 +1010,25 @@ void EAQtParamDialog::saveParams()
             _pData->setIsMesSeries(false);
         }
     }
+    _wasSaved = true;
 }
 
 void EAQtParamDialog::methodChanged()
 {
-    if ( _paramMethod[PARAM::method_scv]->isChecked() ) {
+    if ( !_checkboxIsPro->isChecked() ) {
+        if ( _paramMethod[PARAM::method_scv]->isChecked() ) {
         _lineLabels[lid_E0_dE]->setEnabled(false);
         _lineEdits[lid_E0_dE]->setEnabled(false);
-    } else if ( _paramMethod[PARAM::method_npv]->isChecked() ) {
+        } else if ( _paramMethod[PARAM::method_npv]->isChecked() ) {
         _lineLabels[lid_E0_dE]->setEnabled(true);
         _lineEdits[lid_E0_dE]->setEnabled(true);
         _lineLabels[lid_E0_dE]->setText("E0 [mV]:");
-    } else if ( _paramMethod[PARAM::method_dpv]->isChecked()
+        } else if ( _paramMethod[PARAM::method_dpv]->isChecked()
            || _paramMethod[PARAM::method_sqw]->isChecked() ) {
         _lineLabels[lid_E0_dE]->setEnabled(true);
         _lineEdits[lid_E0_dE]->setEnabled(true);
         _lineLabels[lid_E0_dE]->setText("dE [mV]:");
+        }
     }
 }
 
@@ -1017,4 +1037,23 @@ void EAQtParamDialog::showPotentialProgram()
     EAQtParamPotentialProgram *ppp = new EAQtParamPotentialProgram(_dialog);
     ppp->exec();
     delete ppp;
+}
+
+void EAQtParamDialog::checkPotentialProgram()
+{
+    if ( _checkboxIsPro->isChecked() ) {
+        _lineEdits[lid_Ek]->setDisabled(true);
+        _lineEdits[lid_Ep]->setDisabled(true);
+        _lineEdits[lid_E0_dE]->setDisabled(true);
+        _lineEdits[lid_Estep]->setDisabled(true);
+        _lineEdits[lid_breaks]->setDisabled(true);
+        _lineEdits[lid_breaks]->setText("0");
+    } else {
+        _lineEdits[lid_Ek]->setEnabled(true);
+        _lineEdits[lid_Ep]->setEnabled(true);
+        _lineEdits[lid_E0_dE]->setEnabled(true);
+        _lineEdits[lid_Estep]->setEnabled(true);
+        _lineEdits[lid_breaks]->setEnabled(true);
+        this->methodChanged();
+    }
 }

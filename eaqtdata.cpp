@@ -1052,6 +1052,7 @@ void EAQtData::MesStart(bool isLsv)
 
         if ( this->_pSeriesData->Mes_PotentialProgramLength() > 0 ) {
             _PVParam[PARAM::pro]= 1;
+            setPotentialProgram(QVector<int16_t>::fromStdVector(this->_pSeriesData->Mes_PotentialProgram()));
         }
 
         if ( this->_pSeriesData->Mes_WaitForUser() == true ) {
@@ -1279,9 +1280,8 @@ void EAQtData::MesStart(bool isLsv)
                 this->getMesCurves()->get(mesCurveIndex)->Param(i, _PVParam[i]);
             }
 
-            if ( this->_isMesSeries
-                 && _PVParam[PARAM::pro] == PARAM::pro_yes
-                 && this->_pSeriesData->Mes_PotentialProgramLength() > 0 ) {
+            if ( _PVParam[PARAM::pro] == PARAM::pro_yes
+                 && this->_PVParam_PotentialProgram.size() > 2 ) {
                 //
                 // TYLKO DLA Programowania potencjalu
                 //
@@ -1448,15 +1448,20 @@ bool EAQtData::sendPVToEA()
 
     int16_t lenE;
     int16_t E[1200];
-    if ( this->_isMesSeries && this->getMesCurves()->get(0)->Param(PARAM::pro) == 1 ) {
-        lenE = this->_pSeriesData->Mes_PotentialProgramLength();
+    if ( this->getMesCurves()->get(0)->Param(PARAM::pro) == 1 ) {
+        if ( _PVParam_PotentialProgram.size() < 3 ) {
+            _pUI->showMessageBox(tr("Potential program has to have more than 2 points"), tr("Error"));
+            return false;
+        }
+        lenE = _PVParam_PotentialProgram.size();
         for ( int i=0; i<lenE; i++ ) {
             //E[i] = i*10;
-            E[i]=this->_pSeriesData->Mes_PotentialProgram()[i];
+            E[i]=_PVParam_PotentialProgram[i];
         }
         E1I = E[0];
         E2I = E[1];
-        E3I = E2I - this->getMesCurves()->get(0)->Param(PARAM::dE);
+        E3I = E[2];
+        //E3I = E2I - this->getMesCurves()->get(0)->Param(PARAM::dE);
     }
 
     for (i=0 ; i<PARAM::PARAMNUM ; i++) {

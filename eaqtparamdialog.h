@@ -63,6 +63,7 @@ public slots:
     void setSeriaFile();
     void methodChanged();
     void showPotentialProgram();
+    void checkPotentialProgram();
 
 private:
     QHBoxLayout* generateLayout();
@@ -84,6 +85,7 @@ private:
     EAQtDataInterface *_pData;
     QFontMetrics* _metrics;
     bool _isLsv;
+    bool _wasSaved;
 
     enum lineEditParamID {
         lid_Ep,

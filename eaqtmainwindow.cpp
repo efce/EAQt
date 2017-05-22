@@ -756,6 +756,15 @@ void EAQtMainWindow::paramCopy()
             for ( int i=0; i<PARAM::PARAMNUM; ++i ) {
                 this->_pEAQtData->ParamPV(i,c->Param(i));
             }
+            if ( c->Param(PARAM::pro) == PARAM::pro_yes ) {
+                QVector<double>* potentials = c->getPotentialVector();
+                uint32_t vsize = potentials->size();
+                QVector<int16_t> program(vsize,0);
+                for ( uint32_t i = 0; i<vsize; ++i) {
+                    program[i] = (int16_t) potentials->at(i);
+                }
+                _pEAQtData->setPotentialProgram(program);
+            }
         }
     }
 }
