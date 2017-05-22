@@ -74,7 +74,7 @@ bool EAQtParamPotentialProgram::checkPotentialProgramArea()
     }
     while ( (posp=checktext.find(separatorList[separatorNum])) != -1 ) {
         tmp = checktext.substr(0,posp);
-        if ( point_is_integer( tmp ) ) {
+        if ( isTextInteger( tmp ) ) {
              data = atoi(tmp.c_str());
         } else {
             summary->setText(tr("Only integer values are allowed."));
@@ -85,7 +85,7 @@ bool EAQtParamPotentialProgram::checkPotentialProgramArea()
     }
 
     tmp = checktext; //ostatni punkt
-    if ( point_is_integer( tmp ) ) {
+    if ( isTextInteger( tmp ) ) {
          data = atoi(tmp.c_str());
     } else {
         summary->setText(tr("Only integer values are allowed."));
@@ -101,7 +101,7 @@ bool EAQtParamPotentialProgram::checkPotentialProgramArea()
     }
 }
 
-bool EAQtParamPotentialProgram::point_is_integer(const std::string& s)
+bool EAQtParamPotentialProgram::isTextInteger(const std::string& s)
 {
     return( strspn( s.c_str(), "-0123456789" ) == s.size() && s.c_str()[0] != '\0' );
 }

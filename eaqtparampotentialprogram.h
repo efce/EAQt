@@ -17,7 +17,7 @@ private:
     QPlainTextEdit* potentialProgramTextArea;
     QVector<int16_t> newPotentialList;
     QVector<int16_t> oldPotentialList;
-    bool point_is_integer(const std::string& s);
+    bool isTextInteger(const std::string& s);
     bool checkPotentialProgramArea();
     int separatorNum;
     QVector<char> separatorList;
