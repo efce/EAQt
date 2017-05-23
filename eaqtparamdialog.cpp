@@ -906,6 +906,12 @@ void EAQtParamDialog::saveParams()
                 this->setParam(PARAM::pro,PARAM::pro_yes);
             }
         }
+    } else {
+        if ( _startEbox->isChecked() ) {
+            setParam(PARAM::Escheck,PARAM::Escheck_yes);
+        } else {
+            setParam(PARAM::Escheck,PARAM::Escheck_no);
+        }
     }
     this->setParam(PARAM::aver, this->_lineEdits[lid_aver]->text().toInt());
     this->setParam(PARAM::breaknr, this->_lineEdits[lid_breaks]->text().toInt());
