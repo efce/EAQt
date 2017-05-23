@@ -117,12 +117,12 @@ void EAQtRecalculateCurveDialog::recalculate()
         for ( uint32_t nc = 0; nc<cc->count(); ++nc ) {
             Curve *c = EAQtData::getInstance().getCurves()->get(nc);
             recalculateCurve(c,newTp,newTw);
-            c->FName(tr("not saved)"));
+            c->FName(tr("(not saved)"));
         }
     } else {
         Curve *c = EAQtData::getInstance().getCurves()->get(EAQtData::getInstance().Act());
         recalculateCurve(c,newTp,newTw);
-        c->FName(tr("not saved)"));
+        c->FName(tr("(not saved)"));
     }
     _pUI->updateAll(true);
 }
