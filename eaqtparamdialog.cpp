@@ -894,15 +894,17 @@ void EAQtParamDialog::saveParams()
 {
     _wasSaved = false;
     this->setParam(PARAM::pro,PARAM::pro_no);
-    if ( _checkboxIsPro->isChecked() ) {
-        if ( EAQtData::getInstance().getPotentialProgram().size() < 3 ) {
-            QMessageBox mb(_dialog);
-            mb.setWindowTitle(tr("Error"));
-            mb.setText(tr("Potential program requires at least three points."));
-            mb.exec();
-            return;
-        } else {
-            this->setParam(PARAM::pro,PARAM::pro_yes);
+    if ( !_isLsv ) {
+        if ( _checkboxIsPro->isChecked() ) {
+            if ( EAQtData::getInstance().getPotentialProgram().size() < 3 ) {
+                QMessageBox mb(_dialog);
+                mb.setWindowTitle(tr("Error"));
+                mb.setText(tr("Potential program requires at least three points."));
+                mb.exec();
+                return;
+            } else {
+                this->setParam(PARAM::pro,PARAM::pro_yes);
+            }
         }
     }
     this->setParam(PARAM::aver, this->_lineEdits[lid_aver]->text().toInt());
