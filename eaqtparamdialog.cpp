@@ -383,7 +383,7 @@ QGroupBox *EAQtParamDialog::createRestItems()
         this->_startEbox = new QGroupBox(tr("Use start potential"));
         _startEbox->setCheckable(true);
         _startEbox->setChecked(false);
-        _lineLabels[lid_td]->setText(tr("tstart [ms]:"));//15
+        _lineLabels[lid_td]->setText(tr("tstart [s]:"));//15
         _lineLabels[lid_E0_dE]->setText(tr("Estart [mV]:"));//11
         QGridLayout *strLay = new QGridLayout();
         strLay->addWidget(_lineLabels[lid_td],0,0);
@@ -900,6 +900,13 @@ void EAQtParamDialog::saveParams()
                 QMessageBox mb(_dialog);
                 mb.setWindowTitle(tr("Error"));
                 mb.setText(tr("Potential program requires at least three points."));
+                mb.exec();
+                return;
+            } else if ( _paramSampl[PARAM::sampl_double]->isChecked()
+            && (EAQtData::getInstance().getPotentialProgram().size()%2!=0) ) {
+                QMessageBox mb(_dialog);
+                mb.setWindowTitle(tr("Error"));
+                mb.setText(tr("Double sampling requires even number of points for potential program."));
                 mb.exec();
                 return;
             } else {

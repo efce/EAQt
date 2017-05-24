@@ -1,6 +1,6 @@
 
   /*****************************************************************************************************************
-  *  Electrochmical analyzer software EAQt to be used with 8KCA and M161
+  *  Electrocmical analyzer software EAQt to be used with 8KCA and M161
   *
   *  Copyright (C) 2017  Filip Ciepiela <filip.ciepiela@agh.edu.pl> and Małgorzata Jakubowska <jakubows@agh.edu.pl>
   *  This program is free software; you can redistribute it and/or modify 
