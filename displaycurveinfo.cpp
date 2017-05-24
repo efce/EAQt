@@ -89,7 +89,7 @@ QString DisplayCurveInfo::getHTMLInfo()
                   + tr("<tr><td><b>tp:</b>&nbsp;%1&nbsp;ms</td><td><b>tw:</b>&nbsp;%2&nbsp;ms</td></tr>").arg(_curve->Param(PARAM::tp)).arg(_curve->Param(PARAM::tw))
              )
           + tr("<tr><td><b>td:</b>&nbsp;%1&nbsp;ms</td><td></td></tr>").arg(_curve->Param(PARAM::td))
-          + tr("<tr><td colspan=2><b>Number of points:</b>&nbsp;%1</td></tr>").arg(_curve->Param(PARAM::ptnr))
+          + tr("<tr><td colspan=2><b>Data points:</b>&nbsp;%1</td></tr>").arg(_curve->Param(PARAM::ptnr))
           + tr("<tr><td colspan=2><b>Multielectrode setup:</b>&nbsp;%1</td></tr>").arg(_curve->Param(PARAM::multi),8,2)
           + (_curve->Param(PARAM::breaknr)>0?
                  tr("<tr><td colspan=2><b>Breaks:</b></td></tr>")

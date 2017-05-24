@@ -30,7 +30,7 @@ EAQtAverageDialog::EAQtAverageDialog(EAQtUIInterface* pui) : QObject()
     _pUI = pui;
     _dialog = new QDialog();
     _dialog->setWindowTitle(tr("Average curves"));
-    QGridLayout *gl = new QGridLayout();
+    QHBoxLayout *gl = new QHBoxLayout();
     _butAverage = new QPushButton(tr("Average selected"));
     connect(_butAverage,SIGNAL(clicked(bool)),this,SLOT(average()));
     _butClose = new QPushButton(tr("Close"));
@@ -42,25 +42,32 @@ EAQtAverageDialog::EAQtAverageDialog(EAQtUIInterface* pui) : QObject()
 
     _listBox = new QVBoxLayout();
     //_listBox->setMargin(1);
-    _listBox->addStretch(0);
+    _listBox->setAlignment(Qt::AlignTop);
     _sa = new QScrollArea();
     _scrollAreaWidget = new QWidget();
     _scrollAreaWidget->setFixedWidth(250);
     _scrollAreaWidget->setLayout(_listBox);
     _sa->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
     _sa->setFixedWidth(400);
-    _sa->setMaximumHeight(600);
-    _sa->setLayout(new QVBoxLayout);
+    _sa->setMinimumHeight(340);
+    QVBoxLayout *salay = new QVBoxLayout();
+    salay->setAlignment(Qt::AlignTop);
+    _sa->setLayout(salay);
     _sa->setWidget(_scrollAreaWidget);
     _sa->setWidgetResizable(true);
-
     generateList();
 
-    gl->addWidget(_sa,0,0,4,1);
-    gl->addWidget(_butAverage,0,1,1,1);
-    gl->addWidget(_butSelectAll,1,1,1,1);
-    gl->addWidget(_butSelectNone,2,1,1,1);
-    gl->addWidget(_butClose,3,1,1,1);
+    QVBoxLayout *butLay = new QVBoxLayout();
+    butLay->addWidget(_butAverage);
+    butLay->addWidget(_butSelectAll);
+    butLay->addWidget(_butSelectNone);
+    butLay->addWidget(_butClose);
+    butLay->addStretch(0);
+    butLay->addSpacing(1);
+
+    gl->addWidget(_sa);
+    gl->addLayout(butLay);
+
     _dialog->setLayout(gl);
 }
 
@@ -93,6 +100,7 @@ void EAQtAverageDialog::generateList()
         _list[i]->setChecked(false);
         _listBox->addWidget(_list[i]);
     }
+    _listBox->addSpacing(1);
     _listBox->update();
     _scrollAreaWidget->update();
     _sa->layout()->update();
