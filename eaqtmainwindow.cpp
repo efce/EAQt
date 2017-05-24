@@ -26,6 +26,7 @@
 #include "eaqtrecalculatecurvedialog.h"
 #include "calibrationplot.h"
 #include "eaqtaveragedialog.h"
+#include "eaqtcurverenamedialog.h"
 
 EAQtMainWindow::EAQtMainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -875,6 +876,10 @@ void EAQtMainWindow::createActionsTopMenu()
     _actExportCurve->setStatusTip(tr("Export curve(s) as *.txt or *.csv"));
     connect(_actExportCurve, SIGNAL(triggered(bool)), this, SLOT(exportCurve()));
 
+    this->_actRenameCurve = new QAction(tr("Rename curve"), this);
+    _actRenameCurve->setStatusTip(tr("Change name / comment of selected curve"));
+    connect(_actRenameCurve, SIGNAL(triggered(bool)), this, SLOT(showRenameCurve()));
+
     this->_actStartMeasurement = new QAction(tr("Repeat previous (PV)"), this);
     this->_actStartMeasurement->setStatusTip(tr("Start previous measurement"));
     connect(_actStartMeasurement, SIGNAL(triggered(bool)),this,SLOT(userStartsMeasurement()));
@@ -979,6 +984,7 @@ void EAQtMainWindow::createMenusTopMenu()
     _menuFile->addAction(this->_actLoadCurve);
     _menuFile->addAction(this->_actSaveCurve);
     _menuFile->addAction(this->_actExportCurve);
+    _menuFile->addAction(this->_actRenameCurve);
 
     _menuMeasurement = this->menuBar()->addMenu(tr("&Measurement"));
     _menuMeasurement->addAction(this->_actStartMeasurement);
@@ -1350,4 +1356,17 @@ void EAQtMainWindow::showTestCGMDE()
 void EAQtMainWindow::updateCGMDETest()
 {
     _dialogTestCGMDE->updateTest();
+}
+
+void EAQtMainWindow::showRenameCurve()
+{
+    Curve *c = EAQtData::getInstance().getCurves()->get(EAQtData::getInstance().Act());
+    if ( c == NULL ) {
+        showMessageBox(tr("Could not select curve for renaming."), tr("Error"));
+        return;
+    }
+    EAQtCurveRenameDialog *crd = new EAQtCurveRenameDialog(c);
+    crd->exec();
+    delete crd;
+    updateAll(false);
 }

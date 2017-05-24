@@ -135,6 +135,7 @@ private:
     QAction *_actLoadCurve;
     QAction *_actSaveCurve;
     QAction *_actExportCurve;
+    QAction *_actRenameCurve;
 
     QAction *_actAverage;
     QAction *_actDataCursor;
@@ -177,6 +178,7 @@ private slots:
     void paramSave();
     void paramLoad();
     void exportCurve();
+    void showRenameCurve();
     void showAverage();
     void showDataCursor();
     void startBackgroundCorrection();
