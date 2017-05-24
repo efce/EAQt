@@ -61,6 +61,7 @@ private:
     void updateFrequencyPlot();
     void updateCurveFrequency(Curve* c);
     void trySG(Curve *c, int span, int order);
+    void tryIFFT(Curve* c, double treshhold, double samplingFreq, QVector<double>& freq, QVector<double>& vImg, QVector<double>& vReal);
 
 public:
     EAQtAdvancedSmoothDialog(int lastUsed, const std::vector<double>& params, EAQtUIInterface *pui);
