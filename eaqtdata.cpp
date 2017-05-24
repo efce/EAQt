@@ -1286,10 +1286,10 @@ void EAQtData::MesStart(bool isLsv)
                 // TYLKO DLA Programowania potencjalu
                 //
                 int prsize = _PVParam_PotentialProgram.size();
-                getMesCurves()->get(mesCurveIndex)->reinitializeCurveData(prsize);
                 QVector<double> vecP;
                 QVector<double> vecT;
                 if ( getMesCurves()->get(mesCurveIndex)->Param(PARAM::sampl) == PARAM::sampl_single ) {
+                    getMesCurves()->get(mesCurveIndex)->reinitializeCurveData(prsize);
                     getMesCurves()->get(mesCurveIndex)->Param(PARAM::ptnr,prsize);
                     getMesCurves()->get(mesCurveIndex)->Param(PARAM::Ek,prsize);
                     if ( _PVParam[PARAM::messc] == PARAM::messc_cyclic && nrOfElectrodes <= mesCurveIndex ) {
@@ -1306,6 +1306,7 @@ void EAQtData::MesStart(bool isLsv)
                         }
                     }
                 } else {
+                    getMesCurves()->get(mesCurveIndex)->reinitializeCurveData(prsize/2);
                     getMesCurves()->get(mesCurveIndex)->Param(PARAM::ptnr,prsize/2);
                     getMesCurves()->get(mesCurveIndex)->Param(PARAM::Ek,prsize/2);
                     if ( _PVParam[PARAM::messc] == PARAM::messc_cyclic && nrOfElectrodes <= mesCurveIndex ) {
@@ -1739,7 +1740,8 @@ void EAQtData::MesUpdate(uint32_t nNrOfMesCurve, uint32_t nPointFromDevice, bool
     }
 */
     int msecnow = _fromUpdate.elapsed();
-    if ( !freezUI && MEASUREMENT::displayDelay < msecnow ) {
+    if ( (nNrOfMesCurve == 0 && nPointFromDevice == 1)
+    || !freezUI && MEASUREMENT::displayDelay < msecnow ) {
         this->_pUI->MeasurementUpdate(nNrOfMesCurve, nPointFromDevice);
         _fromUpdate.restart();
     }
