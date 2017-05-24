@@ -119,7 +119,8 @@ void EAQtSignalProcessing::kissFFT(double samplingFrequency,
     }
 }
 
-void EAQtSignalProcessing::kissIFFT(const QVector<double> &freqImg,
+void EAQtSignalProcessing::kissIFFT(double samplingFreq,
+                                    const QVector<double> &freqImg,
                                     const QVector<double> &freqReal,
                                     QVector<double> &values
                                    )
@@ -141,8 +142,9 @@ void EAQtSignalProcessing::kissIFFT(const QVector<double> &freqImg,
     fft.transform( &inbuf[0] , &outbuf[0] );
 
     values.resize(N);
+    double factor = samplingFreq*N;
     for ( int i = 0; i<N; ++i ) {
-        values[i] = outbuf[i].real();
+        values[i] = outbuf[i].real()/factor;
     }
 }
 

@@ -23,6 +23,7 @@
 #include <QRadioButton>
 #include <QPushButton>
 #include "./Qcustomplot/qcustomplot.h"
+#include "eaqtuiinterface.h"
 #include "curve.h"
 
 class EAQtAdvancedSmoothDialog : public QObject
@@ -35,13 +36,17 @@ private:
     QLineEdit *_leSGSpan;
     QLineEdit *_leSGOrder;
     QLineEdit *_leFTreshhold;
-    QPushButton *_butSmooth;
-    QPushButton *_butCancel;
-    QPushButton *_butShowFrequency;
+    QPushButton *_butApply;
+    QPushButton *_butClose;
     QCustomPlot *_plotFreq;
     QVector<QCPGraph*> _graphs;
+    QVector<QVector<double>> _frequencies;
+    QVector<double> _samplingFreq;
+    QVector<QVector<double>> _imgValues;
+    QVector<QVector<double>> _realValues;
     std::vector<double> _params;
-    enum method {
+    EAQtUIInterface *_pUI;
+    enum method : int {
         method_sg,
         method_spline,
         method_fourier
@@ -55,15 +60,17 @@ private:
     QGridLayout* generateLayout(int select);
     void updateFrequencyPlot();
     void updateCurveFrequency(Curve* c);
+    void trySG(Curve *c, int span, int order);
 
 public:
-    EAQtAdvancedSmoothDialog(int lastUsed, const std::vector<double>& params);
+    EAQtAdvancedSmoothDialog(int lastUsed, const std::vector<double>& params, EAQtUIInterface *pui);
     ~EAQtAdvancedSmoothDialog();
     void exec();
     void hide();
 
 public slots:
     void methodChanged();
+    void apply();
 
 };
 

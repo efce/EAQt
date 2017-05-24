@@ -999,11 +999,10 @@ void EAQtMainWindow::createMenusTopMenu()
     _menuAnalysis = this->menuBar()->addMenu(tr("&Analysis"));
     _menuAnalysis->addAction(this->_actAverage);
     _menuAnalysis->addAction(this->_actDataCursor);
-    _menuAnalysis->addAction(this->_actCalibrationData);
     _menuAnalysis->addAction(this->_actBkgCorrection);
     _menuAnalysis->addAction(this->_actRelativeValues);
     _menuAnalysis->addAction(this->_actMoveUpDown);
-    _menuAnalysis->addAction(this->_actSmooth);
+    //_menuAnalysis->addAction(this->_actSmooth);
     _menuAnalysis->addAction(this->_actAdvSmooth);
     _menuAnalysis->addAction(this->_actRecalculateCurve);
 
@@ -1343,7 +1342,7 @@ void EAQtMainWindow::PlotSetInverted(bool inverted)
 void EAQtMainWindow::showAdvancedSmooth()
 {
     std::vector<double> x;
-    EAQtAdvancedSmoothDialog* adv = new EAQtAdvancedSmoothDialog(0,x);
+    EAQtAdvancedSmoothDialog* adv = new EAQtAdvancedSmoothDialog(0,x,this);
     adv->exec();
     delete adv;
 }

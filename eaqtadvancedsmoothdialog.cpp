@@ -19,9 +19,10 @@
 #include "eaqtdata.h"
 #include "eaqtsignalprocessing.h"
 
-EAQtAdvancedSmoothDialog::EAQtAdvancedSmoothDialog(int lastUsed, const std::vector<double>& params) : QObject()
+EAQtAdvancedSmoothDialog::EAQtAdvancedSmoothDialog(int lastUsed, const std::vector<double>& params, EAQtUIInterface *pui) : QObject()
 {
     _params = params;
+    _pUI = pui;
 
     _dialog = new QDialog();
     _dialog->setModal(true);
@@ -52,9 +53,11 @@ QGridLayout* EAQtAdvancedSmoothDialog::generateLayout(int select)
     _leSGOrder = new QLineEdit;
     _leSGOrder->setEnabled(false);
     _leSGOrder->setValidator(new QIntValidator(1,9));
+    _leSGOrder->setText("3");
     _leSGSpan = new QLineEdit;
     _leSGSpan->setEnabled(false);
     _leSGSpan->setValidator(new QIntValidator(5,99));
+    _leSGSpan->setText("13");
     gl->addWidget(_radMethod[method_sg],vpos++,0,1,2);
     gl->addWidget(lSpan,vpos,0,1,1);
     gl->addWidget(_leSGSpan,vpos++,1,1,1);
@@ -100,6 +103,13 @@ QGridLayout* EAQtAdvancedSmoothDialog::generateLayout(int select)
     _plotFreq->setInteractions(QCP::iRangeZoom | QCP::iRangeDrag);
     gl->addWidget(_plotFreq,0,2,vpos,1);
 
+    _butClose = new QPushButton(tr("Close"));
+    connect(_butClose,SIGNAL(clicked(bool)),_dialog,SLOT(close()));
+    _butApply = new QPushButton(tr("Apply"));
+    connect(_butApply,SIGNAL(clicked(bool)),this,SLOT(apply()));
+    gl->addWidget(_butApply,++vpos,0,1,1);
+    gl->addWidget(_butClose,vpos,1,1,1);
+
     return gl;
 }
 
@@ -127,13 +137,13 @@ void EAQtAdvancedSmoothDialog::updateFrequencyPlot()
     || cc->count() < 1 ) {
         return;
     }
+
     _plotFreq->clearGraphs();
-    if ( _graphs.size() > 0 ) {
-        for ( int i = 0; i<_graphs.size(); ++i ) {
-            delete _graphs[i];
-        }
-    }
-    _graphs.resize(0);
+    _graphs.clear();
+    _samplingFreq.clear();
+    _frequencies.clear();
+    _realValues.clear();
+    _imgValues.clear();
 
     if ( EAQtData::getInstance().Act() == SELECT::all ) {
         for ( uint32_t i = 0; i< cc->count(); ++i ) {
@@ -183,6 +193,10 @@ void EAQtAdvancedSmoothDialog::updateCurveFrequency(Curve* c)
 
     //EAQtSignalProcessing::dft(samplingFreq,c->getYVector(),frequencies,real,img);
     EAQtSignalProcessing::kissFFT(samplingFreq,c->getYVector(),frequencies,real,img);
+    _frequencies.push_back(frequencies);
+    _imgValues.push_back(img);
+    _realValues.push_back(real);
+    _samplingFreq.push_back(samplingFreq);
 
     QVector<double> power;
     power.resize(real.size());
@@ -192,4 +206,99 @@ void EAQtAdvancedSmoothDialog::updateCurveFrequency(Curve* c)
     int half = ceil(frequencies.size()/2);
     _graphs[index]->setData(frequencies.mid(0,half-1),power.mid(0,half-1));
     _graphs[index]->setVisible(true);
+}
+
+void EAQtAdvancedSmoothDialog::apply()
+{
+    int selected = -1;
+    for ( uint i = 0; i<_radMethod.size(); ++i ) {
+        if (_radMethod[i]->isChecked() ) {
+            selected = i;
+            break;
+        }
+    }
+    switch (selected) {
+    case method_sg:
+        {
+            int order = _leSGOrder->text().toInt();
+            int span = _leSGSpan->text().toInt();
+            if ( order >= span ) {
+                QMessageBox mb(_dialog);
+                mb.setText(tr("Span has to be larger than order."));
+                mb.exec();
+                return;
+            }
+            if ( EAQtData::getInstance().Act() == SELECT::all ) {
+                CurveCollection* cc = EAQtData::getInstance().getCurves();
+                Curve *c;
+                for ( uint32_t i = 0; i<cc->count(); ++i) {
+                c = cc->get(i);
+                if ( c != NULL ) {
+                    trySG(c,span,order);
+                }
+                }
+            } else {
+                Curve *c = EAQtData::getInstance().getCurves()->get(EAQtData::getInstance().Act());
+                if ( c != NULL ) {
+                trySG(c, span, order);
+                }
+            }
+
+            break;
+        }
+
+    case method_fourier:
+        {
+            double threshold = _leFTreshhold->text().toDouble();
+            for ( uint i = 0; i <_frequencies.size(); ++i ) {
+                int threshPos = -1;
+                uint32_t points = _frequencies[i].size();
+                for ( uint32_t ii = 0; ii<points; ++ii ) {
+                    if ( _frequencies[i].at(ii) > threshold ) {
+                        threshPos = ii;
+                        break;
+                    }
+                }
+                if ( threshPos == -1 ) {
+                    //TODO: error?
+                    continue;
+                }
+                uint32_t rangeDN = threshPos;
+                uint32_t rangeUP = _frequencies[i].size() - threshPos;
+                for ( uint32_t ii = rangeDN; ii<=rangeUP; ++ii ) {
+                    _imgValues[i].replace(ii,0.0);
+                    _realValues[i].replace(ii,0);
+                }
+                QVector<double> newy;
+                EAQtSignalProcessing::kissIFFT(_samplingFreq[i], _imgValues[i],_realValues[i],newy);
+                Curve *c = EAQtData::getInstance().getCurves()->get(i);
+                for ( uint32_t ii=0; ii<points;++ii) {
+                    c->setYValue(ii,newy[ii]);
+                }
+            }
+
+            break;
+        }
+
+    default:
+    case method_spline:
+        break;
+    }
+    _pUI->updateAll(true);
+    updateFrequencyPlot();
+}
+
+void EAQtAdvancedSmoothDialog::trySG(Curve *c, int span, int order)
+{
+    if ( c->Param(PARAM::ptnr) <= span ) {
+        QMessageBox mb(_dialog);
+        mb.setText(tr("Span has to be smaller than number of points in curve."));
+    }
+    QVector<double> y = c->getYVector();
+    EAQtSignalProcessing::sgSmooth(&y,order,span);
+    uint32_t sy = y.size();
+    for ( uint32_t i = 0; i<sy;++i) {
+        c->setYValue(i,y[i]);
+    }
+
 }
