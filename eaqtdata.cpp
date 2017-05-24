@@ -1740,8 +1740,8 @@ void EAQtData::MesUpdate(uint32_t nNrOfMesCurve, uint32_t nPointFromDevice, bool
     }
 */
     int msecnow = _fromUpdate.elapsed();
-    if ( (nNrOfMesCurve == 0 && nPointFromDevice == 1)
-    || !freezUI && MEASUREMENT::displayDelay < msecnow ) {
+    if ( (nPointFromDevice == 1 && nNrOfMesCurve == 0)
+    || (!freezUI && MEASUREMENT::displayDelay < msecnow) ) {
         this->_pUI->MeasurementUpdate(nNrOfMesCurve, nPointFromDevice);
         _fromUpdate.restart();
     }
