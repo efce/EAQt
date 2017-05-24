@@ -610,27 +610,44 @@ void EAQtMainWindow::PlotRescaleAxes()
         _plotMain->yAxis->setRangeUpper(maxy);
         _plotMain->replot();
     } else {
+        _plotMain->rescaleAxes();
+        _plotMain->replot();
         return;
     }
 }
 
-void EAQtMainWindow::PlotMesRescaleAxes(Curve* c)
+void EAQtMainWindow::PlotForceRescale(double x1, double x2, double y1, double y2)
 {
-    double minx = *std::min_element(c->getXVector().constBegin(),c->getXVector().constEnd());
-    double maxx = *std::max_element(c->getXVector().constBegin(),c->getXVector().constEnd());
-    double miny = *std::min_element(c->getYVector().constBegin(),c->getYVector().constEnd());
-    double maxy = *std::max_element(c->getYVector().constBegin(),c->getYVector().constEnd());
-    if ( _plotMain->xAxis->range().lower > minx) {
-        _plotMain->xAxis->setRangeLower(minx);
+    if ( x1 > x2 ) {
+        _plotMain->xAxis->setRangeLower(x2);
+        _plotMain->xAxis->setRangeUpper(x1);
+    } else {
+        _plotMain->xAxis->setRangeLower(x1);
+        _plotMain->xAxis->setRangeUpper(x2);
     }
-    if ( _plotMain->xAxis->range().upper < maxx) {
-        _plotMain->xAxis->setRangeUpper(maxx);
+    if ( y1 > y2 ) {
+        _plotMain->yAxis->setRangeLower(y2);
+        _plotMain->yAxis->setRangeUpper(y1);
+    } else {
+        _plotMain->yAxis->setRangeLower(y1);
+        _plotMain->yAxis->setRangeUpper(y2);
     }
-    if ( _plotMain->yAxis->range().lower > miny ) {
-        _plotMain->yAxis->setRangeLower(miny);
+    _plotMain->replot();
+}
+
+void EAQtMainWindow::PlotMesRescaleAxes(double cx, double cy)
+{
+    if ( _plotMain->xAxis->range().lower > cx) {
+        _plotMain->xAxis->setRangeLower(cx);
     }
-    if ( _plotMain->yAxis->range().upper < maxy ) {
-        _plotMain->yAxis->setRangeUpper(maxy);
+    if ( _plotMain->xAxis->range().upper < cx) {
+        _plotMain->xAxis->setRangeUpper(cx);
+    }
+    if ( _plotMain->yAxis->range().lower > cy ) {
+        _plotMain->yAxis->setRangeLower(cy);
+    }
+    if ( _plotMain->yAxis->range().upper < cy ) {
+        _plotMain->yAxis->setRangeUpper(cy);
     }
     _plotMain->replot();
 }
@@ -691,12 +708,6 @@ void EAQtMainWindow::MeasurementUpdate(uint32_t curveNr, uint32_t pointNr)
 {
     int i = 0;
     Curve* curve;
-    curve = _pEAQtData->getMesCurves()->get(curveNr);
-    setLowLabelText(0,tr("curve #: %1; point #: %2; potential: %3; current %4")
-                                  .arg(curveNr)
-                                  .arg(pointNr)
-                                  .arg(_pEAQtData->dispE(curve->getPotentialVector()->at(pointNr)))
-                                  .arg(_pEAQtData->dispI(curve->getCurrentVector()->at(pointNr))));
 
     switch ( this->_pEAQtData->getXAxis() ) {
     case XAXIS::potential:
@@ -737,9 +748,21 @@ void EAQtMainWindow::MeasurementUpdate(uint32_t curveNr, uint32_t pointNr)
     default:
         throw 1;
     }
-    //PlotMesRescaleAxes(curve);
-    _plotMain->rescaleAxes();//DO NOT USE ANYWHERE ELSE !
-    _plotMain->replot();
+    curve = _pEAQtData->getMesCurves()->get(curveNr);
+    setLowLabelText(0,tr("curve #: %1; point #: %2; potential: %3; current %4")
+                                  .arg(curveNr)
+                                  .arg(pointNr)
+                                  .arg(_pEAQtData->dispE(curve->getPotentialVector()->at(pointNr)))
+                                  .arg(_pEAQtData->dispI(curve->getCurrentVector()->at(pointNr))));
+    if ( pointNr == 1
+    && _pEAQtData->getCurves()->count() == 0 ) {
+        PlotForceRescale(curve->getXVector().at(0)
+                         ,curve->getXVector().at(1)
+                         ,curve->getYVector().at(0)
+                         ,curve->getYVector().at(1) );
+    } else {
+        PlotMesRescaleAxes(curve->getXVector().at(pointNr), curve->getYVector().at(pointNr));
+    }
 }
 
 void EAQtMainWindow::showMessageBox(QString text, QString title)

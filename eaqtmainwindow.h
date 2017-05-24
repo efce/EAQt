@@ -55,7 +55,8 @@ public:
      QCPItemStraightLine* PlotAddLine();
      EAQtUIInterface::PlotLayer* PlotGetLayers();
      void PlotSetInverted(bool);
-     void PlotMesRescaleAxes(Curve* c);
+     void PlotMesRescaleAxes(double cx, double cy);
+     void PlotForceRescale(double x1, double x2, double y1, double y2);
      void PlotDisconnectMouse();
      void PlotConnectMouse();
      void MeasurementSetup();
