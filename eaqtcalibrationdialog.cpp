@@ -213,6 +213,7 @@ EAQtCalibrationDialog::EAQtCalibrationDialog(CalibrationData *cd, QHash<QString,
     connect(butCancel,SIGNAL(clicked(bool)),this->_dialog,SLOT(close()));
     connect(butCal,SIGNAL(clicked(bool)), this,SLOT(drawCalibration()));
     this->_dialog->setLayout(glm);
+    _dialog->setMinimumHeight(600);
 }
 
 EAQtCalibrationDialog::~EAQtCalibrationDialog()
