@@ -1090,6 +1090,7 @@ void EAQtMainWindow::saveCurve()
         }
         this->_pEAQtData->safeAppend(savePath, curve);
     }
+    updateAll(false);
     return;
 }
 
