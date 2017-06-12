@@ -43,7 +43,7 @@ EAQtMainWindow::EAQtMainWindow(QWidget *parent) :
     this->createMenusTopMenu();
     this->setWindowTitle(tr("EAQt - electrochemical analyzer software"));
     _isRectangleZoom = false;
-    _PathInUse = "";
+    _PathInUse = QDir::homePath();
     new QShortcut( QKeySequence(Qt::Key_Escape), this, SLOT(userStopsMeasurement()));
     new QShortcut( QKeySequence(Qt::Key_F5), this, SLOT(userStartsMeasurement()));
     new QShortcut( QKeySequence(Qt::Key_Delete), this, SLOT(deleteActive()));
@@ -565,8 +565,9 @@ void EAQtMainWindow::deleteAll()
 
 void EAQtMainWindow::showOpenFile()
 {
-    EAQtOpenFileDialog *ofd = new EAQtOpenFileDialog(this->_pEAQtData);
+    EAQtOpenFileDialog *ofd = new EAQtOpenFileDialog(this->_pEAQtData, _PathInUse);
     ofd->exec();
+    _PathInUse = ofd->getLastPath();
     delete ofd;
 }
 
@@ -810,7 +811,10 @@ EAQtSaveFiledialog::SaveDetails EAQtMainWindow::DialogSaveInFile()
     EAQtSaveFiledialog::SaveDetails nsd = sfd->getSaveDetails();
     if ( !nsd.wasCanceled ) {
         sd = nsd;
+        QFileInfo fi(nsd.fileName);
+        _PathInUse = fi.absoluteDir().canonicalPath();
     }
+
     delete sfd;
     return nsd;
 }
@@ -1064,7 +1068,7 @@ void EAQtMainWindow::showSaveCurve()
     }
     QFileDialog *qfd = new QFileDialog();
     QString filter = "EAQt voltammograms file (*.volt)";
-    QString savePath = qfd->getSaveFileName(this,tr("Add curve to file"),NULL,filter,&filter);
+    QString savePath = qfd->getSaveFileName(this,tr("Add curve to file"),_PathInUse,filter,&filter);
     if ( savePath.isEmpty() ) {
         delete qfd;
         return;
@@ -1093,6 +1097,8 @@ void EAQtMainWindow::showSaveCurve()
         }
         this->_pEAQtData->safeAppend(savePath, curve);
     }
+    QFileInfo fi(savePath);
+    _PathInUse = fi.absoluteDir().canonicalPath();
     updateAll(false);
     return;
 }
@@ -1107,7 +1113,7 @@ void EAQtMainWindow::showExportCurve()
     QFileDialog *qfd = new QFileDialog();
     QString filter = "Text file (*.txt);;Comma separated values (*.csv)";
     QString sel = "Text file (*.txt)";
-    QString savePath = qfd->getSaveFileName(this,tr("Export curve to file"),NULL,filter,&sel);
+    QString savePath = qfd->getSaveFileName(this,tr("Export curve to file"),_PathInUse,filter,&sel);
     if (savePath.isEmpty() ) {
         return;
     }
@@ -1124,6 +1130,8 @@ void EAQtMainWindow::showExportCurve()
     } else {
         _pEAQtData->exportToCSV(savePath);
     }
+
+    _PathInUse = fi.absoluteDir().canonicalPath();
     delete qfd;
 }
 
@@ -1373,4 +1381,14 @@ void EAQtMainWindow::showRenameCurve()
     crd->exec();
     delete crd;
     updateAll(false);
+}
+
+void EAQtMainWindow::setPathInUse(QString path)
+{
+    _PathInUse = path;
+}
+
+QString EAQtMainWindow::getPathInUse()
+{
+    return _PathInUse;
 }

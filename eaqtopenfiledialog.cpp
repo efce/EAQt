@@ -20,10 +20,11 @@
 #include "eaqtopenfiledialog.h"
 #include "mdir.h"
 
-EAQtOpenFileDialog::EAQtOpenFileDialog(EAQtData* pData) : QObject()
+EAQtOpenFileDialog::EAQtOpenFileDialog(EAQtData* pData, QString path) : QObject()
 {
     this->_pData = pData;
     this->_fd = new QFileDialog();
+    _fd->setDirectory(path);
     _fd->setOption( QFileDialog::DontUseNativeDialog, true );
     _fd->setNameFilter("volt (*.volt);;vol (*.vol)");
     QGridLayout* l = (QGridLayout*) _fd->layout();
@@ -63,6 +64,8 @@ void EAQtOpenFileDialog::updateList(QString fileToShow)
     if ( !file->open(QIODevice::ReadOnly) ) {
         return;
     }
+    QFileInfo fi(file->fileName());
+    _lastPath = fi.absoluteDir().canonicalPath();
     if ( file->fileName().right(4).compare(".vol",Qt::CaseInsensitive) == 0 ) {
         this->_pData->MDirReadOld(*file);
         MDirCollection* vDir = this->_pData->getMDir();
@@ -98,5 +101,12 @@ void EAQtOpenFileDialog::loadSelected(QModelIndex qmi)
 
 void EAQtOpenFileDialog::loadFile(QString filename)
 {
+    QFileInfo fi(filename);
+    _lastPath = fi.absoluteDir().canonicalPath();
     this->_pData->openFile(&filename,0);
+}
+
+QString EAQtOpenFileDialog::getLastPath()
+{
+    return _lastPath;
 }

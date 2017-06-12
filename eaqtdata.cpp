@@ -1843,6 +1843,7 @@ void EAQtData::MesAfter()
         this->_pUI->MeasurementUpdate(0,_mesCurves->get(0)->getPotentialVector()->size()-1);
     }
 
+    EAQtSaveFiledialog::SaveDetails saveDetails;
     if (this->_isMesSeries != true ) // to nie pomiar seryjny
     {
         if ( this->_pUI->showQuestionBox( tr("Save dialog"),
@@ -1851,7 +1852,7 @@ void EAQtData::MesAfter()
             err = -1;
             while (err < 0)
             {
-                EAQtSaveFiledialog::SaveDetails saveDetails = this->_pUI->DialogSaveInFile();
+                saveDetails = this->_pUI->DialogSaveInFile();
                 if ( saveDetails.wasCanceled ) {
                     break;
                 }
@@ -1902,8 +1903,9 @@ void EAQtData::MesAfter()
         _pSeriesData = new MesCFG();
         _isMesSeries = false;
     }
-
+    QFileInfo fi(saveDetails.fileName);
     this->_pUI->MeasurementAfter();
+    _pUI->setPathInUse(fi.absoluteDir().canonicalPath());
     return;
 }
 

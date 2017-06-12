@@ -72,6 +72,8 @@ public:
      void disableButtonsAndTable();
      void enableAll();
      void updateCGMDETest();
+     void setPathInUse(QString path);
+     QString getPathInUse();
 public slots:
      void PlotRescaleAxes();
 

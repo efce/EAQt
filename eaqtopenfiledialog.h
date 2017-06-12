@@ -28,9 +28,10 @@ class EAQtOpenFileDialog : public QObject
     Q_OBJECT
 
 public:
-    EAQtOpenFileDialog(EAQtData*);
+    EAQtOpenFileDialog(EAQtData*, QString path);
     ~EAQtOpenFileDialog();
     void exec();
+    QString getLastPath();
 
 private:
 
@@ -38,7 +39,7 @@ private:
     QListWidget* _curvesInFileList;
     EAQtData* _pData;
     QString _fileSelected;
-
+    QString _lastPath;
 
 public slots:
     void updateList(QString);

@@ -71,7 +71,10 @@ void CalibrationPlot::update()
     _calibrationPoints->setData(_cd->xValues,_cd->yValues,false);
     QString text;
     if ( _cd->slope == 0 || !qIsFinite(_cd->intercept) ) {
-        text = tr("Regression line cannot be plotted.");
+        text = tr("Regression line cannot be plotted.<br>");
+        text += tr("r = %1 <br>").arg(_cd->correlationCoef,0,'f',4);
+        text += tr("i = %1(±%2)c + %3(±%4) <br>").arg(_cd->slope,0,'f',4).arg(_cd->slopeStdDev,0,'f',4).arg(_cd->intercept,0,'f',4).arg(_cd->interceptStdDev,0,'f',4);
+
         _calibrationLine->setVisible(false);
         _plot->xAxis->setLabel(tr("c / %1").arg(_cd->xUnits));
         _plot->yAxis->setLabel(tr("i / %1").arg(_cd->yUnits));
