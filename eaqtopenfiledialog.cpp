@@ -32,10 +32,11 @@ EAQtOpenFileDialog::EAQtOpenFileDialog(EAQtData* pData) : QObject()
     _fd->setLabelText( QFileDialog::Accept, tr("Load all") );
     _fd->setLabelText( QFileDialog::Reject, tr("Close") );
     //this->curvesInFileList->setFixedHeight(200);
-    l->addWidget(this->_curvesInFileList,0,3,2,1);
+    l->addWidget(this->_curvesInFileList,0,3,4,1);
     connect(this->_fd,SIGNAL(currentChanged(QString)),this,SLOT(updateList(QString)));
     connect(_curvesInFileList,SIGNAL(clicked(QModelIndex)),this,SLOT(loadSelected(QModelIndex)));
     connect(_fd,SIGNAL(fileSelected(QString)),this,SLOT(loadFile(QString)));
+    _fd->resize(_fd->width()+_curvesInFileList->width(), _fd->height());
     _fd->show();
 }
 
