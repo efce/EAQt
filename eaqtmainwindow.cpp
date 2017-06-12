@@ -421,7 +421,7 @@ QGridLayout* EAQtMainWindow::createLayout()
     butOpenFile = new QPushButton(tr("Load"));
     butOpenFile->setStatusTip(tr("Load curves from file"));
     this->_vecButtonsDisablable.append( butOpenFile );
-    connect(butOpenFile,SIGNAL(clicked(bool)),this,SLOT(openFile()));
+    connect(butOpenFile,SIGNAL(clicked(bool)),this,SLOT(showOpenFile()));
 
     this->_butStartMes = new QPushButton(tr("Start PV"));
     _butStartMes->setStatusTip(tr("Start measurement with the same settings as previuos"));
@@ -563,9 +563,11 @@ void EAQtMainWindow::deleteAll()
     this->_pEAQtData->deleteAllCurvesFromGraph();
 }
 
-void EAQtMainWindow::openFile()
+void EAQtMainWindow::showOpenFile()
 {
-    new EAQtOpenFileDialog(this->_pEAQtData);
+    EAQtOpenFileDialog *ofd = new EAQtOpenFileDialog(this->_pEAQtData);
+    ofd->exec();
+    delete ofd;
 }
 
 QCPGraph* EAQtMainWindow::PlotAddGraph()
@@ -865,16 +867,16 @@ void EAQtMainWindow::createActionsTopMenu()
     this->_actSaveCurve = new QAction(tr("&Save curve"), this);
     _actSaveCurve->setShortcuts(QKeySequence::Save);
     _actSaveCurve->setStatusTip(tr("Add curve(s) to EAQt voltammogram file (.volt)"));
-    connect(_actSaveCurve, SIGNAL(triggered(bool)), this, SLOT(saveCurve()));
+    connect(_actSaveCurve, SIGNAL(triggered(bool)), this, SLOT(showSaveCurve()));
 
     this->_actLoadCurve = new QAction(tr("&Load curve"), this);
     _actLoadCurve->setShortcut(QKeySequence::Open);
     _actLoadCurve->setStatusTip(tr("Load curve(s) from *.volt or *.vol files"));
-    connect(_actLoadCurve, SIGNAL(triggered(bool)), this, SLOT(openFile()));
+    connect(_actLoadCurve, SIGNAL(triggered(bool)), this, SLOT(showOpenFile()));
 
     this->_actExportCurve = new QAction(tr("&Export curve"), this);
     _actExportCurve->setStatusTip(tr("Export curve(s) as *.txt or *.csv"));
-    connect(_actExportCurve, SIGNAL(triggered(bool)), this, SLOT(exportCurve()));
+    connect(_actExportCurve, SIGNAL(triggered(bool)), this, SLOT(showExportCurve()));
 
     this->_actRenameCurve = new QAction(tr("Rename curve"), this);
     _actRenameCurve->setStatusTip(tr("Change name / comment of selected curve"));
@@ -1053,23 +1055,24 @@ void EAQtMainWindow::showAccessoriesDialog()
     delete ad;
 }
 
-void EAQtMainWindow::saveCurve()
+void EAQtMainWindow::showSaveCurve()
 {
-    if ( _pEAQtData->getCurves()->count() > 0
-    && this->_pEAQtData->Act() == SELECT::none ) {
+    if ( _pEAQtData->getCurves()->count() == 0
+    || this->_pEAQtData->Act() == SELECT::none ) {
         this->showMessageBox(tr("Cannot save - no curve(s) selected."));
         return;
     }
     QFileDialog *qfd = new QFileDialog();
     QString filter = "EAQt voltammograms file (*.volt)";
     QString savePath = qfd->getSaveFileName(this,tr("Add curve to file"),NULL,filter,&filter);
+    if ( savePath.isEmpty() ) {
+        delete qfd;
+        return;
+    }
     if ( savePath.right(5).compare( ".volt", Qt::CaseInsensitive) != 0 ) {
         savePath.append(".volt");
     }
     delete qfd;
-    if ( savePath.isEmpty() ) {
-        return;
-    }
     if ( this->_pEAQtData->Act() == SELECT::all ) {
         uint i = 0;
         int err;
@@ -1094,16 +1097,17 @@ void EAQtMainWindow::saveCurve()
     return;
 }
 
-void EAQtMainWindow::exportCurve()
+void EAQtMainWindow::showExportCurve()
 {
-    if ( _pEAQtData->getCurves()->count() > 0
-    && this->_pEAQtData->Act() == SELECT::none ) {
+    if ( _pEAQtData->getCurves()->count() == 0
+    || this->_pEAQtData->Act() == SELECT::none ) {
         this->showMessageBox(tr("Cannot save - no curve(s) selected."));
         return;
     }
     QFileDialog *qfd = new QFileDialog();
-    QString filter = "Text file (*.txt);;Comma separated values (.csv)";
-    QString savePath = qfd->getSaveFileName(this,tr("Add curve to file"),NULL,filter,&filter);
+    QString filter = "Text file (*.txt);;Comma separated values (*.csv)";
+    QString sel = "Text file (*.txt)";
+    QString savePath = qfd->getSaveFileName(this,tr("Export curve to file"),NULL,filter,&sel);
     if (savePath.isEmpty() ) {
         return;
     }

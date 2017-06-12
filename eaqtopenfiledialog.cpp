@@ -37,13 +37,17 @@ EAQtOpenFileDialog::EAQtOpenFileDialog(EAQtData* pData) : QObject()
     connect(_curvesInFileList,SIGNAL(clicked(QModelIndex)),this,SLOT(loadSelected(QModelIndex)));
     connect(_fd,SIGNAL(fileSelected(QString)),this,SLOT(loadFile(QString)));
     _fd->resize(_fd->width()+_curvesInFileList->width(), _fd->height());
-    _fd->show();
 }
 
 EAQtOpenFileDialog::~EAQtOpenFileDialog()
 {
     delete _curvesInFileList;
     delete _fd;
+}
+
+void EAQtOpenFileDialog::exec()
+{
+    _fd->exec();
 }
 
 void EAQtOpenFileDialog::updateList(QString fileToShow)

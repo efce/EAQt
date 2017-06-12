@@ -170,14 +170,14 @@ private slots:
     void deleteActive();
     void deleteNonactive();
     void deleteAll();
-    void openFile();
+    void showOpenFile();
     void userStopsMeasurement();
     void userStartsMeasurement();
-    void saveCurve();
+    void showSaveCurve();
     void paramCopy();
     void paramSave();
     void paramLoad();
-    void exportCurve();
+    void showExportCurve();
     void showRenameCurve();
     void showAverage();
     void showDataCursor();

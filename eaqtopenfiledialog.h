@@ -30,6 +30,7 @@ class EAQtOpenFileDialog : public QObject
 public:
     EAQtOpenFileDialog(EAQtData*);
     ~EAQtOpenFileDialog();
+    void exec();
 
 private:
 
