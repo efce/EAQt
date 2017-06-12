@@ -414,7 +414,8 @@ DISTFILES += \
     template-fft/url \
     template-fft/README.md \
     kiss_fft130/COPYING \
-    kiss_fft130/README
+    kiss_fft130/README \
+    img/eaqtlogo.svg
 
 RESOURCES += \
     ./eaqt_resource.qrc

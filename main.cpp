@@ -40,6 +40,8 @@ int main(int argc, char *argv[])
     EAQtMainWindow w;
     EAQtData::getInstance().initialUpdate((EAQtUIInterface*)&w);
     w.InitialUpdate(EAQtData::getInstance());
+    QIcon logo(":/icons/img/eaqtlogo.svg");
+    w.setWindowIcon(logo);
     w.show();
     return a.exec();
 }
