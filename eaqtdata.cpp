@@ -1840,7 +1840,7 @@ void EAQtData::MesAfter()
     // nie wiem czy trzeba: m_nStopInfo = 1;
 
     if ( _mesCurves->count() > 0 && _mesCurves->get(0)->getNrOfDataPoints() > 0 ) {
-        this->_pUI->MeasurementUpdate(0,_mesCurves->get(0)->getPotentialVector()->size()-1);
+        this->_pUI->MeasurementUpdate(0,_mesCurves->get(0)->getNrOfDataPoints()-1);
     }
 
     EAQtSaveFiledialog::SaveDetails saveDetails;
