@@ -1129,7 +1129,7 @@ void EAQtData::MesStart(bool isLsv)
                 */
                 if ( _LSVParam[PARAM::Ep] < _LSVParam[PARAM::Ek] ) {
                     if ( _LSVParam[PARAM::EstartLSV] >= _LSVParam[PARAM::Ep]
-                         &&  _LSVParam[PARAM::EstartLSV] <= _LSVParam[PARAM::Ek] ) {
+                    &&  _LSVParam[PARAM::EstartLSV] <= _LSVParam[PARAM::Ek] ) {
                         QVector<double> vecMesPotential;
                         QVector<double> vecMesTime;
                         this->_ptnrFromEss = (int) ceil( fabs( (_LSVParam[PARAM::Ek] - _LSVParam[PARAM::EstartLSV])
@@ -1167,10 +1167,10 @@ void EAQtData::MesStart(bool isLsv)
                     }
                 } else {
                     if ( _LSVParam[PARAM::EstartLSV] <= _LSVParam[PARAM::Ep]
-                         &&  _LSVParam[PARAM::EstartLSV] >= _LSVParam[PARAM::Ek] ) {
+                    &&  _LSVParam[PARAM::EstartLSV] >= _LSVParam[PARAM::Ek] ) {
                         QVector<double> vecMesPotential;
                         QVector<double> vecMesTime;
-                        this->_ptnrFromEss = (int) ceil( fabs( (_LSVParam[PARAM::Ep] - _LSVParam[PARAM::EstartLSV])
+                        this->_ptnrFromEss = (int) ceil( fabs( (_LSVParam[PARAM::Ek] - _LSVParam[PARAM::EstartLSV])
                                                                 / MEASUREMENT::LSVstepE[_LSVParam[PARAM::dEdt]]) );
                         vecMesPotential.resize(_LSVParam[PARAM::ptnr]);
                         vecMesTime.resize(_LSVParam[PARAM::ptnr]);
