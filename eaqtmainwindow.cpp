@@ -489,7 +489,7 @@ QGridLayout* EAQtMainWindow::createLayout()
     this->ui->mainToolBar->addWidget(butRescale);
 
     this->_plotMain = new QCustomPlot();
-    _plotMain->setNoAntialiasingOnDrag(true);
+    _plotMain->setNoAntialiasingOnDrag(false);
     this->_plotMain->addLayer("Nonactive");
     _plotLayers.NonActive = _plotMain->layer("Nonactive");
     this->_plotMain->addLayer("Active");
@@ -497,9 +497,11 @@ QGridLayout* EAQtMainWindow::createLayout()
     this->_plotMain->addLayer("Markers");
     _plotLayers.Markers = _plotMain->layer("Markers");
     this->_plotMain->addLayer("Measurement");
+    _plotMain->setNotAntialiasedElements(QCP::aeAll);
     _plotLayers.Measurement = _plotMain->layer("Measurement");
     _plotLayers.Measurement->setMode(QCPLayer::lmBuffered);
     _plotLayers.Markers->setMode(QCPLayer::lmBuffered);
+
     this->_plotMain->setInteractions( this->_plotDefaultInteractions );
     this->_rectZoom = new QCPItemRect(_plotMain);
     _rectZoom->setPen(QPen(QColor(50,50,50),2,Qt::DashLine));
@@ -758,14 +760,32 @@ void EAQtMainWindow::MeasurementUpdate(uint32_t curveNr, uint32_t pointNr)
                                   .arg(pointNr)
                                   .arg(_pEAQtData->dispE(curve->getPotentialVector()->at(pointNr)))
                                   .arg(_pEAQtData->dispI(curve->getCurrentVector()->at(pointNr))));
-    if ( pointNr == 1
-    && _pEAQtData->getCurves()->count() == 0 ) {
-        PlotForceRescale(curve->getXVector().at(0)
-                         ,curve->getXVector().at(1)
-                         ,curve->getYVector().at(0)
-                         ,curve->getYVector().at(1) );
+    if ( _pEAQtData->_ptnrFromEss == 0 ) {
+        if ( pointNr == 1
+        && curveNr == 0
+        && _pEAQtData->getCurves()->count() == 0 ) {
+            if ( _pEAQtData->_ptnrFromEss == 0 ) {
+                PlotForceRescale(curve->getXVector().at(0)
+                                 ,curve->getXVector().at(1)
+                                 ,curve->getYVector().at(0)
+                                 ,curve->getYVector().at(1) );
+            }
+        } else {
+            PlotMesRescaleAxes(curve->getXVector().at(pointNr), curve->getYVector().at(pointNr));
+        }
     } else {
-        PlotMesRescaleAxes(curve->getXVector().at(pointNr), curve->getYVector().at(pointNr));
+        if ( pointNr == _pEAQtData->_ptnrFromEss+1
+        && curveNr == 0
+        && _pEAQtData->getCurves()->count() == 0 ) {
+            if ( _pEAQtData->_ptnrFromEss == 0 ) {
+                PlotForceRescale(curve->getXVector().at(_pEAQtData->_ptnrFromEss)
+                                 ,curve->getXVector().at(_pEAQtData->_ptnrFromEss+1)
+                                 ,curve->getYVector().at(_pEAQtData->_ptnrFromEss)
+                                 ,curve->getYVector().at(_pEAQtData->_ptnrFromEss+1) );
+            }
+        } else {
+            PlotMesRescaleAxes(curve->getXVector().at(pointNr), curve->getYVector().at(pointNr));
+        }
     }
 }
 

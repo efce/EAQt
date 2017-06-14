@@ -1127,12 +1127,12 @@ void EAQtData::MesStart(bool isLsv)
                 * Gdy interpretujemy potencjał startowy, to się dzieje :)
                 * nie uwzględniono multielektr !
                 */
-                if ( _LSVParam[PARAM::Ep] < _LSVParam[PARAM::Ek] ) {
+                if ( _LSVParam[PARAM::Ep] < _LSVParam[PARAM::Ek] ) { // not inverted
                     if ( _LSVParam[PARAM::EstartLSV] >= _LSVParam[PARAM::Ep]
                     &&  _LSVParam[PARAM::EstartLSV] <= _LSVParam[PARAM::Ek] ) {
                         QVector<double> vecMesPotential;
                         QVector<double> vecMesTime;
-                        this->_ptnrFromEss = (int) ceil( fabs( (_LSVParam[PARAM::Ek] - _LSVParam[PARAM::EstartLSV])
+                        this->_ptnrFromEss = (int) ceil( fabs( (double)(_LSVParam[PARAM::Ek] - _LSVParam[PARAM::EstartLSV])
                                                                 / MEASUREMENT::LSVstepE[_LSVParam[PARAM::dEdt]]) );
                         vecMesPotential.resize(_LSVParam[PARAM::ptnr]);
                         vecMesTime.resize(_LSVParam[PARAM::ptnr]);
@@ -1165,12 +1165,12 @@ void EAQtData::MesStart(bool isLsv)
                         getMesCurves()->get(mesCurveIndex)->setPotentialVector(vecMesPotential);
                         getMesCurves()->get(mesCurveIndex)->setTimeVector(vecMesTime);
                     }
-                } else {
+                } else { // inverted
                     if ( _LSVParam[PARAM::EstartLSV] <= _LSVParam[PARAM::Ep]
                     &&  _LSVParam[PARAM::EstartLSV] >= _LSVParam[PARAM::Ek] ) {
                         QVector<double> vecMesPotential;
                         QVector<double> vecMesTime;
-                        this->_ptnrFromEss = (int) ceil( fabs( (_LSVParam[PARAM::Ek] - _LSVParam[PARAM::EstartLSV])
+                        this->_ptnrFromEss = (int) ceil( fabs( (double)(_LSVParam[PARAM::Ek] - _LSVParam[PARAM::EstartLSV])
                                                                 / MEASUREMENT::LSVstepE[_LSVParam[PARAM::dEdt]]) );
                         vecMesPotential.resize(_LSVParam[PARAM::ptnr]);
                         vecMesTime.resize(_LSVParam[PARAM::ptnr]);
@@ -1561,6 +1561,7 @@ bool EAQtData::sendPVToEA()
 void EAQtData::MesStop()
 {
     _stopInfo = 1;
+    _ptnrFromEss = 0;
     if (_conductingMeasurement == 0) {
         this->_pUI->showMessageBox(tr("Measurement was not initiated.")); // Pomiar nie został zainicjowany
     } else {

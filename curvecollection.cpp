@@ -46,6 +46,7 @@ uint32_t CurveCollection::addNew(uint32_t nrOfDataPoints)
     uint32_t index = _vCurves.size();
     _vCurves.push_back(new Curve(nrOfDataPoints));
     _vCurves[index]->setPlot(_pUI->PlotAddGraph());
+    _vCurves[index]->getPlot()->setAdaptiveSampling(false);
     return index;
 }
 

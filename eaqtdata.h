@@ -156,6 +156,8 @@ public:
     QString getMesSeriesFile();
     void setMesSeriesFile(QString);
 
+    uint32_t _ptnrFromEss;
+
    struct TestCGMDE {
        int32_t GP;				// test CGMDE - czas otwarcia zaworu
        int32_t BT;				// test CGMDE - czas przerwy
@@ -186,7 +188,6 @@ private:
    QVector<int16_t> _PVParam_PotentialProgram {};
 
    int _currentRange;
-   int _ptnrFromEss;
    bool _prepareEstart;
    int _calculatedNrOfPoints;
    int _displayCurveNr;
