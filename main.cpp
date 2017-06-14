@@ -42,6 +42,17 @@ int main(int argc, char *argv[])
     w.InitialUpdate(EAQtData::getInstance());
     QIcon logo(":/icons/img/eaqtlogo.svg");
     w.setWindowIcon(logo);
+    if ( argc > 0 ) {
+        QFileInfo fi(argv[1]);
+        if ( fi.isFile() ) {
+            QString name = fi.absoluteFilePath();
+            if ( name.right(5).compare(".volt",Qt::CaseInsensitive) == 0 ) {
+                EAQtData::getInstance().CurReadFilePro(&name,0);
+            } else {
+                EAQtData::getInstance().CurReadFileOld(&name,0);
+            }
+        }
+    }
     w.show();
     return a.exec();
 }
