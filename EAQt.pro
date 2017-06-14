@@ -420,7 +420,9 @@ DISTFILES += \
     img/eaqtlogo.svg.png \
     img/eaqtlogo.ico \
     img/eaqtlogo.svg.xcf \
-    eaqt.rc
+    eaqt.rc \
+    img/zoom.svg.png \
+    img/rescale.svg.png
 
 RESOURCES += \
     ./eaqt_resource.qrc

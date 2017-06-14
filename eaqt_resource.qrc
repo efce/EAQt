@@ -1,8 +1,8 @@
 <RCC>
-    <qresource prefix="/icons">
-        <file alias="icon_rescale">img/rescale.svg</file>
-        <file alias="icon_zoom">img/zoom.svg</file>
-        <file>img/eaqtlogo.svg</file>
+    <qresource prefix="/img">
+        <file alias="icon_rescale">img/rescale.svg.png</file>
+        <file alias="icon_zoom">img/zoom.svg.png</file>
+        <file alias="logo">img/eaqtlogo.svg.png</file>
     </qresource>
     <qresource prefix="/lang">
         <file>eaqt_pl.qm</file>

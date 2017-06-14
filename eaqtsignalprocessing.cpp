@@ -290,6 +290,7 @@ void EAQtSignalProcessing::generateBackground(uint32_t r1, uint32_t r2, uint32_t
     r2 = rs[1];
     r3 = rs[2];
     r4 = rs[3];
+
 #if QT_VERSION < 0x050500
     bx = c->getXVector().mid(r1,(r2-r1));
     QVector<double> tmp = c->getXVector().mid(r3,(r4-r3));

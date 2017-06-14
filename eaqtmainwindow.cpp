@@ -462,14 +462,14 @@ QGridLayout* EAQtMainWindow::createLayout()
     combo->addWidget(_comboOnXAxis);
 
     _butZoom = new QPushButton();
-    QIcon izoom = QIcon(":/icons/icon_zoom");
+    QIcon izoom = QIcon(":/img/icon_zoom");
     _butZoom->setIcon(izoom);
     _butZoom->setFixedWidth(30);
     _butZoom->setFixedHeight(30);
     connect(_butZoom,SIGNAL(clicked(bool)),this,SLOT(PlotRectangleZoom()));
 
     QPushButton *butRescale = new QPushButton();
-    QIcon irescale = QIcon(":/icons/icon_rescale");
+    QIcon irescale = QIcon(":/img/icon_rescale");
     butRescale->setIcon(irescale);
     butRescale->setFixedWidth(30);
     butRescale->setFixedHeight(30);

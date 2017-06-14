@@ -40,7 +40,7 @@ int main(int argc, char *argv[])
     EAQtMainWindow w;
     EAQtData::getInstance().initialUpdate((EAQtUIInterface*)&w);
     w.InitialUpdate(EAQtData::getInstance());
-    QIcon logo(":/icons/img/eaqtlogo.svg");
+    QIcon logo(":/img/logo");
     w.setWindowIcon(logo);
     if ( argc > 0 ) {
         QFileInfo fi(argv[1]);
