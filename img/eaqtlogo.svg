@@ -9,9 +9,9 @@
    xmlns="http://www.w3.org/2000/svg"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
-   width="138.34541mm"
-   height="120.38709mm"
-   viewBox="0 0 138.34542 120.38709"
+   width="138.13776mm"
+   height="139.98988mm"
+   viewBox="0 0 138.13776 139.98988"
    version="1.1"
    id="svg8"
    inkscape:version="0.92.1 r"
@@ -95,8 +95,8 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="0.7"
-     inkscape:cx="181.97695"
-     inkscape:cy="177.98445"
+     inkscape:cx="-46.271825"
+     inkscape:cy="178.54056"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      showgrid="true"
@@ -108,8 +108,8 @@
     <inkscape:grid
        type="xygrid"
        id="grid3682"
-       originx="34.81672"
-       originy="-208.49482" />
+       originx="34.713101"
+       originy="-208.34767" />
   </sodipodi:namedview>
   <metadata
      id="metadata5">
@@ -127,21 +127,16 @@
      inkscape:label="Layer 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(34.816718,31.881927)">
+     transform="translate(34.713099,51.337586)">
     <path
        inkscape:connector-curvature="0"
        id="path5263"
        style="fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.03527778"
        d="M -58.644472,101.07204 H 145.08471 V -33.071718 H -58.644472 Z" />
-    <path
-       inkscape:connector-curvature="0"
-       id="path5265"
-       style="fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:none;stroke-width:0.03527778"
-       d="M -58.644472,101.07204 H 145.08471 V -33.071718 H -58.644472 Z" />
     <g
        id="g5706"
        style="stroke-width:3.4412508;stroke-miterlimit:9.8723402;stroke-dasharray:none"
-       transform="matrix(0.75999343,0,0,1,-8.0423932,0)">
+       transform="matrix(0.75885269,0,0,1.1628314,-7.9789616,-14.26428)">
       <path
          inkscape:connector-curvature="0"
          id="path3684"
@@ -384,22 +379,23 @@
          inkscape:connector-curvature="0" />
     </g>
     <rect
-       style="fill:#00ff00;stroke:#000000;stroke-width:3;stroke-miterlimit:9.8723402;stroke-dasharray:none;stroke-opacity:1"
+       style="fill:#00ff00;stroke:#000000;stroke-width:3.00832129;stroke-miterlimit:9.8723402;stroke-dasharray:none;stroke-opacity:1"
        id="rect5708"
-       width="128.69221"
-       height="52.916664"
-       x="-28.150551"
-       y="-28.437502" />
+       width="128.49905"
+       height="53.290623"
+       x="-28.056938"
+       y="-47.332302" />
     <text
        xml:space="preserve"
-       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:44.09722137px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.26458332"
-       x="35.612671"
-       y="11.314088"
-       id="text5712"><tspan
+       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:42.80145645px;line-height:1.25;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:middle;fill:#ffffff;fill-opacity:1;stroke:none;stroke-width:0.26607779"
+       x="36.246231"
+       y="-6.6296725"
+       id="text5712"
+       transform="scale(0.99289081,1.0071601)"><tspan
          sodipodi:role="line"
          id="tspan5710"
-         x="35.612671"
-         y="11.314088"
-         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:44.09722137px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;writing-mode:lr-tb;text-anchor:middle;fill:#ffffff;stroke-width:0.26458332">EAQt</tspan></text>
+         x="36.246231"
+         y="-6.6296725"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:42.80145645px;font-family:sans-serif;-inkscape-font-specification:'sans-serif, Bold';font-variant-ligatures:normal;font-variant-caps:normal;font-variant-numeric:normal;font-feature-settings:normal;text-align:center;writing-mode:lr-tb;text-anchor:middle;fill:#ffffff;stroke-width:0.26607779">EAQt</tspan></text>
   </g>
 </svg>
