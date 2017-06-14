@@ -24,6 +24,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 # You can also select to disable deprecated APIs only up to a certain version of Qt.
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
+RC_FILE = myapp.rc
 
 SOURCES += main.cpp\
     Qcustomplot/qcustomplot.cpp \
@@ -418,7 +419,8 @@ DISTFILES += \
     img/eaqtlogo.svg \
     img/eaqtlogo.svg.png \
     img/eaqtlogo.ico \
-    img/eaqtlogo.svg.xcf
+    img/eaqtlogo.svg.xcf \
+    eaqt.rc
 
 RESOURCES += \
     ./eaqt_resource.qrc
