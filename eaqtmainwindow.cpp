@@ -1087,15 +1087,18 @@ void EAQtMainWindow::showSaveCurve()
         return;
     }
     QFileDialog *qfd = new QFileDialog();
-    QString filter = "EAQt voltammograms file (*.volt)";
-    QString savePath = qfd->getSaveFileName(this,tr("Add curve to file"),_PathInUse,filter,&filter);
+    QString filter = FILES::saveFile;
+    QString filterdef = FILES::saveDef;
+    QString savePath = qfd->getSaveFileName(this,tr("Add curve to file"),_PathInUse,filter,&filterdef);
     if ( savePath.isEmpty() ) {
         delete qfd;
         return;
     }
-    if ( savePath.right(5).compare( ".volt", Qt::CaseInsensitive) != 0 ) {
-        savePath.append(".volt");
+    /*
+    if ( savePath.right(FILES::saveCompressExt.size()).compare(FILES::saveCompressExt, Qt::CaseInsensitive) != 0 ) {
+        savePath.append(FILES::saveCompressExt);
     }
+    */
     delete qfd;
     if ( this->_pEAQtData->Act() == SELECT::all ) {
         uint i = 0;

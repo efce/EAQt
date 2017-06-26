@@ -567,68 +567,78 @@ int EAQtData::CurReadCurvePro(QFile &ff, QString pCName)
     j1 = getCurves()->addNew(1); // TMP nie znam ilosci punktow krzywej
     getCurves()->get(j1)->getPlot()->setLayer(_pUI->PlotGetLayers()->NonActive);
     ff.read((char*)(&cLen), sizeof(uint32_t));			// ilosc bajtow krzywej w pliku
-    ff.read(cAux, 1); // nazwa krzywej
-    int ii=0;
-    while (cAux[ii] != '\0') {
-        ii++;
-        ff.read(cAux+ii, 1);
-    }
-
-    this->getCurves()->get(j1)->CName(QString(cAux));
-
-    ff.read(buf,1); // komentarz
-    ii=0;
-    while (buf[ii] != '\0')
-    {
-        ii++;
-        ff.read(buf+ii, 1);
-    }
-    this->getCurves()->get(j1)->Comment(QString(buf));
-
-    ff.read((char*)(&fparam), sizeof(int32_t)*1);		// liczba parametrów
-
-    if ( fparam > PARAM::PARAMNUM ) {
-        //        CString	m_String;
-        //        m_String.LoadString(IDS_info5);
-
-        //        this->view->MessageBox(m_String);
-        this->getCurves()->remove(j1);
-        return -1;
-    }
-    for (ii=0 ; ii<fparam ; ii++) {
-        ff.read((char*)(&work),sizeof(int32_t)*1);
-        this->getCurves()->get(j1)->Param(ii, work);
-    }
-
-    this->getCurves()->get(j1)->reinitializeCurveData(this->getCurves()->get(j1)->Param(PARAM::ptnr));
-
-    // wyniki
-    double time;
-    double potential;
-
-    for (int ii=0 ; ii<this->getCurves()->get(j1)->Param(PARAM::ptnr) ; ii++) {
-        ff.read((char*)(&time), sizeof(double));
-        ff.read((char*)(&potential), sizeof(double));
-        ff.read((char*)(&dwork), sizeof(double));
-        this->getCurves()->get(j1)->addDataPoint(time, potential, dwork);
-    }
-
-    if ( this->getCurves()->get(j1)->Param(PARAM::nonaveragedsampling) != 0 ) {
-        uint32_t vectorSize;
-        ff.read((char*)(&vectorSize),sizeof(uint32_t));
-        if ( vectorSize == 0 ) {
-            this->getCurves()->get(j1)->Param(PARAM::nonaveragedsampling,0);
-        } else {
-            this->getCurves()->get(j1)->allocateProbingData(vectorSize);
-            float data;
-            for (uint32_t j=0;j<vectorSize;j++) {
-                ff.read((char*)(&data),sizeof(float));
-                this->getCurves()->get(j1)->addProbingDataPoint(data);
-            }
+    if (ff.fileName().right(FILES::saveCompressExt.size()).compare(FILES::saveCompressExt,Qt::CaseInsensitive) == 0 ) {
+        ff.read(cAux, 1); // nazwa krzywej
+        int ii=0;
+        while (cAux[ii] != '\0') {
+            ii++;
+            ff.read(cAux+ii, 1);
+        }
+        QByteArray ba = ff.read(cLen-ii);
+        getCurves()->get(j1)->unserialize(ba);
+    } else {
+        ff.read(cAux, 1); // nazwa krzywej
+        int ii=0;
+        while (cAux[ii] != '\0') {
+            ii++;
+            ff.read(cAux+ii, 1);
         }
 
-    }
+        this->getCurves()->get(j1)->CName(QString(cAux));
 
+        ff.read(buf,1); // komentarz
+        ii=0;
+        while (buf[ii] != '\0')
+        {
+            ii++;
+            ff.read(buf+ii, 1);
+        }
+        this->getCurves()->get(j1)->Comment(QString(buf));
+
+        ff.read((char*)(&fparam), sizeof(int32_t)*1);		// liczba parametrów
+
+        if ( fparam > PARAM::PARAMNUM ) {
+            //        CString	m_String;
+            //        m_String.LoadString(IDS_info5);
+
+            //        this->view->MessageBox(m_String);
+            this->getCurves()->remove(j1);
+            return -1;
+        }
+        for (ii=0 ; ii<fparam ; ii++) {
+            ff.read((char*)(&work),sizeof(int32_t)*1);
+            this->getCurves()->get(j1)->Param(ii, work);
+        }
+
+        this->getCurves()->get(j1)->reinitializeCurveData(this->getCurves()->get(j1)->Param(PARAM::ptnr));
+
+        // wyniki
+        double time;
+        double potential;
+
+        for (int ii=0 ; ii<this->getCurves()->get(j1)->Param(PARAM::ptnr) ; ii++) {
+            ff.read((char*)(&time), sizeof(double));
+            ff.read((char*)(&potential), sizeof(double));
+            ff.read((char*)(&dwork), sizeof(double));
+            this->getCurves()->get(j1)->addDataPoint(time, potential, dwork);
+        }
+
+        if ( this->getCurves()->get(j1)->Param(PARAM::nonaveragedsampling) != 0 ) {
+            uint32_t vectorSize;
+            ff.read((char*)(&vectorSize),sizeof(uint32_t));
+            if ( vectorSize == 0 ) {
+                this->getCurves()->get(j1)->Param(PARAM::nonaveragedsampling,0);
+            } else {
+                this->getCurves()->get(j1)->allocateProbingData(vectorSize);
+                float data;
+                for (uint32_t j=0;j<vectorSize;j++) {
+                    ff.read((char*)(&data),sizeof(float));
+                    this->getCurves()->get(j1)->addProbingDataPoint(data);
+                }
+            }
+
+        }
+    }
     this->setCurrentRange(this->getCurves()->get(j1)->Param(PARAM::crange),this->getCurves()->get(j1)->Param(PARAM::crange));
     this->getCurves()->get(j1)->FName(ff.fileName());
     this->_pUI->updateAll();
@@ -1931,9 +1941,11 @@ int EAQtData::MesSaveAll(QString UserCName, QString UserFName, QString UserComme
         UserCName = "USER";
     }
 
+    /*
     if ( UserFName.right(5).compare(".volt",Qt::CaseInsensitive) != 0 ) {
         UserFName += ".volt";
     }
+    */
 
     /*
     *
@@ -2173,87 +2185,105 @@ int EAQtData::safeAppend(QString pFileName, Curve* CurveToAppend)
     pI++;
     *(buffer+3)=*pI;
 
-    int addLen, addLen1;
-    addLen = 4 + appCurveName.size() + 1 + CurveToAppend->Comment().size() + 1;
-    curveBuffer = (char *)malloc(addLen);
-    // number of params + params + time vecotr + potential vecotr + current vecotr
-    addLen1 = addLen + 4 + PARAM::PARAMNUM*sizeof(int32_t) + 3*CurveToAppend->getNrOfDataPoints()*sizeof(double);
-    if ( CurveToAppend->Param(PARAM::nonaveragedsampling) != 0 ) {
-        // nonaveraged length
-        addLen1 += CurveToAppend->getNumberOfProbingPoints()*sizeof(float)+sizeof(uint32_t); //+zapisanie ile tych punktow jest
-    }
-
-    char *PointInBuffer;
-
-    PointInBuffer=curveBuffer;
-
-    char* pI2 = (char*)&addLen1; // 4 bajty - długość krzywej
-    for (uint iii=0; iii<sizeof(int32_t); iii++)
-    {
-        *(PointInBuffer)=*pI2;
-        pI2++;
-        PointInBuffer++;
-    }
-
-    for (int ii=0;ii<appCurveName.toLocal8Bit().size();ii++)
-    {
-        *(PointInBuffer)=appCurveName.toLocal8Bit()[ii];
-        PointInBuffer++;
-    }
-    *(PointInBuffer)='\0';
-    PointInBuffer++;
-
-    for (int ii=0;ii<CurveToAppend->Comment().toLocal8Bit().size();ii++)
-    {
-        *(PointInBuffer)=CurveToAppend->Comment().toLocal8Bit()[ii];
-        PointInBuffer++;
-    }
-    *(PointInBuffer)='\0';
-    PointInBuffer++;
-
     QString TempFileName = pFileName + ".tmp";
-
     QFile *outFile = new QFile(TempFileName);
-    if ( outFile->open(QIODevice::ReadWrite) )
-    {
-        outFile->write(buffer,fileLen);
-        outFile->write(curveBuffer,addLen);
 
-        int32_t nParNr=PARAM::PARAMNUM;
-        outFile->write((char*)&nParNr,sizeof(int32_t));
-        for (short ii=0;ii<PARAM::PARAMNUM;ii++) {
-            int nParVal=CurveToAppend->Param(ii);
-            outFile->write((char*)&nParVal,sizeof(int32_t));
-        }
-
-        double dAux;
-        for (uint ii=0; ii<CurveToAppend->getNrOfDataPoints(); ii++) {
-            dAux = CurveToAppend->getTimePoint(ii);       // time
-            outFile->write((char*)&dAux,sizeof(double));
-            dAux = CurveToAppend->getPotentialPoint(ii);   // potential
-            outFile->write((char*)&dAux,sizeof(double));
-            dAux=CurveToAppend->Result(ii);
-            outFile->write((char*)&dAux,sizeof(double));   // current
-
-        }
-        if ( CurveToAppend->Param(PARAM::nonaveragedsampling) != 0 )  {
-            // nonaveraged:
-            uint32_t vectorSize = CurveToAppend->getNumberOfProbingPoints();
-            vector<float> vFloat(CurveToAppend->getProbingData()->begin(), CurveToAppend->getProbingData()->end());
-            outFile->write((char*)&vectorSize,sizeof(uint32_t));
-            outFile->write((char*)&vFloat[0],vectorSize*sizeof(float));
+    if ( pFileName.right(FILES::saveCompressExt.size()).compare(FILES::saveCompressExt,Qt::CaseInsensitive) == 0 ) {
+        QByteArray compressed = CurveToAppend->serialize();
+        QByteArray name = CurveToAppend->CName().toUtf8();
+        int addLen = compressed.size() + name.size() + sizeof(int) + 1;
+        if ( outFile->open(QIODevice::ReadWrite) )
+        {
+            outFile->write(buffer,fileLen);
+            outFile->write((char*)&addLen, sizeof(int));
+            outFile->write(name.data(),name.size());
+            outFile->write("\0",1);
+            outFile->write(compressed,compressed.size());
+        } else {
+            this->_pUI->showMessageBox(tr("Could not open tmp file. Curve not saved."));
+            return(-3);
         }
         outFile->close();
     } else {
+        int addLen, addLen1;
+        addLen = 4 + appCurveName.size() + 1 + CurveToAppend->Comment().size() + 1;
+        curveBuffer = (char *)malloc(addLen);
+        // number of params + params + time vecotr + potential vecotr + current vecotr
+        addLen1 = addLen + 4 + PARAM::PARAMNUM*sizeof(int32_t) + 3*CurveToAppend->getNrOfDataPoints()*sizeof(double);
+        if ( CurveToAppend->Param(PARAM::nonaveragedsampling) != 0 ) {
+            // nonaveraged length
+            addLen1 += CurveToAppend->getNumberOfProbingPoints()*sizeof(float)+sizeof(uint32_t); //+zapisanie ile tych punktow jest
+        }
+
+        char *PointInBuffer;
+
+        PointInBuffer=curveBuffer;
+
+        char* pI2 = (char*)&addLen1; // 4 bajty - długość krzywej
+        for (uint iii=0; iii<sizeof(int32_t); iii++)
+        {
+            *(PointInBuffer)=*pI2;
+            pI2++;
+            PointInBuffer++;
+        }
+
+        for (int ii=0;ii<appCurveName.toLocal8Bit().size();ii++)
+        {
+            *(PointInBuffer)=appCurveName.toLocal8Bit()[ii];
+            PointInBuffer++;
+        }
+        *(PointInBuffer)='\0';
+        PointInBuffer++;
+
+        for (int ii=0;ii<CurveToAppend->Comment().toLocal8Bit().size();ii++)
+        {
+            *(PointInBuffer)=CurveToAppend->Comment().toLocal8Bit()[ii];
+            PointInBuffer++;
+        }
+        *(PointInBuffer)='\0';
+        PointInBuffer++;
+
+        if ( outFile->open(QIODevice::ReadWrite) )
+        {
+            outFile->write(buffer,fileLen);
+            outFile->write(curveBuffer,addLen);
+
+            int32_t nParNr=PARAM::PARAMNUM;
+            outFile->write((char*)&nParNr,sizeof(int32_t));
+            for (short ii=0;ii<PARAM::PARAMNUM;ii++) {
+                int nParVal=CurveToAppend->Param(ii);
+                outFile->write((char*)&nParVal,sizeof(int32_t));
+            }
+
+            double dAux;
+            for (uint ii=0; ii<CurveToAppend->getNrOfDataPoints(); ii++) {
+                dAux = CurveToAppend->getTimePoint(ii);       // time
+                outFile->write((char*)&dAux,sizeof(double));
+                dAux = CurveToAppend->getPotentialPoint(ii);   // potential
+                outFile->write((char*)&dAux,sizeof(double));
+                dAux=CurveToAppend->Result(ii);
+                outFile->write((char*)&dAux,sizeof(double));   // current
+
+            }
+            if ( CurveToAppend->Param(PARAM::nonaveragedsampling) != 0 )  {
+                // nonaveraged:
+                uint32_t vectorSize = CurveToAppend->getNumberOfProbingPoints();
+                vector<float> vFloat(CurveToAppend->getProbingData()->begin(), CurveToAppend->getProbingData()->end());
+                outFile->write((char*)&vectorSize,sizeof(uint32_t));
+                outFile->write((char*)&vFloat[0],vectorSize*sizeof(float));
+            }
+            outFile->close();
+        } else {
+            byteArray.clear();
+            free(curveBuffer);
+            this->_pUI->showMessageBox(tr("Could not open tmp file. Curve not saved."));
+            return(-3);
+        }
+
         byteArray.clear();
         free(curveBuffer);
-        this->_pUI->showMessageBox("IDS_info6");
-        return(-3);
+        PointInBuffer=NULL;
     }
-
-    byteArray.clear();
-    free(curveBuffer);
-    PointInBuffer=NULL;
 
     ////////////////////////////////////////////////////////////////////////////
     //////////////////// walidacja pliku TEMP //////////////////////////////////
@@ -2261,7 +2291,7 @@ int EAQtData::safeAppend(QString pFileName, Curve* CurveToAppend)
     unsigned long tmpFileLen;
 
     if( !outFile->open(QIODevice::ReadOnly) ) {
-        this->_pUI->showMessageBox("IDS_info6");
+        this->_pUI->showMessageBox(tr("Error while openning temp file. Curve not saved."));
         return(-6);
     }
 
@@ -2271,7 +2301,7 @@ int EAQtData::safeAppend(QString pFileName, Curve* CurveToAppend)
     if ( tmpFileLen > maxFileSizeBytes  ||  tmpFileLen < 240 )
     {
         outFile->close();
-        this->_pUI->showMessageBox("IDS_info6");
+        this->_pUI->showMessageBox(tr("Error while openning temp file, or file damaged. Curve not saved."));
         return(-6);
     }
 
@@ -2285,7 +2315,7 @@ int EAQtData::safeAppend(QString pFileName, Curve* CurveToAppend)
     if ( CurvsInTmpFile<1 )
     {
         qba2.clear();
-        this->_pUI->showMessageBox("IDS_info6");
+        this->_pUI->showMessageBox(tr("Error while reading number of files from tmp. Curve not saved."));
         return(-6);
     }
 
@@ -2298,7 +2328,7 @@ int EAQtData::safeAppend(QString pFileName, Curve* CurveToAppend)
         nOffsetWholeSum+=*tmpCurOffset;
         if ( tmpFileLen < nOffsetWholeSum ) {
             qba2.clear();
-            this->_pUI->showMessageBox("IDS_info6");
+            this->_pUI->showMessageBox(tr("Error while verifing size of tmp file (offset sum > filesize). Curve not saved."));
             return (-6);
         }
     }
@@ -2307,7 +2337,7 @@ int EAQtData::safeAppend(QString pFileName, Curve* CurveToAppend)
     if( nOffsetWholeSum<=4 || (tmpFileLen!=nOffsetWholeSum) ) // verify offsets and file size
     {
         qba2.clear();
-        this->_pUI->showMessageBox("IDS_info6");
+        this->_pUI->showMessageBox(tr("Error while verifing size of tmp file (offset sum != filesize). Curve not saved."));
         return(-6);
     }
 

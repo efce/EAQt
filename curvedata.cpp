@@ -96,6 +96,7 @@ QVector<double>* CurveData::getProbingDataPointNumbers()
 void CurveData::setProbingData(QVector<double> probingData)
 {
     this->_vProbingData = probingData;
+    _nrOfPoints = _vProbingData.size();
 }
 
 uint32_t CurveData::getNumberOfProbingPoints()

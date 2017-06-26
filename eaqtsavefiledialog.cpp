@@ -19,6 +19,7 @@
 #include <QLabel>
 #include <QStandardPaths>
 #include "eaqtsavefiledialog.h"
+#include "const.h"
 
 EAQtSaveFiledialog::EAQtSaveFiledialog(QWidget* parent, QString cname, QString ccomment, QString pathToShow, QString file) : QObject()
 {
@@ -50,7 +51,8 @@ EAQtSaveFiledialog::SaveDetails EAQtSaveFiledialog::getSaveDetails()
     fd->selectFile(_filename);
     fd->setModal(true);
     fd->setOption( QFileDialog::DontUseNativeDialog, true );
-    fd->setNameFilter("volt (*.volt)");
+    fd->setNameFilter(FILES::saveFile);
+    fd->selectNameFilter(FILES::saveDef);
     QGridLayout* l = (QGridLayout*) fd->layout();
     QGridLayout* lay = new QGridLayout();
     this->_leCurveComment = new QPlainTextEdit();

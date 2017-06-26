@@ -19,12 +19,21 @@
 #define _CONST_H_ 1
 
 #include <QColor>
+#include <QString>
 #include <vector>
+#include <QApplication>
 
 namespace COLOR {
     const QColor regular = QColor(20,20,240);
     const QColor measurement = QColor(0,0,0);
     const QColor active = QColor(240,20,20);
+}
+
+namespace FILES {
+    const QString saveFile = QApplication::translate("FILES", "Compressed Voltammogram (*.voltc);;Unompressed Voltammogram (*.volt)");
+    const QString saveDef = QApplication::translate("FILES", "Compressed Voltammogram (*.voltc)");
+    const QString saveCompressExt = QString(".voltc");
+    const QString openFile = QApplication::translate("FILES", "Voltammograms (*.vol *.volt *.voltc)");
 }
 
 namespace MEASUREMENT {

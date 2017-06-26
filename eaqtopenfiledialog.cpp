@@ -26,7 +26,7 @@ EAQtOpenFileDialog::EAQtOpenFileDialog(EAQtData* pData, QString path) : QObject(
     this->_fd = new QFileDialog();
     _fd->setDirectory(path);
     _fd->setOption( QFileDialog::DontUseNativeDialog, true );
-    _fd->setNameFilter("volt (*.volt);;vol (*.vol)");
+    _fd->setNameFilter(FILES::openFile);
     QGridLayout* l = (QGridLayout*) _fd->layout();
     this->_curvesInFileList = new QListWidget();
     _curvesInFileList->setFixedWidth(QFontMetrics(_fd->font()).width("WWWWWWWWWWWWWWW"));

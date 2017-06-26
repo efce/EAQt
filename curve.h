@@ -32,6 +32,9 @@ public:
 
 	~Curve();
 
+    QByteArray serialize();
+    void unserialize(QByteArray &ba);
+
     void Param(int32_t nParamNr, int32_t lValue);
     int32_t Param(int32_t nParamNr);
 	void Result(int nResultNr, double dResult);

@@ -422,3 +422,97 @@ void Curve::setYValue(uint32_t index, double value)
         return;
     }
 }
+
+QByteArray Curve::serialize()
+{
+    QByteArray *tmp = new QByteArray();
+    tmp->reserve(100000);
+
+    QByteArray name = this->CName().toUtf8();
+    tmp->append(name.data(),name.size());
+    tmp->append(1,NULL);
+    QByteArray comment = this->Comment().toUtf8();
+    tmp->append(comment.data(),comment.size());
+    tmp->append(1,NULL);
+    int32_t paramnum = PARAM::PARAMNUM;
+    tmp->append((char*) (&paramnum), sizeof(int32_t));
+    tmp->append((char*)&this->_mesParam, PARAM::PARAMNUM*sizeof(int32_t));
+    uint32_t dataSize = this->getNrOfDataPoints();
+    tmp->append((char*)&dataSize,sizeof(uint32_t));
+    tmp->append((char*)_curveData->getPotentialVector()->data(), dataSize*sizeof(double));
+    tmp->append((char*)_curveData->getTimeVector()->data(), dataSize*sizeof(double));
+    tmp->append((char*)_curveData->getCurrentVector()->data(), dataSize*sizeof(double));
+    if ( _mesParam[PARAM::nonaveragedsampling] != 0 ) {
+        uint32_t probSize = this->getNumberOfProbingPoints();
+        tmp->append((char*)&probSize, sizeof(uint32_t));
+        tmp->append((char*)_curveData->getProbingData()->data(), probSize*sizeof(double));
+    }
+    return qCompress(*tmp, 9); // level 9 should provide around 50% compression //
+}
+
+void Curve::unserialize(QByteArray &ba)
+{
+    QByteArray serialized = qUncompress(ba);
+    int i = 0;
+    QByteArray tmp;
+    while ( serialized[i]!=NULL ) {
+        tmp.append(serialized[i]);
+        ++i;
+    }
+    QString name(tmp);
+    tmp.clear();
+    _curveName = name;
+    ++i;
+
+    while ( serialized[i]!=NULL ) {
+        tmp.append(serialized[i]);
+        ++i;
+    }
+    QString comment(tmp);
+    _comment = comment;
+    ++i;
+
+    int32_t paramnum;
+    memcpy(&paramnum, serialized.data()+i, sizeof(int32_t));
+    i+=sizeof(int32_t);
+    memcpy(&_mesParam[0],serialized.data()+i,paramnum*sizeof(int32_t));
+    i+=paramnum*sizeof(int32_t);
+
+    uint32_t dataSize;
+    memcpy(&dataSize, serialized.data()+i, sizeof(uint32_t));
+    i+=sizeof(uint32_t);
+
+    this->reinitializeCurveData(dataSize);
+
+    QVector<double> pot;
+    pot.resize(dataSize);
+    memcpy(pot.data(),serialized.data()+i,dataSize*sizeof(double));
+    i+=dataSize*sizeof(double);
+    this->setPotentialVector(pot);
+
+    QVector<double> time;
+    time.resize(dataSize);
+    memcpy(time.data(),serialized.data()+i,dataSize*sizeof(double));
+    i+=dataSize*sizeof(double);
+    this->setTimeVector(time);
+
+    QVector<double> current;
+    current.resize(dataSize);
+    memcpy(current.data(),serialized.data()+i,dataSize*sizeof(double));
+    for ( uint i=0; i<dataSize;++i) {
+        this->Result(i,current[i]);
+    }
+    i+=dataSize*sizeof(double);
+
+    if ( _mesParam[PARAM::nonaveragedsampling] != 0 ) {
+        uint32_t probSize;
+        memcpy(&probSize, serialized.data()+i, sizeof(uint32_t));
+        i+=sizeof(uint32_t);
+        QVector<double> prob;
+        prob.resize(probSize);
+        memcpy(prob.data(),serialized.data()+i,probSize*sizeof(double));
+        this->setProbingData(prob);
+    }
+
+    return;
+}
