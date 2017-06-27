@@ -198,7 +198,7 @@ EAQtCalibrationDialog::EAQtCalibrationDialog(CalibrationData *cd, QHash<QString,
     glm->addWidget(_calculateBox,0,0,1,2);
     glm->addWidget(sa,1,0,1,2);
     QPushButton *butCal = new QPushButton(tr("Plot calibration"));
-    QPushButton *butCancel = new QPushButton(tr("Cancel"));
+    QPushButton *butCancel = new QPushButton(tr("Close"));
     glm->addWidget(butCal,2,0,1,1);
     glm->addWidget(butCancel,2,1,1,1);
     _calibrationPlot = new CalibrationPlot(_cd);

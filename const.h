@@ -30,8 +30,9 @@ namespace COLOR {
 }
 
 namespace FILES {
-    const QString saveFile = QApplication::translate("FILES", "Compressed Voltammogram (*.voltc);;Unompressed Voltammogram (*.volt)");
     const QString saveDef = QApplication::translate("FILES", "Compressed Voltammogram (*.voltc)");
+    const QString saveDefUncompress = QApplication::translate("FILES", "Unompressed Voltammogram (*.volt)");
+    const QString saveFile = saveDef + ";;" + saveDefUncompress;
     const QString saveCompressExt = QString(".voltc");
     const QString openFile = QApplication::translate("FILES", "Voltammograms (*.vol *.volt *.voltc)");
 }

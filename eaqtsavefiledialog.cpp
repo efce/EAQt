@@ -52,7 +52,12 @@ EAQtSaveFiledialog::SaveDetails EAQtSaveFiledialog::getSaveDetails()
     fd->setModal(true);
     fd->setOption( QFileDialog::DontUseNativeDialog, true );
     fd->setNameFilter(FILES::saveFile);
-    fd->selectNameFilter(FILES::saveDef);
+    if ( _filename.isEmpty()
+    || _filename.right(FILES::saveCompressExt.size()).compare(FILES::saveCompressExt,Qt::CaseInsensitive) == 0 ) {
+        fd->selectNameFilter(FILES::saveDef);
+    } else {
+        fd->selectNameFilter(FILES::saveDefUncompress);
+    }
     QGridLayout* l = (QGridLayout*) fd->layout();
     QGridLayout* lay = new QGridLayout();
     this->_leCurveComment = new QPlainTextEdit();
