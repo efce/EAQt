@@ -1089,16 +1089,11 @@ void EAQtMainWindow::showSaveCurve()
     QFileDialog *qfd = new QFileDialog();
     QString filter = FILES::saveFile;
     QString filterdef = FILES::saveDef;
-    QString savePath = qfd->getSaveFileName(this,tr("Add curve to file"),_PathInUse,filter,&filterdef);
+    QString savePath = qfd->getSaveFileName(this,tr("Add curve to file"),_PathInUse,filter,&filterdef,QFileDialog::DontConfirmOverwrite);
     if ( savePath.isEmpty() ) {
         delete qfd;
         return;
     }
-    /*
-    if ( savePath.right(FILES::saveCompressExt.size()).compare(FILES::saveCompressExt, Qt::CaseInsensitive) != 0 ) {
-        savePath.append(FILES::saveCompressExt);
-    }
-    */
     delete qfd;
     if ( this->_pEAQtData->Act() == SELECT::all ) {
         uint i = 0;

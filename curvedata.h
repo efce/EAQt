@@ -34,7 +34,7 @@ public:
 
     void allocateProbingData(uint32_t nLen ,double dProbingRate);
 	void addProbingDataPoint(float);
-    void setProbingData(QVector<double>);
+    void setProbingData(QVector<double>&);
     QVector<double>* getProbingData();
     uint32_t getNumberOfProbingPoints();
     QVector<double>* getProbingDataPointNumbers();

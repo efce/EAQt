@@ -93,10 +93,17 @@ QVector<double>* CurveData::getProbingDataPointNumbers()
     return &this->_vProbingDataPointNo;
 }
 
-void CurveData::setProbingData(QVector<double> probingData)
+void CurveData::setProbingData(QVector<double>& probingData)
 {
-    this->_vProbingData = probingData;
-    _nrOfPoints = _vProbingData.size();
+    _vProbingData = probingData;
+    _nrOfPointsProbing = _vProbingData.size();
+    _vProbingDataPointNo.clear();
+    _vProbingDataPointNo.resize(_nrOfPointsProbing);
+    uint32_t i = 0;
+    for ( double d = 1; d<=_nrOfPointsProbing; ++d ) {
+        this->_vProbingDataPointNo[i] = d;
+        ++i;
+    }
 }
 
 uint32_t CurveData::getNumberOfProbingPoints()
