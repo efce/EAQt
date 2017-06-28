@@ -28,8 +28,8 @@ public:
     QString CName(void);
     void CName(QString);
 
-    uint32_t Off(void);
-    void Off(uint32_t);
+    int32_t Off(void);
+    void Off(int32_t);
 
 private:
     QString _curveName;	// nazwa krzywej

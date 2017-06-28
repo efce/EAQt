@@ -61,7 +61,7 @@ public:
      void PlotConnectMouse();
      void MeasurementSetup();
      void MeasurementAfter();
-     void MeasurementUpdate(uint32_t curveNr, uint32_t pointNr);
+     void MeasurementUpdate(int32_t curveNr, int32_t pointNr);
      void showMessageBox(QString text, QString title = "");
      bool showQuestionBox(QString text, QString title = "", bool defaultIsYes = true);
      EAQtSaveFiledialog::SaveDetails DialogSaveInFile();

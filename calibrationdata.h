@@ -37,8 +37,8 @@ public:
     double x0value;
     double x0StdDev;
     double correlationCoef;
-    uint32_t pointStart;
-    uint32_t pointEnd;
+    int32_t pointStart;
+    int32_t pointEnd;
     QVector<double> xValues;
     QString xUnits;
     QVector<double> yValues;

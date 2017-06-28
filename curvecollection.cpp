@@ -25,7 +25,7 @@ CurveCollection::CurveCollection(EAQtUIInterface *ui)
 
 CurveCollection::~CurveCollection()
 {
-    for ( uint32_t i=0; i<_vCurves.size(); ++i) {
+    for ( auto i=0; i<_vCurves.size(); ++i) {
         if ( _vCurves[i] == NULL ) {
             continue;
         }
@@ -34,16 +34,16 @@ CurveCollection::~CurveCollection()
     this->_vCurves.clear();
 }
 
-uint32_t CurveCollection::append(Curve *curve)
+int32_t CurveCollection::append(Curve *curve)
 {
-    uint32_t index = _vCurves.size();
+    int32_t index = _vCurves.size();
     _vCurves.push_back(curve);
     return index;
 }
 
-uint32_t CurveCollection::addNew(uint32_t nrOfDataPoints)
+int32_t CurveCollection::addNew(int32_t nrOfDataPoints)
 {
-    uint32_t index = _vCurves.size();
+    int32_t index = _vCurves.size();
     _vCurves.push_back(new Curve(nrOfDataPoints));
     _vCurves[index]->setPlot(_pUI->PlotAddGraph());
     _vCurves[index]->getPlot()->setAdaptiveSampling(false);
@@ -59,7 +59,7 @@ Curve* CurveCollection::get(int index)
     }
 }
 
-void CurveCollection::remove(uint32_t index)
+void CurveCollection::remove(int32_t index)
 {
     /*
     * Remove from Vector AND call destructor
@@ -78,7 +78,7 @@ void CurveCollection::remove(Curve* curve)
     /*
     * Remove from Vector AND call destructor
     */
-    for (uint32_t index=0; index<_vCurves.size(); ++index ) {
+    for (int32_t index=0; index<_vCurves.size(); ++index ) {
         if ( _vCurves[index] == curve ) {
             this->remove(index);
             return;
@@ -87,7 +87,7 @@ void CurveCollection::remove(Curve* curve)
     throw std::invalid_argument( "Could not find curve" );
 }
 
-void CurveCollection::unset(uint32_t index)
+void CurveCollection::unset(int32_t index)
 {
     /*
     * Remove from Vector WITHOUT calling destructor
@@ -105,7 +105,7 @@ void CurveCollection::unset(Curve* curve)
     /*
     * Remove from Vector WITHOUT calling destructor
     */
-    for (uint32_t index=0; index<_vCurves.size(); ++index ) {
+    for (int32_t index=0; index<_vCurves.size(); ++index ) {
         if ( _vCurves[index] == curve ) {
             this->unset(index);
             return;
@@ -116,7 +116,7 @@ void CurveCollection::unset(Curve* curve)
 
 void CurveCollection::clear()
 {
-    for ( uint32_t i=0; i<_vCurves.size(); ++i) {
+    for ( int32_t i=0; i<_vCurves.size(); ++i) {
         if ( _vCurves[i] == NULL ) {
             continue;
         }
@@ -126,7 +126,7 @@ void CurveCollection::clear()
     this->_vCurves.clear();
 }
 
-uint32_t CurveCollection::count()
+int32_t CurveCollection::count()
 {
     return _vCurves.size();
 }

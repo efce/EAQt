@@ -146,7 +146,7 @@ void EAQtAdvancedSmoothDialog::updateFrequencyPlot()
     _imgValues.clear();
 
     if ( EAQtData::getInstance().Act() == SELECT::all ) {
-        for ( uint32_t i = 0; i< cc->count(); ++i ) {
+        for ( int32_t i = 0; i< cc->count(); ++i ) {
             updateCurveFrequency(cc->get(i));
         }
     } else {
@@ -211,7 +211,7 @@ void EAQtAdvancedSmoothDialog::updateCurveFrequency(Curve* c)
 void EAQtAdvancedSmoothDialog::apply()
 {
     int selected = -1;
-    for ( uint i = 0; i<_radMethod.size(); ++i ) {
+    for ( int i = 0; i<_radMethod.size(); ++i ) {
         if (_radMethod[i]->isChecked() ) {
             selected = i;
             break;
@@ -231,7 +231,7 @@ void EAQtAdvancedSmoothDialog::apply()
             if ( EAQtData::getInstance().Act() == SELECT::all ) {
                 CurveCollection* cc = EAQtData::getInstance().getCurves();
                 Curve *c;
-                for ( uint32_t i = 0; i<cc->count(); ++i) {
+                for ( int32_t i = 0; i<cc->count(); ++i) {
                 c = cc->get(i);
                 if ( c != NULL ) {
                     trySG(c,span,order);
@@ -251,7 +251,7 @@ void EAQtAdvancedSmoothDialog::apply()
         {
             double threshold = _leFTreshhold->text().toDouble();
             if ( EAQtData::getInstance().Act() == SELECT::all ) {
-                for ( uint i = 0; i <_frequencies.size(); ++i ) {
+                for ( int i = 0; i <_frequencies.size(); ++i ) {
                     Curve *c = EAQtData::getInstance().getCurves()->get(i);
                     tryIFFT(c,threshold, _samplingFreq[i],_frequencies[i],_imgValues[i], _realValues[i]);
                 }
@@ -279,8 +279,8 @@ void EAQtAdvancedSmoothDialog::trySG(Curve *c, int span, int order)
     }
     QVector<double> y = c->getYVector();
     EAQtSignalProcessing::sgSmooth(&y,order,span);
-    uint32_t sy = y.size();
-    for ( uint32_t i = 0; i<sy;++i) {
+    int32_t sy = y.size();
+    for ( int32_t i = 0; i<sy;++i) {
         c->setYValue(i,y[i]);
     }
 
@@ -290,8 +290,8 @@ void EAQtAdvancedSmoothDialog::tryIFFT(Curve* c, double treshhold, double sampli
 {
 
         int threshPos = -1;
-        uint32_t points = freq.size();
-        for ( uint32_t ii = 0; ii<points; ++ii ) {
+        int32_t points = freq.size();
+        for ( int32_t ii = 0; ii<points; ++ii ) {
             if ( freq.at(ii) > treshhold ) {
                 threshPos = ii;
                 break;
@@ -301,16 +301,16 @@ void EAQtAdvancedSmoothDialog::tryIFFT(Curve* c, double treshhold, double sampli
             //TODO: error?
             return;
         }
-        uint32_t rangeDN = threshPos;
-        uint32_t rangeUP = freq.size() - threshPos;
-        for ( uint32_t ii = rangeDN; ii<=rangeUP; ++ii ) {
+        int32_t rangeDN = threshPos;
+        int32_t rangeUP = freq.size() - threshPos;
+        for ( int32_t ii = rangeDN; ii<=rangeUP; ++ii ) {
             vImg.replace(ii,0.0);
             vReal.replace(ii,0);
         }
         QVector<double> newy;
         EAQtSignalProcessing::kissIFFT(samplingFreq, vImg, vReal, newy);
 
-        for ( uint32_t ii=0; ii<points;++ii) {
+        for ( int32_t ii=0; ii<points;++ii) {
             c->setYValue(ii,newy[ii]);
         }
 }

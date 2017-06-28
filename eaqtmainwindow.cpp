@@ -586,12 +586,12 @@ void EAQtMainWindow::PlotRescaleAxes()
 {
     CurveCollection* cc = _pEAQtData->getCurves();
     if ( cc->count() > 0 ) {
-        uint32_t sizecc = cc->count();
+        int32_t sizecc = cc->count();
         double minx = *std::min_element(cc->get(0)->getXVector().constBegin(),cc->get(0)->getXVector().constEnd());
         double maxx = *std::max_element(cc->get(0)->getXVector().constBegin(),cc->get(0)->getXVector().constEnd());
         double miny = *std::min_element(cc->get(0)->getYVector().constBegin(),cc->get(0)->getYVector().constEnd());
         double maxy = *std::max_element(cc->get(0)->getYVector().constBegin(),cc->get(0)->getYVector().constEnd());
-        for ( uint32_t i = 0; i<sizecc; ++i ) {
+        for ( int32_t i = 0; i<sizecc; ++i ) {
             static double lmaxx, lminx, lmaxy, lminy;
             lminx = *std::min_element(cc->get(i)->getXVector().constBegin(),cc->get(i)->getXVector().constEnd());
             lmaxx = *std::max_element(cc->get(i)->getXVector().constBegin(),cc->get(i)->getXVector().constEnd());
@@ -710,7 +710,7 @@ void EAQtMainWindow::MeasurementAfter()
     this->_mouseHandler->ChangeMouseMode(EAQtMouseHandler::mm_normal, EAQtMouseHandler::uf_none);
 }
 
-void EAQtMainWindow::MeasurementUpdate(uint32_t curveNr, uint32_t pointNr)
+void EAQtMainWindow::MeasurementUpdate(int32_t curveNr, int32_t pointNr)
 {
     int i = 0;
     Curve* curve;
@@ -863,9 +863,9 @@ void EAQtMainWindow::paramCopy()
             }
             if ( c->Param(PARAM::pro) == PARAM::pro_yes ) {
                 QVector<double>* potentials = c->getPotentialVector();
-                uint32_t vsize = potentials->size();
+                int32_t vsize = potentials->size();
                 QVector<int16_t> program(vsize,0);
-                for ( uint32_t i = 0; i<vsize; ++i) {
+                for ( int32_t i = 0; i<vsize; ++i) {
                     program[i] = (int16_t) potentials->at(i);
                 }
                 _pEAQtData->setPotentialProgram(program);

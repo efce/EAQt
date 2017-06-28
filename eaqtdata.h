@@ -65,7 +65,7 @@ private:
     void createMatrix();
     void crmxSQW();
     void loadMesFile();
-    void seriaWait(uint32_t);
+    void seriaWait(int32_t);
 
     bool sendLSVToEA();
     bool sendPVToEA();
@@ -127,7 +127,7 @@ public:
     void MesStop();
     void MesClear();
     void MesAfter();
-    void MesUpdate(uint32_t, uint32_t, bool);
+    void MesUpdate(int32_t, int32_t, bool);
     int  MesSaveAll(QString UserCName, QString UserFName, QString UserComment);
     bool isMeasurement();
     const QVector<int16_t>& getPotentialProgram();
@@ -156,7 +156,7 @@ public:
     QString getMesSeriesFile();
     void setMesSeriesFile(QString);
 
-    uint32_t _ptnrFromEss;
+    int32_t _ptnrFromEss;
 
    struct TestCGMDE {
        int32_t GP;				// test CGMDE - czas otwarcia zaworu
@@ -203,7 +203,7 @@ private:
                            // 0 - ignore start potential;
                            // 1 - start potential within measurement range;
                            // 2 - start potential outside of measurment range;
-   uint32_t _mesSimultCurvesCounter;			// licznik mierzonych rwnoczenie krzywych
+   int32_t _mesSimultCurvesCounter;			// licznik mierzonych rwnoczenie krzywych
 
    struct BreakInfo {
        int32_t currentSec;
@@ -241,7 +241,7 @@ private:
                                 // 0 - techniki impulsowe, 1 - LSV
    int32_t _conductingMeasurement;
    bool _performSetup;
-   uint32_t _multielectrodeNr;
+   int32_t _multielectrodeNr;
    std::vector<double> mdata;		// do interpretacji
 
     //SERIA:

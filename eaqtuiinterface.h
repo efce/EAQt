@@ -46,7 +46,7 @@ public:
 	virtual void PlotSetInverted(bool) = 0;
 
     virtual void MeasurementSetup() = 0;
-    virtual void MeasurementUpdate(uint32_t curveNr, uint32_t pointNr) = 0;
+    virtual void MeasurementUpdate(int32_t curveNr, int32_t pointNr) = 0;
     virtual void MeasurementAfter() = 0;
     virtual void enableAll() = 0;
     virtual void disableButtonsOnly() = 0;

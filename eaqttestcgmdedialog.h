@@ -60,7 +60,7 @@ private:
     double _averageResult;
     double _stardardDev;
     int _pulseNum;
-    std::vector<int> _vResults;
+    QVector<int> _vResults;
 
     void updateDialog();
     void readDialog();

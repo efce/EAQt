@@ -37,7 +37,7 @@ EAQtRecalculateCurveDialog::EAQtRecalculateCurveDialog(EAQtUIInterface *pui) : Q
     if ( EAQtData::getInstance().Act() == SELECT::all  ) {
         bool allHaveNonAvg = true;
         _tpplustw = cc->get(0)->Param(PARAM::tp) + cc->get(0)->Param(PARAM::tw);
-        for ( uint32_t i =0; i<curveCount; ++i ) {
+        for ( int32_t i =0; i<curveCount; ++i ) {
             if ( cc->get(i)->getNumberOfProbingPoints() == 0 ) {
                 allHaveNonAvg = false;
             }
@@ -118,7 +118,7 @@ void EAQtRecalculateCurveDialog::recalculate()
     }
     if ( EAQtData::getInstance().Act() == SELECT::all ) {
         CurveCollection *cc = EAQtData::getInstance().getCurves();
-        for ( uint32_t nc = 0; nc<cc->count(); ++nc ) {
+        for ( int32_t nc = 0; nc<cc->count(); ++nc ) {
             Curve *c = EAQtData::getInstance().getCurves()->get(nc);
             recalculateCurve(c,newTp,newTw);
             c->FName(tr("(not saved)"));
@@ -135,11 +135,11 @@ void EAQtRecalculateCurveDialog::recalculateCurve(Curve *c, int tp, int tw)
 {
     double wrk = 0;
     QVector<double>* v = c->getProbingData();
-    for ( uint32_t i =0; i<c->getNrOfDataPoints(); ++i ) {
+    for ( int32_t i =0; i<c->getNrOfDataPoints(); ++i ) {
         switch (c->Param(PARAM::method)) {
         case PARAM::method_dpv:
         case PARAM::method_npv:
-            for ( uint32_t p=0; p<c->getNrOfDataPoints(); ++p ) {
+            for ( int32_t p=0; p<c->getNrOfDataPoints(); ++p ) {
                 wrk = 0;
                 for ( int i=0; i<tp; ++i ) {
                     wrk += v->at(i+tw+_tpplustw+(2*_tpplustw*p));

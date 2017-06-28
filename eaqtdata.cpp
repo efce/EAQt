@@ -382,12 +382,12 @@ void EAQtData::Act(int toAct)
 // --------------------------------------------------------
 bool EAQtData::MDirReadPro(QFile &ff)
 {
-    uint32_t iAux, iFilePos;
+    int32_t iAux, iFilePos;
     char cAux[1024];
-    uint32_t curvesInFile;
+    int32_t curvesInFile;
 
     ff.seek(0);
-    ff.read((char*)(&iAux), sizeof(uint32_t)); // liczba krzywych w pliku
+    ff.read((char*)(&iAux), sizeof(int32_t)); // liczba krzywych w pliku
 
     curvesInFile = iAux;
     iFilePos=4;
@@ -398,11 +398,11 @@ bool EAQtData::MDirReadPro(QFile &ff)
         return false;
     }
 
-    for(uint32_t i = 0;i < curvesInFile;++i) {
+    for(int32_t i = 0;i < curvesInFile;++i) {
         ff.seek(iFilePos);
-        uint32_t index = _fileIndex->addNew();
+        int32_t index = _fileIndex->addNew();
         _fileIndex->get(index)->Off(iFilePos);         	// offset krzywej w pliku
-        ff.read((char*)(&iAux), sizeof(uint32_t)); // długość krzywej
+        ff.read((char*)(&iAux), sizeof(int32_t)); // długość krzywej
         iFilePos += iAux;
         ff.read(cAux, 1); // nazwa krzywej
         int ii=0;
@@ -429,7 +429,7 @@ bool EAQtData::MDirReadOld(QFile &ff)
     {
         ff.read(cAux, 10);
         ff.read((char*)&iAux, sizeof(int16_t));
-        uint32_t index = _fileIndex->addNew();
+        int32_t index = _fileIndex->addNew();
         _fileIndex->get(index)->Off(iAux);
         _fileIndex->get(index)->CName(QString(cAux));
         if ( !_fileIndex->get(index)->CName().isEmpty() ) {
@@ -463,7 +463,7 @@ void EAQtData::CurReadFilePro(QString *FileName, int PosNr)
         return;
 
     if (PosNr == 0) {
-        for (uint32_t i=0 ; i<_fileIndex->count() ; ++i) {
+        for (int32_t i=0 ; i<_fileIndex->count() ; ++i) {
             if ( (j = CurReadCurvePro(ff, _fileIndex->get(i)->CName())) < 0) {
                 ff.close();
                 _pUI->showMessageBox(tr("Error while reading the file"), tr("Error"));
@@ -502,7 +502,7 @@ void EAQtData::CurReadFileOld(QString *FileName, int PosNr)
         return;
 
     if (PosNr == 0) {
-        for (uint32_t i=0 ; i<_fileIndex->count() ; ++i) {
+        for (int32_t i=0 ; i<_fileIndex->count() ; ++i) {
             if ( (j = CurReadCurveOld(ff, _fileIndex->get(i)->CName())) < 0) {
                 ff.close();
                 _pUI->showMessageBox(tr("Error while reading the file"), tr("Error"));
@@ -537,9 +537,9 @@ int EAQtData::CurReadCurvePro(QFile &ff, QString pCName)
     if ( _measurementGo ) {
         return 0;
     }
-    uint32_t j1;
-    uint32_t i;
-    uint32_t cLen;
+    int32_t j1;
+    int32_t i;
+    int32_t cLen;
 
     MDirReadPro(ff);
 
@@ -561,7 +561,7 @@ int EAQtData::CurReadCurvePro(QFile &ff, QString pCName)
 
     j1 = getCurves()->addNew(1); // TMP nie znam ilosci punktow krzywej
     getCurves()->get(j1)->getPlot()->setLayer(_pUI->PlotGetLayers()->NonActive);
-    ff.read((char*)(&cLen), sizeof(uint32_t));			// ilosc bajtow krzywej w pliku
+    ff.read((char*)(&cLen), sizeof(int32_t));			// ilosc bajtow krzywej w pliku
     if (ff.fileName().right(FILES::saveCompressExt.size()).compare(FILES::saveCompressExt,Qt::CaseInsensitive) == 0 ) {
         QByteArray ba = ff.read(cLen);
         if ( !getCurves()->get(j1)->unserialize(ba,true) ) {
@@ -586,8 +586,8 @@ int EAQtData::CurReadCurvePro(QFile &ff, QString pCName)
 int EAQtData::CurReadCurveOld(QFile &ff, QString CName)
 {
     //TODO: na razie bez wsparcia potencjału startowego LSV ! //
-    uint32_t j1, j2;
-    uint32_t cntr, i;
+    int32_t j1, j2;
+    int32_t cntr, i;
     int16_t fparam, ix;
     int startadr, work;
     char buf[256];
@@ -620,7 +620,7 @@ int EAQtData::CurReadCurveOld(QFile &ff, QString CName)
     ParamReadOld(ff);
 
     startadr = sizeof(int16_t) + PARAM::VOL_CMAX*12 + (PARAM::VOL_PMAX-2)*sizeof(int); // nie zmieniać cmax i pmax (słownik vol)
-    for (int16_t ii=0; ii<i; ii++) {
+    for (int32_t ii=0; ii<i; ii++) {
         startadr += _fileIndex->get(ii)->Off();
     }
     ff.seek(startadr);
@@ -640,7 +640,7 @@ int EAQtData::CurReadCurveOld(QFile &ff, QString CName)
     getCurves()->get(j1)->Comment(QString(buf));
     ff.read((char*)&fparam, sizeof(int16_t)*1);		// liczba ró¿nych parametrów
     if (fparam>0) {
-        for (i=0 ; i<fparam ; i++) {
+        for (i=0 ; i<(int32_t)fparam ; i++) {
             ff.read((char*)&ix, sizeof(int16_t)*1); // numer parametru
             ff.read((char*)&work,sizeof(int32_t)*1); // wartoœæ
             getCurves()->get(j1)->Param(ix, work);
@@ -653,7 +653,7 @@ int EAQtData::CurReadCurveOld(QFile &ff, QString CName)
     getCurves()->get(j1)->Param(PARAM::pro, 0);
 
     // wyniki
-    uint32_t time = 0;
+    int32_t time = 0;
     int timestep = 1;
     if ( getCurves()->get(j1)->Param(PARAM::method) != PARAM::method_lsv ) {
         timestep = 2*this->getCurves()->get(j1)->Param(PARAM::tp) + 2*this->getCurves()->get(j1)->Param(PARAM::tw);
@@ -662,7 +662,7 @@ int EAQtData::CurReadCurveOld(QFile &ff, QString CName)
     }
     double potential = this->getCurves()->get(j1)->Param(PARAM::Ep);
     double estep = ( this->getCurves()->get(j1)->Param(PARAM::Ek) - this->getCurves()->get(j1)->Param(PARAM::Ep) ) / this->getCurves()->get(j1)->Param(PARAM::ptnr);
-    for (i=0 ; i<this->getCurves()->get(j1)->Param(PARAM::ptnr) ; i++) {
+    for (int ii=0 ; ii<this->getCurves()->get(j1)->Param(PARAM::ptnr) ; ++ii) {
         ff.read((char*)&dwork, sizeof(double));
         this->getCurves()->get(j1)->addDataPoint(time, potential, dwork);
         potential +=estep;
@@ -682,9 +682,8 @@ int EAQtData::CurReadCurveOld(QFile &ff, QString CName)
 
         double potential = this->getCurves()->get(j1)->Param(PARAM::Ep);
         double time = timestep*2*this->getCurves()->get(j2)->Param(PARAM::ptnr);
-        for (i=0 ; i<this->getCurves()->get(j2)->Param(PARAM::ptnr) ; i++) {
+        for (int ii=0 ; ii<this->getCurves()->get(j2)->Param(PARAM::ptnr) ; ++ii) {
             ff.read((char*)&dwork, sizeof(double));
-            //this->vCurves[j2]->Result(i, dwork);
             this->getCurves()->get(j2)->addDataPoint(time, potential, dwork);
             potential +=estep;
             time -= timestep;
@@ -733,7 +732,7 @@ void EAQtData::deleteNonactiveCurvesFromGraph()
         Curve *c = this->getCurves()->get(this->Act());
         this->getCurves()->unset(this->Act());
         this->getCurves()->clear();
-        uint32_t index = this->getCurves()->append(c);
+        int32_t index = this->getCurves()->append(c);
         this->Act(index);
         this->_pUI->updateAll();
     }
@@ -905,7 +904,7 @@ void EAQtData::ProcessPacketFromEA(char* packet, bool nextPacketReady)
             i+= 2;
             currentPointNr = ((uint16_t)RxBuf[i] | ((uint16_t)RxBuf[i+1]<<8));
             i+= 2;
-            workl = ((uint32_t)RxBuf[i] | ((uint32_t)RxBuf[i+1]<<8) | ((uint32_t)RxBuf[i+2]<<16) | ((uint32_t)RxBuf[i+3]<<24));
+            workl = ((int32_t)RxBuf[i] | ((int32_t)RxBuf[i+1]<<8) | ((int32_t)RxBuf[i+2]<<16) | ((int32_t)RxBuf[i+3]<<24));
             i += 4;
             DataLen -= 8;
             if ( firstCycle ) {
@@ -922,7 +921,7 @@ void EAQtData::ProcessPacketFromEA(char* packet, bool nextPacketReady)
         break;
 
     case EA2PC_RECORDS::startELSV:
-        _EstartCurrentTime = ((uint32_t)RxBuf[1] | ((uint32_t)RxBuf[2]<<8) | ((uint32_t)RxBuf[3]<<16) | ((uint32_t)RxBuf[4]<<24));
+        _EstartCurrentTime = ((int32_t)RxBuf[1] | ((int32_t)RxBuf[2]<<8) | ((int32_t)RxBuf[3]<<16) | ((int32_t)RxBuf[4]<<24));
         this->updateELSV();
         break;
 
@@ -954,9 +953,9 @@ bool EAQtData::isMeasurement()
 // --------------------------------------------------------------------------------------
 void EAQtData::MesStart(bool isLsv)
 {
-    uint32_t actptnr;
+    int32_t actptnr;
     int32_t nrOfCurvesMeasured = 1;
-    uint32_t work;
+    int32_t work;
     int32_t mesCurveIndex;
     int i;
 
@@ -1083,7 +1082,7 @@ void EAQtData::MesStart(bool isLsv)
                                                                 / MEASUREMENT::LSVstepE[_LSVParam[PARAM::dEdt]]) );
                         vecMesPotential.resize(_LSVParam[PARAM::ptnr]);
                         vecMesTime.resize(_LSVParam[PARAM::ptnr]);
-                        int p;
+                        int32_t p;
                         for ( p = 0; p<(_LSVParam[PARAM::ptnr]-this->_ptnrFromEss); ++p ) {
                             vecMesPotential[p] = _LSVParam[PARAM::EstartLSV];
                             vecMesTime[p] = MEASUREMENT::LSVtime[_LSVParam[PARAM::dEdt]];
@@ -1397,7 +1396,7 @@ void EAQtData::MesStart(bool isLsv)
 bool EAQtData::sendPVToEA()
 {
     int32_t i, lenEact;
-    uint32_t TxN;
+    int32_t TxN;
 
     char TxBufAlt[320];
 
@@ -1572,7 +1571,7 @@ bool EAQtData::sendLSVToEA()
     }
 }
 
-void EAQtData::MesUpdate(uint32_t nNrOfMesCurve, uint32_t nPointFromDevice, bool freezUI)
+void EAQtData::MesUpdate(int32_t nNrOfMesCurve, int32_t nPointFromDevice, bool freezUI)
 {
     ///////////////// SETUP //////////////////
     if ( this->_performSetup == true && !this->_endOfMes ) {
@@ -1583,7 +1582,7 @@ void EAQtData::MesUpdate(uint32_t nNrOfMesCurve, uint32_t nPointFromDevice, bool
         _fromUpdate.restart();
         if ( this->_PVParam[PARAM::electr] == PARAM::electr_multi ) {
             this->_multielectrodeNr = 0;
-            uint32_t work;
+            int32_t work;
             work = this->_PVParam[PARAM::multi];
             for (int i=0 ; i<8 ; i++) {
                 if ((work & 0x00000080) != 0) {
@@ -1890,7 +1889,7 @@ int EAQtData::MesSaveAll(QString UserCName, QString UserFName, QString UserComme
     QString orderedPrefixes[8];
     int cntElectrodes = 0;
     if ( this->_PVParam[PARAM::electr] == PARAM::electr_multi ) {
-        uint32_t work;
+        int32_t work;
         work = this->_PVParam[PARAM::multi];
         for (int i=0 ; i<8 ; i++) {
             if ((work & 0x00000080) != 0) {
@@ -1971,7 +1970,7 @@ int EAQtData::MesSaveAll(QString UserCName, QString UserFName, QString UserComme
 
     while ( getMesCurves()->get(0) != NULL ) {
         int index = this->getCurves()->append(this->getMesCurves()->get(0));
-        this->getMesCurves()->unset((uint32_t)0);
+        this->getMesCurves()->unset((int32_t)0);
         this->getCurves()->get(index)->changeToRegularPlot();
         this->Act(index);
     }
@@ -1997,10 +1996,9 @@ int EAQtData::safeAppend(QString pFileName, Curve* CurveToAppend)
     /// -8 - wrong curve name
 
     char *buffer;
-    char *curveBuffer;
     char *validTemp;
     unsigned long fileLen;
-    uint32_t nCurveCntr; // licznik krzywych
+    int32_t nCurveCntr; // licznik krzywych
     int const maxFileSizeBytes = 1024*1024*1024;
 
     QFile *file = new QFile(pFileName);
@@ -2011,7 +2009,7 @@ int EAQtData::safeAppend(QString pFileName, Curve* CurveToAppend)
         if( file->open(QIODevice::ReadWrite) ) // jezeli nie ma proba utworzenia
         {
             nCurveCntr = 0;
-            file->write((char*)&nCurveCntr,sizeof(uint32_t));
+            file->write((char*)&nCurveCntr,sizeof(int32_t));
             file->close();
             if ( !file->open(QIODevice::ReadOnly) ) {
                 this->_pUI->showMessageBox("IDS_info6");
@@ -2045,8 +2043,8 @@ int EAQtData::safeAppend(QString pFileName, Curve* CurveToAppend)
     file->close();
 
     // Verify the number of curves in file
-    uint32_t *CurvInFile;
-    CurvInFile=(uint32_t*)buffer;
+    int32_t *CurvInFile;
+    CurvInFile=(int32_t*)buffer;
 
     int a=4;
 
@@ -2055,10 +2053,10 @@ int EAQtData::safeAppend(QString pFileName, Curve* CurveToAppend)
     int CurvInFileLen;
 
 
-    for (uint i=0;i<*CurvInFile;i++)
+    for (int i=0;i<*CurvInFile;i++)
     {
         // a - start of curve
-        CurvInFileLen=*(uint32_t*)(buffer+a); // length of curve with bytes representing the length
+        CurvInFileLen=*(int32_t*)(buffer+a); // length of curve with bytes representing the length
 
         int o=0;
         while ((char)*(buffer+a+4+o) != '\0') // name of curve -- +4 bytes of its size
@@ -2087,7 +2085,7 @@ int EAQtData::safeAppend(QString pFileName, Curve* CurveToAppend)
 
             appCurveName.append(tr("%1").arg(appNumber++));
 
-            for ( uint p=0;p<*CurvInFile;p++ )
+            for ( int p=0;p<*CurvInFile;p++ )
             {
                 if( CurveNames[p].compare(appCurveName,Qt::CaseSensitive) == 0 )
                     nComperator = nComperator + 1;
@@ -2109,7 +2107,7 @@ int EAQtData::safeAppend(QString pFileName, Curve* CurveToAppend)
 
     CurveToAppend->CName(appCurveName);
     *CurvInFile=*CurvInFile+1;	// number of curves +1 (new one) -- 4 bytes
-    memcpy(buffer,CurvInFile,sizeof(uint32_t));
+    memcpy(buffer,CurvInFile,sizeof(int32_t));
 
     QString TempFileName = pFileName + ".tmp";
     QFile *outFile = new QFile(TempFileName);
@@ -2124,7 +2122,7 @@ int EAQtData::safeAppend(QString pFileName, Curve* CurveToAppend)
     {
         outFile->write(buffer,fileLen);
         outFile->write((char*)&addLen, sizeof(int));
-        outFile->write(toSave,toSave.size());
+        outFile->write(toSave);
     } else {
         this->_pUI->showMessageBox(tr("Could not open tmp file. Curve not saved."));
         return(-3);
@@ -2155,8 +2153,8 @@ int EAQtData::safeAppend(QString pFileName, Curve* CurveToAppend)
     validTemp = qba2.data();
     outFile->close();
 
-    uint32_t CurvsInTmpFile;
-    CurvsInTmpFile=*(uint32_t*)validTemp;
+    int32_t CurvsInTmpFile;
+    CurvsInTmpFile=*(int32_t*)validTemp;
 
     if ( CurvsInTmpFile<1 )
     {
@@ -2167,10 +2165,10 @@ int EAQtData::safeAppend(QString pFileName, Curve* CurveToAppend)
 
     unsigned long nOffsetWholeSum = sizeof(int32_t);
 
-    for(uint II=0;II<CurvsInTmpFile;II++)
+    for(int II=0;II<CurvsInTmpFile;II++)
     {
-        uint32_t* tmpCurOffset;
-        tmpCurOffset=(uint32_t*)(validTemp+nOffsetWholeSum);
+        int32_t* tmpCurOffset;
+        tmpCurOffset=(int32_t*)(validTemp+nOffsetWholeSum);
         nOffsetWholeSum+=*tmpCurOffset;
         if ( tmpFileLen < nOffsetWholeSum ) {
             qba2.clear();
@@ -2252,7 +2250,7 @@ void EAQtData::loadMesFile()
 /*
  * When there is delay between measurements is MeasurementSeries, this should be done
  */
-void EAQtData::seriaWait(uint32_t delay)
+void EAQtData::seriaWait(int32_t delay)
 {
     QTime dieTime= QTime::currentTime().addSecs(delay*1000);
     while (QTime::currentTime() < dieTime) {
@@ -2609,7 +2607,7 @@ std::vector<bool> EAQtData::getChannelsEnabled()
 {
     std::vector<bool> enabled;
     enabled.resize(_vChannelNamesOfMultielectrode.size());
-    uint32_t multi = _PVParam[PARAM::multi];
+    int32_t multi = _PVParam[PARAM::multi];
     for ( uint i = 0 ; i<enabled.size(); ++i ) {
         enabled[i] = (bool)(multi & 1<<i);
     }
@@ -2623,9 +2621,9 @@ void EAQtData::setChannelsNames(QVector<QString> names)
 
 void EAQtData::setChannelsEnabled(std::vector<bool> enabled)
 {
-    uint32_t multi = 0;
+    int32_t multi = 0;
     for ( uint i = 0 ; i<enabled.size(); ++i ) {
-        multi |= ( (uint32_t)enabled[i]<<i);
+        multi |= ( (int32_t)enabled[i]<<i);
     }
     _PVParam[PARAM::multi] = multi;
 }
@@ -2658,9 +2656,9 @@ EAQtSignalProcessing* EAQtData::getProcessing()
 void EAQtData::exportToCSV(QString path)
 {
     QFile *ff = new QFile(path);
-    uint32_t i;
-    int* blen;
-    blen = new int[_curves->count()];
+    int32_t i;
+    //int* blen;
+    //blen = new int[_curves->count()];
     //int blenm;
     char* endOfLine = new char[2]{ '\r', '\n' };
     if (this->Act() != SELECT::all) {
@@ -2788,7 +2786,7 @@ void EAQtData::exportToCSV(QString path)
 
 void EAQtData::exportToTXT(QString path)
 {
-    uint32_t i, k;
+    int32_t i, k;
     char buf[256];
     int* blen;
     blen = new int[_curves->count()];

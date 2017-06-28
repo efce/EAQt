@@ -90,7 +90,6 @@ void EAQtNetwork::processPacket()
     if ( _socket->bytesAvailable() < NETWORK::RxBufLength ) {
         return;
     }
-    static char b[50];
     static int ba;
     static char test;
     while ( (ba=_socket->bytesAvailable()) >= NETWORK::RxBufLength ) {

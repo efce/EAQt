@@ -27,41 +27,41 @@
 class CurveData
 {
 public:
-    CurveData(uint32_t);
-    void addDataPoint(double, double, double, uint32_t);
-    void addDataPoint(double current, uint32_t pointNumber);
+    CurveData(int32_t);
+    void addDataPoint(double, double, double, int32_t);
+    void addDataPoint(double current, int32_t pointNumber);
 	int getNrOfPoints();
 
-    void allocateProbingData(uint32_t nLen ,double dProbingRate);
+    void allocateProbingData(int32_t nLen ,double dProbingRate);
 	void addProbingDataPoint(float);
     void setProbingData(QVector<double>&);
     QVector<double>* getProbingData();
-    uint32_t getNumberOfProbingPoints();
+    int32_t getNumberOfProbingPoints();
     QVector<double>* getProbingDataPointNumbers();
 
     QVector<double>* getPotentialVector();
-    double getPotential(uint32_t index);
+    double getPotential(int32_t index);
     void setPotentialVector(QVector<double>);
 
     QVector<double>* getTimeVector();
-    double getTime(uint32_t index);
+    double getTime(int32_t index);
     void setTimeVector(QVector<double>);
 
     QVector<double>* getCurrentVector();
-    double getCurrent(uint32_t index);
-    void setCurrent(uint32_t index, double value);
+    double getCurrent(int32_t index);
+    void setCurrent(int32_t index, double value);
 
-    void setMesCurrent1Point(uint32_t, int64_t);
-    void addToMesCurrent1Point(uint32_t, int64_t);
-    int64_t getMesCurrent1Point(uint32_t);
-    void setMesCurrent2Point(uint32_t, int64_t);
-    void addToMesCurrent2Point(uint32_t, int64_t);
-    int64_t getMesCurrent2Point(uint32_t);
-    void setMesTimePoint(uint32_t, int64_t);
-    void addToMesTimePoint(uint32_t, int64_t);
-    int64_t getMesTimePoint(uint32_t);
+    void setMesCurrent1Point(int32_t, int64_t);
+    void addToMesCurrent1Point(int32_t, int64_t);
+    int64_t getMesCurrent1Point(int32_t);
+    void setMesCurrent2Point(int32_t, int64_t);
+    void addToMesCurrent2Point(int32_t, int64_t);
+    int64_t getMesCurrent2Point(int32_t);
+    void setMesTimePoint(int32_t, int64_t);
+    void addToMesTimePoint(int32_t, int64_t);
+    int64_t getMesTimePoint(int32_t);
 
-    void allocateMesArray(uint32_t numberOfFields, bool allocateTwoCurrent);
+    void allocateMesArray(int32_t numberOfFields, bool allocateTwoCurrent);
 
     int64_t* mesResCurrent1;
     int64_t* mesResCurrent2;
@@ -75,11 +75,11 @@ private:
     QVector<double> _vCurrent;
     QVector<double> _vPotential;
     QVector<double> _vTime;
-    int _nrOfPoints;
+    int32_t _nrOfPoints;
     double _probingRate;
     QVector<double> _vProbingData;
     QVector<double> _vProbingDataPointNo;
-    int _nrOfPointsProbing;
+    int32_t _nrOfPointsProbing;
 
 };
 

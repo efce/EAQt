@@ -26,10 +26,10 @@ class EAQtSignalProcessing : public QObject
 
 public:
     EAQtSignalProcessing(CurveCollection* cc, QCPGraph* gr);
-    void generateBackground(uint32_t a1, uint32_t a2, uint32_t b1, uint32_t b2);
+    void generateBackground(int32_t a1, int32_t a2, int32_t b1, int32_t b2);
     void subtractBackground();
     void hideBackground();
-    void calibrationData(uint32_t a1, uint32_t a2);
+    void calibrationData(int32_t a1, int32_t a2);
     void shiftCurve(double dY);
     static void kissFFT(double samplingFrequency, const QVector<double>& values, QVector<double>& frequency, QVector<double>& freqReal, QVector<double>& freqImg);
     static void kissIFFT(double samplingFreq, const QVector<double>& freqImg, const QVector<double>& freqReal, QVector<double>& values);
@@ -39,7 +39,7 @@ public:
     static void dft(double samplingFrequency, const QVector<double>& values, QVector<double>& frequency, QVector<double>& freqReal, QVector<double>& freqImg);
     static void idft(const QVector<double>& freqImg, const QVector<double>& freqReal, QVector<double>& values);
     static void sgSmooth(QVector<double>* y, int order, int span);
-    static double relativeHeight(Curve* c, uint32_t start, uint32_t end);
+    static double relativeHeight(Curve* c, int32_t start, int32_t end);
 private:
     CurveCollection* _curves;
     QCPGraph* _graph;

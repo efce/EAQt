@@ -58,8 +58,8 @@ void CalibrationData::save(QFile *file, bool includeCurves)
     file->write(ba);
     wrt = (char)this->wasFitted;
     file->write((char*)&wrt,1);
-    file->write((char*)&(this->pointStart),sizeof(uint32_t));
-    file->write((char*)&(this->pointEnd),sizeof(uint32_t));
+    file->write((char*)&(this->pointStart),sizeof(int32_t));
+    file->write((char*)&(this->pointEnd),sizeof(int32_t));
     file->write((char*)&(this->slope),sizeof(double));
     file->write((char*)&(this->slopeStdDev),sizeof(double));
     file->write((char*)&(this->intercept),sizeof(double));
@@ -91,8 +91,8 @@ void CalibrationData::load(QFile *file)
     this->yUnits = QString::fromUtf8(ba);
     file->read((char*)&wrt,1);
     this->wasFitted = (bool)wrt;
-    file->read((char*)&(this->pointStart),sizeof(uint32_t));
-    file->read((char*)&(this->pointEnd),sizeof(uint32_t));
+    file->read((char*)&(this->pointStart),sizeof(int32_t));
+    file->read((char*)&(this->pointEnd),sizeof(int32_t));
     file->read((char*)&(this->slope),sizeof(double));
     file->read((char*)&(this->slopeStdDev),sizeof(double));
     file->read((char*)&(this->intercept),sizeof(double));

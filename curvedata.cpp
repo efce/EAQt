@@ -17,7 +17,7 @@
   *******************************************************************************************************************/
 #include "curvedata.h"
 
-CurveData::CurveData(uint32_t dataSize)
+CurveData::CurveData(int32_t dataSize)
 {
     this->_vCurrent.resize(dataSize);
     this->_vPotential.resize(dataSize);
@@ -39,7 +39,7 @@ CurveData::~CurveData(void)
 	}
 }
 
-void CurveData::allocateProbingData(uint32_t nLen, double dProbingRate)
+void CurveData::allocateProbingData(int32_t nLen, double dProbingRate)
 {
 	this->_probingRate = dProbingRate;
     this->_vProbingData.resize(nLen);
@@ -50,7 +50,7 @@ void CurveData::allocateProbingData(uint32_t nLen, double dProbingRate)
     }
 }
 	
-void CurveData::addDataPoint(double time, double potential, double current, uint32_t pointNumber)
+void CurveData::addDataPoint(double time, double potential, double current, int32_t pointNumber)
 {
 	if ( (pointNumber!= -1) && (pointNumber < this->_nrOfPoints) ) {
 		this->_vCurrent[pointNumber]   = current;
@@ -64,7 +64,7 @@ void CurveData::addDataPoint(double time, double potential, double current, uint
 	}
 }
 
-void CurveData::addDataPoint(double current, uint32_t pointNumber)
+void CurveData::addDataPoint(double current, int32_t pointNumber)
 {
     if ( pointNumber >= this->getPotentialVector()->size() || pointNumber >= this->getTimeVector()->size() ) {
         throw 1;
@@ -99,14 +99,14 @@ void CurveData::setProbingData(QVector<double>& probingData)
     _nrOfPointsProbing = _vProbingData.size();
     _vProbingDataPointNo.clear();
     _vProbingDataPointNo.resize(_nrOfPointsProbing);
-    uint32_t i = 0;
+    int32_t i = 0;
     for ( double d = 1; d<=_nrOfPointsProbing; ++d ) {
         this->_vProbingDataPointNo[i] = d;
         ++i;
     }
 }
 
-uint32_t CurveData::getNumberOfProbingPoints()
+int32_t CurveData::getNumberOfProbingPoints()
 {
 	return this->_nrOfPointsProbing;
 }
@@ -126,7 +126,7 @@ void CurveData::setPotentialVector(QVector<double> vecPot)
 	this->_vPotential = vecPot;
 }
 
-double CurveData::getPotential(uint32_t index)
+double CurveData::getPotential(int32_t index)
 {
 	return this->_vPotential[index];
 }
@@ -136,12 +136,12 @@ QVector<double>* CurveData::getCurrentVector()
     return &this->_vCurrent;
 }
 
-double CurveData::getCurrent(uint32_t index)
+double CurveData::getCurrent(int32_t index)
 {
 	return this->_vCurrent[index];
 }
 
-void CurveData::setCurrent(uint32_t index, double value)
+void CurveData::setCurrent(int32_t index, double value)
 {
 	this->_vCurrent[index] = value;
 }
@@ -157,57 +157,57 @@ void CurveData::setTimeVector(QVector<double> vecTime)
 }
 
 
-double CurveData::getTime(uint32_t index)
+double CurveData::getTime(int32_t index)
 {
 	return this->_vTime[index];
 }
 
-void CurveData::setMesCurrent1Point(uint32_t nr, int64_t value)
+void CurveData::setMesCurrent1Point(int32_t nr, int64_t value)
 {
 	this->mesResCurrent1[nr] = value;
 }
 
-void CurveData::addToMesCurrent1Point(uint32_t nr, int64_t value)
+void CurveData::addToMesCurrent1Point(int32_t nr, int64_t value)
 {
     this->mesResCurrent1[nr] += value;
 }
 
-void CurveData::setMesCurrent2Point(uint32_t nr, int64_t value)
+void CurveData::setMesCurrent2Point(int32_t nr, int64_t value)
 {
 	this->mesResCurrent2[nr] = value;
 }
 
-void CurveData::addToMesCurrent2Point(uint32_t nr, int64_t value)
+void CurveData::addToMesCurrent2Point(int32_t nr, int64_t value)
 {
     this->mesResCurrent2[nr] += value;
 }
 
-void CurveData::setMesTimePoint(uint32_t nr, int64_t value)
+void CurveData::setMesTimePoint(int32_t nr, int64_t value)
 {
 	this->mesResTime[nr] = value;
 }
 
-void CurveData::addToMesTimePoint(uint32_t nr, int64_t value)
+void CurveData::addToMesTimePoint(int32_t nr, int64_t value)
 {
     this->mesResTime[nr] += value;
 }
 
-int64_t CurveData::getMesTimePoint(uint32_t nr)
+int64_t CurveData::getMesTimePoint(int32_t nr)
 {
     return this->mesResTime[nr];
 }
 
-int64_t CurveData::getMesCurrent1Point(uint32_t nr)
+int64_t CurveData::getMesCurrent1Point(int32_t nr)
 {
     return this->mesResCurrent1[nr];
 }
 
-int64_t CurveData::getMesCurrent2Point(uint32_t nr)
+int64_t CurveData::getMesCurrent2Point(int32_t nr)
 {
     return this->mesResCurrent2[nr];
 }
 
-void CurveData::allocateMesArray(uint32_t numberOfFields, bool allocateTwoCurrent)
+void CurveData::allocateMesArray(int32_t numberOfFields, bool allocateTwoCurrent)
 {
 	this->isMesAllocated = true;
 	this->allocatedTwoCurrent = allocateTwoCurrent;

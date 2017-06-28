@@ -95,7 +95,7 @@ void EAQtAverageDialog::generateList()
     }
     _list.clear();
     _list.resize(cc->count());
-    for ( uint i=0; i<cc->count(); ++i) {
+    for ( int32_t i=0; i<cc->count(); ++i) {
         _list[i] = new QCheckBox( cc->get(i)->CName() );
         _list[i]->setChecked(false);
         _listBox->addWidget(_list[i]);
@@ -130,9 +130,9 @@ void EAQtAverageDialog::average()
 {
     if ( _list.size() > 0 ) {
         CurveCollection* cc = EAQtData::getInstance().getCurves();
-        QVector<uint32_t> toAvg(0);
-        uint32_t dataSize = 0;
-        uint32_t nonavgSize = 0;
+        QVector<int32_t> toAvg(0);
+        int32_t dataSize = 0;
+        int32_t nonavgSize = 0;
         bool error = false;
         bool avgNonavg = true;
         for ( int i =0; i<_list.size(); ++i ) {
@@ -162,7 +162,7 @@ void EAQtAverageDialog::average()
             QVector<double> nonavg(nonavgSize,0.0);
             for ( int i = 0; i<toAvg.size(); ++i ) {
                 QVector<double> *cv = cc->get(toAvg[i])->getCurrentVector();
-                for ( uint32_t ii=0; ii<dataSize; ++ii) {
+                for ( int32_t ii=0; ii<dataSize; ++ii) {
                     current[ii] += cv->at(ii);
                 }
             }
@@ -172,7 +172,7 @@ void EAQtAverageDialog::average()
             if ( avgNonavg ) {
                 for ( int i = 0; i<toAvg.size(); ++i ) {
                     QVector<double> *cv = cc->get(toAvg[i])->getProbingData();
-                    for ( uint32_t ii=0; ii<nonavgSize; ++ii) {
+                    for ( int32_t ii=0; ii<nonavgSize; ++ii) {
                         nonavg[ii] += cv->at(ii);
                     }
                 }
@@ -183,7 +183,7 @@ void EAQtAverageDialog::average()
             Curve* avgCurve = new Curve(cc->get(toAvg[0]));
             avgCurve->FName(tr("(not saved)"));
             avgCurve->CName(avgCurve->CName() + "(AVG)");
-            for ( uint32_t i =0; i<dataSize; ++i) {
+            for ( int32_t i =0; i<dataSize; ++i) {
                 avgCurve->Result(i,current[i]);
             }
             if ( avgNonavg ) {

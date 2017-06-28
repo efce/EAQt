@@ -15,8 +15,13 @@
   *  along with this program; if not, write to the Free Software Foundation,
   *  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
   *******************************************************************************************************************/
+// save diagnostic state
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wall"
 #include "./Eigen/Dense"
 #include "./kiss_fft130/kissfft.hh"
+#pragma GCC diagnostic pop
+
 #include "eaqtdata.h"
 #include "eaqtsignalprocessing.h"
 #include "eaqtcalibrationdialog.h"
@@ -54,12 +59,12 @@ void EAQtSignalProcessing::shiftCurve(double dY)
     }
 }
 
-void EAQtSignalProcessing::calibrationData(uint32_t a1, uint32_t a2)
+void EAQtSignalProcessing::calibrationData(int32_t a1, int32_t a2)
 {
     CalibrationData *calibration = EAQtData::getInstance()._calibration;
     static QHash<QString,QString> oldSettings;
     calibration->yValues.resize(_curves->count());
-    for ( uint i = 0; i<_curves->count(); ++i ) {
+    for ( int32_t i = 0; i<_curves->count(); ++i ) {
         calibration->yValues[i] = relativeHeight(_curves->get(i), a1,a2);
     }
     calibration->pointStart = a1;
@@ -70,12 +75,12 @@ void EAQtSignalProcessing::calibrationData(uint32_t a1, uint32_t a2)
     delete cd;
 }
 
-double EAQtSignalProcessing::relativeHeight(Curve *c, uint32_t start, uint32_t end)
+double EAQtSignalProcessing::relativeHeight(Curve *c, int32_t start, int32_t end)
 {
         QVector<double> values = c->getYVector();
         double min = values[start];
         double max = values[end];
-        for ( uint32_t pos=start; pos<=end; ++pos ) {
+        for ( int32_t pos=start; pos<=end; ++pos ) {
             if ( values[pos] > max ) {
                 max = values[pos];
             } else if ( values[pos] < min ) {
@@ -151,16 +156,16 @@ void EAQtSignalProcessing::kissIFFT(double samplingFreq,
 void EAQtSignalProcessing::linearRegression(const QVector<double>& x, const QVector<double>& y, double* slope, double* slopeStdDev, double* intercept, double* interceptStdDev, double* x0StdDev)
 {
     Eigen::MatrixXd A;
-    uint n = y.size();
-    uint i = 0;
+    int n = y.size();
+    int i = 0;
     A.resize(n,2);
-    for ( int i = 0; i<n; ++i ) {
+    for ( i = 0; i<n; ++i ) {
         A(i,0) = 1;
         A(i,1) = x[i];
     }
     Eigen::VectorXd b;
     b.resize(n);
-    for ( int i = 0; i<n;++i ) {
+    for ( i = 0; i<n;++i ) {
         b(i) = y[i];
     }
     Eigen::VectorXd leastSquare = A.jacobiSvd(Eigen::ComputeThinU | Eigen::ComputeThinV).solve(b);
@@ -263,13 +268,13 @@ void EAQtSignalProcessing::sgSmooth(QVector<double> *y, int order, int span)
     }
 }
 
-void EAQtSignalProcessing::generateBackground(uint32_t r1, uint32_t r2, uint32_t r3, uint32_t r4)
+void EAQtSignalProcessing::generateBackground(int32_t r1, int32_t r2, int32_t r3, int32_t r4)
 {
     Curve *c = _curves->get(EAQtData::getInstance().Act());
     bkg_curveX = c->getXVector();
     QVector<double> bx;
     QVector<double> by;
-    uint32_t rs[4];
+    int32_t rs[4];
     rs[0] = r1;
     rs[1] = r2;
     rs[2] = r3;
@@ -279,7 +284,7 @@ void EAQtSignalProcessing::generateBackground(uint32_t r1, uint32_t r2, uint32_t
         sorted = true;
         for ( int i = 0; i<3; ++i) {
             if ( rs[i] > rs[i+1] ) {
-                uint32_t t = rs[i];
+                int32_t t = rs[i];
                 rs[i] = rs[i+1];
                 rs[i+1] = t;
                 sorted = false;

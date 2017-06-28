@@ -27,7 +27,7 @@ MDirCollection::~MDirCollection()
 {
     this->clear();
 }
-MDir* MDirCollection::get(uint32_t index)
+MDir* MDirCollection::get(int32_t index)
 {
     return _vMdirs[index];
 }
@@ -40,14 +40,14 @@ void MDirCollection::clear()
     _vMdirs.clear();
 }
 
-uint32_t MDirCollection::addNew()
+int32_t MDirCollection::addNew()
 {
-    uint32_t index = _vMdirs.size();
+    int32_t index = _vMdirs.size();
     _vMdirs.push_back(new MDir);
     return index;
 }
 
-uint32_t MDirCollection::count()
+int32_t MDirCollection::count()
 {
     return _vMdirs.size();
 }

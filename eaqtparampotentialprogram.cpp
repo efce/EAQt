@@ -79,7 +79,7 @@ bool EAQtParamPotentialProgram::checkPotentialProgramArea()
 
     bool foundSeparator = false;
     for (int i=0; i<this->separatorList.size();++i) {
-        if ( checktext.find(this->separatorList[i]) != -1 ) {
+        if ( checktext.find(this->separatorList[i]) != std::string::npos ) {
             this->separatorNum = i;
             foundSeparator = true;
             break;

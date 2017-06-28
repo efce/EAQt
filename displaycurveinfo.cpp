@@ -129,11 +129,11 @@ QString DisplayCurveInfo::getHTMLInfo()
         pte.append("<tr><td colspan=2>dE/dt: ");
         double speed = MEASUREMENT::LSVstepE[_curve->Param(PARAM::dEdt)]/MEASUREMENT::LSVtime[_curve->Param(PARAM::dEdt)];
         if ( speed < 0.025 )
-            pte.append("%1 mV/s").arg(speed*1000,0,'f',1);
+            pte.append(tr("%1 mV/s").arg(speed*1000,0,'f',1));
         else if ( speed < 1 )
-            pte.append("%1 mV/s").arg(speed*1000,0,'f',0);
+            pte.append(tr("%1 mV/s").arg(speed*1000,0,'f',0));
         else
-            pte.append("%1 V/s").arg(speed,0,'f',0);
+            pte.append(tr("%1 V/s").arg(speed,0,'f',0));
         pte.append("</td></tr>");
     } else {
         pte.append(QApplication::translate("EAQtMainWindow", "<tr><td colspan=2>Estep: %1 mV</td></tr>").arg(_curve->Param(PARAM::Estep)));

@@ -74,7 +74,7 @@ void EAQtOpenFileDialog::updateList(QString fileToShow)
         delete fileinfo;
         this->_curvesInFileList->clear();
         if ( vDir->count() > 0 ) {
-            for (uint i = 0; i<vDir->count(); ++i) {
+            for (int32_t i = 0; i<vDir->count(); ++i) {
                 this->_curvesInFileList->addItem(vDir->get(i)->CName());
             }
         }
@@ -86,7 +86,7 @@ void EAQtOpenFileDialog::updateList(QString fileToShow)
         delete fileinfo;
         this->_curvesInFileList->clear();
         if ( vDir->count() > 0 ) {
-            for (uint i = 0; i<vDir->count(); ++i) {
+            for (int32_t i = 0; i<vDir->count(); ++i) {
                 this->_curvesInFileList->addItem(vDir->get(i)->CName());
             }
         }

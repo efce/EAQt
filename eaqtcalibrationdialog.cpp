@@ -132,7 +132,6 @@ EAQtCalibrationDialog::EAQtCalibrationDialog(CalibrationData *cd, QHash<QString,
     this->_dialog = new QDialog();
     this->_leConcentrations.resize(_cd->yValues.size());
     this->_leAdditionVolumes.resize(_cd->yValues.size());
-    uint i;
     _fontLabel = new QFont(_dialog->font());
     _fontLabel->setBold(true);
     QLabel *lname = new QLabel(tr("Name"));
@@ -163,7 +162,7 @@ EAQtCalibrationDialog::EAQtCalibrationDialog(CalibrationData *cd, QHash<QString,
     gl->addLayout(cb2,0,3,1,1);
     QDoubleValidator *validator = new QDoubleValidator(0.0,999999.9,7);
     validator->setNotation(QDoubleValidator::StandardNotation);
-    for ( i = 0; i<_cd->yValues.size(); ++i ) {
+    for (int i = 0; i<_cd->yValues.size(); ++i ) {
         QLabel *l1 = new QLabel(_cd->curves->get(i)->CName() + ": ");
         QLabel *l2 = new QLabel(EAQtData::getInstance().dispI(_cd->yValues[i]) + " ");
         this->_leConcentrations[i] = new QLineEdit();
