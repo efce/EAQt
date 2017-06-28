@@ -33,7 +33,7 @@ public:
 	~Curve();
 
     QByteArray serialize(bool compress);
-    void unserialize(QByteArray &ba, bool compressed);
+    bool unserialize(QByteArray &ba, bool compressed);
 
     void Param(int32_t nParamNr, int32_t lValue);
     int32_t Param(int32_t nParamNr);

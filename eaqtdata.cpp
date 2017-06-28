@@ -539,12 +539,7 @@ int EAQtData::CurReadCurvePro(QFile &ff, QString pCName)
     }
     uint32_t j1;
     uint32_t i;
-    int32_t fparam;
-    int work;
     uint32_t cLen;
-    char buf[256];
-    double dwork;
-    char cAux[1024];
 
     MDirReadPro(ff);
 
@@ -568,85 +563,23 @@ int EAQtData::CurReadCurvePro(QFile &ff, QString pCName)
     getCurves()->get(j1)->getPlot()->setLayer(_pUI->PlotGetLayers()->NonActive);
     ff.read((char*)(&cLen), sizeof(uint32_t));			// ilosc bajtow krzywej w pliku
     if (ff.fileName().right(FILES::saveCompressExt.size()).compare(FILES::saveCompressExt,Qt::CaseInsensitive) == 0 ) {
-//        ff.read(cAux, 1); // nazwa krzywej
-//        int ii=0;
-//        while (cAux[ii] != '\0') {
-//            ii++;
-//            ff.read(cAux+ii, 1);
-//        }
-//        QByteArray ba = ff.read(cLen-ii);
         QByteArray ba = ff.read(cLen);
-        getCurves()->get(j1)->unserialize(ba,true);
+        if ( !getCurves()->get(j1)->unserialize(ba,true) ) {
+            getCurves()->remove(j1);
+            this->_pUI->updateAll();
+            return -1;
+        }
     } else {
         QByteArray ba = ff.read(cLen);
-        getCurves()->get(j1)->unserialize(ba,false);
-
-//        ff.read(cAux, 1); // nazwa krzywej
-//        int ii=0;
-//        while (cAux[ii] != '\0') {
-//            ii++;
-//            ff.read(cAux+ii, 1);
-//        }
-
-//        this->getCurves()->get(j1)->CName(QString(cAux));
-
-//        ff.read(buf,1); // komentarz
-//        ii=0;
-//        while (buf[ii] != '\0')
-//        {
-//            ii++;
-//            ff.read(buf+ii, 1);
-//        }
-//        this->getCurves()->get(j1)->Comment(QString(buf));
-
-//        ff.read((char*)(&fparam), sizeof(int32_t)*1);		// liczba parametrów
-
-//        if ( fparam > PARAM::PARAMNUM ) {
-//            //        CString	m_String;
-//            //        m_String.LoadString(IDS_info5);
-
-//            //        this->view->MessageBox(m_String);
-//            this->getCurves()->remove(j1);
-//            return -1;
-//        }
-//        for (ii=0 ; ii<fparam ; ii++) {
-//            ff.read((char*)(&work),sizeof(int32_t)*1);
-//            this->getCurves()->get(j1)->Param(ii, work);
-//        }
-
-//        this->getCurves()->get(j1)->reinitializeCurveData(this->getCurves()->get(j1)->Param(PARAM::ptnr));
-
-//        // wyniki
-//        double time;
-//        double potential;
-
-//        for (int ii=0 ; ii<this->getCurves()->get(j1)->Param(PARAM::ptnr) ; ii++) {
-//            ff.read((char*)(&time), sizeof(double));
-//            ff.read((char*)(&potential), sizeof(double));
-//            ff.read((char*)(&dwork), sizeof(double));
-//            this->getCurves()->get(j1)->addDataPoint(time, potential, dwork);
-//        }
-
-//        if ( this->getCurves()->get(j1)->Param(PARAM::nonaveragedsampling) != 0 ) {
-//            uint32_t vectorSize;
-//            ff.read((char*)(&vectorSize),sizeof(uint32_t));
-//            if ( vectorSize == 0 ) {
-//                this->getCurves()->get(j1)->Param(PARAM::nonaveragedsampling,0);
-//            } else {
-//                this->getCurves()->get(j1)->allocateProbingData(vectorSize);
-//                float data;
-//                for (uint32_t j=0;j<vectorSize;j++) {
-//                    ff.read((char*)(&data),sizeof(float));
-//                    this->getCurves()->get(j1)->addProbingDataPoint(data);
-//                }
-//            }
-
-//        }
+        if ( !getCurves()->get(j1)->unserialize(ba,false) ) {
+            getCurves()->remove(j1);
+            this->_pUI->updateAll();
+            return -1;
+        }
     }
     this->setCurrentRange(this->getCurves()->get(j1)->Param(PARAM::crange),this->getCurves()->get(j1)->Param(PARAM::crange));
     this->getCurves()->get(j1)->FName(ff.fileName());
     this->_pUI->updateAll();
-
     return(j1);
 }
 
@@ -2118,7 +2051,6 @@ int EAQtData::safeAppend(QString pFileName, Curve* CurveToAppend)
     int a=4;
 
     QString* CurveNames = new QString[*CurvInFile];
-    char appNumber=0;
     int nComperator=0;
     int CurvInFileLen;
 
@@ -2142,20 +2074,18 @@ int EAQtData::safeAppend(QString pFileName, Curve* CurveToAppend)
     }
 
     QString appCurveName = "";
+
     if( nComperator == 0 )
     {
         appCurveName = CurveToAppend->CName();
     } else {
-        short SafetySwitch = 0;
+        uint appNumber = 0;
         while(true) //change the curve name
         {
-            char bufo[2];
             nComperator=0;
             appCurveName = CurveToAppend->CName();
-            sprintf(bufo, "%02d", appNumber++);
 
-            appCurveName.append(bufo[0]);
-            appCurveName.append(bufo[1]);
+            appCurveName.append(tr("%1").arg(appNumber++));
 
             for ( uint p=0;p<*CurvInFile;p++ )
             {
@@ -2168,27 +2098,18 @@ int EAQtData::safeAppend(QString pFileName, Curve* CurveToAppend)
                 break;
             }
 
-            if ( SafetySwitch > 98 )
+            if ( appNumber > 98 )
             {
                 byteArray.clear();
-                this->_pUI->showMessageBox("IDS_info6");
+                this->_pUI->showMessageBox(tr("Too many curves with the same name in file."));
                 return(-8);
             }
-            SafetySwitch++;
         }
     }
 
+    CurveToAppend->CName(appCurveName);
     *CurvInFile=*CurvInFile+1;	// number of curves +1 (new one) -- 4 bytes
-
     memcpy(buffer,CurvInFile,sizeof(uint32_t));
-//    char* pI = (char*)CurvInFile;
-//    *(buffer)=*pI;
-//    pI++;
-//    *(buffer+1)=*pI;
-//    pI++;
-//    *(buffer+2)=*pI;
-//    pI++;
-//    *(buffer+3)=*pI;
 
     QString TempFileName = pFileName + ".tmp";
     QFile *outFile = new QFile(TempFileName);

@@ -450,23 +450,23 @@ QByteArray Curve::serialize(bool compress)
     }
     if ( compress ) {
         QByteArray tmp2 = qCompress(*tmp,9); // level 9 should provide around 50% compression //
-        tmp2.prepend(1,NULL);
+        tmp2.prepend(1,'\0');
         tmp2.prepend(name.data(),name.size());
         delete tmp;
         return tmp2;
     } else {
-        tmp->prepend(1,NULL);
+        tmp->prepend(1,'\0');
         tmp->prepend(name.data(),name.size());
         return *tmp;
     }
 
 }
 
-void Curve::unserialize(QByteArray &ba, bool compressed)
+bool Curve::unserialize(QByteArray &ba, bool compressed)
 {
     QByteArray tmp;
     int i = 0;
-    while ( ba[i]!=NULL ) {
+    while ( ba[i]!='\0' ) {
         tmp.append(ba[i]);
         ++i;
     }
@@ -498,7 +498,7 @@ void Curve::unserialize(QByteArray &ba, bool compressed)
         mb.setWindowTitle(mb.tr("Error"));
         mb.setText(mb.tr("Curve has more parameters than this version of EAQt allows for. Curve cannot be loaded. (Maybe it originates from newer version?)"));
         mb.exec();
-        return;
+        return false;
     }
     i+=sizeof(int32_t);
     memcpy(&_mesParam[0],serialized.data()+i,paramnum*sizeof(int32_t));
@@ -535,5 +535,5 @@ void Curve::unserialize(QByteArray &ba, bool compressed)
             }
         }
     }
-    return;
+    return true;
 }
