@@ -435,7 +435,7 @@ QByteArray Curve::serialize(bool compress)
     tmp->append(1,NULL);
     int32_t paramnum = PARAM::PARAMNUM;
     tmp->append((char*) (&paramnum), sizeof(int32_t));
-    tmp->append((char*)&this->_mesParam, PARAM::PARAMNUM*sizeof(int32_t));
+    tmp->append((char*)&_mesParam, PARAM::PARAMNUM*sizeof(int32_t));
     uint32_t dataSize = _mesParam[PARAM::ptnr];
     for ( uint32_t i = 0; i<dataSize; ++i ) {
         tmp->append((char*)_curveData->getPotentialVector()->data()+i*sizeof(double),sizeof(double));
@@ -493,6 +493,13 @@ void Curve::unserialize(QByteArray &ba, bool compressed)
 
     int32_t paramnum;
     memcpy(&paramnum, serialized.data()+i, sizeof(int32_t));
+    if ( paramnum > PARAM::PARAMNUM ) {
+        QMessageBox mb;
+        mb.setWindowTitle(mb.tr("Error"));
+        mb.setText(mb.tr("Curve has more parameters than this version of EAQt allows for. Curve cannot be loaded. (Maybe it originates from newer version?)"));
+        mb.exec();
+        return;
+    }
     i+=sizeof(int32_t);
     memcpy(&_mesParam[0],serialized.data()+i,paramnum*sizeof(int32_t));
     i+=paramnum*sizeof(int32_t);
