@@ -358,6 +358,7 @@ void EAQtSignalProcessing::generateBackground(int32_t r1, int32_t r2, int32_t r3
             ylog[i] = log(by[i]);
         }
         polynomialFit(bx,ylog,1,&coeff);
+        bkg_curveY.resize(bkg_curveX.size());
         for ( int i = 0; i<c->getXVector().size(); ++i ) {
             bkg_curveY[i] = exp(coeff[0])*exp(bkg_curveX[i] * coeff[1]);
         }
