@@ -55,6 +55,7 @@ int main(int argc, char *argv[])
                 QMessageBox mb;
                 mb.setWindowTitle(w.tr("Error"));
                 mb.setText(w.tr("Unsupported file type."));
+                mb.exec();
             }
         }
     }
