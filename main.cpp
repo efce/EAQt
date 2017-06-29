@@ -46,10 +46,15 @@ int main(int argc, char *argv[])
         QFileInfo fi(argv[1]);
         if ( fi.isFile() ) {
             QString name = fi.absoluteFilePath();
-            if ( name.right(5).compare(".volt",Qt::CaseInsensitive) == 0 ) {
+            if ( name.right(5).compare(".volt",Qt::CaseInsensitive) == 0
+            || name.right(6).compare(FILES::saveCompressExt,Qt::CaseInsensitive) == 0 ) {
                 EAQtData::getInstance().CurReadFilePro(&name,0);
-            } else {
+            } else if ( name.right(4).compare(".vol",Qt::CaseInsensitive) == 0 ) {
                 EAQtData::getInstance().CurReadFileOld(&name,0);
+            } else {
+                QMessageBox mb;
+                mb.setWindowTitle(w.tr("Error"));
+                mb.setText(w.tr("Unsupported file type."));
             }
         }
     }
