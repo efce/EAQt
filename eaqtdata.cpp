@@ -2782,6 +2782,7 @@ void EAQtData::exportToCSV(QString path)
     }
     ff->close();
     delete ff;
+    delete[] endOfLine;
 }
 
 void EAQtData::exportToTXT(QString path)

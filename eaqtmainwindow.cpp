@@ -1139,6 +1139,7 @@ void EAQtMainWindow::showExportCurve()
     QString sel = "Text file (*.txt)";
     QString savePath = qfd->getSaveFileName(this,tr("Export curve to file"),_PathInUse,filter,&sel);
     if (savePath.isEmpty() ) {
+        delete qfd;
         return;
     }
     QFileInfo fi(savePath);
@@ -1230,6 +1231,7 @@ void EAQtMainWindow::loadCalibration()
     if ( !fileName.isEmpty() ) {
         QFile f(fileName);
         if ( !f.open(QIODevice::ReadOnly) ) {
+            delete fd;
             return;
         }
         delete _pEAQtData->_calibration;
@@ -1237,6 +1239,7 @@ void EAQtMainWindow::loadCalibration()
         _pEAQtData->_calibration->load(&f);
         f.close();
     }
+    delete fd;
 }
 
 void EAQtMainWindow::clearCalibration()
