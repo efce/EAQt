@@ -142,6 +142,7 @@ private:
     QAction *_actAverage;
     QAction *_actDataCursor;
     QAction *_actBkgCorrection;
+    QAction *_actBkgCorrectionSettings;
     QAction *_actRelativeValues;
     QAction *_actMoveUpDown;
     QAction *_actSmooth;
@@ -183,6 +184,7 @@ private slots:
     void showRenameCurve();
     void showAverage();
     void showDataCursor();
+    void showBackgroundCorrectionSettings();
     void startBackgroundCorrection();
     void startRelativeValues();
     void startMoveUpDown();

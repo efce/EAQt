@@ -27,6 +27,7 @@ namespace COLOR {
     const QColor regular = QColor(20,20,240);
     const QColor measurement = QColor(0,0,0);
     const QColor active = QColor(240,20,20);
+    const QColor background = QColor(150, 10, 10);
 }
 
 namespace FILES {

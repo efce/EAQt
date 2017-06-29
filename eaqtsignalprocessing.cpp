@@ -28,6 +28,7 @@
 
 double EAQtSignalProcessing::_TINY = 1.0e-20;
 double EAQtSignalProcessing::_PI = 2*asin(1.0);
+int EAQtSignalProcessing::_selectedFitMethod = EAQtSignalProcessing::poly3;
 
 EAQtSignalProcessing::EAQtSignalProcessing(CurveCollection *cc, QCPGraph *graph) : QObject()
 {
@@ -270,6 +271,10 @@ void EAQtSignalProcessing::sgSmooth(QVector<double> *y, int order, int span)
 
 void EAQtSignalProcessing::generateBackground(int32_t r1, int32_t r2, int32_t r3, int32_t r4)
 {
+    QPen pn = QPen(COLOR::background);
+    pn.setStyle(Qt::DashLine);
+    pn.setWidth(2);
+    _graph->setPen(pn);
     Curve *c = _curves->get(EAQtData::getInstance().Act());
     bkg_curveX = c->getXVector();
     QVector<double> bx;
@@ -323,15 +328,41 @@ void EAQtSignalProcessing::generateBackground(int32_t r1, int32_t r2, int32_t r3
 #endif
 
     QVector<double> coeff;
-    polynomialFit(bx,by,3,&coeff);
-    bkg_curveY.resize(bkg_curveX.size());
-    for ( int i = 0; i<c->getXVector().size(); ++i ) {
-        bkg_curveY[i] = coeff[3]*pow(bkg_curveX[i],3) + coeff[2]*pow(bkg_curveX[i],2) + coeff[1]*bkg_curveX[i] + coeff[0];
+    switch (EAQtSignalProcessing::_selectedFitMethod) {
+    case poly1:
+        polynomialFit(bx,by,1,&coeff);
+        bkg_curveY.resize(bkg_curveX.size());
+        for ( int i = 0; i<c->getXVector().size(); ++i ) {
+            bkg_curveY[i] = coeff[1]*bkg_curveX[i] + coeff[0];
+        }
+        break;
+    case poly2:
+        polynomialFit(bx,by,2,&coeff);
+        bkg_curveY.resize(bkg_curveX.size());
+        for ( int i = 0; i<c->getXVector().size(); ++i ) {
+            bkg_curveY[i] = coeff[2]*pow(bkg_curveX[i],2) + coeff[1]*bkg_curveX[i] + coeff[0];
+        }
+        break;
+    default:
+    case poly3:
+        polynomialFit(bx,by,3,&coeff);
+        bkg_curveY.resize(bkg_curveX.size());
+        for ( int i = 0; i<c->getXVector().size(); ++i ) {
+            bkg_curveY[i] = coeff[3]*pow(bkg_curveX[i],3) + coeff[2]*pow(bkg_curveX[i],2) + coeff[1]*bkg_curveX[i] + coeff[0];
+        }
+        break;
+    case exponential:
+        int nn = by.size();
+        QVector<double> ylog(nn);
+        for ( int i =0; i<nn;++i ) {
+            ylog[i] = log(by[i]);
+        }
+        polynomialFit(bx,ylog,1,&coeff);
+        for ( int i = 0; i<c->getXVector().size(); ++i ) {
+            bkg_curveY[i] = exp(coeff[0])*exp(bkg_curveX[i] * coeff[1]);
+        }
+        break;
     }
-
-//    bkg_curveX.append(bx);
-//    bkg_curveY.append(by);
-
     _graph->setData(bkg_curveX, bkg_curveY);
     _graph->setVisible(true);
 }
@@ -468,4 +499,24 @@ void EAQtSignalProcessing::idft(const QVector<double>& freqImg, const QVector<do
         iv = (img + real)/(double)N;
         values.replace(n, iv);
     }
+}
+
+QVector<QString> EAQtSignalProcessing::getFitNames()
+{
+    QVector<QString> names(SIZE,"");
+    names[poly1] = tr("y=p1*x+p2");
+    names[poly2] = tr("y=p1*x^2+p2*x+p3");
+    names[poly3] = tr("y=p1*x^3+p2*x^2+p3*x+p4");
+    names[exponential] =   tr("y=p1*exp(x*p2)");
+    return names;
+}
+
+int EAQtSignalProcessing::getFitMethod()
+{
+    return EAQtSignalProcessing::_selectedFitMethod;
+}
+
+void EAQtSignalProcessing::setFitMethod(int method)
+{
+    EAQtSignalProcessing::_selectedFitMethod = method;
 }

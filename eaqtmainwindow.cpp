@@ -27,6 +27,7 @@
 #include "calibrationplot.h"
 #include "eaqtaveragedialog.h"
 #include "eaqtcurverenamedialog.h"
+#include "eaqtbackgroundcorrectiondialog.h"
 
 EAQtMainWindow::EAQtMainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -951,6 +952,10 @@ void EAQtMainWindow::createActionsTopMenu()
     this->_actBkgCorrection->setStatusTip(tr("Perform background correction"));
     connect(_actBkgCorrection, SIGNAL(triggered(bool)),this,SLOT(startBackgroundCorrection()));
 
+    this->_actBkgCorrectionSettings = new QAction(tr("Background correction settings"), this);
+    this->_actBkgCorrectionSettings->setStatusTip(tr("Show settings of background correction."));
+    connect(_actBkgCorrectionSettings, SIGNAL(triggered(bool)),this,SLOT(showBackgroundCorrectionSettings()));
+
     this->_actRelativeValues = new QAction(tr("Relative values"), this);
     this->_actRelativeValues->setStatusTip(tr("Show relative to line values"));
     connect(_actRelativeValues, SIGNAL(triggered(bool)),this,SLOT(startRelativeValues()));
@@ -1026,6 +1031,7 @@ void EAQtMainWindow::createMenusTopMenu()
     _menuAnalysis->addAction(this->_actAverage);
     _menuAnalysis->addAction(this->_actDataCursor);
     _menuAnalysis->addAction(this->_actBkgCorrection);
+    _menuAnalysis->addAction(this->_actBkgCorrectionSettings);
     _menuAnalysis->addAction(this->_actRelativeValues);
     _menuAnalysis->addAction(this->_actMoveUpDown);
     //_menuAnalysis->addAction(this->_actSmooth);
@@ -1409,4 +1415,11 @@ void EAQtMainWindow::setPathInUse(QString path)
 QString EAQtMainWindow::getPathInUse()
 {
     return _PathInUse;
+}
+
+void EAQtMainWindow::showBackgroundCorrectionSettings()
+{
+    EAQtBackgroundCorrectionDialog *bkg = new EAQtBackgroundCorrectionDialog();
+    bkg->exec();
+    delete bkg;
 }

@@ -40,8 +40,21 @@ public:
     static void idft(const QVector<double>& freqImg, const QVector<double>& freqReal, QVector<double>& values);
     static void sgSmooth(QVector<double>* y, int order, int span);
     static double relativeHeight(Curve* c, int32_t start, int32_t end);
+    enum FitMethod : int {
+        poly1,
+        poly2,
+        poly3,
+        exponential,
+        SIZE
+    };
+    static QVector<QString> getFitNames();
+    static int getFitMethod();
+    static void setFitMethod(int);
+
+
 private:
     CurveCollection* _curves;
+    static int _selectedFitMethod;
     QCPGraph* _graph;
     QVector<double> _backgroundX;
     QVector<double> _backgroundY;
