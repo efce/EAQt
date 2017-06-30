@@ -246,7 +246,7 @@ QGroupBox *EAQtParamDialog::createRestItems()
     connect(_lineEdits[lid_Ep],SIGNAL(textEdited(QString)),this,SLOT(onlEditchanged(QString)));
     _lineEdits[lid_Ep]->setValidator(this->getValidator(EAQtParamDialog::vt_potential));
     _lineEdits[lid_Ep]->setMaxLength(5);
-    _lineEdits[lid_Ep]->setFixedWidth(_metrics->width("999999"));
+    _lineEdits[lid_Ep]->setFixedWidth(_metrics->width("9999999"));
     _lineLabels[lid_Ep] = new QLabel(tr("Ep [mV]:"));//9
     i=lid_Ep;
     qgrid->addWidget(_lineLabels[i], pos, 0);
@@ -257,7 +257,7 @@ QGroupBox *EAQtParamDialog::createRestItems()
     connect(_lineEdits[lid_Ek],SIGNAL(textEdited(QString)),this,SLOT(onlEditchanged(QString)));
     _lineEdits[lid_Ek]->setValidator(this->getValidator(EAQtParamDialog::vt_potential));
     _lineEdits[lid_Ek]->setMaxLength(5);
-    _lineEdits[lid_Ek]->setFixedWidth(_metrics->width("999999"));
+    _lineEdits[lid_Ek]->setFixedWidth(_metrics->width("9999999"));
     _lineLabels[lid_Ek] = new QLabel(tr("Ek [mV]:"));//10
     i=lid_Ek;
     qgrid->addWidget(_lineLabels[i], ++pos, 0);
@@ -268,7 +268,7 @@ QGroupBox *EAQtParamDialog::createRestItems()
     //connect(lineEdits[lid_Estep],SIGNAL(textEdited(QString)),this,SLOT(onlEditchanged(QString)));
     _lineEdits[lid_Estep]->setValidator(this->getValidator(EAQtParamDialog::vt_potential));
     _lineEdits[lid_Estep]->setMaxLength(5);
-    _lineEdits[lid_Estep]->setFixedWidth(_metrics->width("999999"));
+    _lineEdits[lid_Estep]->setFixedWidth(_metrics->width("9999999"));
     _lineLabels[lid_Estep] = new QLabel(tr("Estep [mV]:"));//11
     i=lid_Estep;
     qgrid->addWidget(_lineLabels[i], ++pos, 0);
@@ -338,7 +338,7 @@ QGroupBox *EAQtParamDialog::createRestItems()
     //connect(lineEdits[lid_points],SIGNAL(textEdited(QString)),this,SLOT(onlEditchanged(QString)));
     _lineEdits[lid_mixer]->setValidator(this->getValidator(EAQtParamDialog::vt_mixer));
     _lineEdits[lid_mixer]->setMaxLength(3);
-    _lineEdits[lid_mixer]->setFixedWidth(_metrics->width("9999"));
+    _lineEdits[lid_mixer]->setFixedWidth(_metrics->width("99999"));
     _lineLabels[lid_mixer] = new QLabel(tr("mixer [s]:"));
     i=lid_mixer;
     qgrid->addWidget(_lineLabels[i], ++pos, 0);
