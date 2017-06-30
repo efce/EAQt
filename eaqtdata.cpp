@@ -1946,10 +1946,10 @@ int EAQtData::MesSaveAll(QString UserCName, QString UserFName, QString UserComme
                 this->getMesCurves()->get(num)->FName(UserFName);
                 this->getMesCurves()->get(num)->Comment(UserComment);
             } else { // cykliczna
-                this->getMesCurves()->get(num)->CName(UserCName);
+                this->getMesCurves()->get(num)->CName("◭" + UserCName);
                 this->getMesCurves()->get(num)->FName(UserFName);
                 this->getMesCurves()->get(num)->Comment(UserComment);
-                this->getMesCurves()->get(num+1)->CName("r"+UserCName);
+                this->getMesCurves()->get(num+1)->CName("◮" + UserCName);
                 this->getMesCurves()->get(num+1)->FName(UserFName);
                 this->getMesCurves()->get(num+1)->Comment(UserComment);
                 this->getMesCurves()->get(num+1)->setDate();
