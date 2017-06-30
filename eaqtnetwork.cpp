@@ -92,6 +92,7 @@ void EAQtNetwork::processPacket()
     }
     static int ba;
     static char test;
+    //char b[256];
     while ( (ba=_socket->bytesAvailable()) >= NETWORK::RxBufLength ) {
         _rxSize = _socket->read(_pRxBuf,NETWORK::RxBufLength);
         //sprintf(b,"bytes read: %d;bytes avail: %d;",_rxSize,ba);

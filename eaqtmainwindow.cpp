@@ -759,6 +759,7 @@ void EAQtMainWindow::MeasurementUpdate(int32_t curveNr, int32_t pointNr)
     default:
         throw 1;
     }
+
     curve = _pEAQtData->getMesCurves()->get(curveNr);
     setLowLabelText(0,tr("curve #: %1; point #: %2; potential: %3; current %4")
                                   .arg(curveNr)
@@ -776,7 +777,31 @@ void EAQtMainWindow::MeasurementUpdate(int32_t curveNr, int32_t pointNr)
                                  ,curve->getYVector().at(1) );
             }
         } else {
-            PlotMesRescaleAxes(curve->getXVector().at(pointNr), curve->getYVector().at(pointNr));
+            switch (this->_pEAQtData->getXAxis()) {
+            case XAXIS::potential:
+                PlotMesRescaleAxes(
+                    curve->getPotentialVector()->at(pointNr)
+                    ,curve->getCurrentVector()->at(pointNr)
+                );
+                break;
+
+            case XAXIS::time:
+                PlotMesRescaleAxes(
+                    curve->getTimeVector()->at(pointNr)
+                    ,curve->getCurrentVector()->at(pointNr)
+                );
+                break;
+
+            case XAXIS::nonaveraged:
+                PlotMesRescaleAxes(
+                    curve->getProbingDataPointNumbers()->at(curve->getNumberOfProbingPoints()-1)
+                    ,curve->getProbingData()->at(curve->getNumberOfProbingPoints()-1)
+                );
+                break;
+
+            default:
+                throw 1;
+            }
         }
     } else {
         if ( pointNr == _pEAQtData->_ptnrFromEss+1
@@ -789,7 +814,31 @@ void EAQtMainWindow::MeasurementUpdate(int32_t curveNr, int32_t pointNr)
                                  ,curve->getYVector().at(_pEAQtData->_ptnrFromEss+1) );
             }
         } else {
-            PlotMesRescaleAxes(curve->getXVector().at(pointNr), curve->getYVector().at(pointNr));
+            switch (this->_pEAQtData->getXAxis()) {
+            case XAXIS::potential:
+                PlotMesRescaleAxes(
+                    curve->getPotentialVector()->at(pointNr)
+                    ,curve->getCurrentVector()->at(pointNr)
+                );
+                break;
+
+            case XAXIS::time:
+                PlotMesRescaleAxes(
+                    curve->getTimeVector()->at(pointNr)
+                    ,curve->getCurrentVector()->at(pointNr)
+                );
+                break;
+
+            case XAXIS::nonaveraged:
+                PlotMesRescaleAxes(
+                    curve->getProbingDataPointNumbers()->at(curve->getNumberOfProbingPoints()-1)
+                    ,curve->getProbingData()->at(curve->getNumberOfProbingPoints()-1)
+                );
+                break;
+
+            default:
+                throw 1;
+            }
         }
     }
 }
