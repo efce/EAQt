@@ -327,7 +327,7 @@ QGroupBox *EAQtParamDialog::createRestItems()
     //connect(lineEdits[lid_points],SIGNAL(textEdited(QString)),this,SLOT(onlEditchanged(QString)));
     _lineEdits[lid_aver]->setValidator(this->getValidator(EAQtParamDialog::vt_mixer));
     _lineEdits[lid_aver]->setMaxLength(3);
-    _lineEdits[lid_aver]->setFixedWidth(_metrics->width("9999"));
+    _lineEdits[lid_aver]->setFixedWidth(_metrics->width("99999"));
     _lineLabels[lid_aver] = new QLabel(tr("average:"));
     i=lid_aver;
     qgrid->addWidget(_lineLabels[i], ++pos, 0);
