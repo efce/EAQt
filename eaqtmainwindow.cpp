@@ -676,13 +676,12 @@ void EAQtMainWindow::disableButtonsOnly()
     for ( int i = 0; i<_vecButtonsDisablable.size(); ++i ) {
         _vecButtonsDisablable[i]->setDisabled(true);
     }
+    _comboOnXAxis->setDisabled(true);
 }
 
 void EAQtMainWindow::disableButtonsAndTable()
 {
-    for ( int i = 0; i<_vecButtonsDisablable.size(); ++i ) {
-        _vecButtonsDisablable[i]->setDisabled(true);
-    }
+    disableButtonsOnly();
     this->_tableCurveMain->setDisabled(true);
 }
 
@@ -692,6 +691,7 @@ void EAQtMainWindow::enableAll()
         _vecButtonsDisablable[i]->setDisabled(false);
     }
     this->_tableCurveMain->setDisabled(false);
+    _comboOnXAxis->setDisabled(false);
 }
 
 void EAQtMainWindow::userStartsMeasurement()
@@ -1092,15 +1092,11 @@ void EAQtMainWindow::showSaveCurve()
         this->showMessageBox(tr("Cannot save - no curve(s) selected."));
         return;
     }
-    QFileDialog *qfd = new QFileDialog();
-    QString filter = FILES::saveFile;
-    QString filterdef = FILES::saveDef;
-    QString savePath = qfd->getSaveFileName(this,tr("Add curve to file"),_PathInUse,filter,&filterdef,QFileDialog::DontConfirmOverwrite);
-    if ( savePath.isEmpty() ) {
-        delete qfd;
-        return;
-    }
-    delete qfd;
+
+    EAQtSaveFiledialog *sfd = new EAQtSaveFiledialog(this, "", "", _PathInUse, "");
+    EAQtSaveFiledialog::SaveDetails saveDetails = sfd->getSaveDetails(false);
+    QString savePath = saveDetails.fileName;
+    delete sfd;
     if ( this->_pEAQtData->Act() == SELECT::all ) {
         uint i = 0;
         int err;

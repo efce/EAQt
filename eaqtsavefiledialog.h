@@ -37,7 +37,7 @@ public:
         QString curveName;
         QString curveComment;
     };
-    SaveDetails getSaveDetails();
+    SaveDetails getSaveDetails(bool allowFotNameChange = true);
 private:
     SaveDetails _saveDetails;
     QWidget* _parent;
@@ -47,10 +47,12 @@ private:
     QString _cname;
     QString _ccomment;
     QString _filename;
+    QFileDialog* _fd;
 public slots:
     void updateCurveName(QString);
     void updateCurveComment();
     void updateFileName(QString);
+    void setSuffix(QString);
     void wasCanceled();
 };
 

@@ -34,34 +34,37 @@ EAQtSaveFiledialog::EAQtSaveFiledialog(QWidget* parent, QString cname, QString c
     _saveDetails.fileName = _filename;
 }
 
-EAQtSaveFiledialog::SaveDetails EAQtSaveFiledialog::getSaveDetails()
+EAQtSaveFiledialog::SaveDetails EAQtSaveFiledialog::getSaveDetails(bool allowForNameChange)
 {
-    QFileDialog* fd = new QFileDialog();
+    _fd = new QFileDialog();
     if ( _pathToShow.isEmpty() && _filename.isEmpty() ) {
-        fd->setDirectory(QStandardPaths::writableLocation(QStandardPaths::DesktopLocation));
+        _fd->setDirectory(QStandardPaths::writableLocation(QStandardPaths::DesktopLocation));
     }
     if ( _pathToShow.isEmpty() ) {
-        fd->setDirectory(_pathToShow);
+        _fd->setDirectory(_pathToShow);
     }
     if ( !_filename.isEmpty() ) {
         QFileInfo fi(_filename);
-        fd->setDirectory(fi.absoluteDir());
-        fd->selectFile(fi.baseName());
+        _fd->setDirectory(fi.absoluteDir());
+        _fd->selectFile(fi.baseName());
     }
-    fd->selectFile(_filename);
-    fd->setModal(true);
-    fd->setOption( QFileDialog::DontUseNativeDialog, true );
-    fd->setNameFilter(FILES::saveFile);
+    _fd->selectFile(_filename);
+    _fd->setModal(true);
+    _fd->setOption( QFileDialog::DontUseNativeDialog, true );
+    _fd->setNameFilter(FILES::saveFile);
     if ( _filename.isEmpty()
     || _filename.right(FILES::saveCompressExt.size()).compare(FILES::saveCompressExt,Qt::CaseInsensitive) == 0 ) {
-        fd->selectNameFilter(FILES::saveDef);
+        _fd->selectNameFilter(FILES::saveDef);
+        _fd->setDefaultSuffix("voltc");
     } else {
-        fd->selectNameFilter(FILES::saveDefUncompress);
+        _fd->selectNameFilter(FILES::saveDefUncompress);
+        _fd->setDefaultSuffix("volt");
     }
-    QGridLayout* l = (QGridLayout*) fd->layout();
+    connect(_fd,SIGNAL(filterSelected(QString)),this,SLOT(setSuffix(QString)));
+    QGridLayout* l = (QGridLayout*) _fd->layout();
     QGridLayout* lay = new QGridLayout();
     this->_leCurveComment = new QPlainTextEdit();
-    QFontMetrics *metrics = new QFontMetrics(fd->font());
+    QFontMetrics *metrics = new QFontMetrics(_fd->font());
     this->_leCurveComment->setFixedHeight(2.9*metrics->height() );
     _leCurveComment->setPlainText(_ccomment);
     QLabel* lbCurveComment = new QLabel(tr("Curve comment:"));
@@ -75,21 +78,30 @@ EAQtSaveFiledialog::SaveDetails EAQtSaveFiledialog::getSaveDetails()
     lay->addWidget(lbCurveComment,1,0,1,1,Qt::AlignRight);
     lay->addWidget(this->_leCurveComment,1,1,2,3);
 
-    fd->setLabelText( QFileDialog::Accept, tr("Save") );
-    fd->setLabelText( QFileDialog::Reject, tr("Cancel") );
+    if ( allowForNameChange == false ) {
+        _leCurveComment->setDisabled(true);
+        _leCurveName->setDisabled(true);
+    }
+
+    _fd->setLabelText( QFileDialog::Accept, tr("Save") );
+    _fd->setLabelText( QFileDialog::Reject, tr("Cancel") );
     l->addLayout(lay,4,0,1,4);
 
     connect(this->_leCurveName,SIGNAL(textChanged(QString)),this,SLOT(updateCurveName(QString)));
     connect(this->_leCurveComment,SIGNAL(textChanged()),this,SLOT(updateCurveComment()));
-    connect(fd,SIGNAL(fileSelected(QString)),this,SLOT(updateFileName(QString)));
-    connect(fd,SIGNAL(rejected()),this,SLOT(wasCanceled()));
+    connect(_fd,SIGNAL(fileSelected(QString)),this,SLOT(updateFileName(QString)));
+    connect(_fd,SIGNAL(rejected()),this,SLOT(wasCanceled()));
 
-    fd->exec();
+    _fd->exec();
 
     if ( _saveDetails.fileName.isEmpty() ) {
         this->_saveDetails.wasCanceled = true;
     }
+    if ( _saveDetails.fileName.right(_fd->defaultSuffix().size()+1).compare("."+_fd->defaultSuffix(),Qt::CaseInsensitive) != 0 ) {
+        _saveDetails.fileName.append("." + _fd->defaultSuffix());
+    }
 
+    delete _fd;
     return this->_saveDetails;
 }
 
@@ -111,4 +123,14 @@ void EAQtSaveFiledialog::updateFileName(QString fn)
 void EAQtSaveFiledialog::wasCanceled()
 {
     _saveDetails.wasCanceled = true;
+}
+
+void EAQtSaveFiledialog::setSuffix(QString selectedFilter)
+{
+    QString news = selectedFilter;
+    if ( FILES::saveDef.compare(selectedFilter) == 0 ) {
+        _fd->setDefaultSuffix("voltc");
+    } else {
+        _fd->setDefaultSuffix("volt");
+    }
 }
