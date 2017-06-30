@@ -677,6 +677,8 @@ void EAQtMainWindow::disableButtonsOnly()
         _vecButtonsDisablable[i]->setDisabled(true);
     }
     _comboOnXAxis->setDisabled(true);
+    _butZoom->setDisabled(true);
+    _butCurveInfoToggle->setDisabled(true);
 }
 
 void EAQtMainWindow::disableButtonsAndTable()
@@ -692,6 +694,8 @@ void EAQtMainWindow::enableAll()
     }
     this->_tableCurveMain->setDisabled(false);
     _comboOnXAxis->setDisabled(false);
+    _butZoom->setDisabled(false);
+    _butCurveInfoToggle->setDisabled(false);
 }
 
 void EAQtMainWindow::userStartsMeasurement()
