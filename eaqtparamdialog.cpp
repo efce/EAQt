@@ -292,7 +292,7 @@ QGroupBox *EAQtParamDialog::createRestItems()
     //connect(lineEdits[lid_tp],SIGNAL(textEdited(QString)),this,SLOT(onlEditchanged(QString)));
     _lineEdits[lid_tp]->setValidator(this->getValidator(EAQtParamDialog::vt_tp));
     _lineEdits[lid_tp]->setMaxLength(3);
-    _lineEdits[lid_tp]->setFixedWidth(_metrics->width("9999"));
+    _lineEdits[lid_tp]->setFixedWidth(_metrics->width("99999"));
     _lineLabels[lid_tp] = new QLabel(tr("tp [ms]:"));//13
     i=lid_tp;
     qgrid->addWidget(_lineLabels[i], ++pos, 0);
@@ -303,7 +303,7 @@ QGroupBox *EAQtParamDialog::createRestItems()
     //connect(lineEdits[lid_tw],SIGNAL(textEdited(QString)),this,SLOT(onlEditchanged(QString)));
     _lineEdits[lid_tw]->setValidator(this->getValidator(EAQtParamDialog::vt_potential_time));
     _lineEdits[lid_tw]->setMaxLength(3);
-    _lineEdits[lid_tw]->setFixedWidth(_metrics->width("9999"));
+    _lineEdits[lid_tw]->setFixedWidth(_metrics->width("99999"));
     _lineLabels[lid_tw] = new QLabel(tr("tw [ms]:"));//14
     i=lid_tw;
     qgrid->addWidget(_lineLabels[i], ++pos, 0);
