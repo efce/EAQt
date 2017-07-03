@@ -401,7 +401,7 @@ HEADERS  += \
     eaqtcurverenamedialog.h \
     eaqtbackgroundcorrectiondialog.h
 
-FORMS    += mainwindow.ui
+FORMS    +=
 
 TRANSLATIONS = ./eaqt_pl.ts
 
