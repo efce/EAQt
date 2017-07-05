@@ -79,15 +79,9 @@ void EAQtSignalProcessing::calibrationData(int32_t a1, int32_t a2)
 double EAQtSignalProcessing::relativeHeight(Curve *c, int32_t start, int32_t end)
 {
         QVector<double> values = c->getYVector();
-        double min = values[start];
-        double max = values[end];
-        for ( int32_t pos=start; pos<=end; ++pos ) {
-            if ( values[pos] > max ) {
-                max = values[pos];
-            } else if ( values[pos] < min ) {
-                min = values[pos];
-            }
-        }
+
+        double min = *std::min_element(&values[start],&values[end]);
+        double max = *std::max_element(&values[start],&values[end]);
         return (max - min);
 }
 
