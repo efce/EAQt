@@ -438,8 +438,8 @@ QByteArray Curve::serialize(bool compress)
     tmp->append((char*)&_mesParam, PARAM::PARAMNUM*sizeof(int32_t));
     int32_t dataSize = _mesParam[PARAM::ptnr];
     for ( int32_t i = 0; i<dataSize; ++i ) {
-        tmp->append((char*)_curveData->getPotentialVector()->data()+i*sizeof(double),sizeof(double));
         tmp->append((char*)_curveData->getTimeVector()->data()+i*sizeof(double),sizeof(double));
+        tmp->append((char*)_curveData->getPotentialVector()->data()+i*sizeof(double),sizeof(double));
         tmp->append((char*)_curveData->getCurrentVector()->data()+i*sizeof(double),sizeof(double));
     }
     if ( _mesParam[PARAM::nonaveragedsampling] != 0 ) {
@@ -510,9 +510,9 @@ bool Curve::unserialize(QByteArray &ba, bool compressed)
     double pot, time, curr;
 
     for ( int32_t ii = 0; ii<dataSize; ++ii ) {
-        memcpy(&pot,(serialized.data()+i),sizeof(double));
-        i+=sizeof(double);
         memcpy(&time,(serialized.data()+i),sizeof(double));
+        i+=sizeof(double);
+        memcpy(&pot,(serialized.data()+i),sizeof(double));
         i+=sizeof(double);
         memcpy(&curr,(serialized.data()+i),sizeof(double));
         i+=sizeof(double);
