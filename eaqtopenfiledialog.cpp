@@ -96,7 +96,7 @@ void EAQtOpenFileDialog::updateList(QString fileToShow)
 void EAQtOpenFileDialog::loadSelected(QModelIndex qmi)
 {
     int idToLoad = qmi.row();
-    this->_pData->openFile(&this->_fileSelected,idToLoad);
+    this->_pData->openFile(&this->_fileSelected,idToLoad+1);
 }
 
 void EAQtOpenFileDialog::loadFile(QString filename)
