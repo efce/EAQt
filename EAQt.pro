@@ -399,7 +399,8 @@ HEADERS  += \
     eaqtaveragedialog.h \
     eaqtparampotentialprogram.h \
     eaqtcurverenamedialog.h \
-    eaqtbackgroundcorrectiondialog.h
+    eaqtbackgroundcorrectiondialog.h \
+    ui_mainwindow.h
 
 FORMS    +=
 
