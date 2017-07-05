@@ -102,7 +102,7 @@ bool EAQtMouseHandler::userCanUseCurveList()
     }
 }
 
-uint EAQtMouseHandler::GetCursorPointIndex(cursorsList cursNum)
+int32_t EAQtMouseHandler::GetCursorPointIndex(cursorsList cursNum)
 {
     return this->_vCursors[static_cast<int>(cursNum)]->getIndex();
 }
@@ -521,15 +521,24 @@ void EAQtMouseHandler::callUserFunction()
             return;
         }
         if ( this->_timesPressed > 2 ) {
-            int cl1, cl2;
-            if ( this->GetCursorX(cl_multipleSelect1) < this->GetCursorX(cl_multipleSelect2) ) {
-                cl1 = this->GetCursorPointIndex(cl_multipleSelect1);
-                cl2 = this->GetCursorPointIndex(cl_multipleSelect2);
-            } else {
-                cl2 = this->GetCursorPointIndex(cl_multipleSelect1);
-                cl1 = this->GetCursorPointIndex(cl_multipleSelect2);
+            QVector<std::array<int,2>> coords;
+            coords.resize(_pData->getCurves()->count());
+            for ( int i =0; i< coords.size(); ++i) {
+                _vCursors[cl_multipleSelect1]->setSnapTo(_pData->getCurves()->get(i)->getPlot());
+                _vCursors[cl_multipleSelect2]->setSnapTo(_pData->getCurves()->get(i)->getPlot());
+                _vCursors[cl_multipleSelect1]->move(_vCursors[cl_multipleSelect1]->getX());
+                _vCursors[cl_multipleSelect2]->move(_vCursors[cl_multipleSelect2]->getX());
+                if ( this->GetCursorX(cl_multipleSelect1) < this->GetCursorX(cl_multipleSelect2) ) {
+                    coords[i][0] = this->GetCursorPointIndex(cl_multipleSelect1);
+                    coords[i][1] = this->GetCursorPointIndex(cl_multipleSelect2);
+                } else {
+                    coords[i][1] = this->GetCursorPointIndex(cl_multipleSelect1);
+                    coords[i][0] = this->GetCursorPointIndex(cl_multipleSelect2);
+                }
             }
-            this->_pData->getProcessing()->calibrationData(cl1, cl2);
+            _vCursors[cl_multipleSelect1]->setSnapTo(_pData->getCurves()->get(_pData->Act())->getPlot());
+            _vCursors[cl_multipleSelect2]->setSnapTo(_pData->getCurves()->get(_pData->Act())->getPlot());
+            this->_pData->getProcessing()->calibrationData(coords);
             this->setDefaults();
             this->_pUI->PlotGetLayers()->Markers->replot();
         }
@@ -616,4 +625,9 @@ bool EAQtMouseHandler::wantsClicks()
     } else {
         return true;
     }
+}
+
+QVector<EAQtPlotCursor*>* EAQtMouseHandler::getCursors()
+{
+    return &_vCursors;
 }

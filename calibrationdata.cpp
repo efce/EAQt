@@ -33,6 +33,7 @@ CalibrationData::CalibrationData()
     correlationCoef = 0;
     pointEnd = 0;
     pointStart = 0;
+    xAxis = XAXIS::potential;
 }
 
 void CalibrationData::save(QFile *file, bool includeCurves)
@@ -60,6 +61,7 @@ void CalibrationData::save(QFile *file, bool includeCurves)
     file->write((char*)&wrt,1);
     file->write((char*)&(this->pointStart),sizeof(int32_t));
     file->write((char*)&(this->pointEnd),sizeof(int32_t));
+    file->write((char*)&(this->xAxis),sizeof(int32_t));
     file->write((char*)&(this->slope),sizeof(double));
     file->write((char*)&(this->slopeStdDev),sizeof(double));
     file->write((char*)&(this->intercept),sizeof(double));
@@ -93,6 +95,7 @@ void CalibrationData::load(QFile *file)
     this->wasFitted = (bool)wrt;
     file->read((char*)&(this->pointStart),sizeof(int32_t));
     file->read((char*)&(this->pointEnd),sizeof(int32_t));
+    file->read((char*)&(this->xAxis),sizeof(int32_t));
     file->read((char*)&(this->slope),sizeof(double));
     file->read((char*)&(this->slopeStdDev),sizeof(double));
     file->read((char*)&(this->intercept),sizeof(double));

@@ -34,14 +34,14 @@ public:
     QCPGraph* getSnappedTo();
     double getX();
     double getY();
-    uint getIndex();
+    int32_t getIndex();
 private:
     QCPItemStraightLine* _line;
     QCPGraph* _point;
     QCPGraph* _snappedTo;
     double _xpos;
     double _ypos;
-    uint _posIndex;
+    int32_t _posIndex;
 };
 
 #endif // EAQTPLOTCURSOR_H

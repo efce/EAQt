@@ -60,16 +60,18 @@ void EAQtSignalProcessing::shiftCurve(double dY)
     }
 }
 
-void EAQtSignalProcessing::calibrationData(int32_t a1, int32_t a2)
+void EAQtSignalProcessing::calibrationData(QVector<std::array<int,2>>& coords)
 {
     CalibrationData *calibration = EAQtData::getInstance()._calibration;
     static QHash<QString,QString> oldSettings;
     calibration->yValues.resize(_curves->count());
     for ( int32_t i = 0; i<_curves->count(); ++i ) {
-        calibration->yValues[i] = relativeHeight(_curves->get(i), a1,a2);
+        calibration->yValues[i] = relativeHeight(_curves->get(i), coords[i][0],coords[i][1]);
     }
-    calibration->pointStart = a1;
-    calibration->pointEnd = a2;
+    int act = EAQtData::getInstance().Act();
+    calibration->pointStart = _curves->get(act)->getXVector().at(coords[act][1]);
+    calibration->pointEnd = _curves->get(act)->getXVector().at(coords[act][0]);
+    calibration->xAxis = EAQtData::getInstance().getXAxis();
     calibration->curves = _curves;
     EAQtCalibrationDialog *cd = new EAQtCalibrationDialog(calibration, &oldSettings);
     cd->exec();

@@ -43,6 +43,7 @@ public:
     QString xUnits;
     QVector<double> yValues;
     QString yUnits;
+    int32_t xAxis;
     CurveCollection *curves;
 };
 

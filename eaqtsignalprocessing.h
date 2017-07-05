@@ -29,7 +29,7 @@ public:
     void generateBackground(int32_t a1, int32_t a2, int32_t b1, int32_t b2);
     void subtractBackground();
     void hideBackground();
-    void calibrationData(int32_t a1, int32_t a2);
+    void calibrationData(QVector<std::array<int,2>>&);
     void shiftCurve(double dY);
     static void kissFFT(double samplingFrequency, const QVector<double>& values, QVector<double>& frequency, QVector<double>& freqReal, QVector<double>& freqImg);
     static void kissIFFT(double samplingFreq, const QVector<double>& freqImg, const QVector<double>& freqReal, QVector<double>& values);

@@ -81,7 +81,7 @@ void EAQtPlotCursor::move(double x, double y)
         this->_point->data()->clear();
         this->_point->addData(x,y);
     } else {
-        uint index = 0;
+        int32_t index = 0;
         double diff = fabs(x - this->_snappedTo->data()->at(index)->key);
         double diffnew;
         for ( int i = 0; i<this->_snappedTo->data()->size(); ++i ) {
@@ -113,7 +113,7 @@ double EAQtPlotCursor::getY()
     return this->_ypos;
 }
 
-uint EAQtPlotCursor::getIndex()
+int32_t EAQtPlotCursor::getIndex()
 {
     return this->_posIndex;
 }

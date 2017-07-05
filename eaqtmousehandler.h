@@ -73,10 +73,11 @@ public:
     void BackClick();
     void UpdateLocation(double *MX, double *MY);
     bool wantsClicks();
+    QVector<EAQtPlotCursor*>* getCursors();
+    int32_t GetCursorPointIndex(cursorsList);
 
 private:
     void setDefaults();
-    uint GetCursorPointIndex(cursorsList);
     double GetCursorX(cursorsList);
     double GetCursorY(cursorsList);
     bool GetCursorVisible(cursorsList);

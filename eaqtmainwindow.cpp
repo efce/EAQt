@@ -1320,11 +1320,24 @@ void EAQtMainWindow::resultCalibration()
     if ( _pEAQtData->_calibration->wasFitted == true ) {
         CalibrationData* cd = _pEAQtData->_calibration;
         Curve* c = _pEAQtData->getCurves()->get(_pEAQtData->Act());
-        if ( c == NULL || c->getNrOfDataPoints() < cd->pointEnd ) {
+        if ( c == NULL ) {
+            return;
+        }
+        int xAxisSave = _pEAQtData->getXAxis();
+        _pEAQtData->setXAxis(cd->xAxis);
+
+        _mouseHandler->getCursors()->at(EAQtMouseHandler::cl_multipleSelect1)->setSnapTo(c->getPlot());
+        _mouseHandler->getCursors()->at(EAQtMouseHandler::cl_multipleSelect2)->setSnapTo(c->getPlot());
+        _mouseHandler->getCursors()->at(EAQtMouseHandler::cl_multipleSelect1)->move(cd->pointStart);
+        _mouseHandler->getCursors()->at(EAQtMouseHandler::cl_multipleSelect2)->move(cd->pointEnd);
+        int c1 = _mouseHandler->GetCursorPointIndex(EAQtMouseHandler::cl_multipleSelect1);
+        int c2 = _mouseHandler->GetCursorPointIndex(EAQtMouseHandler::cl_multipleSelect2);
+        if ( c1 == c2 ) {
             showMessageBox(tr("Cannot use curve in calibration -- points out of range."), tr("Error"));
             return;
         }
-        double signal = EAQtSignalProcessing::relativeHeight(c,cd->pointStart,cd->pointEnd);
+        double signal = EAQtSignalProcessing::relativeHeight(c,c1,c2);
+        _pEAQtData->setXAxis(xAxisSave);
         double conc = (signal - cd->intercept) / cd->slope;
         showMessageBox(tr("Result of calibration: %1 %2").arg(conc,0,'f',5).arg(cd->xUnits),tr("Result"));
     } else {
