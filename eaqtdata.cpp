@@ -598,7 +598,7 @@ int EAQtData::CurReadCurveOld(QFile &ff, QString CName)
         return -1;
 
     for (i=0 ; i<_fileIndex->count() ; i++) {
-        if (CName.compare(_fileIndex->get(i)->CName(),Qt::CaseInsensitive) == 0) {
+        if (CName.compare(_fileIndex->get(i)->CName(),Qt::CaseSensitive) == 0) {
             break;
         }
     }
@@ -609,7 +609,7 @@ int EAQtData::CurReadCurveOld(QFile &ff, QString CName)
     // i numer krzywej
     ff.seek(_fileIndex->get(i)->Off());
     for (i=0 ; i<_fileIndex->count() ; ++i) {
-        if (CName.compare(_fileIndex->get(i)->CName(),Qt::CaseInsensitive) == 0) {
+        if (CName.compare(_fileIndex->get(i)->CName(),Qt::CaseSensitive) == 0) {
             break;
         }
     }
