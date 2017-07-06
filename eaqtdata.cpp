@@ -250,7 +250,7 @@ void EAQtData::createMatrix()
         _measurementMatrix[mxptr] = 5; mxptr++;
         // if polar and tr<>0 then PROC3
         if ((this->getMesCurves()->get(i)->Param(PARAM::mespv) == PARAM::mespv_polarography)
-                && (tr != 0)) {
+                && (_trValue != 0)) {
             _measurementMatrix[mxptr] = 3;
             mxptr++;
         }
