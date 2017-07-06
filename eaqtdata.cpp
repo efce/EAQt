@@ -598,7 +598,7 @@ int EAQtData::CurReadCurveOld(QFile &ff, QString CName)
         return -1;
 
     for (i=0 ; i<_fileIndex->count() ; i++) {
-        if (CName.compare(_fileIndex->get(i)->CName(),Qt::CaseSensitive) == 0) {
+        if (CName.compare(_fileIndex->get(i)->CName(),Qt::CaseInsensitive) == 0) {
             break;
         }
     }
@@ -609,7 +609,7 @@ int EAQtData::CurReadCurveOld(QFile &ff, QString CName)
     // i numer krzywej
     ff.seek(_fileIndex->get(i)->Off());
     for (i=0 ; i<_fileIndex->count() ; ++i) {
-        if (CName.compare(_fileIndex->get(i)->CName(),Qt::CaseSensitive) == 0) {
+        if (CName.compare(_fileIndex->get(i)->CName(),Qt::CaseInsensitive) == 0) {
             break;
         }
     }
@@ -647,7 +647,7 @@ int EAQtData::CurReadCurveOld(QFile &ff, QString CName)
         }
     }
 
-    //getCurves->get(j1)->reinitializeCurveData(this->Curve(j1)->Param(ptnr));
+    getCurves()->get(j1)->reinitializeCurveData(getCurves()->get(j1)->Param(PARAM::ptnr));
     getCurves()->get(j1)->Param(PARAM::multi, 0);
     getCurves()->get(j1)->Param(PARAM::nonaveragedsampling, 0);
     getCurves()->get(j1)->Param(PARAM::pro, 0);
@@ -671,7 +671,7 @@ int EAQtData::CurReadCurveOld(QFile &ff, QString CName)
     this->setCurrentRange(getCurves()->get(j1)->Param(PARAM::crange),this->getCurves()->get(j1)->Param(PARAM::electr));
     this->getCurves()->get(j1)->FName(ff.fileName());
     if ( this->getCurves()->get(j1)->Param(PARAM::messc) >= PARAM::messc_cyclic ) { // krzywa cykliczna
-        j2 = this->getCurves()->addNew(_mainParam[PARAM::ptnr]);
+        j2 = this->getCurves()->addNew(getCurves()->get(j1)->Param(PARAM::ptnr));
         this->getCurves()->get(j2)->CName(this->getCurves()->get(j1)->CName());
         this->getCurves()->get(j2)->Comment(this->getCurves()->get(j1)->Comment());
         this->getCurves()->get(j2)->FName(ff.fileName());
