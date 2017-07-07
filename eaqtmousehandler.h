@@ -85,6 +85,7 @@ private:
     void callUserFunction();
     void toggleMovingCursor(QCPGraph* gr);
     bool userCanUseCurveList();
+    void updateCursorLabel();
     double dClickCoordinates[2];
     struct RelativeParametersLine {
         double pointX;

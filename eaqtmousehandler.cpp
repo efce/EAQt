@@ -50,7 +50,7 @@ void EAQtMouseHandler::onSelectionChanged()
         if ( this->_pData->Act() >= 0 ) {
             this->_vCursors[cl_movingCursor]->setSnapTo(this->_pData->getCurves()->get(this->_pData->Act())->getPlot());
             this->_vCursors[cl_movingCursor]->move(this->_vCursors[cl_movingCursor]->getX());
-            //TODO: update text on lowlabel
+            this->updateCursorLabel();
         } else {
             this->ChangeMouseMode(mm_normal,uf_none);
         }
@@ -270,10 +270,7 @@ void EAQtMouseHandler::ForwardClick(double MouseCursorX,double MouseCursorY)
     case mm_dataCursor:
         this->_timesPressed = 0;
         this->_vCursors[cl_movingCursor]->move(MouseCursorX);
-        this->_pUI->setLowLabelText(0,tr("Data cursor:")
-                                   + " nr=" + _pData->dispNR(_vCursors[cl_movingCursor]->getIndex())
-                                   + " E=" + _pData->dispE(this->_vCursors[cl_movingCursor]->getX())
-                                   + " I=" + _pData->dispI(this->_vCursors[cl_movingCursor]->getY()));
+        this->updateCursorLabel();
         this->_pUI->updateAll(false);
         break;
 
@@ -630,4 +627,12 @@ bool EAQtMouseHandler::wantsClicks()
 QVector<EAQtPlotCursor*>* EAQtMouseHandler::getCursors()
 {
     return &_vCursors;
+}
+
+void EAQtMouseHandler::updateCursorLabel()
+{
+    this->_pUI->setLowLabelText(0,tr("Data cursor:")
+                               + " nr=" + _pData->dispNR(_vCursors[cl_movingCursor]->getIndex())
+                               + " E=" + _pData->dispE(this->_vCursors[cl_movingCursor]->getX())
+                               + " i=" + _pData->dispI(this->_vCursors[cl_movingCursor]->getY()));
 }
