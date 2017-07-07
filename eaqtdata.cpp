@@ -110,7 +110,7 @@ void EAQtData::initParam()
     _PVParam[PARAM::impnr] = 5;
     _PVParam[PARAM::imptime] = 10;
     _PVParam[PARAM::inttime] = 200;
-    _PVParam[PARAM::nonaveragedsampling] = 0;
+    _PVParam[PARAM::nonaveragedsampling] = 1;
 
     // Akcesoria
     _PVParam[PARAM::sti] = 20;

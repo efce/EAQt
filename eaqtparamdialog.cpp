@@ -37,7 +37,7 @@ EAQtParamDialog::EAQtParamDialog(EAQtDataInterface *pd, bool isLsv)
     this->_metrics = new QFontMetrics(QApplication::font());
     this->_dialog = new QDialog();
     this->_dialog->setModal(true);
-    this->_dialog->setWindowTitle(QString("Parametry pomiaru ") + (isLsv?QString("LSV"):QString("PV")));
+    this->_dialog->setWindowTitle(tr("Parameters of ") + (isLsv?QString("LSV"):QString("PV")));
     this->_dialog->setLayout(this->generateLayout());
     this->_dialog->layout()->setSizeConstraint(QLayout::SetFixedSize);
     this->prepareDialog();
@@ -510,8 +510,8 @@ QGroupBox* EAQtParamDialog::createAdvanced()
     QGroupBox* gb = new QGroupBox();
     QGridLayout *gl = new QGridLayout();
     QVBoxLayout *meselay = new QVBoxLayout();
-    _advWidgets.nonaveraged = new QCheckBox(tr("Record nonaveraged\n current samples"));
-    _advWidgets.nonaveraged->setChecked( (getParam(PARAM::nonaveragedsampling)!=0) );
+    _advWidgets.nonaveraged = new QCheckBox(tr("Do not record nonaveraged\n current samples"));
+    _advWidgets.nonaveraged->setChecked( (getParam(PARAM::nonaveragedsampling)==0) );
     _advWidgets.useMesFile = new QGroupBox(tr("Measurement series"));
     _advWidgets.useMesFile->setCheckable(true);
     _advWidgets.isMultielectrode = new QGroupBox(tr("Multielectrode setup"));
@@ -746,7 +746,7 @@ void EAQtParamDialog::prepareDialog()
     } else {
         if ( !_pData->getIsMesSeries()
         && getParam(PARAM::multi) == 0
-        && getParam(PARAM::nonaveragedsampling) == 0 ) {
+        && getParam(PARAM::nonaveragedsampling) != 0 ) {
             this->grboxAdvancedSettings->setVisible(false);
         }
     }
@@ -1013,7 +1013,7 @@ void EAQtParamDialog::saveParams()
         } else {
             setParam(PARAM::multi, 0);
         }
-        setParam(PARAM::nonaveragedsampling, (int32_t)_advWidgets.nonaveraged->isChecked());
+        setParam(PARAM::nonaveragedsampling, (int32_t)(!_advWidgets.nonaveraged->isChecked()));
         if ( _advWidgets.useMesFile->isChecked() ) {
             QString fp = _advWidgets.mesFilePath->text();
             if ( !fp.isEmpty() ) {
