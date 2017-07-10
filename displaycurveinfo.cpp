@@ -77,7 +77,7 @@ QString DisplayCurveInfo::getHTMLInfo()
                                 .arg(width/2)
                                 .arg(_curve->Param(PARAM::Ek))
           + (isLSV?
-              tr("<tr><td colspan=2><b>Sweep rate:</b>&nbsp%1&nbsp;mV/s</td></tr>").arg(sweepRate)
+              tr("<tr><td colspan=2><b>Sweep rate:</b>&nbsp;%1&nbsp;mV/s</td></tr>").arg(sweepRate)
             : tr("<tr><td><b>Estep:</b>&nbsp;%1&nbsp;mV</td>").arg(_curve->Param(PARAM::Estep))
                    + ((_curve->Param(PARAM::method)==PARAM::method_dpv)||(_curve->Param(PARAM::method)==PARAM::method_sqw)?
                           tr("<td><b>dE:</b>&nbsp;%1&nbsp;mV</td></tr>").arg(_curve->Param(PARAM::dE))
