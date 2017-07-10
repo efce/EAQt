@@ -2065,12 +2065,13 @@ int EAQtData::safeAppend(QString pFileName, Curve* CurveToAppend)
         CurvInFileLen=*(int32_t*)(buffer+a); // length of curve with bytes representing the length
 
         int o=0;
+        QByteArray ba;
         while ((char)*(buffer+a+4+o) != '\0') // name of curve -- +4 bytes of its size
         {
-            CurveNames[i].append((char)*(buffer+a+4+o));
+            ba.append((char)*(buffer+a+4+o));
             o++;
         }
-        CurveNames[i] = QString::fromUtf8(CurveNames[i]);
+        CurveNames[i].fromUtf8(ba);
 
         if( CurveNames[i].compare(CurveToAppend->CName(),Qt::CaseSensitive) == 0 ) // does curve exists in file
             nComperator = nComperator + 1;  //if does increment its name
