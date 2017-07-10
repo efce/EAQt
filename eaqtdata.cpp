@@ -1689,6 +1689,7 @@ void EAQtData::MesUpdate(int32_t nNrOfMesCurve, int32_t nPointFromDevice, bool f
     int msecnow = _fromUpdate.elapsed();
     if ( (nPointFromDevice == 1 && nNrOfMesCurve == 0)
     || (!freezUI && MEASUREMENT::displayDelay < msecnow) ) {
+        _pUI->setLowLabelText(1,tr(" [FPS: %1]").arg( 1.0 / ((double)msecnow/1000.0) ));
         this->_pUI->MeasurementUpdate(nNrOfMesCurve, nPointFromDevice);
         _fromUpdate.restart();
     }
