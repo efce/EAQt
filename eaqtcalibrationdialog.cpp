@@ -228,7 +228,6 @@ void EAQtCalibrationDialog::exec()
 
 void EAQtCalibrationDialog::drawCalibration()
 {
-    //TODO: confidence intervals instead of standard deviation
     _cd->xValues.resize(_leConcentrations.size());
     int csize = _cd->xValues.size();
     for ( int i = 0; i<csize; ++i) {

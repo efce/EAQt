@@ -522,3 +522,19 @@ void EAQtSignalProcessing::setFitMethod(int method)
 {
     EAQtSignalProcessing::_selectedFitMethod = method;
 }
+
+double EAQtSignalProcessing::tinv0975(uint degreesOfFreedom)
+{
+    switch ( degreesOfFreedom ) {
+    case 0:
+        return 0.0;
+    case 1:
+        return 12.706;
+    case 2:
+        return 4.303;
+    case 3:
+        return 3.182;
+    default:
+        return (exp(2.378/(double)degreesOfFreedom) + 0.96);
+    }
+}

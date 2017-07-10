@@ -50,6 +50,7 @@ public:
     static QVector<QString> getFitNames();
     static int getFitMethod();
     static void setFitMethod(int);
+    static double tinv0975(uint x);
 
 
 private:
