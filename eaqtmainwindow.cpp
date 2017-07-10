@@ -585,6 +585,12 @@ QCPCurve* EAQtMainWindow::PlotAddQCPCurve()
 
 void EAQtMainWindow::PlotRescaleAxes()
 {
+    _plotMain->rescaleAxes();
+    _plotMain->replot();
+    return;
+    /*
+     * Manual rescaling:
+     *
     CurveCollection* cc = _pEAQtData->getCurves();
     if ( cc->count() > 0 ) {
         int32_t sizecc = cc->count();
@@ -621,6 +627,7 @@ void EAQtMainWindow::PlotRescaleAxes()
         _plotMain->replot();
         return;
     }
+    */
 }
 
 void EAQtMainWindow::PlotForceRescale(double x1, double x2, double y1, double y2)
