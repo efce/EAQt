@@ -45,8 +45,8 @@ int32_t CurveCollection::addNew(int32_t nrOfDataPoints)
 {
     int32_t index = _vCurves.size();
     _vCurves.push_back(new Curve(nrOfDataPoints));
-    _vCurves[index]->setPlot(_pUI->PlotAddGraph());
-    _vCurves[index]->getPlot()->setAdaptiveSampling(false);
+    _vCurves[index]->setPlot(_pUI->PlotAddQCPCurve());
+    //_vCurves[index]->getPlot()->setAdaptiveSampling(false);
     return index;
 }
 
@@ -65,7 +65,7 @@ void CurveCollection::remove(int32_t index)
     * Remove from Vector AND call destructor
     */
     if ( this->_vCurves.size() > index ) {
-        this->_pUI->PlotRemoveGraph(this->_vCurves[index]->getPlot());
+        this->_pUI->PlotRemoveQCPCurve(this->_vCurves[index]->getPlot());
         delete _vCurves[index];
         this->_vCurves.erase(this->_vCurves.begin()+index);
     } else {
@@ -120,7 +120,7 @@ void CurveCollection::clear()
         if ( _vCurves[i] == NULL ) {
             continue;
         }
-        this->_pUI->PlotRemoveGraph(this->_vCurves[i]->getPlot());
+        this->_pUI->PlotRemoveQCPCurve(this->_vCurves[i]->getPlot());
         delete this->_vCurves[i];
     }
     this->_vCurves.clear();

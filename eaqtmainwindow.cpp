@@ -176,9 +176,9 @@ void EAQtMainWindow::handleMouseReleased(QMouseEvent *me)
     }
 }
 
-bool EAQtMainWindow::PlotRemoveGraph(QCPGraph* graph)
+bool EAQtMainWindow::PlotRemoveQCPCurve(QCPCurve* graph)
 {
-    return this->_plotMain->removeGraph(graph);
+    return this->_plotMain->removePlottable(graph);
 }
 
 void EAQtMainWindow::updateAll(bool rescale)
@@ -252,7 +252,7 @@ void EAQtMainWindow::PlotRegenerate()
     this->_plotMain->blockSignals(true);
     Curve* curve;
     while ( (curve=this->_pEAQtData->getCurves()->get(i)) != NULL ) {
-        curve->getPlot()->setData(curve->getXVector(), curve->getYVector(),true);
+        curve->getPlot()->setData(curve->getXVector(), curve->getYVector());
         curve->getPlot()->setPen(QPen(COLOR::regular));
         curve->getPlot()->setLayer(_plotLayers.NonActive);
         curve->getPlot()->setSelection(QCPDataSelection());
@@ -341,10 +341,10 @@ void EAQtMainWindow::TableDrawSelection()
 void EAQtMainWindow::PlotSelectionChanged()
 {
     int selectedGraphID = -1;
-    QList<QCPGraph*> ql =  this->_plotMain->selectedGraphs();
+    QList<QCPAbstractPlottable*> ql =  this->_plotMain->selectedPlottables();
     Curve *curve;
 
-    foreach (QCPGraph* gg, ql) {
+    foreach (QCPAbstractPlottable* gg, ql) {
         int i = 0;
         while ( (curve=this->_pEAQtData->getCurves()->get(i)) != NULL ) {
             if ( gg == curve->getPlot() ) {
@@ -574,9 +574,9 @@ void EAQtMainWindow::showOpenFile()
     delete ofd;
 }
 
-QCPGraph* EAQtMainWindow::PlotAddGraph()
+QCPCurve* EAQtMainWindow::PlotAddQCPCurve()
 {
-    QCPGraph* qg = this->_plotMain->addGraph();
+    QCPCurve* qg = new QCPCurve(_plotMain->xAxis, _plotMain->yAxis);
     qg->setSelectable(QCP::stWhole);
     qg->setSelectionDecorator(NULL);
     qg->setPen(QPen(COLOR::regular));
@@ -726,7 +726,6 @@ void EAQtMainWindow::MeasurementUpdate(int32_t curveNr, int32_t pointNr)
             curve->getPlot()->setData(
                         curve->getPotentialVector()->mid(0,curve->getNrOfDataPoints())
                         ,curve->getCurrentVector()->mid(0,curve->getNrOfDataPoints())
-                        ,true
                       );
             ++i;
         }
@@ -737,7 +736,6 @@ void EAQtMainWindow::MeasurementUpdate(int32_t curveNr, int32_t pointNr)
             curve->getPlot()->setData(
                         curve->getTimeVector()->mid(0,curve->getNrOfDataPoints())
                         ,curve->getCurrentVector()->mid(0,curve->getNrOfDataPoints())
-                        ,true
                       );
             ++i;
         }
@@ -749,7 +747,6 @@ void EAQtMainWindow::MeasurementUpdate(int32_t curveNr, int32_t pointNr)
                 curve->getPlot()->setData(
                             curve->getProbingDataPointNumbers()->mid(0,curve->getNumberOfProbingPoints())
                             ,curve->getProbingData()->mid(0,curve->getNumberOfProbingPoints())
-                            ,true
                           );
             }
             ++i;
@@ -1223,7 +1220,7 @@ EAQtPlotCursor* EAQtMainWindow::PlotAddCursor()
 {
     QCPItemStraightLine *sl = new QCPItemStraightLine(this->_plotMain);
     sl->setLayer(_plotLayers.Markers);
-    QCPGraph *gf = PlotAddGraph();
+    QCPCurve *gf = PlotAddQCPCurve();
     gf->setLayer(_plotLayers.Markers);
     return new EAQtPlotCursor(sl,gf);
 }

@@ -79,8 +79,8 @@ public:
     QVector<double> getYVector();
     void setYValue(int32_t, double);
 
-    QCPGraph* getPlot();
-    void setPlot(QCPGraph *_plot);
+    QCPCurve* getPlot();
+    void setPlot(QCPCurve *_plot);
 	bool hasPlot();
     void changeToMesPlot(int32_t electroNum = 0);
 	void changeToRegularPlot();
@@ -103,7 +103,7 @@ private:
     QString _curveName;		// Curve name in file
     int32_t _mesParam[PARAM::PARAMNUM];		// Parameters of the measurement
     QString _comment;		// Comments of the curve (usually sample informations)
-    QCPGraph* _plot;				// pointer to the graph structure in the EAQtMainWindow::_plotMain
+    QCPCurve* _plot;				// pointer to the graph structure in the EAQtMainWindow::_plotMain
     bool _hasPlot;
     int _lastDisplayed;
     bool _wasModified;

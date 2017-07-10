@@ -192,7 +192,7 @@ void EAQtAverageDialog::average()
             for ( int i =toAvg.size()-1; i>=0; --i) {
                 cc->remove(toAvg[i]);
             }
-            avgCurve->setPlot(_pUI->PlotAddGraph());
+            avgCurve->setPlot(_pUI->PlotAddQCPCurve());
             avgCurve->changeToRegularPlot();
             cc->append(avgCurve);
         } else {

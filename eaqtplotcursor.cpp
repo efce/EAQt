@@ -17,7 +17,7 @@
   *******************************************************************************************************************/
 #include "eaqtplotcursor.h"
 
-EAQtPlotCursor::EAQtPlotCursor(QCPItemStraightLine* sl, QCPGraph* gr)
+EAQtPlotCursor::EAQtPlotCursor(QCPItemStraightLine* sl, QCPCurve* gr)
 {
     this->_line = sl;
     sl->setSelectable(false);
@@ -25,7 +25,7 @@ EAQtPlotCursor::EAQtPlotCursor(QCPItemStraightLine* sl, QCPGraph* gr)
     this->_point = gr;
     gr->setSelectable(QCP::stNone);
     gr->setVisible(false);
-    gr->setLineStyle(QCPGraph::lsNone);
+    //gr->setLineStyle(QCPGraph::lsNone);
     gr->setScatterStyle(QCPScatterStyle::ssStar);
     QColor col = QColor(0,0,0);
     QPen qp = this->_line->pen();
@@ -118,7 +118,7 @@ int32_t EAQtPlotCursor::getIndex()
     return this->_posIndex;
 }
 
-void EAQtPlotCursor::setSnapTo(QCPGraph *g)
+void EAQtPlotCursor::setSnapTo(QCPCurve *g)
 {
     this->_snappedTo = g;
 }

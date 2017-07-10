@@ -46,8 +46,8 @@ public:
     void InitialUpdate(EAQtData& d);
      void updateAll(bool rescale = true);
      EAQtUIInterface* getUIInterface();
-     QCPGraph* PlotAddGraph();
-     bool PlotRemoveGraph(QCPGraph* graph);
+     QCPCurve* PlotAddQCPCurve();
+     bool PlotRemoveQCPCurve(QCPCurve* graph);
      EAQtPlotCursor *PlotAddCursor();
      double PlotGetXMiddle();
      void PlotReplot();

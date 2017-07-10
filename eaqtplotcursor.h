@@ -23,22 +23,22 @@
 class EAQtPlotCursor
 {
 public:
-    EAQtPlotCursor(QCPItemStraightLine*, QCPGraph*);
+    EAQtPlotCursor(QCPItemStraightLine*, QCPCurve*);
     void setVisible(bool);
     bool getVisible();
     void setColor(QColor);
     QColor getColor();
     void setMarker(QCPScatterStyle);
     void move(double x, double y = 0);
-    void setSnapTo(QCPGraph*);
-    QCPGraph* getSnappedTo();
+    void setSnapTo(QCPCurve*);
+    QCPCurve* getSnappedTo();
     double getX();
     double getY();
     int32_t getIndex();
 private:
     QCPItemStraightLine* _line;
-    QCPGraph* _point;
-    QCPGraph* _snappedTo;
+    QCPCurve* _point;
+    QCPCurve* _snappedTo;
     double _xpos;
     double _ypos;
     int32_t _posIndex;

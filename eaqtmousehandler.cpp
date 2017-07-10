@@ -126,7 +126,7 @@ void EAQtMouseHandler::SetCursorsOnActPlot()
 {
     if ( this->_pData->Act() != SELECT::all
     && this->_pData->Act() != SELECT::none ) {
-        QCPGraph* gr = this->_pData->getCurves()->get(this->_pData->Act())->getPlot();
+        QCPCurve* gr = this->_pData->getCurves()->get(this->_pData->Act())->getPlot();
         if ( gr->visible() ) {
             for (int i=0;i<cl_LAST; ++i) {
                 this->_vCursors[i]->setSnapTo(gr);
@@ -137,7 +137,7 @@ void EAQtMouseHandler::SetCursorsOnActPlot()
     }
 }
 
-void EAQtMouseHandler::toggleMovingCursor(QCPGraph* gr) {
+void EAQtMouseHandler::toggleMovingCursor(QCPCurve* gr) {
     if ( this->_vCursors[cl_movingCursor]->getVisible() ) {
         this->_vCursors[cl_movingCursor]->setVisible(false);
     } else {

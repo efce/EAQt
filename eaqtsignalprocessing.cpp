@@ -30,7 +30,7 @@ double EAQtSignalProcessing::_TINY = 1.0e-20;
 double EAQtSignalProcessing::_PI = 2*asin(1.0);
 int EAQtSignalProcessing::_selectedFitMethod = EAQtSignalProcessing::poly3;
 
-EAQtSignalProcessing::EAQtSignalProcessing(CurveCollection *cc, QCPGraph *graph) : QObject()
+EAQtSignalProcessing::EAQtSignalProcessing(CurveCollection *cc, QCPCurve *graph) : QObject()
 {
     _curves = cc;
     graph->setVisible(false);

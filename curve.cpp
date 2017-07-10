@@ -160,12 +160,12 @@ void Curve::Result(int32_t nResultNr, double dResult)
 	this->_curveData->setCurrent(nResultNr, dResult);
 }
 
-QCPGraph* Curve::getPlot()
+QCPCurve* Curve::getPlot()
 {
 	return this->_plot;
 }
 
-void Curve::setPlot(QCPGraph* plot)
+void Curve::setPlot(QCPCurve* plot)
 {
 	this->_plot = plot;
 	this->_hasPlot = true;

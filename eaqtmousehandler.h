@@ -83,7 +83,7 @@ private:
     bool GetCursorVisible(cursorsList);
     void SetCursorsOnActPlot();
     void callUserFunction();
-    void toggleMovingCursor(QCPGraph* gr);
+    void toggleMovingCursor(QCPCurve* gr);
     bool userCanUseCurveList();
     void updateCursorLabel();
     double dClickCoordinates[2];

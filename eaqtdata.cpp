@@ -71,7 +71,7 @@ void EAQtData::initialUpdate(EAQtUIInterface *wp)
     _mesCurves = new CurveCollection(wp);
     _fileIndex = new MDirCollection();
     _network = new EAQtNetwork(this);
-    _processing = new EAQtSignalProcessing(_curves, wp->PlotAddGraph());
+    _processing = new EAQtSignalProcessing(_curves, wp->PlotAddQCPCurve());
     _calibration = new CalibrationData();
 }
 
@@ -1599,7 +1599,7 @@ void EAQtData::MesUpdate(int32_t nNrOfMesCurve, int32_t nPointFromDevice, bool f
         int ic = 0;
         while ( getMesCurves()->get(ic) != NULL ) {
             if ( !getMesCurves()->get(ic)->hasPlot() ) {
-                getMesCurves()->get(ic)->setPlot(this->_pUI->PlotAddGraph());
+                getMesCurves()->get(ic)->setPlot(this->_pUI->PlotAddQCPCurve());
                 getMesCurves()->get(ic)->changeToMesPlot();
             }
             ic++;
