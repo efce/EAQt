@@ -566,7 +566,7 @@ double EAQtSignalProcessing::calcStdDev(QVector<double> yvals)
     int n = yvals.size();
     double sum = std::accumulate(yvals.begin(), yvals.end(), 0.0);
     double mean = sum / n;
-    double wrk;
+    double wrk = 0;
     for ( int i = 0; i<n; ++i ) {
         wrk += pow((mean - yvals[i]),2);
     }
