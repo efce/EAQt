@@ -147,6 +147,7 @@ private:
     QAction *_actMoveUpDown;
     QAction *_actSmooth;
     QAction *_actAdvSmooth;
+    QAction *_actStats;
     QAction *_actRecalculateCurve; // Change tp and tw based on nonaveraged measurement
 
     QAction *_actCalibrationData;
@@ -190,6 +191,7 @@ private slots:
     void startMoveUpDown();
     void startSmooth();
     void showAdvancedSmooth();
+    void startCurvesStats();
     void showRecalculateCurve();
     void startCalibration();
     void loadCalibration();

@@ -1025,6 +1025,10 @@ void EAQtMainWindow::createActionsTopMenu()
     this->_actAdvSmooth->setStatusTip(tr("Advanced smoothing dialog"));
     connect(_actAdvSmooth, SIGNAL(triggered(bool)),this,SLOT(showAdvancedSmooth()));
 
+    this->_actStats = new QAction(tr("Curves statistics"), this);
+    this->_actStats->setStatusTip(tr("Show standard deviation and other parameters of selcted range"));
+    connect(_actStats, SIGNAL(triggered(bool)),this,SLOT(startCurvesStats()));
+
     this->_actRecalculateCurve = new QAction(tr("Recalculate curve"), this);
     this->_actRecalculateCurve->setStatusTip(tr("Reculculate curve's current values based on non-averaged measurement"));
     connect(_actRecalculateCurve, SIGNAL(triggered(bool)),this,SLOT(showRecalculateCurve()));
@@ -1089,6 +1093,7 @@ void EAQtMainWindow::createMenusTopMenu()
     _menuAnalysis->addAction(this->_actMoveUpDown);
     //_menuAnalysis->addAction(this->_actSmooth);
     _menuAnalysis->addAction(this->_actAdvSmooth);
+    _menuAnalysis->addAction(this->_actStats);
     _menuAnalysis->addAction(this->_actRecalculateCurve);
 
     _menuCalibration = this->menuBar()->addMenu(tr("Calibration"));
@@ -1487,4 +1492,10 @@ void EAQtMainWindow::showBackgroundCorrectionSettings()
     EAQtBackgroundCorrectionDialog *bkg = new EAQtBackgroundCorrectionDialog();
     bkg->exec();
     delete bkg;
+}
+
+void EAQtMainWindow::startCurvesStats()
+{
+    _mouseHandler->ChangeMouseMode(EAQtMouseHandler::mm_place2markers,
+                                   EAQtMouseHandler::uf_statistic_data);
 }

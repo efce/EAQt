@@ -78,6 +78,28 @@ void EAQtSignalProcessing::calibrationData(QVector<std::array<int,2>>& coords)
     delete cd;
 }
 
+void EAQtSignalProcessing::curvesStats(QVector<std::array<int,2>>& coords)
+{
+    int n = _curves->count();
+    QVector<double> vec;
+    QVector<double> minmax(n);
+    for ( int i = 0; i < n; ++i ) {
+        vec.append(_curves->get(i)->getXVector().mid(coords[i][0], coords[i][1]));
+        minmax[i] = relativeHeight(_curves->get(i), coords[i][0], coords[i][1]);
+    }
+    double stdDev = calcStdDev(vec);
+    double peakStdDev = calcStdDev(minmax);
+    double peakMean = std::accumulate(minmax.begin(), minmax.end(),0.0);
+    peakMean /= n;
+    QString text;
+    text += tr("Peak height: %1 ± %2 µA <br>").arg(peakMean,0,'f',4).arg(peakStdDev,0,'f',4);
+    text += tr("Baseline Standard Deviation: %1 µA <br>").arg(stdDev,0,'f',4);
+    QMessageBox mb;
+    mb.setWindowTitle(tr("Stats"));
+    mb.setText(text);
+    mb.exec();
+}
+
 double EAQtSignalProcessing::relativeHeight(Curve *c, int32_t start, int32_t end)
 {
         QVector<double> values = c->getYVector();
@@ -537,4 +559,16 @@ double EAQtSignalProcessing::tinv0975(uint degreesOfFreedom)
     default:
         return (exp(2.378/(double)degreesOfFreedom) + 0.96);
     }
+}
+
+double EAQtSignalProcessing::calcStdDev(QVector<double> yvals)
+{
+    int n = yvals.size();
+    double sum = std::accumulate(yvals.begin(), yvals.end(), 0.0);
+    double mean = sum / n;
+    double wrk;
+    for ( int i = 0; i<n; ++i ) {
+        wrk += pow((mean - yvals[i]),2);
+    }
+    return sqrt(wrk/(n-1));
 }

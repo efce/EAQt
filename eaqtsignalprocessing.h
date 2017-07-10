@@ -30,6 +30,7 @@ public:
     void subtractBackground();
     void hideBackground();
     void calibrationData(QVector<std::array<int,2>>&);
+    void curvesStats(QVector<std::array<int,2>>&);
     void shiftCurve(double dY);
     static void kissFFT(double samplingFrequency, const QVector<double>& values, QVector<double>& frequency, QVector<double>& freqReal, QVector<double>& freqImg);
     static void kissIFFT(double samplingFreq, const QVector<double>& freqImg, const QVector<double>& freqReal, QVector<double>& values);
@@ -51,6 +52,7 @@ public:
     static int getFitMethod();
     static void setFitMethod(int);
     static double tinv0975(uint x);
+    static double calcStdDev(QVector<double>);
 
 
 private:
