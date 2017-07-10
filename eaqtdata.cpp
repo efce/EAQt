@@ -2070,6 +2070,7 @@ int EAQtData::safeAppend(QString pFileName, Curve* CurveToAppend)
             CurveNames[i].append((char)*(buffer+a+4+o));
             o++;
         }
+        CurveNames[i] = QString::fromUtf8(CurveNames[i]);
 
         if( CurveNames[i].compare(CurveToAppend->CName(),Qt::CaseSensitive) == 0 ) // does curve exists in file
             nComperator = nComperator + 1;  //if does increment its name
