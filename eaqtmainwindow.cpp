@@ -498,7 +498,7 @@ QGridLayout* EAQtMainWindow::createLayout()
     this->_plotMain->addLayer("Markers");
     _plotLayers.Markers = _plotMain->layer("Markers");
     this->_plotMain->addLayer("Measurement");
-    _plotMain->setNotAntialiasedElements(QCP::aeAll);
+    //_plotMain->setNotAntialiasedElements(QCP::aeAll); //There should be some performance gains, but they are too little ...
     _plotLayers.Measurement = _plotMain->layer("Measurement");
     _plotLayers.Measurement->setMode(QCPLayer::lmBuffered);
     _plotLayers.Markers->setMode(QCPLayer::lmBuffered);
