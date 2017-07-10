@@ -630,42 +630,6 @@ void EAQtMainWindow::PlotRescaleAxes()
     */
 }
 
-void EAQtMainWindow::PlotForceRescale(double x1, double x2, double y1, double y2)
-{
-    if ( x1 > x2 ) {
-        _plotMain->xAxis->setRangeLower(x2);
-        _plotMain->xAxis->setRangeUpper(x1);
-    } else {
-        _plotMain->xAxis->setRangeLower(x1);
-        _plotMain->xAxis->setRangeUpper(x2);
-    }
-    if ( y1 > y2 ) {
-        _plotMain->yAxis->setRangeLower(y2);
-        _plotMain->yAxis->setRangeUpper(y1);
-    } else {
-        _plotMain->yAxis->setRangeLower(y1);
-        _plotMain->yAxis->setRangeUpper(y2);
-    }
-    _plotMain->replot();
-}
-
-void EAQtMainWindow::PlotMesRescaleAxes(double cx, double cy)
-{
-    if ( _plotMain->xAxis->range().lower > cx) {
-        _plotMain->xAxis->setRangeLower(cx);
-    }
-    if ( _plotMain->xAxis->range().upper < cx) {
-        _plotMain->xAxis->setRangeUpper(cx);
-    }
-    if ( _plotMain->yAxis->range().lower > cy ) {
-        _plotMain->yAxis->setRangeLower(cy);
-    }
-    if ( _plotMain->yAxis->range().upper < cy ) {
-        _plotMain->yAxis->setRangeUpper(cy);
-    }
-    _plotMain->replot();
-}
-
 void EAQtMainWindow::showParamDialogPV()
 {
     EAQtParamDialog *pd = new EAQtParamDialog((EAQtDataInterface*)this->_pEAQtData,false);
@@ -770,81 +734,7 @@ void EAQtMainWindow::MeasurementUpdate(int32_t curveNr, int32_t pointNr)
                                   .arg(pointNr)
                                   .arg(_pEAQtData->dispE(curve->getPotentialVector()->at(pointNr)))
                                   .arg(_pEAQtData->dispI(curve->getCurrentVector()->at(pointNr))));
-    if ( _pEAQtData->_ptnrFromEss == 0 ) {
-        if ( pointNr == 1
-        && curveNr == 0
-        && _pEAQtData->getCurves()->count() == 0 ) {
-            if ( _pEAQtData->_ptnrFromEss == 0 ) {
-                PlotForceRescale(curve->getXVector().at(0)
-                                 ,curve->getXVector().at(1)
-                                 ,curve->getYVector().at(0)
-                                 ,curve->getYVector().at(1) );
-            }
-        } else {
-            switch (this->_pEAQtData->getXAxis()) {
-            case XAXIS::potential:
-                PlotMesRescaleAxes(
-                    curve->getPotentialVector()->at(pointNr)
-                    ,curve->getCurrentVector()->at(pointNr)
-                );
-                break;
-
-            case XAXIS::time:
-                PlotMesRescaleAxes(
-                    curve->getTimeVector()->at(pointNr)
-                    ,curve->getCurrentVector()->at(pointNr)
-                );
-                break;
-
-            case XAXIS::nonaveraged:
-                PlotMesRescaleAxes(
-                    curve->getProbingDataPointNumbers()->at(curve->getNumberOfProbingPoints()-1)
-                    ,curve->getProbingData()->at(curve->getNumberOfProbingPoints()-1)
-                );
-                break;
-
-            default:
-                throw 1;
-            }
-        }
-    } else {
-        if ( pointNr == _pEAQtData->_ptnrFromEss+1
-        && curveNr == 0
-        && _pEAQtData->getCurves()->count() == 0 ) {
-            if ( _pEAQtData->_ptnrFromEss == 0 ) {
-                PlotForceRescale(curve->getXVector().at(_pEAQtData->_ptnrFromEss)
-                                 ,curve->getXVector().at(_pEAQtData->_ptnrFromEss+1)
-                                 ,curve->getYVector().at(_pEAQtData->_ptnrFromEss)
-                                 ,curve->getYVector().at(_pEAQtData->_ptnrFromEss+1) );
-            }
-        } else {
-            switch (this->_pEAQtData->getXAxis()) {
-            case XAXIS::potential:
-                PlotMesRescaleAxes(
-                    curve->getPotentialVector()->at(pointNr)
-                    ,curve->getCurrentVector()->at(pointNr)
-                );
-                break;
-
-            case XAXIS::time:
-                PlotMesRescaleAxes(
-                    curve->getTimeVector()->at(pointNr)
-                    ,curve->getCurrentVector()->at(pointNr)
-                );
-                break;
-
-            case XAXIS::nonaveraged:
-                PlotMesRescaleAxes(
-                    curve->getProbingDataPointNumbers()->at(curve->getNumberOfProbingPoints()-1)
-                    ,curve->getProbingData()->at(curve->getNumberOfProbingPoints()-1)
-                );
-                break;
-
-            default:
-                throw 1;
-            }
-        }
-    }
+    PlotRescaleAxes();
 }
 
 void EAQtMainWindow::showMessageBox(QString text, QString title)
