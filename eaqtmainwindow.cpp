@@ -1496,6 +1496,8 @@ void EAQtMainWindow::showBackgroundCorrectionSettings()
 
 void EAQtMainWindow::startCurvesStats()
 {
-    _mouseHandler->ChangeMouseMode(EAQtMouseHandler::mm_place2markers,
-                                   EAQtMouseHandler::uf_statistic_data);
+    if ( _pEAQtData->getCurves()->count() > 0 ) {
+        _mouseHandler->ChangeMouseMode(EAQtMouseHandler::mm_place2markers,
+                                    EAQtMouseHandler::uf_statistic_data);
+    }
 }
