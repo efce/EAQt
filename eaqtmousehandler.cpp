@@ -232,6 +232,7 @@ void EAQtMouseHandler::ChangeMouseMode(mouseMode mm, userFunctions uf)
         qp = this->_structRPL.baseLine->pen();
         qp.setColor(QColor(0, 200, 50));
         this->_structRPL.baseLine->setPen(qp);
+        this->_pUI->PlotGetLayers()->Markers->replot();
         break;
 
     case mm_measurement:
@@ -359,6 +360,7 @@ void EAQtMouseHandler::ForwardClick(double MouseCursorX,double MouseCursorY)
             this->_structRPL.baseLine->setVisible(false);
             this->setDefaults();
         }
+        this->_pUI->PlotGetLayers()->Markers->replot();
         break;
     }
 }
@@ -437,6 +439,7 @@ void EAQtMouseHandler::BackClick()
             this->_structRPL.baseLine->setVisible(true);
             this->_vCursors[cl_relativeParameterCursor]->setVisible(false);
         }
+        this->_pUI->PlotGetLayers()->Markers->replot();
         break;
 
     default:
