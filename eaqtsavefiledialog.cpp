@@ -52,8 +52,8 @@ EAQtSaveFiledialog::SaveDetails EAQtSaveFiledialog::getSaveDetails(bool allowFor
     _fd->setModal(true);
     _fd->setOption( QFileDialog::DontUseNativeDialog, true );
     _fd->setNameFilter(FILES::saveFile);
-    if ( _filename.isEmpty()
-    || _filename.right(FILES::saveCompressExt.size()).compare(FILES::saveCompressExt,Qt::CaseInsensitive) == 0 ) {
+    if ( !_filename.isEmpty()
+    && _filename.right(FILES::saveCompressExt.size()).compare(FILES::saveCompressExt,Qt::CaseInsensitive) == 0 ) {
         _fd->selectNameFilter(FILES::saveDef);
         _fd->setDefaultSuffix("voltc");
     } else {
