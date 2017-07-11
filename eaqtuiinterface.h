@@ -27,7 +27,7 @@ class EAQtUIInterface
 public:
     virtual void updateAll(bool rescale = true) = 0;
     virtual QCPCurve* PlotAddQCPCurve() = 0;
-    virtual void PlotRescaleAxes() = 0;
+    virtual void PlotRescaleAxes(bool manual = false) = 0;
     virtual bool PlotRemoveQCPCurve(QCPCurve* graph) = 0;
     virtual EAQtPlotCursor *PlotAddCursor() = 0;
     virtual double PlotGetXMiddle() = 0;

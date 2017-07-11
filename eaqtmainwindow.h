@@ -73,7 +73,7 @@ public:
      void setPathInUse(QString path);
      QString getPathInUse();
 public slots:
-     void PlotRescaleAxes();
+     void PlotRescaleAxes(bool manual = false);
 
 private slots:
     void handleMouseMoved(QMouseEvent*);

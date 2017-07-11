@@ -474,7 +474,7 @@ QGridLayout* EAQtMainWindow::createLayout()
     butRescale->setIcon(irescale);
     butRescale->setFixedWidth(30);
     butRescale->setFixedHeight(30);
-    connect(butRescale,SIGNAL(clicked(bool)),this,SLOT(PlotRescaleAxes()));
+    connect(butRescale,SIGNAL(clicked(bool)),this,SLOT(PlotRescaleAxes(bool)));
 
     mainButtonLayout->addWidget(butDeleteActive);
     mainButtonLayout->addWidget(butDeleteAll);
@@ -583,51 +583,53 @@ QCPCurve* EAQtMainWindow::PlotAddQCPCurve()
     return qg;
 }
 
-void EAQtMainWindow::PlotRescaleAxes()
+void EAQtMainWindow::PlotRescaleAxes(bool manual)
 {
-    _plotMain->rescaleAxes();
-    _plotMain->replot();
-    return;
-    /*
-     * Manual rescaling:
-     *
-    CurveCollection* cc = _pEAQtData->getCurves();
-    if ( cc->count() > 0 ) {
-        int32_t sizecc = cc->count();
-        double minx = *std::min_element(cc->get(0)->getXVector().constBegin(),cc->get(0)->getXVector().constEnd());
-        double maxx = *std::max_element(cc->get(0)->getXVector().constBegin(),cc->get(0)->getXVector().constEnd());
-        double miny = *std::min_element(cc->get(0)->getYVector().constBegin(),cc->get(0)->getYVector().constEnd());
-        double maxy = *std::max_element(cc->get(0)->getYVector().constBegin(),cc->get(0)->getYVector().constEnd());
-        for ( int32_t i = 0; i<sizecc; ++i ) {
-            static double lmaxx, lminx, lmaxy, lminy;
-            lminx = *std::min_element(cc->get(i)->getXVector().constBegin(),cc->get(i)->getXVector().constEnd());
-            lmaxx = *std::max_element(cc->get(i)->getXVector().constBegin(),cc->get(i)->getXVector().constEnd());
-            lminy = *std::min_element(cc->get(i)->getYVector().constBegin(),cc->get(i)->getYVector().constEnd());
-            lmaxy = *std::max_element(cc->get(i)->getYVector().constBegin(),cc->get(i)->getYVector().constEnd());
-            if ( lminx < minx ) {
-                minx = lminx;
-            }
-            if ( lmaxx > maxx ) {
-                maxx = lmaxx;
-            }
-            if ( lminy < miny ) {
-                miny = lminy;
-            }
-            if ( lmaxy > maxy ) {
-                maxy = lmaxy;
-            }
-        }
-        _plotMain->xAxis->setRangeLower(minx);
-        _plotMain->xAxis->setRangeUpper(maxx);
-        _plotMain->yAxis->setRangeLower(miny);
-        _plotMain->yAxis->setRangeUpper(maxy);
+    if ( manual == false ) {
+        _plotMain->rescaleAxes(true);
         _plotMain->replot();
     } else {
-        _plotMain->rescaleAxes();
-        _plotMain->replot();
-        return;
+         /*
+         * Manual rescaling:
+         */
+        CurveCollection* cc = _pEAQtData->getCurves();
+        if ( cc->count() > 0 ) {
+            int32_t sizecc = cc->count();
+            double minx = *std::min_element(cc->get(0)->getXVector().constBegin(),cc->get(0)->getXVector().constEnd());
+            double maxx = *std::max_element(cc->get(0)->getXVector().constBegin(),cc->get(0)->getXVector().constEnd());
+            double miny = *std::min_element(cc->get(0)->getYVector().constBegin(),cc->get(0)->getYVector().constEnd());
+            double maxy = *std::max_element(cc->get(0)->getYVector().constBegin(),cc->get(0)->getYVector().constEnd());
+            for ( int32_t i = 0; i<sizecc; ++i ) {
+                static double lmaxx, lminx, lmaxy, lminy;
+                lminx = *std::min_element(cc->get(i)->getXVector().constBegin(),cc->get(i)->getXVector().constEnd());
+                lmaxx = *std::max_element(cc->get(i)->getXVector().constBegin(),cc->get(i)->getXVector().constEnd());
+                lminy = *std::min_element(cc->get(i)->getYVector().constBegin(),cc->get(i)->getYVector().constEnd());
+                lmaxy = *std::max_element(cc->get(i)->getYVector().constBegin(),cc->get(i)->getYVector().constEnd());
+                if ( lminx < minx ) {
+                    minx = lminx;
+                }
+                if ( lmaxx > maxx ) {
+                    maxx = lmaxx;
+                }
+                if ( lminy < miny ) {
+                    miny = lminy;
+                }
+                if ( lmaxy > maxy ) {
+                    maxy = lmaxy;
+                }
+            }
+            _plotMain->xAxis->setRangeLower(minx);
+            _plotMain->xAxis->setRangeUpper(maxx);
+            _plotMain->yAxis->setRangeLower(miny);
+            _plotMain->yAxis->setRangeUpper(maxy);
+            _plotMain->replot();
+        } else {
+            /* No curves loaded -- try automatic
+             */
+            _plotMain->rescaleAxes(true);
+            _plotMain->replot();
+        }
     }
-    */
 }
 
 void EAQtMainWindow::showParamDialogPV()
