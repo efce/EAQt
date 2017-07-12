@@ -33,12 +33,12 @@ void MDir::CName(QString buf)
 	_curveName = buf;
 }
 
-uint64_t MDir::Off(void)
+TYPES::FileSize MDir::Off(void)
 {
 	return _curveOffset;
 }
 
-void MDir::Off(uint64_t off)
+void MDir::Off(TYPES::FileSize off)
 {
 	_curveOffset = off;
 }

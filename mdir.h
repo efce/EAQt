@@ -19,6 +19,7 @@
 #define _C_M_DIR_H_ 1
 
 #include <QString>
+#include "const.h"
 
 class MDir	
 {
@@ -28,12 +29,12 @@ public:
     QString CName(void);
     void CName(QString);
 
-    uint64_t Off(void);
-    void Off(uint64_t);
+    TYPES::FileSize Off(void);
+    void Off(TYPES::FileSize);
 
 private:
     QString _curveName;                 // nazwa krzywej
-    uint64_t _curveOffset;				// offset do pocztku pliku
+    TYPES::FileSize _curveOffset;				// offset do pocztku pliku
 };
 
 #endif

@@ -382,28 +382,27 @@ void EAQtData::Act(int toAct)
 // --------------------------------------------------------
 bool EAQtData::MDirReadPro(QFile &ff)
 {
-    int32_t iAux, iFilePos;
+    uint32_t uiAux;
+    TYPES::FileSize iFilePos = 0;
     char cAux[1024];
-    int32_t curvesInFile;
+    TYPES::VectorSize curvesInFile =0;
 
     ff.seek(0);
-    ff.read((char*)(&iAux), sizeof(int32_t)); // liczba krzywych w pliku
+    ff.read((char*)(&curvesInFile), sizeof(TYPES::VectorSize)); // liczba krzywych w pliku
 
-    curvesInFile = iAux;
-    iFilePos=4;
-
+    iFilePos+=sizeof(TYPES::VectorSize);
     _fileIndex->clear();
 
     if (curvesInFile == 0) {
         return false;
     }
 
-    for(int32_t i = 0;i < curvesInFile;++i) {
+    for(TYPES::VectorSize i = 0;i < curvesInFile;++i) {
         ff.seek(iFilePos);
-        int32_t index = _fileIndex->addNew();
+        TYPES::VectorSize index = _fileIndex->addNew();
         _fileIndex->get(index)->Off(iFilePos);         	// offset krzywej w pliku
-        ff.read((char*)(&iAux), sizeof(int32_t)); // długość krzywej
-        iFilePos += iAux;
+        ff.read((char*)(&uiAux), sizeof(TYPES::CurveSize)); // długość krzywej
+        iFilePos += uiAux;
         ff.read(cAux, 1); // nazwa krzywej
         int ii=0;
         while (cAux[ii] != '\0') {
