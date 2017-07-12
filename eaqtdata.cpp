@@ -539,7 +539,7 @@ int EAQtData::CurReadCurvePro(QFile &ff, QString pCName)
     if ( _measurementGo ) {
         return 0;
     }
-    int32_t j1;
+    TYPES::vectorindex_t j1;
     int32_t i;
     TYPES::curvefileindex_t cLen;
 
@@ -588,8 +588,9 @@ int EAQtData::CurReadCurvePro(QFile &ff, QString pCName)
 int EAQtData::CurReadCurveOld(QFile &ff, QString CName)
 {
     //TODO: na razie bez wsparcia potencjału startowego LSV ! //
-    int32_t j1, j2;
-    int32_t cntr, i;
+    TYPES::vectorindex_t j1, j2;
+    TYPES::vectorindex_t i;
+    int16_t cntr;
     int16_t fparam, ix;
     int startadr, work;
     char buf[256];
@@ -621,8 +622,8 @@ int EAQtData::CurReadCurveOld(QFile &ff, QString CName)
 
     ParamReadOld(ff);
 
-    startadr = sizeof(int16_t) + PARAM::VOL_CMAX*12 + (PARAM::VOL_PMAX-2)*sizeof(int); // nie zmieniać cmax i pmax (słownik vol)
-    for (int32_t ii=0; ii<i; ii++) {
+    startadr = sizeof(int16_t) + PARAM::VOL_CMAX*12 + (PARAM::VOL_PMAX-2)*sizeof(int32_t); // nie zmieniać cmax i pmax (słownik vol)
+    for (TYPES::vectorindex_t ii=0; ii<i; ii++) {
         startadr += _fileIndex->get(ii)->Off();
     }
     ff.seek(startadr);
@@ -630,10 +631,9 @@ int EAQtData::CurReadCurveOld(QFile &ff, QString CName)
     j1 = getCurves()->addNew(_mainParam[PARAM::ptnr]);
     getCurves()->get(j1)->getPlot()->setLayer(_pUI->PlotGetLayers()->NonActive);
 
-    for (int ii=0 ; ii<(PARAM::VOL_PMAX-2) ; ii++) { // nie zmieniać pmax (słownik vol)
+    for (int32_t ii=0 ; ii<(PARAM::VOL_PMAX-2) ; ii++) { // nie zmieniać pmax (słownik vol)
         getCurves()->get(j1)->Param(ii, _mainParam[ii]);
     }
-
 
     ff.read((char*)&cntr, sizeof(int16_t)*1);			// numer krzywej
     ff.read(buf, sizeof(char)*10);		// nazwa krzywej
@@ -642,7 +642,7 @@ int EAQtData::CurReadCurveOld(QFile &ff, QString CName)
     getCurves()->get(j1)->Comment(QString(buf));
     ff.read((char*)&fparam, sizeof(int16_t)*1);		// liczba ró¿nych parametrów
     if (fparam>0) {
-        for (i=0 ; i<(int32_t)fparam ; i++) {
+        for (i=0 ; i<fparam ; i++) {
             ff.read((char*)&ix, sizeof(int16_t)*1); // numer parametru
             ff.read((char*)&work,sizeof(int32_t)*1); // wartoœæ
             getCurves()->get(j1)->Param(ix, work);
@@ -655,7 +655,7 @@ int EAQtData::CurReadCurveOld(QFile &ff, QString CName)
     getCurves()->get(j1)->Param(PARAM::pro, 0);
 
     // wyniki
-    int32_t time = 0;
+    double time = 0;
     int timestep = 1;
     if ( getCurves()->get(j1)->Param(PARAM::method) != PARAM::method_lsv ) {
         timestep = 2*this->getCurves()->get(j1)->Param(PARAM::tp) + 2*this->getCurves()->get(j1)->Param(PARAM::tw);
@@ -664,7 +664,7 @@ int EAQtData::CurReadCurveOld(QFile &ff, QString CName)
     }
     double potential = this->getCurves()->get(j1)->Param(PARAM::Ep);
     double estep = ( this->getCurves()->get(j1)->Param(PARAM::Ek) - this->getCurves()->get(j1)->Param(PARAM::Ep) ) / this->getCurves()->get(j1)->Param(PARAM::ptnr);
-    for (int ii=0 ; ii<this->getCurves()->get(j1)->Param(PARAM::ptnr) ; ++ii) {
+    for (TYPES::vectorindex_t ii=0 ; ii<this->getCurves()->get(j1)->Param(PARAM::ptnr) ; ++ii) {
         ff.read((char*)&dwork, sizeof(double));
         this->getCurves()->get(j1)->addDataPoint(time, potential, dwork);
         potential +=estep;

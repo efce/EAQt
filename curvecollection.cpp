@@ -41,16 +41,16 @@ int32_t CurveCollection::append(Curve *curve)
     return index;
 }
 
-int32_t CurveCollection::addNew(int32_t nrOfDataPoints)
+TYPES::vectorindex_t CurveCollection::addNew(TYPES::vectorindex_t nrOfDataPoints)
 {
-    int32_t index = _vCurves.size();
+    TYPES::vectorindex_t index = _vCurves.size();
     _vCurves.push_back(new Curve(nrOfDataPoints));
     _vCurves[index]->setPlot(_pUI->PlotAddQCPCurve());
     //_vCurves[index]->getPlot()->setAdaptiveSampling(false);
     return index;
 }
 
-Curve* CurveCollection::get(int index)
+Curve* CurveCollection::get(TYPES::vectorindex_t index)
 {
     if ( index < _vCurves.size() && index >= 0 ) {
         return _vCurves[index];
@@ -59,7 +59,7 @@ Curve* CurveCollection::get(int index)
     }
 }
 
-void CurveCollection::remove(int32_t index)
+void CurveCollection::remove(TYPES::vectorindex_t index)
 {
     /*
     * Remove from Vector AND call destructor
@@ -78,7 +78,7 @@ void CurveCollection::remove(Curve* curve)
     /*
     * Remove from Vector AND call destructor
     */
-    for (int32_t index=0; index<_vCurves.size(); ++index ) {
+    for (TYPES::vectorindex_t index=0; index<_vCurves.size(); ++index ) {
         if ( _vCurves[index] == curve ) {
             this->remove(index);
             return;
@@ -87,7 +87,7 @@ void CurveCollection::remove(Curve* curve)
     throw std::invalid_argument( "Could not find curve" );
 }
 
-void CurveCollection::unset(int32_t index)
+void CurveCollection::unset(TYPES::vectorindex_t index)
 {
     /*
     * Remove from Vector WITHOUT calling destructor
@@ -105,7 +105,7 @@ void CurveCollection::unset(Curve* curve)
     /*
     * Remove from Vector WITHOUT calling destructor
     */
-    for (int32_t index=0; index<_vCurves.size(); ++index ) {
+    for (TYPES::vectorindex_t index=0; index<_vCurves.size(); ++index ) {
         if ( _vCurves[index] == curve ) {
             this->unset(index);
             return;
@@ -116,7 +116,7 @@ void CurveCollection::unset(Curve* curve)
 
 void CurveCollection::clear()
 {
-    for ( int32_t i=0; i<_vCurves.size(); ++i) {
+    for ( TYPES::vectorindex_t i=0; i<_vCurves.size(); ++i) {
         if ( _vCurves[i] == NULL ) {
             continue;
         }

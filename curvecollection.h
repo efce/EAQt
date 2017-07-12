@@ -31,15 +31,15 @@ class CurveCollection
 public:
     CurveCollection(EAQtUIInterface*);
     ~CurveCollection();
-    int32_t append(Curve*);
-    int32_t addNew(int32_t nrOfDataPoints);
-    void remove(int32_t);
+    TYPES::vectorindex_t append(Curve*);
+    TYPES::vectorindex_t addNew(TYPES::vectorindex_t nrOfDataPoints);
+    void remove(TYPES::vectorindex_t);
     void remove(Curve*);
-    void unset(int32_t);
+    void unset(TYPES::vectorindex_t);
     void unset(Curve*);
     Curve* get(int);
     void clear();
-    int32_t count();
+    TYPES::vectorindex_t count();
 private:
     QVector<Curve*> _vCurves {};
     EAQtUIInterface *_pUI;

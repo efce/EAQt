@@ -26,10 +26,10 @@ class MDirCollection
 public:
     MDirCollection();
     ~MDirCollection();
-    MDir* get(int32_t index);
+    MDir* get(TYPES::vectorindex_t index);
     void clear();
-    int32_t addNew();
-    int32_t count();
+    TYPES::vectorindex_t addNew();
+    TYPES::vectorindex_t count();
 private:
     std::vector<MDir*> _vMdirs {};
 };
