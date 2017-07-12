@@ -24,12 +24,12 @@
 #include <QApplication>
 
 namespace TYPES {
-    typedef int32_t VectorSize;
-    const VectorSize maxVectorSize = std::numeric_limits<VectorSize>::max()-1;
-    typedef uint32_t CurveSize;
-    const CurveSize maxCurveSize = std::numeric_limits<CurveSize>::max()-1;
-    typedef uint64_t FileSize;
-    const FileSize maxFileSize = 1024*1024*1024; //max file size is 1GB
+    typedef int32_t vectorindex_t;
+    const vectorindex_t maxVectorIndex = std::numeric_limits<vectorindex_t>::max()-1;
+    typedef uint32_t curvefileindex_t;
+    const curvefileindex_t maxCurveFileIndex = std::numeric_limits<curvefileindex_t>::max()-1;
+    typedef uint64_t filesize_t;
+    const filesize_t maxFileSize = 1024*1024*1024; //max file size is 1GB
 }
 
 namespace COLOR {

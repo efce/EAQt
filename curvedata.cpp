@@ -17,7 +17,7 @@
   *******************************************************************************************************************/
 #include "curvedata.h"
 
-CurveData::CurveData(TYPES::VectorSize dataSize)
+CurveData::CurveData(TYPES::vectorindex_t dataSize)
 {
     this->_vCurrent.resize(dataSize);
     this->_vPotential.resize(dataSize);
@@ -39,7 +39,7 @@ CurveData::~CurveData(void)
 	}
 }
 
-void CurveData::allocateProbingData(TYPES::VectorSize nLen, double dProbingRate)
+void CurveData::allocateProbingData(TYPES::vectorindex_t nLen, double dProbingRate)
 {
 	this->_probingRate = dProbingRate;
     this->_vProbingData.resize(nLen);
@@ -50,7 +50,7 @@ void CurveData::allocateProbingData(TYPES::VectorSize nLen, double dProbingRate)
     }
 }
 	
-void CurveData::addDataPoint(double time, double potential, double current, TYPES::VectorSize pointNumber)
+void CurveData::addDataPoint(double time, double potential, double current, TYPES::vectorindex_t pointNumber)
 {
 	if ( (pointNumber!= -1) && (pointNumber < this->_nrOfPoints) ) {
 		this->_vCurrent[pointNumber]   = current;
@@ -64,7 +64,7 @@ void CurveData::addDataPoint(double time, double potential, double current, TYPE
 	}
 }
 
-void CurveData::addDataPoint(double current, TYPES::VectorSize pointNumber)
+void CurveData::addDataPoint(double current, TYPES::vectorindex_t pointNumber)
 {
     if ( pointNumber >= this->getPotentialVector()->size() || pointNumber >= this->getTimeVector()->size() ) {
         throw 1;
@@ -99,7 +99,7 @@ void CurveData::setProbingData(QVector<double>& probingData)
     _nrOfPointsProbing = _vProbingData.size();
     _vProbingDataPointNo.clear();
     _vProbingDataPointNo.resize(_nrOfPointsProbing);
-    TYPES::VectorSize i = 0;
+    TYPES::vectorindex_t i = 0;
     for ( double d = 1; d<=_nrOfPointsProbing; ++d ) {
         this->_vProbingDataPointNo[i] = d;
         ++i;
@@ -126,7 +126,7 @@ void CurveData::setPotentialVector(QVector<double> vecPot)
 	this->_vPotential = vecPot;
 }
 
-double CurveData::getPotential(TYPES::VectorSize index)
+double CurveData::getPotential(TYPES::vectorindex_t index)
 {
 	return this->_vPotential[index];
 }
@@ -136,12 +136,12 @@ QVector<double>* CurveData::getCurrentVector()
     return &this->_vCurrent;
 }
 
-double CurveData::getCurrent(TYPES::VectorSize index)
+double CurveData::getCurrent(TYPES::vectorindex_t index)
 {
 	return this->_vCurrent[index];
 }
 
-void CurveData::setCurrent(TYPES::VectorSize index, double value)
+void CurveData::setCurrent(TYPES::vectorindex_t index, double value)
 {
 	this->_vCurrent[index] = value;
 }
@@ -157,57 +157,57 @@ void CurveData::setTimeVector(QVector<double> vecTime)
 }
 
 
-double CurveData::getTime(TYPES::VectorSize index)
+double CurveData::getTime(TYPES::vectorindex_t index)
 {
 	return this->_vTime[index];
 }
 
-void CurveData::setMesCurrent1Point(TYPES::VectorSize nr, int64_t value)
+void CurveData::setMesCurrent1Point(TYPES::vectorindex_t nr, int64_t value)
 {
 	this->mesResCurrent1[nr] = value;
 }
 
-void CurveData::addToMesCurrent1Point(TYPES::VectorSize nr, int64_t value)
+void CurveData::addToMesCurrent1Point(TYPES::vectorindex_t nr, int64_t value)
 {
     this->mesResCurrent1[nr] += value;
 }
 
-void CurveData::setMesCurrent2Point(TYPES::VectorSize nr, int64_t value)
+void CurveData::setMesCurrent2Point(TYPES::vectorindex_t nr, int64_t value)
 {
 	this->mesResCurrent2[nr] = value;
 }
 
-void CurveData::addToMesCurrent2Point(TYPES::VectorSize nr, int64_t value)
+void CurveData::addToMesCurrent2Point(TYPES::vectorindex_t nr, int64_t value)
 {
     this->mesResCurrent2[nr] += value;
 }
 
-void CurveData::setMesTimePoint(TYPES::VectorSize nr, int64_t value)
+void CurveData::setMesTimePoint(TYPES::vectorindex_t nr, int64_t value)
 {
 	this->mesResTime[nr] = value;
 }
 
-void CurveData::addToMesTimePoint(TYPES::VectorSize nr, int64_t value)
+void CurveData::addToMesTimePoint(TYPES::vectorindex_t nr, int64_t value)
 {
     this->mesResTime[nr] += value;
 }
 
-int64_t CurveData::getMesTimePoint(TYPES::VectorSize nr)
+int64_t CurveData::getMesTimePoint(TYPES::vectorindex_t nr)
 {
     return this->mesResTime[nr];
 }
 
-int64_t CurveData::getMesCurrent1Point(TYPES::VectorSize nr)
+int64_t CurveData::getMesCurrent1Point(TYPES::vectorindex_t nr)
 {
     return this->mesResCurrent1[nr];
 }
 
-int64_t CurveData::getMesCurrent2Point(TYPES::VectorSize nr)
+int64_t CurveData::getMesCurrent2Point(TYPES::vectorindex_t nr)
 {
     return this->mesResCurrent2[nr];
 }
 
-void CurveData::allocateMesArray(TYPES::VectorSize numberOfFields, bool allocateTwoCurrent)
+void CurveData::allocateMesArray(TYPES::vectorindex_t numberOfFields, bool allocateTwoCurrent)
 {
 	this->isMesAllocated = true;
 	this->allocatedTwoCurrent = allocateTwoCurrent;

@@ -28,41 +28,41 @@
 class CurveData
 {
 public:
-    CurveData(TYPES::VectorSize);
-    void addDataPoint(double, double, double, TYPES::VectorSize);
-    void addDataPoint(double current, TYPES::VectorSize pointNumber);
+    CurveData(TYPES::vectorindex_t);
+    void addDataPoint(double, double, double, TYPES::vectorindex_t);
+    void addDataPoint(double current, TYPES::vectorindex_t pointNumber);
 	int getNrOfPoints();
 
-    void allocateProbingData(TYPES::VectorSize nLen ,double dProbingRate);
+    void allocateProbingData(TYPES::vectorindex_t nLen ,double dProbingRate);
 	void addProbingDataPoint(float);
     void setProbingData(QVector<double>&);
     QVector<double>* getProbingData();
-    TYPES::VectorSize getNumberOfProbingPoints();
+    TYPES::vectorindex_t getNumberOfProbingPoints();
     QVector<double>* getProbingDataPointNumbers();
 
     QVector<double>* getPotentialVector();
-    double getPotential(TYPES::VectorSize index);
+    double getPotential(TYPES::vectorindex_t index);
     void setPotentialVector(QVector<double>);
 
     QVector<double>* getTimeVector();
-    double getTime(TYPES::VectorSize index);
+    double getTime(TYPES::vectorindex_t index);
     void setTimeVector(QVector<double>);
 
     QVector<double>* getCurrentVector();
-    double getCurrent(TYPES::VectorSize index);
-    void setCurrent(TYPES::VectorSize index, double value);
+    double getCurrent(TYPES::vectorindex_t index);
+    void setCurrent(TYPES::vectorindex_t index, double value);
 
-    void setMesCurrent1Point(TYPES::VectorSize, int64_t);
-    void addToMesCurrent1Point(TYPES::VectorSize, int64_t);
-    int64_t getMesCurrent1Point(TYPES::VectorSize);
-    void setMesCurrent2Point(TYPES::VectorSize, int64_t);
-    void addToMesCurrent2Point(TYPES::VectorSize, int64_t);
-    int64_t getMesCurrent2Point(TYPES::VectorSize);
-    void setMesTimePoint(TYPES::VectorSize, int64_t);
-    void addToMesTimePoint(TYPES::VectorSize, int64_t);
-    int64_t getMesTimePoint(TYPES::VectorSize);
+    void setMesCurrent1Point(TYPES::vectorindex_t, int64_t);
+    void addToMesCurrent1Point(TYPES::vectorindex_t, int64_t);
+    int64_t getMesCurrent1Point(TYPES::vectorindex_t);
+    void setMesCurrent2Point(TYPES::vectorindex_t, int64_t);
+    void addToMesCurrent2Point(TYPES::vectorindex_t, int64_t);
+    int64_t getMesCurrent2Point(TYPES::vectorindex_t);
+    void setMesTimePoint(TYPES::vectorindex_t, int64_t);
+    void addToMesTimePoint(TYPES::vectorindex_t, int64_t);
+    int64_t getMesTimePoint(TYPES::vectorindex_t);
 
-    void allocateMesArray(TYPES::VectorSize numberOfFields, bool allocateTwoCurrent);
+    void allocateMesArray(TYPES::vectorindex_t numberOfFields, bool allocateTwoCurrent);
 
     int64_t* mesResCurrent1;
     int64_t* mesResCurrent2;
@@ -76,11 +76,11 @@ private:
     QVector<double> _vCurrent;
     QVector<double> _vPotential;
     QVector<double> _vTime;
-    TYPES::VectorSize _nrOfPoints;
+    TYPES::vectorindex_t _nrOfPoints;
     double _probingRate;
     QVector<double> _vProbingData;
     QVector<double> _vProbingDataPointNo;
-    TYPES::VectorSize _nrOfPointsProbing;
+    TYPES::vectorindex_t _nrOfPointsProbing;
 
 };
 

@@ -20,12 +20,12 @@
 #include "curvedata.h"
 #include "eaqtdata.h"
 
-Curve::Curve(TYPES::VectorSize nLen)
+Curve::Curve(TYPES::vectorindex_t nLen)
 {
     Initialize(nLen);
 }
 
-Curve::Curve(TYPES::VectorSize nLen, int nLenProbing, double dProbingRate)
+Curve::Curve(TYPES::vectorindex_t nLen, int nLenProbing, double dProbingRate)
 {
     Initialize(nLen);
 	this->_curveData->allocateProbingData(nLenProbing, dProbingRate);
@@ -62,9 +62,9 @@ Curve::~Curve()
 	delete this->_curveData;
 }
 
-void Curve::Initialize(TYPES::VectorSize nResLen)
+void Curve::Initialize(TYPES::vectorindex_t nResLen)
 {
-    if ( nResLen >= TYPES::maxVectorSize
+    if ( nResLen >= TYPES::maxVectorIndex
     || nResLen < 0 ) {
         throw 1;
     }
@@ -75,16 +75,16 @@ void Curve::Initialize(TYPES::VectorSize nResLen)
     _curveName.clear();
     _comment.clear();
 	_hasPlot = false;
-    this->_curveData = new CurveData((TYPES::VectorSize) nResLen);
+    this->_curveData = new CurveData((TYPES::vectorindex_t) nResLen);
     for (int i=0; i<PARAM::PARAMNUM; i++ ) {
 		this->_mesParam[i] = 0;
 	}
 }
 
-void Curve::reinitializeCurveData(TYPES::VectorSize newSize)
+void Curve::reinitializeCurveData(TYPES::vectorindex_t newSize)
 {
 	delete this->_curveData;
-    if ( newSize >= TYPES::maxVectorSize
+    if ( newSize >= TYPES::maxVectorIndex
     || newSize < 0 ) {
         throw 1;
     }
@@ -116,13 +116,13 @@ void Curve::clearPlot()
 	}
 }
 
-void Curve::addDataPoint(double time, double potential, double current, TYPES::VectorSize pointNumber)
+void Curve::addDataPoint(double time, double potential, double current, TYPES::vectorindex_t pointNumber)
 {
 	_wasModified = true;
 	this->_curveData->addDataPoint(time, potential, current, pointNumber);
 }
 
-void Curve::addDataPoint(double current, TYPES::VectorSize pointNumber)
+void Curve::addDataPoint(double current, TYPES::vectorindex_t pointNumber)
 {
 	_wasModified = true;
 	this->_curveData->addDataPoint(current, pointNumber);
@@ -144,7 +144,7 @@ void Curve::setPotentialVector(QVector<double> vecPot)
 	this->_curveData->setPotentialVector(vecPot);
 }
 
-double Curve::getPotentialPoint(TYPES::VectorSize index)
+double Curve::getPotentialPoint(TYPES::vectorindex_t index)
 {
 	return this->_curveData->getPotential(index);
 }
@@ -160,17 +160,17 @@ void Curve::setTimeVector(QVector<double> vecTime)
 	this->_curveData->setTimeVector(vecTime);
 }
 
-double Curve::getTimePoint(TYPES::VectorSize index)
+double Curve::getTimePoint(TYPES::vectorindex_t index)
 {
 	return this->_curveData->getTime(index);
 }
 
-double Curve::Result(TYPES::VectorSize nResultNr)
+double Curve::Result(TYPES::vectorindex_t nResultNr)
 {
 	return this->_curveData->getCurrent(nResultNr);
 }
 
-void Curve::Result(TYPES::VectorSize nResultNr, double dResult)
+void Curve::Result(TYPES::vectorindex_t nResultNr, double dResult)
 {
 	_wasModified = true;
 	this->_curveData->setCurrent(nResultNr, dResult);
@@ -223,7 +223,7 @@ QString Curve::Comment()
 	return _comment;
 }
 
-void Curve::allocateMesArray(TYPES::VectorSize numOfFields, bool twoCurrent)
+void Curve::allocateMesArray(TYPES::vectorindex_t numOfFields, bool twoCurrent)
 {
 	this->_curveData->allocateMesArray(numOfFields, twoCurrent);
 }
@@ -239,7 +239,7 @@ void Curve::allocateMesArray()
 
 void Curve::allocateProbingData()
 {
-    TYPES::VectorSize nrofsamples;
+    TYPES::vectorindex_t nrofsamples;
     if (this->Param(PARAM::sampl) == PARAM::sampl_single ) { //pojedyncze
         nrofsamples = (this->Param(PARAM::tp)+this->Param(PARAM::tw))*this->Param(PARAM::ptnr);
 	} else { // podwojne
@@ -248,9 +248,9 @@ void Curve::allocateProbingData()
     this->_curveData->allocateProbingData(nrofsamples * this->Param(PARAM::aver), this->Param(PARAM::nonaveragedsampling));
 }
 
-void Curve::allocateProbingData(TYPES::VectorSize newNumber)
+void Curve::allocateProbingData(TYPES::vectorindex_t newNumber)
 {
-    if ( newNumber >= TYPES::maxVectorSize
+    if ( newNumber >= TYPES::maxVectorIndex
     || newNumber < 0 ) {
         throw 1;
     }
@@ -284,32 +284,32 @@ QVector<double>* Curve::getProbingDataPointNumbers()
     return this->_curveData->getProbingDataPointNumbers();
 }
 
-int64_t Curve::getMesTimePoint(TYPES::VectorSize index)
+int64_t Curve::getMesTimePoint(TYPES::vectorindex_t index)
 {
     return this->_curveData->getMesTimePoint(index);
 }
 
-void Curve::addToMesTimePoint(TYPES::VectorSize index, int64_t v)
+void Curve::addToMesTimePoint(TYPES::vectorindex_t index, int64_t v)
 {
     _curveData->addToMesTimePoint(index,v);
 }
 
-int64_t Curve::getMesCurrent1Point(TYPES::VectorSize index)
+int64_t Curve::getMesCurrent1Point(TYPES::vectorindex_t index)
 {
 	return this->_curveData->getMesCurrent1Point(index);
 }
 
-void Curve::addToMesCurrent1Point(TYPES::VectorSize index, int64_t v)
+void Curve::addToMesCurrent1Point(TYPES::vectorindex_t index, int64_t v)
 {
     _curveData->addToMesCurrent1Point(index,v);
 }
 
-int64_t Curve::getMesCurrent2Point(TYPES::VectorSize index)
+int64_t Curve::getMesCurrent2Point(TYPES::vectorindex_t index)
 {
 	return this->_curveData->getMesCurrent2Point(index);
 }
 
-void Curve::addToMesCurrent2Point(TYPES::VectorSize index, int64_t v)
+void Curve::addToMesCurrent2Point(TYPES::vectorindex_t index, int64_t v)
 {
     _curveData->addToMesCurrent2Point(index,v);
 }
@@ -430,7 +430,7 @@ QVector<double> Curve::getYVector()
     }
 }
 
-void Curve::setYValue(TYPES::VectorSize index, double value)
+void Curve::setYValue(TYPES::vectorindex_t index, double value)
 {
     switch ( EAQtData::getInstance().getXAxis() ) {
     default:
@@ -456,16 +456,16 @@ QByteArray Curve::serialize(bool compress)
     int32_t paramnum = PARAM::PARAMNUM;
     tmp->append((char*) (&paramnum), sizeof(int32_t));
     tmp->append((char*)&_mesParam, PARAM::PARAMNUM*sizeof(int32_t));
-    TYPES::VectorSize dataSize = _mesParam[PARAM::ptnr];
+    TYPES::vectorindex_t dataSize = _mesParam[PARAM::ptnr];
     for ( int32_t i = 0; i<dataSize; ++i ) {
         tmp->append((char*)_curveData->getTimeVector()->data()+i*sizeof(double),sizeof(double));
         tmp->append((char*)_curveData->getPotentialVector()->data()+i*sizeof(double),sizeof(double));
         tmp->append((char*)_curveData->getCurrentVector()->data()+i*sizeof(double),sizeof(double));
     }
     if ( _mesParam[PARAM::nonaveragedsampling] != 0 ) {
-        TYPES::VectorSize probSize = this->getNumberOfProbingPoints();
+        TYPES::vectorindex_t probSize = this->getNumberOfProbingPoints();
         vector<float> vFloat(this->getProbingData()->begin(), this->getProbingData()->end());
-        tmp->append((char*)&probSize, sizeof(TYPES::VectorSize));
+        tmp->append((char*)&probSize, sizeof(TYPES::vectorindex_t));
         tmp->append((char*)vFloat.data(), probSize*sizeof(float));
     }
     if ( compress ) {
@@ -524,12 +524,12 @@ bool Curve::unserialize(QByteArray &ba, bool compressed)
     memcpy(&_mesParam[0],serialized.data()+i,paramnum*sizeof(int32_t));
     i+=paramnum*sizeof(int32_t);
 
-    TYPES::VectorSize dataSize = _mesParam[PARAM::ptnr];
+    TYPES::vectorindex_t dataSize = _mesParam[PARAM::ptnr];
     this->reinitializeCurveData(dataSize);
 
     double pot, time, curr;
 
-    for ( TYPES::VectorSize ii = 0; ii<dataSize; ++ii ) {
+    for ( TYPES::vectorindex_t ii = 0; ii<dataSize; ++ii ) {
         memcpy(&time,(serialized.data()+i),sizeof(double));
         i+=sizeof(double);
         memcpy(&pot,(serialized.data()+i),sizeof(double));
@@ -540,15 +540,15 @@ bool Curve::unserialize(QByteArray &ba, bool compressed)
     }
 
     if ( _mesParam[PARAM::nonaveragedsampling] != 0 ) {
-        TYPES::VectorSize probSize;
-        memcpy(&probSize, serialized.data()+i, sizeof(TYPES::VectorSize));
+        TYPES::vectorindex_t probSize;
+        memcpy(&probSize, serialized.data()+i, sizeof(TYPES::vectorindex_t));
         i+=sizeof(int32_t);
         if ( probSize == 0 ) {
             this->Param(PARAM::nonaveragedsampling,0);
         } else {
             allocateProbingData(probSize);
             float data;
-            for (TYPES::VectorSize j=0;j<probSize;++j) {
+            for (TYPES::vectorindex_t j=0;j<probSize;++j) {
                 memcpy(&data,serialized.data()+i,sizeof(float));
                 i+=sizeof(float);
                 addProbingDataPoint(data);

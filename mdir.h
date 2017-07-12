@@ -29,12 +29,12 @@ public:
     QString CName(void);
     void CName(QString);
 
-    TYPES::FileSize Off(void);
-    void Off(TYPES::FileSize);
+    TYPES::filesize_t Off(void);
+    void Off(TYPES::filesize_t);
 
 private:
     QString _curveName;                 // nazwa krzywej
-    TYPES::FileSize _curveOffset;				// offset do pocztku pliku
+    TYPES::filesize_t _curveOffset;				// offset do pocztku pliku
 };
 
 #endif
