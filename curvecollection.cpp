@@ -37,6 +37,10 @@ CurveCollection::~CurveCollection()
 int32_t CurveCollection::append(Curve *curve)
 {
     int32_t index = _vCurves.size();
+    if ( index >= TYPES::maxVectorIndex
+    || index < 0 ) {
+        throw 1;
+    }
     _vCurves.push_back(curve);
     return index;
 }
@@ -44,6 +48,10 @@ int32_t CurveCollection::append(Curve *curve)
 TYPES::vectorindex_t CurveCollection::addNew(TYPES::vectorindex_t nrOfDataPoints)
 {
     TYPES::vectorindex_t index = _vCurves.size();
+    if ( index >= TYPES::maxVectorIndex
+    || index < 0 ) {
+        throw 1;
+    }
     _vCurves.push_back(new Curve(nrOfDataPoints));
     _vCurves[index]->setPlot(_pUI->PlotAddQCPCurve());
     //_vCurves[index]->getPlot()->setAdaptiveSampling(false);
@@ -64,7 +72,8 @@ void CurveCollection::remove(TYPES::vectorindex_t index)
     /*
     * Remove from Vector AND call destructor
     */
-    if ( this->_vCurves.size() > index ) {
+    if ( this->_vCurves.size() > index
+    && index > 0 ) {
         this->_pUI->PlotRemoveQCPCurve(this->_vCurves[index]->getPlot());
         delete _vCurves[index];
         this->_vCurves.erase(this->_vCurves.begin()+index);
@@ -92,7 +101,8 @@ void CurveCollection::unset(TYPES::vectorindex_t index)
     /*
     * Remove from Vector WITHOUT calling destructor
     */
-    if ( this->_vCurves.size() > index ) {
+    if ( this->_vCurves.size() > index
+    && index > 0 ) {
         this->_vCurves[index] = NULL;
         this->_vCurves.erase(this->_vCurves.begin()+index);
     } else {
