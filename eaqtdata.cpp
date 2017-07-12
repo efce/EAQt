@@ -1955,13 +1955,13 @@ int EAQtData::MesSaveAll(QString UserCName, QString UserFName, QString UserComme
                 this->getMesCurves()->get(num+1)->FName(UserFName);
                 this->getMesCurves()->get(num+1)->Comment(UserComment);
                 this->getMesCurves()->get(num+1)->setDate();
-                if ( UserCName.at(0) != QChar('◭') ) {
+                if ( UserCName.at(0) != QChar(0x25EE) ) { // 0x25EE = "◭"
                     this->getMesCurves()->get(num)->CName("◭" + UserCName);
                     this->getMesCurves()->get(num+1)->CName("◮" + UserCName);
                 } else {
                     this->getMesCurves()->get(num)->CName(UserCName);
                     this->getMesCurves()->get(num+1)->CName(UserCName);
-                    getMesCurves()->get(num+1)->CName().replace(0,1,QChar('◮'));
+                    getMesCurves()->get(num+1)->CName().replace(0,1,QChar(0x25EE));// 0x25EE = "◭"
                 }
             }
             num++;
