@@ -542,7 +542,7 @@ int EAQtData::CurReadCurvePro(QFile &ff, QString pCName)
     }
     int32_t j1;
     int32_t i;
-    int32_t cLen;
+    TYPES::CurveSize cLen;
 
     MDirReadPro(ff);
 
@@ -564,7 +564,7 @@ int EAQtData::CurReadCurvePro(QFile &ff, QString pCName)
 
     j1 = getCurves()->addNew(1); // TMP nie znam ilosci punktow krzywej
     getCurves()->get(j1)->getPlot()->setLayer(_pUI->PlotGetLayers()->NonActive);
-    ff.read((char*)(&cLen), sizeof(int32_t));			// ilosc bajtow krzywej w pliku
+    ff.read((char*)(&cLen), sizeof(TYPES::CurveSize));			// ilosc bajtow krzywej w pliku
     if (ff.fileName().right(FILES::saveCompressExt.size()).compare(FILES::saveCompressExt,Qt::CaseInsensitive) == 0 ) {
         QByteArray ba = ff.read(cLen);
         if ( !getCurves()->get(j1)->unserialize(ba,true) ) {
@@ -2007,19 +2007,18 @@ int EAQtData::safeAppend(QString pFileName, Curve* CurveToAppend)
 
     char *buffer;
     char *validTemp;
-    unsigned long fileLen;
-    int32_t nCurveCntr; // licznik krzywych
-    int const maxFileSizeBytes = 1024*1024*1024;
+    TYPES::FileSize fileLen;
+    TYPES::VectorSize nCurveCntr; // licznik krzywych
+    TYPES::FileSize maxFileSizeBytes = 1024*1024*1024*1024;
 
     QFile *file = new QFile(pFileName);
-
 
     if ( !file->exists() )
     {
         if( file->open(QIODevice::ReadWrite) ) // jezeli nie ma proba utworzenia
         {
             nCurveCntr = 0;
-            file->write((char*)&nCurveCntr,sizeof(int32_t));
+            file->write((char*)&nCurveCntr,sizeof(TYPES::VectorSize));
             file->close();
             if ( !file->open(QIODevice::ReadOnly) ) {
                 this->_pUI->showMessageBox("IDS_info6");
@@ -2053,20 +2052,20 @@ int EAQtData::safeAppend(QString pFileName, Curve* CurveToAppend)
     file->close();
 
     // Verify the number of curves in file
-    int32_t *CurvInFile;
-    CurvInFile=(int32_t*)buffer;
+    TYPES::VectorSize *CurvInFile;
+    CurvInFile=(TYPES::VectorSize*)buffer;
 
     int a=4;
 
     QVector<QString> CurveNames(*CurvInFile);
     int nComperator=0;
-    int CurvInFileLen;
+    TYPES::CurveSize CurvInFileLen;
 
 
     for (int i=0;i<*CurvInFile;i++)
     {
         // a - start of curve
-        CurvInFileLen=*(int32_t*)(buffer+a); // length of curve with bytes representing the length
+        CurvInFileLen=*(TYPES::CurveSize*)(buffer+a); // length of curve with bytes representing the length
 
         int o=0;
         QByteArray ba;
@@ -2119,7 +2118,7 @@ int EAQtData::safeAppend(QString pFileName, Curve* CurveToAppend)
 
     CurveToAppend->CName(appCurveName);
     *CurvInFile=*CurvInFile+1;	// number of curves +1 (new one) -- 4 bytes
-    memcpy(buffer,CurvInFile,sizeof(int32_t));
+    memcpy(buffer,CurvInFile,sizeof(TYPES::VectorSize));
 
     QString TempFileName = pFileName + ".tmp";
     QFile *outFile = new QFile(TempFileName);
@@ -2129,11 +2128,11 @@ int EAQtData::safeAppend(QString pFileName, Curve* CurveToAppend)
     } else {
         toSave = CurveToAppend->serialize(false);
     }
-    int addLen = toSave.size() + sizeof(int);
+    TYPES::CurveSize addLen = toSave.size() + sizeof(TYPES::CurveSize);
     if ( outFile->open(QIODevice::ReadWrite) )
     {
         outFile->write(buffer,fileLen);
-        outFile->write((char*)&addLen, sizeof(int));
+        outFile->write((char*)&addLen, sizeof(TYPES::CurveSize));
         outFile->write(toSave);
     } else {
         this->_pUI->showMessageBox(tr("Could not open tmp file. Curve not saved."));
@@ -2144,7 +2143,7 @@ int EAQtData::safeAppend(QString pFileName, Curve* CurveToAppend)
     ////////////////////////////////////////////////////////////////////////////
     //////////////////// walidacja pliku TEMP //////////////////////////////////
 
-    unsigned long tmpFileLen;
+    TYPES::FileSize tmpFileLen;
 
     if( !outFile->open(QIODevice::ReadOnly) ) {
         this->_pUI->showMessageBox(tr("Error while openning temp file. Curve not saved."));
@@ -2165,7 +2164,7 @@ int EAQtData::safeAppend(QString pFileName, Curve* CurveToAppend)
     validTemp = qba2.data();
     outFile->close();
 
-    int32_t CurvsInTmpFile;
+    TYPES::VectorSize CurvsInTmpFile;
     CurvsInTmpFile=*(int32_t*)validTemp;
 
     if ( CurvsInTmpFile<1 )
@@ -2175,13 +2174,13 @@ int EAQtData::safeAppend(QString pFileName, Curve* CurveToAppend)
         return(-6);
     }
 
-    unsigned long nOffsetWholeSum = sizeof(int32_t);
+    TYPES::FileSize nOffsetWholeSum = sizeof(TYPES::VectorSize); //First 4 bytes is number of curves in file
 
     for(int II=0;II<CurvsInTmpFile;II++)
     {
-        int32_t* tmpCurOffset;
-        tmpCurOffset=(int32_t*)(validTemp+nOffsetWholeSum);
-        nOffsetWholeSum+=*tmpCurOffset;
+        TYPES::CurveSize* tmpCurOffset;
+        tmpCurOffset=(TYPES::CurveSize*)(validTemp+nOffsetWholeSum);
+        nOffsetWholeSum+= (*tmpCurOffset);
         if ( tmpFileLen < nOffsetWholeSum ) {
             qba2.clear();
             this->_pUI->showMessageBox(tr("Error while verifing size of tmp file (offset sum > filesize). Curve not saved."));

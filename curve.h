@@ -27,8 +27,8 @@ class Curve
 {
 public:
 	Curve(Curve*);
-    Curve(int32_t nLen);
-    Curve(int32_t nLen, int32_t nLenProbing, double dProbingRate);
+    Curve(TYPES::VectorSize nLen);
+    Curve(TYPES::VectorSize nLen, TYPES::VectorSize nLenProbing, double dProbingRate);
 
 	~Curve();
 
@@ -37,12 +37,12 @@ public:
 
     void Param(int32_t nParamNr, int32_t lValue);
     int32_t Param(int32_t nParamNr);
-    void Result(int32_t nResultNr, double dResult);
-    double Result(int32_t nResultNr);
-    void addDataPoint(double time, double potential, double current, int32_t pointNumber = -1);
-    void addDataPoint(double current, int32_t pointNumber = -1);
+    void Result(TYPES::VectorSize nResultNr, double dResult);
+    double Result(TYPES::VectorSize nResultNr);
+    void addDataPoint(double time, double potential, double current, TYPES::VectorSize pointNumber = -1);
+    void addDataPoint(double current, TYPES::VectorSize pointNumber = -1);
     int32_t getNrOfDataPoints();
-    void reinitializeCurveData(int32_t); //this destroys already loaded data !!!
+    void reinitializeCurveData(TYPES::VectorSize); //this destroys already loaded data !!!
     QVector<double>* getCurrentVector();
 	bool wasModified();
 	void wasModified(bool);
@@ -54,30 +54,30 @@ public:
     void setPotentialVector(QVector<double>);
     void setTimeVector(QVector<double>);
 
-    double getPotentialPoint(int32_t);
+    double getPotentialPoint(TYPES::VectorSize);
     QVector<double>* getTimeVector();
-    double getTimePoint(int32_t);
-    int64_t getMesTimePoint(int32_t index);
-    int64_t getMesCurrent1Point(int32_t index);
-    int64_t getMesCurrent2Point(int32_t index);
+    double getTimePoint(TYPES::VectorSize);
+    int64_t getMesTimePoint(TYPES::VectorSize index);
+    int64_t getMesCurrent1Point(TYPES::VectorSize index);
+    int64_t getMesCurrent2Point(TYPES::VectorSize index);
 
-    void addToMesTimePoint(int32_t index, int64_t v);
-    void addToMesCurrent1Point(int32_t index, int64_t v);
-    void addToMesCurrent2Point(int32_t index, int64_t v);
+    void addToMesTimePoint(TYPES::VectorSize index, int64_t v);
+    void addToMesCurrent1Point(TYPES::VectorSize index, int64_t v);
+    void addToMesCurrent2Point(TYPES::VectorSize index, int64_t v);
 
-    void allocateMesArray(int32_t numOfFields, bool twoCurrent);
+    void allocateMesArray(TYPES::VectorSize numOfFields, bool twoCurrent);
     void allocateMesArray();
 	void allocateProbingData();
-    void allocateProbingData(int32_t newNumber);
+    void allocateProbingData(TYPES::VectorSize newNumber);
     void addProbingDataPoint(float fValue);
-    int32_t getNumberOfProbingPoints();
+    TYPES::VectorSize getNumberOfProbingPoints();
     QVector<double>* getProbingData();
     QVector<double>* getProbingDataPointNumbers();
     void setProbingData(QVector<double>);
 
     QVector<double> getXVector();
     QVector<double> getYVector();
-    void setYValue(int32_t, double);
+    void setYValue(TYPES::VectorSize, double);
 
     QCPCurve* getPlot();
     void setPlot(QCPCurve *_plot);

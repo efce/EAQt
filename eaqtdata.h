@@ -203,7 +203,6 @@ private:
                            // 0 - ignore start potential;
                            // 1 - start potential within measurement range;
                            // 2 - start potential outside of measurment range;
-   int32_t _mesSimultCurvesCounter;			// licznik mierzonych rwnoczenie krzywych
 
    struct BreakInfo {
        int32_t currentSec;

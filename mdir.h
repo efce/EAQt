@@ -28,12 +28,12 @@ public:
     QString CName(void);
     void CName(QString);
 
-    int32_t Off(void);
-    void Off(int32_t);
+    uint64_t Off(void);
+    void Off(uint64_t);
 
 private:
-    QString _curveName;	// nazwa krzywej
-    int _curveOffset;				// offset do pocztku pliku
+    QString _curveName;                 // nazwa krzywej
+    uint64_t _curveOffset;				// offset do pocztku pliku
 };
 
 #endif

@@ -23,6 +23,15 @@
 #include <vector>
 #include <QApplication>
 
+namespace TYPES {
+    typedef int32_t VectorSize;
+    const VectorSize maxVectorSize = std::numeric_limits<VectorSize>::max()-1;
+    typedef uint32_t CurveSize;
+    const CurveSize maxCurveSize = std::numeric_limits<CurveSize>::max()-1;
+    typedef uint64_t FileSize;
+    const FileSize maxFileSize = std::numeric_limits<FileSize>::max()-1;
+}
+
 namespace COLOR {
     const QColor regular = QColor(20,20,240);
     const QColor measurement = QColor(0,0,0);
