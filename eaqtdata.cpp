@@ -417,7 +417,7 @@ bool EAQtData::MDirReadPro(QFile &ff)
 
 bool EAQtData::MDirReadOld(QFile &ff)
 {
-    short iAux;
+    int16_t iAux;
     char cAux[10];
 
     _fileIndex->clear();
@@ -425,15 +425,18 @@ bool EAQtData::MDirReadOld(QFile &ff)
     bool hascurves = false;
     ff.seek(0);
     ff.read((char*)&iAux, sizeof(int16_t));
-    for(int i = 0;i < PARAM::VOL_CMAX;i++) // nie zmieniać cmax (słownik vol)
-    {
-        ff.read(cAux, 10);
-        ff.read((char*)&iAux, sizeof(int16_t));
-        int32_t index = _fileIndex->addNew();
-        _fileIndex->get(index)->Off(iAux);
-        _fileIndex->get(index)->CName(QString(cAux));
-        if ( !_fileIndex->get(index)->CName().isEmpty() ) {
-            hascurves = true;
+    int16_t curvesInFiles = iAux;
+    if ( curvesInFiles < PARAM::VOL_CMAX ) {
+        for(int16_t i = 0;i < curvesInFiles;++i) // nie zmieniać cmax (słownik vol)
+        {
+            ff.read(cAux, 10);
+            ff.read((char*)&iAux, sizeof(int16_t));
+            int32_t index = _fileIndex->addNew();
+            _fileIndex->get(index)->Off(iAux);
+            _fileIndex->get(index)->CName(QString(cAux));
+            if ( !_fileIndex->get(index)->CName().isEmpty() ) {
+                hascurves = true;
+            }
         }
     }
     return hascurves;
