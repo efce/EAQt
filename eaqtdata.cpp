@@ -2008,7 +2008,6 @@ int EAQtData::safeAppend(QString pFileName, Curve* CurveToAppend)
     char *validTemp;
     TYPES::FileSize fileLen;
     TYPES::VectorSize nCurveCntr; // licznik krzywych
-    TYPES::FileSize maxFileSizeBytes = 1024*1024*1024*1024;
 
     QFile *file = new QFile(pFileName);
 
@@ -2039,7 +2038,7 @@ int EAQtData::safeAppend(QString pFileName, Curve* CurveToAppend)
     fileLen=file->size();
 
     // Sprawdzanie czy plik nie jest za duzy do zaladowania do pamieci lub pusty
-    if ( fileLen > maxFileSizeBytes  ||  fileLen < 4 )
+    if ( fileLen > TYPES::maxFileSize ||  fileLen < 4 )
     {
         this->_pUI->showMessageBox("IDS_info6");
         file->close();
@@ -2054,31 +2053,32 @@ int EAQtData::safeAppend(QString pFileName, Curve* CurveToAppend)
     TYPES::VectorSize *CurvInFile;
     CurvInFile=(TYPES::VectorSize*)buffer;
 
-    int a=4;
+
 
     QVector<QString> CurveNames(*CurvInFile);
     int nComperator=0;
     TYPES::CurveSize CurvInFileLen;
 
+    TYPES::FileSize curveOffset=4;
 
-    for (int i=0;i<*CurvInFile;i++)
+    for (TYPES::VectorSize i=0;i<*CurvInFile;++i)
     {
         // a - start of curve
         CurvInFileLen=*(TYPES::CurveSize*)(buffer+a); // length of curve with bytes representing the length
 
-        int o=0;
+        int posInName=0;
         QByteArray ba;
-        while ((char)*(buffer+a+4+o) != '\0') // name of curve -- +4 bytes of its size
+        while ((char)*(buffer+curveOffset+4+posInName) != '\0') // name of curve -- +4 bytes of its size
         {
-            ba.append((char)*(buffer+a+4+o));
-            o++;
+            ba.append((char)*(buffer+curveOffset+4+posInName));
+            posInName++;
         }
         CurveNames[i] = QString::fromUtf8(ba);
 
         if( CurveNames[i].compare(CurveToAppend->CName(),Qt::CaseSensitive) == 0 ) // does curve exists in file
             nComperator = nComperator + 1;  //if does increment its name
 
-        a += CurvInFileLen;
+        curveOffset += CurvInFileLen;
     }
 
     QString appCurveName = "";
@@ -2095,7 +2095,7 @@ int EAQtData::safeAppend(QString pFileName, Curve* CurveToAppend)
 
             appCurveName.append(tr("%1").arg(appNumber++));
 
-            for ( int p=0;p<*CurvInFile;p++ )
+            for ( TYPES::VectorSize p=0;p<*CurvInFile;p++ )
             {
                 if( CurveNames[p].compare(appCurveName,Qt::CaseSensitive) == 0 )
                     nComperator = nComperator + 1;
@@ -2152,7 +2152,7 @@ int EAQtData::safeAppend(QString pFileName, Curve* CurveToAppend)
     outFile->seek(0);
     tmpFileLen=outFile->size();
 
-    if ( tmpFileLen > maxFileSizeBytes  ||  tmpFileLen < 240 )
+    if ( tmpFileLen > TYPES::maxFileSize  ||  tmpFileLen < 240 )
     {
         outFile->close();
         this->_pUI->showMessageBox(tr("Error while openning temp file, or file damaged. Curve not saved."));

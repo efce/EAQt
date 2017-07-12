@@ -29,7 +29,7 @@ namespace TYPES {
     typedef uint32_t CurveSize;
     const CurveSize maxCurveSize = std::numeric_limits<CurveSize>::max()-1;
     typedef uint64_t FileSize;
-    const FileSize maxFileSize = std::numeric_limits<FileSize>::max()-1;
+    const FileSize maxFileSize = 1024*1024*1024; //max file size is 1GB
 }
 
 namespace COLOR {
