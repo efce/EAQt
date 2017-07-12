@@ -85,12 +85,17 @@ void Curve::reinitializeCurveData(int32_t newSize)
 
 void Curve::Param(int nParamNr, int lValue)
 {
-	_mesParam[nParamNr]= lValue;
+    if ( nParamNr <= PARAM::PARAMNUM && nParamNr >= 0 ) {
+        _mesParam[nParamNr]= lValue;
+    }
 }
 
 int32_t Curve::Param(int32_t nParamNr)
 {
-	return _mesParam[nParamNr];
+    if ( nParamNr <= PARAM::PARAMNUM && nParamNr >= 0 ) {
+        return _mesParam[nParamNr];
+    }
+    return NULL;
 }
 
 void Curve::clearPlot()
