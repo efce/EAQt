@@ -84,7 +84,7 @@ void EAQtSignalProcessing::curvesStats(QVector<std::array<int,2>>& coords)
     QVector<double> vec;
     QVector<double> minmax(n);
     for ( int i = 0; i < n; ++i ) {
-        vec.append(_curves->get(i)->getXVector().mid(coords[i][0], coords[i][1]));
+        vec.append(_curves->get(i)->getYVector().mid(coords[i][0], coords[i][1]));
         minmax[i] = relativeHeight(_curves->get(i), coords[i][0], coords[i][1]);
     }
     double stdDev = calcStdDev(vec);
@@ -570,5 +570,5 @@ double EAQtSignalProcessing::calcStdDev(QVector<double> yvals)
     for ( int i = 0; i<n; ++i ) {
         wrk += pow((mean - yvals[i]),2);
     }
-    return sqrt(wrk/(n-1));
+    return sqrt(wrk/((double)n-1.0));
 }
