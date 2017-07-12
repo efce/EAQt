@@ -2064,7 +2064,7 @@ int EAQtData::safeAppend(QString pFileName, Curve* CurveToAppend)
     for (TYPES::VectorSize i=0;i<*CurvInFile;++i)
     {
         // a - start of curve
-        CurvInFileLen=*(TYPES::CurveSize*)(buffer+a); // length of curve with bytes representing the length
+        CurvInFileLen=*(TYPES::CurveSize*)(buffer+curveOffset); // length of curve with bytes representing the length
 
         int posInName=0;
         QByteArray ba;
@@ -2164,7 +2164,7 @@ int EAQtData::safeAppend(QString pFileName, Curve* CurveToAppend)
     outFile->close();
 
     TYPES::VectorSize CurvsInTmpFile;
-    CurvsInTmpFile=*(int32_t*)validTemp;
+    CurvsInTmpFile=*(TYPES::VectorSize*)validTemp;
 
     if ( CurvsInTmpFile<1 )
     {
