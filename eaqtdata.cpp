@@ -561,7 +561,13 @@ int EAQtData::CurReadCurvePro(QFile &ff, QString pCName)
     // i numer krzywej
     ff.seek(_fileIndex->get(i)->Off());
 
-    j1 = getCurves()->addNew(1); // TMP nie znam ilosci punktow krzywej
+    try {
+        j1 = getCurves()->addNew(1); // TMP nie znam ilosci punktow krzywej
+    } catch (int e) {
+        _pUI->showMessageBox(tr("Could not add new curve. Maximum reached?"), tr("Error"));
+        return -1;
+    }
+
     getCurves()->get(j1)->getPlot()->setLayer(_pUI->PlotGetLayers()->NonActive);
     ff.read((char*)(&cLen), sizeof(TYPES::curvefileindex_t));			// ilosc bajtow krzywej w pliku
     if (ff.fileName().right(FILES::saveCompressExt.size()).compare(FILES::saveCompressExt,Qt::CaseInsensitive) == 0 ) {
@@ -628,7 +634,13 @@ int EAQtData::CurReadCurveOld(QFile &ff, QString CName)
     }
     ff.seek(startadr);
 
-    j1 = getCurves()->addNew(_mainParam[PARAM::ptnr]);
+    try {
+        j1 = getCurves()->addNew(_mainParam[PARAM::ptnr]); // TMP nie znam ilosci punktow krzywej
+    } catch (int e) {
+        _pUI->showMessageBox(tr("Could not add new curve. Maximum reached?"), tr("Error"));
+        return -1;
+    }
+
     getCurves()->get(j1)->getPlot()->setLayer(_pUI->PlotGetLayers()->NonActive);
 
     for (int32_t ii=0 ; ii<(PARAM::VOL_PMAX-2) ; ii++) { // nie zmieniać pmax (słownik vol)
@@ -673,7 +685,12 @@ int EAQtData::CurReadCurveOld(QFile &ff, QString CName)
     this->setCurrentRange(getCurves()->get(j1)->Param(PARAM::crange),this->getCurves()->get(j1)->Param(PARAM::electr));
     this->getCurves()->get(j1)->FName(ff.fileName());
     if ( this->getCurves()->get(j1)->Param(PARAM::messc) >= PARAM::messc_cyclic ) { // krzywa cykliczna
-        j2 = this->getCurves()->addNew(getCurves()->get(j1)->Param(PARAM::ptnr));
+        try {
+            j2 = this->getCurves()->addNew(getCurves()->get(j1)->Param(PARAM::ptnr)); // TMP nie znam ilosci punktow krzywej
+        } catch (int e) {
+            _pUI->showMessageBox(tr("Could not add new curve. Maximum reached?"), tr("Error"));
+            return -1;
+        }
         this->getCurves()->get(j2)->CName(this->getCurves()->get(j1)->CName());
         this->getCurves()->get(j2)->Comment(this->getCurves()->get(j1)->Comment());
         this->getCurves()->get(j2)->FName(ff.fileName());
@@ -1054,7 +1071,13 @@ void EAQtData::MesStart(bool isLsv)
 
         for ( int iii=0; iii<nrOfCurvesMeasured; iii++) { // rysowana jest jedna krzywa niezależnie
             // od tego czy jest cykliczna czy nie
-            mesCurveIndex = this->getMesCurves()->addNew(_LSVParam[PARAM::ptnr]);
+            try {
+                mesCurveIndex = this->getCurves()->addNew(_LSVParam[PARAM::ptnr]); // TMP nie znam ilosci punktow krzywej
+            } catch (int e) {
+                _pUI->showMessageBox(tr("Could not add new curve. Maximum reached?"), tr("Error"));
+                throw e;
+            }
+
             getMesCurves()->get(mesCurveIndex)->getPlot()->setLayer(_pUI->PlotGetLayers()->Measurement);
             getMesCurves()->get(mesCurveIndex)->changeToMesPlot();
             QVector<double> vecMesPotential;
@@ -1221,7 +1244,12 @@ void EAQtData::MesStart(bool isLsv)
 
         for ( int iii=0; iii<nrOfCurvesMeasured; iii++) { // rysowana jest jedna krzywa niezależnie
             // od tego czy jest cykliczna czy nie
-            mesCurveIndex = this->getMesCurves()->addNew(_PVParam[PARAM::ptnr]);
+            try {
+                mesCurveIndex = this->getCurves()->addNew(_PVParam[PARAM::ptnr]); // TMP nie znam ilosci punktow krzywej
+            } catch (int e) {
+                _pUI->showMessageBox(tr("Could not add new curve. Maximum reached?"), tr("Error"));
+                throw e;
+            }
             getMesCurves()->get(mesCurveIndex)->getPlot()->setLayer(_pUI->PlotGetLayers()->Measurement);
             getMesCurves()->get(mesCurveIndex)->changeToMesPlot();
             for (i=0 ; i<PARAM::PARAMNUM ; i++) {
