@@ -1072,7 +1072,7 @@ void EAQtData::MesStart(bool isLsv)
         for ( int iii=0; iii<nrOfCurvesMeasured; iii++) { // rysowana jest jedna krzywa niezależnie
             // od tego czy jest cykliczna czy nie
             try {
-                mesCurveIndex = this->getCurves()->addNew(_LSVParam[PARAM::ptnr]); // TMP nie znam ilosci punktow krzywej
+                mesCurveIndex = this->getMesCurves()->addNew(_LSVParam[PARAM::ptnr]); // TMP nie znam ilosci punktow krzywej
             } catch (int e) {
                 _pUI->showMessageBox(tr("Could not add new curve. Maximum reached?"), tr("Error"));
                 throw e;
@@ -1245,7 +1245,7 @@ void EAQtData::MesStart(bool isLsv)
         for ( int iii=0; iii<nrOfCurvesMeasured; iii++) { // rysowana jest jedna krzywa niezależnie
             // od tego czy jest cykliczna czy nie
             try {
-                mesCurveIndex = this->getCurves()->addNew(_PVParam[PARAM::ptnr]); // TMP nie znam ilosci punktow krzywej
+                mesCurveIndex = this->getMesCurves()->addNew(_PVParam[PARAM::ptnr]); // TMP nie znam ilosci punktow krzywej
             } catch (int e) {
                 _pUI->showMessageBox(tr("Could not add new curve. Maximum reached?"), tr("Error"));
                 throw e;
