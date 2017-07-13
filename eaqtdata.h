@@ -93,8 +93,8 @@ public:
     QString dispTIME1(double);
     QString dispTIMEforTXT(double);
 
-    void Act(int nAct);
-    int Act();
+    void Act(TYPES::vectorindex_t nAct);
+    TYPES::vectorindex_t Act();
     int getXAxis();
     void setXAxis(int);
     void ParamPV(int32_t, int32_t);
@@ -181,7 +181,7 @@ private:
 
    unsigned char _TxBuf[NETWORK::TxBufLength];
    unsigned char _RxBuf[NETWORK::RxBufLength];
-   int _act;
+   TYPES::vectorindex_t _act;
    int32_t _mainParam[PARAM::PARAMNUM];	   // parametry pomiaru czytanej/zapisywanej krzywej
    int32_t _PVParam[PARAM::PARAMNUM];
    int32_t _LSVParam[PARAM::PARAMNUM];

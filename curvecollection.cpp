@@ -73,7 +73,7 @@ void CurveCollection::remove(TYPES::vectorindex_t index)
     * Remove from Vector AND call destructor
     */
     if ( this->_vCurves.size() > index
-    && index > 0 ) {
+    && index >= 0 ) {
         this->_pUI->PlotRemoveQCPCurve(this->_vCurves[index]->getPlot());
         delete _vCurves[index];
         this->_vCurves.erase(this->_vCurves.begin()+index);
@@ -102,7 +102,7 @@ void CurveCollection::unset(TYPES::vectorindex_t index)
     * Remove from Vector WITHOUT calling destructor
     */
     if ( this->_vCurves.size() > index
-    && index > 0 ) {
+    && index >= 0 ) {
         this->_vCurves[index] = NULL;
         this->_vCurves.erase(this->_vCurves.begin()+index);
     } else {

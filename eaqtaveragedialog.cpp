@@ -194,7 +194,13 @@ void EAQtAverageDialog::average()
             }
             avgCurve->setPlot(_pUI->PlotAddQCPCurve());
             avgCurve->changeToRegularPlot();
-            cc->append(avgCurve);
+            try {
+                cc->append(avgCurve);
+            } catch (int e) {
+                _pUI->showMessageBox(tr("Could not append new curve. Max reached?"), tr("Error"));
+                _dialog->close();
+                return;
+            }
         } else {
             showError();
         }

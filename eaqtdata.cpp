@@ -352,14 +352,14 @@ void EAQtData::ParamMain(int32_t num, int32_t val)
     _mainParam[num] = val;
 }
 
-int EAQtData::Act()
+TYPES::vectorindex_t EAQtData::Act()
 {
     return _act;
 }
 
-void EAQtData::Act(int toAct)
+void EAQtData::Act(TYPES::vectorindex_t toAct)
 {
-    if ( (int)getCurves()->count() > toAct
+    if ( getCurves()->count() > toAct
     || toAct == SELECT::all ) {
         _act = toAct;
         Curve* c = getCurves()->get(_act);
@@ -587,7 +587,6 @@ int EAQtData::CurReadCurvePro(QFile &ff, QString pCName)
     }
     this->setCurrentRange(this->getCurves()->get(j1)->Param(PARAM::crange),this->getCurves()->get(j1)->Param(PARAM::crange));
     this->getCurves()->get(j1)->FName(ff.fileName());
-    this->_pUI->updateAll();
     return(j1);
 }
 
@@ -751,7 +750,16 @@ void EAQtData::deleteNonactiveCurvesFromGraph()
         Curve *c = this->getCurves()->get(this->Act());
         this->getCurves()->unset(this->Act());
         this->getCurves()->clear();
-        int32_t index = this->getCurves()->append(c);
+        int32_t index;
+        try {
+            index = this->getCurves()->append(c);
+        } catch (int e) {
+            _pUI->showMessageBox(tr("Could not reappend curve."), tr("Error"));
+            Act(SELECT::none);
+            this->_pUI->updateAll();
+            return;
+        }
+
         this->Act(index);
         this->_pUI->updateAll();
     }
@@ -2006,8 +2014,14 @@ int EAQtData::MesSaveAll(QString UserCName, QString UserFName, QString UserComme
 
 
     while ( getMesCurves()->get(0) != NULL ) {
-        int index = this->getCurves()->append(this->getMesCurves()->get(0));
-        this->getMesCurves()->unset((int32_t)0);
+        TYPES::vectorindex_t index;
+        try {
+            index = this->getCurves()->append(this->getMesCurves()->get(0));
+        } catch (int e) {
+            _pUI->showMessageBox(tr("Could not append curve."), tr("Error"));
+        }
+
+        this->getMesCurves()->unset((TYPES::vectorindex_t)0);
         this->getCurves()->get(index)->changeToRegularPlot();
         this->Act(index);
     }
