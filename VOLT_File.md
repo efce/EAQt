@@ -3,12 +3,11 @@ Description byte by byte of the binary format ".volt":
 
 4 bytes: int32_t - number of curves in file
 ==== REPEATING SEQUENCE * number of curves =====
-4 bytes: int32_t - length of each curve data
+4 bytes: uint32_t - length of each curve data
 x bytes (until NULL): char[] - Curve name
 x bytes (until NULL): char[] - Curve comment
 4 bytes: int32_t - number of Param values
 ==== REPEATING SEQUENCE * number of Param values =======
-4 bytes: int32_t - param number
 4 bytes: int32_t - param value
 ===== END OF SEQUENCE ==================================
 ==== REPEATING SEQUENCE * Param(PARAM::ptnr) ===========
