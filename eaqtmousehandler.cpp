@@ -336,6 +336,7 @@ void EAQtMouseHandler::ForwardClick(double MouseCursorX,double MouseCursorY)
         break;
 
     case mm_nearestYonPlot:
+        this->_vCursors[cl_snapXonPlot]->setSnapTo(_pData->getCurves()->get(_pData->Act())->getPlot());
         this->_vCursors[cl_snapXonPlot]->move(MouseCursorX);
         this->_vCursors[cl_snapXonPlot]->setVisible(false);
         this->_timesPressed = 0;
