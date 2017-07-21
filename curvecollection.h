@@ -30,6 +30,7 @@ class CurveCollection
 {
 public:
     CurveCollection(EAQtUIInterface*);
+    CurveCollection(CurveCollection*);
     ~CurveCollection();
     TYPES::vectorindex_t append(Curve*);
     TYPES::vectorindex_t addNew(TYPES::vectorindex_t nrOfDataPoints);

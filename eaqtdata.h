@@ -81,6 +81,9 @@ public:
     void deleteNonactiveCurvesFromGraph();
     void deleteAllCurvesFromGraph();
 
+    void undoPrepare();
+    void undoExecute();
+
     QString dispI(double); //display formated current with units
     QString dispIforTXT(double); //display formated current w/o units
     QString dispE(int); // display formated potential with units
@@ -179,6 +182,14 @@ private:
    EAQtSignalProcessing *_processing;
    QTime _fromUpdate;
 
+   struct UndoStruct {
+       bool undoReady = false;
+       CurveCollection *_curves = NULL;
+       int32_t _act;
+       int32_t _PVParam[PARAM::PARAMNUM];
+       int32_t _LSVParam[PARAM::PARAMNUM];
+   } undoStruct;
+
    unsigned char _TxBuf[NETWORK::TxBufLength];
    unsigned char _RxBuf[NETWORK::RxBufLength];
    TYPES::vectorindex_t _act;
@@ -251,6 +262,8 @@ private:
     // END SERIA
 signals:
     void actChanged(int act);
+    void undoPrepared(bool);
+    void undoExecuted(bool);
 
 };
 #endif // EAQTDATA_H

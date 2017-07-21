@@ -58,6 +58,8 @@ void EAQtMainWindow::InitialUpdate(EAQtData& d)
     this->_mouseHandler = new EAQtMouseHandler(this->_pEAQtData, this);
     this->_mouseHandler->ChangeMouseMode(EAQtMouseHandler::mm_normal, EAQtMouseHandler::uf_none);
     connect(_pEAQtData,SIGNAL(actChanged(int)),_mouseHandler,SLOT(onSelectionChanged()));
+    connect(_pEAQtData,SIGNAL(undoPrepared(bool)),_butUndo,SLOT(setEnabled(bool)));
+    connect(_pEAQtData,SIGNAL(undoExecuted(bool)),_butUndo,SLOT(setDisabled(bool)));
 
     _dialogTestCGMDE = new EAQtTestCGMDEDialog();
 }
@@ -462,6 +464,10 @@ QGridLayout* EAQtMainWindow::createLayout()
     comboWidget->setLayout(combo);
     combo->addWidget(_comboOnXAxis);
 
+    _butUndo = new QPushButton("Undo");
+    _butUndo->setEnabled(false);
+    connect(_butUndo,SIGNAL(clicked(bool)),this,SLOT(undo()));
+
     _butZoom = new QPushButton();
     QIcon izoom = QIcon(":/img/icon_zoom");
     _butZoom->setIcon(izoom);
@@ -486,6 +492,7 @@ QGridLayout* EAQtMainWindow::createLayout()
     this->ui->mainToolBar->addWidget(butParamPV);
     this->ui->mainToolBar->addWidget(butParamLSV);
     this->ui->mainToolBar->addWidget(comboWidget);
+    this->ui->mainToolBar->addWidget(_butUndo);
     this->ui->mainToolBar->addWidget(_butZoom);
     this->ui->mainToolBar->addWidget(butRescale);
 
@@ -1396,4 +1403,9 @@ void EAQtMainWindow::startCurvesStats()
         _mouseHandler->ChangeMouseMode(EAQtMouseHandler::mm_place2markers,
                                     EAQtMouseHandler::uf_statistic_data);
     }
+}
+
+void EAQtMainWindow::undo()
+{
+    _pEAQtData->undoExecute();
 }

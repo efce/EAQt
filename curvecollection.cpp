@@ -23,6 +23,16 @@ CurveCollection::CurveCollection(EAQtUIInterface *ui)
     _vCurves.clear();
 }
 
+CurveCollection::CurveCollection(CurveCollection* toCopy)
+{
+   _vCurves.resize(toCopy->count());
+   _pUI = toCopy->_pUI;
+   for (int i =0; i<toCopy->count();++i) {
+       Curve* copyc = new Curve(toCopy->get(i));
+       _vCurves[i] = copyc;
+   }
+}
+
 CurveCollection::~CurveCollection()
 {
     for ( auto i=0; i<_vCurves.size(); ++i) {

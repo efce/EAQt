@@ -99,6 +99,7 @@ private:
     QPushButton *_butZoom;
     QWidget *_curveInfoMain;
     QPushButton *_butCurveInfoToggle;
+    QPushButton *_butUndo;
     QTextEdit *_curveInfoData;
     EAQtUIInterface::PlotLayer _plotLayers;
     QString _PathInUse;
@@ -199,6 +200,7 @@ private slots:
     void showAboutSoftware();
     void showGithubIssues();
     void showGithub();
+    void undo();
 };
 
 #endif // MAINWINDOW_H

@@ -736,8 +736,10 @@ void EAQtData::openFile(QString *filePath, int nrPos)
 void EAQtData::deleteActiveCurveFromGraph()
 {
     if ( this->Act() == SELECT::all ) {
+        this->undoPrepare();
         this->deleteAllCurvesFromGraph();
     } else if ( this->Act() >= 0 && this->getCurves()->get(this->Act()) != NULL ) {
+        this->undoPrepare();
         this->getCurves()->remove(this->Act());
         this->Act(SELECT::none);
         this->_pUI->updateAll();
@@ -747,6 +749,7 @@ void EAQtData::deleteActiveCurveFromGraph()
 void EAQtData::deleteNonactiveCurvesFromGraph()
 {
     if ( this->getCurves()->get(this->Act()) != NULL ) {
+        this->undoPrepare();
         Curve *c = this->getCurves()->get(this->Act());
         this->getCurves()->unset(this->Act());
         this->getCurves()->clear();
@@ -771,6 +774,7 @@ void EAQtData::deleteAllCurvesFromGraph()
              tr("Delete all curves?"),
              tr("Are you sure"),
              false) ) {
+        this->undoPrepare();
         this->getCurves()->clear();;
         this->Act(SELECT::none);
         this->_pUI->updateAll();
@@ -2909,4 +2913,36 @@ const QVector<int16_t>& EAQtData::getPotentialProgram()
 void EAQtData::setPotentialProgram(QVector<int16_t> pp)
 {
     _PVParam_PotentialProgram = pp;
+}
+
+void EAQtData::undoPrepare()
+{
+    if ( undoStruct._curves != NULL) {
+        delete undoStruct._curves;
+    }
+    undoStruct._curves = new CurveCollection(_curves);
+    undoStruct._act = _act;
+    memcpy(undoStruct._LSVParam,_LSVParam,PARAM::PARAMNUM*sizeof(int32_t));
+    memcpy(undoStruct._PVParam,_PVParam,PARAM::PARAMNUM*sizeof(int32_t));
+    undoStruct.undoReady = true;
+    emit(undoPrepared(true));
+}
+
+void EAQtData::undoExecute()
+{
+    if ( undoStruct.undoReady == true
+     && _measurementGo == 0 ) {
+        delete _curves;
+        _curves = undoStruct._curves;
+        undoStruct._curves = NULL;
+        for ( int i=0; i<_curves->count();++i) {
+            _curves->get(i)->setPlot(_pUI->PlotAddQCPCurve());
+        }
+        _act=undoStruct._act;
+        memcpy(_LSVParam,undoStruct._LSVParam,PARAM::PARAMNUM*sizeof(int32_t));
+        memcpy(_PVParam,undoStruct._PVParam,PARAM::PARAMNUM*sizeof(int32_t));
+        undoStruct.undoReady = false;
+        emit(undoExecuted(true));
+        _pUI->updateAll(true);
+    }
 }
