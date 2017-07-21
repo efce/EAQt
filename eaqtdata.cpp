@@ -2888,10 +2888,11 @@ void EAQtData::exportToTXT(QString path)
         }
     } else {
         i = this->Act();
-        QVector<double> *workE = _curves->get(i)->getYVector();
-        for (k=0 ; k < workE->size() ; k++)
+        QVector<double> workE = _curves->get(i)->getYVector();
+        int n = workE.size();
+        for (k=0 ; k < n ; k++)
         {
-            sprintf(buf,"%10.5lf\n", workE->at(k));
+            sprintf(buf,"%10.5lf\n", workE.at(k));
             ff->write(buf, strlen(buf));
         }
     }
