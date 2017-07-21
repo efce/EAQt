@@ -38,9 +38,10 @@ Curve::Curve(Curve* toCopy)
 	this->FName(toCopy->FName());
 	this->_hasPlot = false;
 
-    for (int32_t i=0; i<PARAM::PARAMNUM; ++i) {
-		this->_mesParam[i] = toCopy->_mesParam[i];
-	}
+    memcpy(this->_mesParam, toCopy->_mesParam, PARAM::PARAMNUM*sizeof(int32_t));
+    //for (int32_t i=0; i<PARAM::PARAMNUM; ++i) {
+    //	this->_mesParam[i] = toCopy->_mesParam[i];
+    //}
     this->_curveData = new CurveData(this->_mesParam[PARAM::ptnr]);
 
     this->setPotentialVector(QVector<double>(*toCopy->getPotentialVector()));
