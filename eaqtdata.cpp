@@ -2739,7 +2739,7 @@ void EAQtData::exportToCSV(QString path)
             this->setCurrentRange(_curves->get(i)->Param(PARAM::crange)
                                   , _curves->get(i)->Param(PARAM::electr));
             if ( this->getXAxis() == XAXIS::potential ) {
-                for ( pt = 0; pt < _curves->get(i)->Param(PARAM::ptnr)-1; ++pt ) {
+                for ( pt = 0; pt < _curves->get(i)->getYVector().size(); ++pt ) {
                     tmp = this->dispEforTXT(_curves->get(i)->getPotentialPoint(pt)).toStdString();
                     tmp.append(",");
                     ff->write(tmp.data(),tmp.size());
@@ -2888,10 +2888,10 @@ void EAQtData::exportToTXT(QString path)
         }
     } else {
         i = this->Act();
-        QVector<double> *workE = _curves->get(i)->getPotentialVector();
-        for (k=0 ; k < _curves->get(i)->Param(PARAM::ptnr) ; k++)
+        QVector<double> *workE = _curves->get(i)->getYVector();
+        for (k=0 ; k < workE->size() ; k++)
         {
-            sprintf(buf,"%10.5lf   %10.5lf\n", workE->at(k), _curves->get(i)->Result(k));
+            sprintf(buf,"%10.5lf\n", workE->at(k));
             ff->write(buf, strlen(buf));
         }
     }
