@@ -32,9 +32,10 @@ EAQtSaveFiledialog::EAQtSaveFiledialog(QWidget* parent, QString cname, QString c
     _saveDetails.curveComment = _ccomment;
     _saveDetails.curveName = _cname;
     _saveDetails.fileName = _filename;
+    _defFilter = "";
 }
 
-EAQtSaveFiledialog::SaveDetails EAQtSaveFiledialog::getSaveDetails(bool allowForNameChange)
+EAQtSaveFiledialog::SaveDetails EAQtSaveFiledialog::getSaveDetails(bool allowForNameChange, bool isExport)
 {
     _fd = new QFileDialog();
     if ( _pathToShow.isEmpty() && _filename.isEmpty() ) {
@@ -51,16 +52,25 @@ EAQtSaveFiledialog::SaveDetails EAQtSaveFiledialog::getSaveDetails(bool allowFor
     _fd->selectFile(_filename);
     _fd->setModal(true);
     _fd->setOption( QFileDialog::DontUseNativeDialog, true );
-    _fd->setNameFilter(FILES::saveFile);
-    if ( !_filename.isEmpty()
-    && _filename.right(FILES::saveCompressExt.size()).compare(FILES::saveCompressExt,Qt::CaseInsensitive) == 0 ) {
-        _fd->selectNameFilter(FILES::saveDef);
-        _fd->setDefaultSuffix("voltc");
+    if ( !isExport ) {
+        _fd->setNameFilter(FILES::saveFile);
+        if ( !_filename.isEmpty()
+        && _filename.right(FILES::saveCompressExt.size()).compare(FILES::saveCompressExt,Qt::CaseInsensitive) == 0 ) {
+            _fd->selectNameFilter(FILES::saveDef);
+            _fd->setDefaultSuffix("voltc");
+        } else {
+            _fd->selectNameFilter(FILES::saveDefUncompress);
+            _fd->setDefaultSuffix("volt");
+        }
+        connect(_fd,SIGNAL(filterSelected(QString)),this,SLOT(setSuffix(QString)));
     } else {
-        _fd->selectNameFilter(FILES::saveDefUncompress);
-        _fd->setDefaultSuffix("volt");
+        _defFilter = tr("Text file (*.txt)");
+        QString filter = _defFilter + ";;" + tr("Comma separated values (*.csv)");
+        _fd->setNameFilter(filter);
+        _fd->selectNameFilter(_defFilter);
+        _fd->setDefaultSuffix("txt");
+        connect(_fd,SIGNAL(filterSelected(QString)),this,SLOT(setSuffixExport(QString)));
     }
-    connect(_fd,SIGNAL(filterSelected(QString)),this,SLOT(setSuffix(QString)));
     QGridLayout* l = (QGridLayout*) _fd->layout();
     QGridLayout* lay = new QGridLayout();
     this->_leCurveComment = new QPlainTextEdit();
@@ -83,7 +93,11 @@ EAQtSaveFiledialog::SaveDetails EAQtSaveFiledialog::getSaveDetails(bool allowFor
         _leCurveName->setDisabled(true);
     }
 
-    _fd->setLabelText( QFileDialog::Accept, tr("Save") );
+    if ( isExport ) {
+        _fd->setLabelText( QFileDialog::Accept, tr("Export") );
+    } else {
+        _fd->setLabelText( QFileDialog::Accept, tr("Save") );
+    }
     _fd->setLabelText( QFileDialog::Reject, tr("Cancel") );
     l->addLayout(lay,4,0,1,4);
 
@@ -132,5 +146,15 @@ void EAQtSaveFiledialog::setSuffix(QString selectedFilter)
         _fd->setDefaultSuffix("voltc");
     } else {
         _fd->setDefaultSuffix("volt");
+    }
+}
+
+void EAQtSaveFiledialog::setSuffixExport(QString selectedFilter)
+{
+    QString news = selectedFilter;
+    if ( selectedFilter.compare(_defFilter) == 0 ) {
+        _fd->setDefaultSuffix("txt");
+    } else {
+        _fd->setDefaultSuffix("csv");
     }
 }
