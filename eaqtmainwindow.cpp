@@ -1091,15 +1091,13 @@ void EAQtMainWindow::showExportCurve()
         this->showMessageBox(tr("Cannot save - no curve(s) selected."));
         return;
     }
-    QFileDialog *qfd = new QFileDialog();
-    QString filter = "Text file (*.txt);;Comma separated values (*.csv)";
-    QString sel = "Text file (*.txt)";
-    QString savePath = qfd->getSaveFileName(this,tr("Export curve to file"),_PathInUse,filter,&sel);
-    if (savePath.isEmpty() ) {
+    EAQtSaveFiledialog *qfd = new EAQtSaveFiledialog(this,"","",_PathInUse,"");
+    EAQtSaveFiledialog::SaveDetails saveDet = qfd->getSaveDetails(false,true);// this,tr("Export curve to file"),_PathInUse,filter,&sel);
+    if ( saveDet.wasCanceled == true ) {
         delete qfd;
         return;
     }
-    QFileInfo fi(savePath);
+    QFileInfo fi(saveDet.fileName);
     if ( fi.isFile() ) {
         if ( !showQuestionBox(tr("This will overwrite existing file. Are you sure ?")
                              ,tr("Warning")
@@ -1107,10 +1105,10 @@ void EAQtMainWindow::showExportCurve()
             return;
         }
     }
-    if ( savePath.right(4).compare(".txt",Qt::CaseInsensitive) == 0 ) {
-        _pEAQtData->exportToTXT(savePath);
+    if ( fi.absoluteFilePath().right(4).compare(".txt",Qt::CaseInsensitive) == 0 ) {
+        _pEAQtData->exportToTXT(fi.absoluteFilePath());
     } else {
-        _pEAQtData->exportToCSV(savePath);
+        _pEAQtData->exportToCSV(fi.absoluteFilePath());
     }
 
     _PathInUse = fi.absoluteDir().canonicalPath();

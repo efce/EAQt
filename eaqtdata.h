@@ -125,6 +125,8 @@ public:
     int safeAppend(QString pFileName, Curve* CurveToAppend);
     void exportToTXT(QString path);
     void exportToCSV(QString path);
+    std::vector<std::string> exportToCSVCurve(Curve* c);
+    std::vector<std::string> exportToTXTCurve(Curve* c);
 
     void MesStart(bool isLsv = false);
     void MesStop();

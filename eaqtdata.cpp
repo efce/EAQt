@@ -2713,194 +2713,137 @@ EAQtSignalProcessing* EAQtData::getProcessing()
 
 void EAQtData::exportToCSV(QString path)
 {
-    QFile *ff = new QFile(path);
-    int32_t i;
-    //int* blen;
-    //blen = new int[_curves->count()];
-    //int blenm;
-    char* endOfLine = new char[2]{ '\r', '\n' };
-    if (this->Act() != SELECT::all) {
-        i = this->Act();
-    } else {
-        for (i = 0 ; i < _curves->count(); i++)
-            if (_curves->get(i) != NULL)
-                break;
+    Curve *c;
+    QByteArray eol = QByteArrayLiteral("\r\n");
+    if (this->Act() >= 0) {
+        c = _curves->get(_act);
+        if ( c == NULL) {
+            _pUI->showMessageBox(tr("Could not find any curve to save."), tr("Error"));
+            return;
+        }
     }
+
+    QFile *ff = new QFile(path);
     if ( !ff->open(QIODevice::ReadWrite) ) {
         _pUI->showMessageBox(tr("Could not open file for writing."), tr("Error"));
     }
 
-    std::string tmp;
-    int pt;
     if (this->Act() == SELECT::all)  // wszystkie aktywne
     {
-        //QVector<double>* workE=_curves->get(0)->getPotentialVector();
-        int savedCurrentRange = this->getCurrentRange();
-
-        for ( int i = 0; i<_curves->count(); ++i) {
-            this->setCurrentRange(_curves->get(i)->Param(PARAM::crange)
-                                  , _curves->get(i)->Param(PARAM::electr));
-            if ( this->getXAxis() == XAXIS::potential ) {
-                for ( pt = 0; pt < _curves->get(i)->getYVector().size(); ++pt ) {
-                    tmp = this->dispEforTXT(_curves->get(i)->getPotentialPoint(pt)).toStdString();
-                    tmp.append(",");
-                    ff->write(tmp.data(),tmp.size());
-                }
-                tmp = this->dispEforTXT(_curves->get(i)->getPotentialPoint(pt)).toStdString();
-                ff->write(tmp.data(),tmp.size());
-            } else if (this->getXAxis() == XAXIS::time ) {
-                for ( pt = 0; pt < _curves->get(i)->Param(PARAM::ptnr)-1; ++pt ) {
-                    tmp = this->dispTIMEforTXT(_curves->get(i)->getTimeVector()->at(pt)).toStdString();
-                    tmp.append(",");
-                    ff->write(tmp.data(),tmp.size());
-                }
-                tmp = this->dispTIMEforTXT(_curves->get(i)->getTimeVector()->at(pt)).toStdString();
-                ff->write(tmp.data(),tmp.size());
-            } else if ( this->getXAxis() == XAXIS::nonaveraged ) {
-                for ( pt = 0; pt < _curves->get(i)->getNumberOfProbingPoints()-1; ++pt ) {
-                    tmp = this->dispNR(pt).toStdString();
-                    tmp.append(",");
-                    ff->write(tmp.data(),tmp.size());
-                }
-                tmp = this->dispNR(pt).toStdString();
-                ff->write(tmp.data(),tmp.size());
-            }
-            ff->write(endOfLine,2);
-
-            if ( getXAxis() != XAXIS::nonaveraged ) {
-                for ( pt = 0; pt < _curves->get(i)->Param(PARAM::ptnr)-1; ++pt ) {
-                    tmp = this->dispIforTXT(_curves->get(i)->Result(pt)).toStdString();
-                    tmp.append(",");
-                    ff->write(tmp.data(),tmp.size());
-                }
-                tmp = this->dispIforTXT(_curves->get(i)->Result(pt)).toStdString();
-                ff->write(tmp.data(),tmp.size());
-            } else {
-                for ( pt = 0; pt < _curves->get(i)->getNrOfDataPoints()-1; ++pt ) {
-                    tmp = this->dispIforTXT(_curves->get(i)->getProbingData()->at(pt)).toStdString();
-                    tmp.append(",");
-                    ff->write(tmp.data(),tmp.size());
-                }
-                tmp = this->dispIforTXT(_curves->get(i)->getProbingData()->at(pt)).toStdString();
-                ff->write(tmp.data(),tmp.size());
-            }
-            if ( i != _curves->count() -1 ) {
-                // Ostatnia linia bez crlf
-                ff->write(endOfLine,2);
+        int n = _curves->count();
+        for ( int i = 0; i<n; ++i) {
+            std::vector<std::string> csvCurve;
+            csvCurve = exportToCSVCurve(_curves->get(i));
+            ff->write(csvCurve[0].data(), csvCurve[0].size());
+            ff->write(eol);
+            ff->write(csvCurve[1].data(),csvCurve[1].size());
+            if ( i+1 < n ) {
+                ff->write(eol);
             }
         }
-        this->setCurrentRange(savedCurrentRange);
     } else { // jedna aktywna
-        i=this->Act();
-        if ( this->getXAxis() == XAXIS::potential ) {
-            int pt = _curves->get(i)->Param(PARAM::ptnr);
-            for ( pt = 0; pt<(_curves->get(i)->Param(PARAM::ptnr)-1); ++pt ) {
-                tmp = this->dispEforTXT(_curves->get(i)->getPotentialPoint(pt)).toStdString();
-                tmp.append(",");
-                ff->write(tmp.data(),tmp.size());
-            }
-            tmp = this->dispEforTXT(_curves->get(i)->getPotentialPoint(pt)).toStdString();
-            ff->write(tmp.data(),tmp.size());
-        } else if (getXAxis() == XAXIS::time ) {
-            for ( pt = 0; pt < (_curves->get(i)->Param(PARAM::ptnr)-1); ++pt ) {
-                tmp = this->dispTIMEforTXT(_curves->get(i)->getTimeVector()->at(pt)).toStdString();
-                tmp.append(",");
-                ff->write(tmp.data(),tmp.size());
-            }
-            tmp = this->dispTIMEforTXT(_curves->get(i)->getTimeVector()->at(pt)).toStdString();
-            ff->write(tmp.data(),tmp.size());
-        } else if ( getXAxis() == XAXIS::nonaveraged ) {
-            for ( pt = 0; pt < _curves->get(i)->getNumberOfProbingPoints()-1; ++pt ) {
-                tmp = this->dispNR(pt).toStdString();
-                tmp.append(",");
-                ff->write(tmp.data(),tmp.size());
-            }
-            tmp = this->dispNR(pt).toStdString();
-            ff->write(tmp.data(),tmp.size());
-        }
-        ff->write(endOfLine,2);
-
-        if ( getXAxis() != XAXIS::nonaveraged ) {
-            for ( pt = 0; pt < _curves->get(i)->Param(PARAM::ptnr)-1; ++pt ) {
-                tmp = this->dispIforTXT(_curves->get(i)->Result(pt)).toStdString();
-                tmp.append(",");
-                ff->write(tmp.data(),tmp.size());
-            }
-            tmp = this->dispIforTXT(_curves->get(i)->Result(pt)).toStdString();
-            ff->write(tmp.data(),tmp.size());
-        } else {
-            for ( pt = 0; pt < _curves->get(i)->getNrOfDataPoints()-1; ++pt ) {
-                tmp = this->dispIforTXT(_curves->get(i)->getProbingData()->at(pt)).toStdString();
-                tmp.append(",");
-                ff->write(tmp.data(),tmp.size());
-            }
-            tmp = this->dispIforTXT(_curves->get(i)->getProbingData()->at(pt)).toStdString();
-            ff->write(tmp.data(),tmp.size());
-        }
+            std::vector<std::string> csvCurve;
+            csvCurve = exportToCSVCurve(c);
+            ff->write(csvCurve[0].data(), csvCurve[0].size());
+            ff->write(eol);
+            ff->write(csvCurve[1].data(),csvCurve[1].size());
     }
     ff->close();
     delete ff;
-    delete[] endOfLine;
+}
+
+std::vector<std::string> EAQtData::exportToCSVCurve(Curve *c)
+{
+    QVector<double> yvec = c->getYVector();
+    QVector<double> xvec = c->getXVector();
+    int n = yvec.size();
+    std::string strY;
+    std::string strX;
+    std::vector<std::string> ret(2);
+    strY.reserve(n*6);
+    strX.reserve(n*4);
+    for ( int i =0; i<n-1; ++i ) {
+        strY.append(dispIforTXT(yvec[i]).toStdString() + ",");
+        strX.append(dispEforTXT(xvec[i]).toStdString() + ",");
+    }
+    strY.append(dispIforTXT(yvec[n-1]).toStdString());
+    strX.append(dispEforTXT(xvec[n-1]).toStdString());
+    ret[0] = strX;
+    ret[1] = strY;
+    return ret;
 }
 
 void EAQtData::exportToTXT(QString path)
 {
-    int32_t i, k;
-    char buf[256];
-    int* blen;
-    blen = new int[_curves->count()];
-    int blenm;
+    Curve *c;
+    int sizeData;
+    QByteArray eol = QByteArrayLiteral("\r\n");
+    if (this->Act() >= 0) {
+        c = _curves->get(_act);
+        if ( c == NULL) {
+            _pUI->showMessageBox(tr("Could not find any curve to save."), tr("Error"));
+            return;
+        }
+        sizeData = c->getYVector().size();
+    } else if ( Act() == SELECT::all ) {
+        if ( (c=_curves->get(0)) == NULL ) {
+            _pUI->showMessageBox(tr("Could not find any curve to save."), tr("Error"));
+            return;
+        }
+        int n = _curves->count();
+        sizeData = _curves->get(0)->getYVector().size();
+        for ( int i =0; i<n; ++i ) {
+            if ( _curves->get(i)->getYVector().size() != sizeData ) {
+                _pUI->showMessageBox(tr("Cannot export to TXT curves with different number of points."), tr("Error"));
+                return;
+            }
+        }
+    }
 
     QFile *ff = new QFile(path);
     if ( !ff->open(QIODevice::ReadWrite) ) {
-        _pUI->showMessageBox(tr("Failed to open file for writing"),tr("Error"));
+        _pUI->showMessageBox(tr("Could not open file for writing."), tr("Error"));
     }
 
-    if (this->Act() == SELECT::all ) {
-        for (i = 0 ; i < _curves->count() ; i++) {
-            if ( _curves->get(i) != NULL ) {
-                blen[i] = _curves->get(i)->Param(PARAM::ptnr);
-            } else {
-                blen[i] = 0;
-            }
-        }
-        blenm = 0;
-        for (i=0 ; i<_curves->count() ; i++) {
-            if (blen[i] > blenm) {
-                blenm = blen[i];
-            }
-        }
-        QVector<double> *workE = _curves->get(0)->getPotentialVector();
+    std::vector<std::string> lines(sizeData);
+    QVector<double> xvals = c->getXVector();
+    for ( int i =0; i<sizeData;++i) {
+        lines[i] = dispEforTXT(xvals[i]).toStdString();
+    }
 
-        for (k=0 ; k<blenm ; k++) {
-            sprintf(buf, "%10.5lf   ", workE->at(k));
-            ff->write(buf, strlen(buf));
-            for (i = 0 ; i < _curves->count() ; i++)
-                if ( _curves->get(i) != NULL ) {
-                    if (k < blen[i]) {
-                        sprintf(buf,"%10.5lf   ", _curves->get(i)->Result(k));
-                        ff->write(buf, strlen(buf));
-                    } else {
-                        sprintf(buf, "             ");
-                        ff->write(buf, strlen(buf));
-                    }
-                }
-            sprintf(buf, "\n");
-            ff->write(buf, 1);
+    if (this->Act() == SELECT::all)  // wszystkie aktywne
+    {
+        int n = _curves->count();
+        for ( int i = 0; i<n; ++i) {
+            std::vector<std::string> cLines = exportToTXTCurve(_curves->get(i));
+            for ( int i = 0; i<sizeData; ++i) {
+                lines[i].append("\t" + cLines[i]);
+            }
         }
-    } else {
-        i = this->Act();
-        QVector<double> workE = _curves->get(i)->getYVector();
-        int n = workE.size();
-        for (k=0 ; k < n ; k++)
-        {
-            sprintf(buf,"%10.5lf\n", workE.at(k));
-            ff->write(buf, strlen(buf));
+    } else { // jedna aktywna
+        std::vector<std::string> cLines = exportToTXTCurve(c);
+        for ( int i = 0; i<sizeData; ++i) {
+            lines[i].append("\t" + cLines[i]);
         }
     }
+    for ( int i =0; i<sizeData-1; ++i) {
+        ff->write(lines[i].data(), lines[i].size());
+        ff->write(eol);
+    }
+    ff->write(lines[sizeData-1].data(), lines[sizeData-1].size());
     ff->close();
-    delete[] blen;
     delete ff;
+}
+
+std::vector<std::string> EAQtData::exportToTXTCurve(Curve *c)
+{
+    QVector<double> vals = c->getYVector();
+    int n = vals.size();
+    std::vector<std::string> ret(n);
+    for ( int i =0; i<n;++i) {
+        ret[i] = dispIforTXT(vals[i]).toStdString();
+    }
+    return ret;
 }
 
 bool EAQtData::getWasLSV()
