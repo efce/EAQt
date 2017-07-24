@@ -2023,6 +2023,7 @@ int EAQtData::MesSaveAll(QString UserCName, QString UserFName, QString UserComme
             index = this->getCurves()->append(this->getMesCurves()->get(0));
         } catch (int e) {
             _pUI->showMessageBox(tr("Could not append curve."), tr("Error"));
+            return -1;
         }
 
         this->getMesCurves()->unset((TYPES::vectorindex_t)0);
@@ -2270,6 +2271,7 @@ void EAQtData::loadMesFile()
         res = this->_pSeriesData->LoadFromFile(this->_seriesFilePath.toStdString());
     } catch (int a) {
         this->_pUI->showMessageBox(tr("error loading file: ") + this->dispNR(a));
+        return;
     }
 
     if ( res == -1 ) {
