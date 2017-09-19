@@ -1017,7 +1017,6 @@ void EAQtParamDialog::saveParams()
         if ( _advWidgets.useMesFile->isChecked() ) {
             QString fp = _advWidgets.mesFilePath->text();
             if ( !fp.isEmpty() ) {
-                _pData->setIsMesSeries(true);
                 _pData->setMesSeriesFile(fp);
             } else {
                 _pData->setIsMesSeries(false);

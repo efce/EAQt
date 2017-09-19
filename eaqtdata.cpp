@@ -15,6 +15,8 @@
   *  along with this program; if not, write to the Free Software Foundation,
   *  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
   *******************************************************************************************************************/
+
+//#include <QSound>
 #include "eaqtdata.h"
 #include "eaqtsavefiledialog.h"
 #include "eaqtcalibrationdialog.h"
@@ -59,6 +61,8 @@ EAQtData::EAQtData() : QObject(), EAQtDataInterface()
     this->_calculatedNrOfPoints = 0;
     this->_displayCurveNr = 0;
     this->_currentPointOnCurve = 0;
+
+    _pSeriesData = new MesCFG();
 
     initParam();
     initParamLSV();
@@ -1006,10 +1010,6 @@ void EAQtData::MesStart(bool isLsv)
             // udało się wczytać plik
             this->_pSeriesData->Mes_Start();
         } else {
-            //wczytanie się nie powiodło
-            //            CString	m_String;
-            //            m_String.LoadString(IDS_info12);
-            //            view->MessageBoxA(m_String);
             return;
         }
     }
@@ -1033,10 +1033,7 @@ void EAQtData::MesStart(bool isLsv)
         }
 
         if ( this->_pSeriesData->Mes_WaitForUser() == true ) {
-            //			CString	m_String;
-            //			m_String.LoadString(IDS_info13);
-
-            //			view->MessageBox(m_String);
+            _pUI->showMessageBox(tr("Press OK to continue the measurement series."), tr("Measurement Series"));
         }
         if ( this->_pSeriesData->Mes_Delay() != 0 ) {
             this->seriaWait(this->_pSeriesData->Mes_Delay());
@@ -1554,19 +1551,14 @@ void EAQtData::MesStop()
         this->_pUI->showMessageBox(tr("Measurement was not initiated.")); // Pomiar nie został zainicjowany
     } else {
         _conductingMeasurement = 0;
-        // wyczyszczenie pola textowego
-        //view->m_sSubtext = _T("");
-        //view->UpdateData( FALSE );
         _TxBuf[0] = PC2EA_RECORODS::recordStop;
-        //TxN = TxBufLgth;
         this->_network->sendToEA((char*)&_TxBuf[0]);
-        //		if ( this->bIsSeriaMes == true ) {
-        //			this->pMesData->~MesCFG();
-        //			this->pMesData = new MesCFG();
-        //			this->bIsSeriaMes = false;
-        //		}
-
-        //		view->enableAllButtons();
+        if ( this->_isMesSeries ) {
+            delete this->_pSeriesData;
+            this->_pSeriesData = new MesCFG();
+            this->_isMesSeries = false;
+            this->_useSeriesFile = true;
+        }
         _pUI->MeasurementAfter();
     }
 }
@@ -1889,9 +1881,11 @@ void EAQtData::MesAfter()
         //        PlaySound("C:\\EALab\\tada.wav", 0, SND_FILENAME|SND_LOOP|SND_ASYNC);
         //        Sleep(2000);
         //        PlaySound(0,0,0);
+        //QSound::play("");
         delete _pSeriesData;
         _pSeriesData = new MesCFG();
         _isMesSeries = false;
+        _useSeriesFile = true;
     }
     QFileInfo fi(saveDetails.fileName);
     this->_pUI->MeasurementAfter();
@@ -2276,7 +2270,7 @@ void EAQtData::loadMesFile()
 
     if ( res == -1 ) {
         QString b = this->_pSeriesData->lasterroron.c_str();
-        this->_pUI->showMessageBox( "IDS_info10" + b );
+        this->_pUI->showMessageBox( tr("Syntax error on line: %1").arg(b));
         this->_isMesSeries = false;
         return;
     } else if ( res == -2 ) {
@@ -2288,18 +2282,14 @@ void EAQtData::loadMesFile()
         this->_isMesSeries = false;
         return;
     } else if ( res == 0 ) {
-        this->_pUI->showMessageBox("IDS_info16"); // Wczytano 0 krzywych, nie kontynuuję
+        this->_pUI->showMessageBox(tr("No measurements loaded, terminating.")); // Wczytano 0 krzywych, nie kontynuuję
         this->_isMesSeries = false;
         return;
     } else if ( res > 0 ) {
-
-        //this->uiInterface->showMessageBox("IDS_info17"); // Wczytano
-        //this->uiInterface->showMessageBox("IDS_info18"); // serii krzywych, rozpoczynam serię pomiarów
-
-        this->_pUI->showMessageBox("IDS_info17" + this->dispNR(res) + "IDS_info18");
+        this->_pUI->showMessageBox(tr("Loaded: %1 measurements. Starting the measurement series.").arg( this->dispNR(res)));
         this->_isMesSeries = true;
     } else {
-        this->_pUI->showMessageBox("IDS_info19"); // Błąd krytyczny, nie kontynuuję
+        this->_pUI->showMessageBox(tr("Critical error. Terminating.")); // Błąd krytyczny, nie kontynuuję
         this->_isMesSeries = false;
         return;
     }
@@ -2704,6 +2694,7 @@ QString EAQtData::getMesSeriesFile()
 void EAQtData::setMesSeriesFile(QString fp)
 {
     _seriesFilePath = fp;
+    _useSeriesFile = (fp.isEmpty()?false:true);
 }
 
 EAQtSignalProcessing* EAQtData::getProcessing()
