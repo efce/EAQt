@@ -52,12 +52,12 @@
 <context>
     <name>Curve</name>
     <message>
-        <location filename="curve.cpp" line="498"/>
+        <location filename="curve.cpp" line="519"/>
         <source>Error</source>
         <translation>Błąd</translation>
     </message>
     <message>
-        <location filename="curve.cpp" line="499"/>
+        <location filename="curve.cpp" line="520"/>
         <source>Curve has more parameters than this version of EAQt allows for. Curve cannot be loaded. (Maybe it originates from newer version?)</source>
         <translation>Wczytywana krzywe ma więcej parametrów niż dozwolone w tej wersji EAQt. Krzywa nie może być wczytana (może pochodzi z nowszej wersji programu?)</translation>
     </message>
@@ -161,8 +161,9 @@
     </message>
     <message>
         <location filename="displaycurveinfo.cpp" line="80"/>
-        <source>&lt;tr&gt;&lt;td colspan=2&gt;&lt;b&gt;Sweep rate:&lt;/b&gt;&amp;nbsp%1&amp;nbsp;mV/s&lt;/td&gt;&lt;/tr&gt;</source>
-        <translation>&lt;tr&gt;&lt;td colspan=2&gt;&lt;b&gt;Szybkość polaryzacji:&lt;/b&gt;&amp;nbsp%1&amp;nbsp;mV/s&lt;/td&gt;&lt;/tr&gt;</translation>
+        <source>&lt;tr&gt;&lt;td colspan=2&gt;&lt;b&gt;Sweep rate:&lt;/b&gt;&amp;nbsp;%1&amp;nbsp;mV/s&lt;/td&gt;&lt;/tr&gt;</source>
+        <oldsource>&lt;tr&gt;&lt;td colspan=2&gt;&lt;b&gt;Sweep rate:&lt;/b&gt;&amp;nbsp%1&amp;nbsp;mV/s&lt;/td&gt;&lt;/tr&gt;</oldsource>
+        <translation>&lt;tr&gt;&lt;td colspan=2&gt;&lt;b&gt;Szybkość polaryzacji:&lt;/b&gt;&amp;nbsp;%1&amp;nbsp;mV/s&lt;/td&gt;&lt;/tr&gt;</translation>
     </message>
     <message>
         <location filename="displaycurveinfo.cpp" line="81"/>
@@ -401,12 +402,18 @@
         <translation>(nie zapisano)</translation>
     </message>
     <message>
-        <location filename="eaqtaveragedialog.cpp" line="211"/>
+        <location filename="eaqtaveragedialog.cpp" line="200"/>
+        <source>Could not append new curve. Max reached?</source>
+        <translation>Nie można dołączyć kolejnej krzywej, Osiągnięto limit ?</translation>
+    </message>
+    <message>
+        <location filename="eaqtaveragedialog.cpp" line="217"/>
         <source>Could not average selected curves</source>
         <translation>Nie można uśrednić wybranych krzywych</translation>
     </message>
     <message>
-        <location filename="eaqtaveragedialog.cpp" line="211"/>
+        <location filename="eaqtaveragedialog.cpp" line="200"/>
+        <location filename="eaqtaveragedialog.cpp" line="217"/>
         <source>Error</source>
         <translation>Błąd</translation>
     </message>
@@ -564,164 +571,241 @@
 <context>
     <name>EAQtData</name>
     <message>
-        <location filename="eaqtdata.cpp" line="39"/>
-        <location filename="eaqtdata.cpp" line="2086"/>
-        <location filename="eaqtdata.cpp" line="2458"/>
+        <location filename="eaqtdata.cpp" line="41"/>
+        <location filename="eaqtdata.cpp" line="2137"/>
+        <location filename="eaqtdata.cpp" line="2506"/>
         <source>%1</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="eaqtdata.cpp" line="458"/>
-        <location filename="eaqtdata.cpp" line="497"/>
+        <location filename="eaqtdata.cpp" line="464"/>
+        <location filename="eaqtdata.cpp" line="503"/>
         <source>File is empty</source>
         <translation>Plik jest pusty</translation>
     </message>
     <message>
-        <location filename="eaqtdata.cpp" line="469"/>
-        <location filename="eaqtdata.cpp" line="478"/>
-        <location filename="eaqtdata.cpp" line="508"/>
-        <location filename="eaqtdata.cpp" line="517"/>
+        <location filename="eaqtdata.cpp" line="475"/>
+        <location filename="eaqtdata.cpp" line="484"/>
+        <location filename="eaqtdata.cpp" line="514"/>
+        <location filename="eaqtdata.cpp" line="523"/>
         <source>Error while reading the file</source>
         <translation>Błąd w czasie zapisu do pliku</translation>
     </message>
     <message>
-        <location filename="eaqtdata.cpp" line="744"/>
+        <location filename="eaqtdata.cpp" line="571"/>
+        <location filename="eaqtdata.cpp" line="643"/>
+        <location filename="eaqtdata.cpp" line="694"/>
+        <location filename="eaqtdata.cpp" line="1086"/>
+        <location filename="eaqtdata.cpp" line="1259"/>
+        <source>Could not add new curve. Maximum reached?</source>
+        <translation>Nie można dodać nowej krzywej, Osiągnięto limit ?</translation>
+    </message>
+    <message>
+        <location filename="eaqtdata.cpp" line="764"/>
+        <source>Could not reappend curve.</source>
+        <translation>Nie można dołączyć krzywej.</translation>
+    </message>
+    <message>
+        <location filename="eaqtdata.cpp" line="778"/>
         <source>Delete all curves?</source>
         <translation>Usunąć wszystkie krzywe?</translation>
     </message>
     <message>
-        <location filename="eaqtdata.cpp" line="745"/>
+        <location filename="eaqtdata.cpp" line="779"/>
         <source>Are you sure</source>
         <translation>Jesteś pewny</translation>
     </message>
     <message>
-        <location filename="eaqtdata.cpp" line="962"/>
+        <location filename="eaqtdata.cpp" line="997"/>
         <source>Start </source>
         <translation>Start </translation>
     </message>
     <message>
-        <location filename="eaqtdata.cpp" line="1413"/>
+        <location filename="eaqtdata.cpp" line="1036"/>
+        <source>Press OK to continue the measurement series.</source>
+        <translation>Naciśnij OK, aby kontynuować serię pomiarów.</translation>
+    </message>
+    <message>
+        <location filename="eaqtdata.cpp" line="1036"/>
+        <source>Measurement Series</source>
+        <translation>Seria Pomiarów</translation>
+    </message>
+    <message>
+        <location filename="eaqtdata.cpp" line="1452"/>
         <source>Potential program has to have more than 2 points</source>
         <translation>Program potencjału mus być dłuższy niż 2 punkty</translation>
     </message>
     <message>
-        <location filename="eaqtdata.cpp" line="1512"/>
+        <location filename="eaqtdata.cpp" line="1551"/>
         <source>Measurement was not initiated.</source>
         <translation>Pomiar nie został zainicjalizowany.</translation>
     </message>
     <message>
-        <location filename="eaqtdata.cpp" line="1746"/>
+        <location filename="eaqtdata.cpp" line="1726"/>
+        <source> [FPS: %1]</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="eaqtdata.cpp" line="1781"/>
         <source>Applying Estart: %1 mV, %2 s</source>
         <translation>Przykładam Estart; %1 mV, %2 s</translation>
     </message>
     <message>
-        <location filename="eaqtdata.cpp" line="1796"/>
+        <location filename="eaqtdata.cpp" line="1831"/>
         <source>Save dialog</source>
         <translation>Zapisywanie</translation>
     </message>
     <message>
-        <location filename="eaqtdata.cpp" line="1797"/>
+        <location filename="eaqtdata.cpp" line="1832"/>
         <source>Do you want to save the result?</source>
         <translation>Chcesz zapisać wynik pomiaru?</translation>
     </message>
     <message>
-        <location filename="eaqtdata.cpp" line="2102"/>
+        <location filename="eaqtdata.cpp" line="2019"/>
+        <source>Could not append curve.</source>
+        <translation>Nie można dołączyć krzywej.</translation>
+    </message>
+    <message>
+        <location filename="eaqtdata.cpp" line="2153"/>
         <source>Too many curves with the same name in file.</source>
         <translation>Zbyt wiele krzywych o tej samej nazwie w pliku.</translation>
     </message>
     <message>
-        <location filename="eaqtdata.cpp" line="2127"/>
+        <location filename="eaqtdata.cpp" line="2178"/>
         <source>Could not open tmp file. Curve not saved.</source>
         <translation>Nie można otworzyć pliku tmp. Nie zapisano krzywej.</translation>
     </message>
     <message>
-        <location filename="eaqtdata.cpp" line="2138"/>
+        <location filename="eaqtdata.cpp" line="2189"/>
         <source>Error while openning temp file. Curve not saved.</source>
         <translation>Nie można otworzyć pliku tmp. Nie zapisano krzywej.</translation>
     </message>
     <message>
-        <location filename="eaqtdata.cpp" line="2148"/>
+        <location filename="eaqtdata.cpp" line="2199"/>
         <source>Error while openning temp file, or file damaged. Curve not saved.</source>
         <translation>Nie można otworzyć pliku tmp. Nie zapisano krzywej.</translation>
     </message>
     <message>
-        <location filename="eaqtdata.cpp" line="2162"/>
+        <location filename="eaqtdata.cpp" line="2213"/>
         <source>Error while reading number of files from tmp. Curve not saved.</source>
         <translation>Nie można otworzyć pliku tmp. Nie zapisano krzywej.</translation>
     </message>
     <message>
-        <location filename="eaqtdata.cpp" line="2175"/>
+        <location filename="eaqtdata.cpp" line="2226"/>
         <source>Error while verifing size of tmp file (offset sum &gt; filesize). Curve not saved.</source>
         <translation>Błąd w czasie weryfikacji wielkości pliku tmp (offset sum &gt; filesize). Nie zapisano krzywej.</translation>
     </message>
     <message>
-        <location filename="eaqtdata.cpp" line="2184"/>
+        <location filename="eaqtdata.cpp" line="2235"/>
         <source>Error while verifing size of tmp file (offset sum != filesize). Curve not saved.</source>
         <translation>Błąd w czasie weryfikacji wielkości pliku tmp (offset sum != filesize). Nie zapisano krzywej.</translation>
     </message>
     <message>
-        <location filename="eaqtdata.cpp" line="2216"/>
+        <location filename="eaqtdata.cpp" line="2267"/>
         <source>error loading file: </source>
         <translation>błąd w czasie wczytywania pliku: </translation>
     </message>
     <message>
-        <location filename="eaqtdata.cpp" line="2442"/>
-        <location filename="eaqtdata.cpp" line="2444"/>
-        <location filename="eaqtdata.cpp" line="2451"/>
+        <location filename="eaqtdata.cpp" line="2273"/>
+        <source>Syntax error on line: %1</source>
+        <translation>Błąd składni na lini %1</translation>
+    </message>
+    <message>
+        <location filename="eaqtdata.cpp" line="2285"/>
+        <source>No measurements loaded, terminating.</source>
+        <translation>Nie wczytano pomiarów. Przerywam.</translation>
+    </message>
+    <message>
+        <location filename="eaqtdata.cpp" line="2289"/>
+        <source>Loaded: %1 measurements. Starting the measurement series.</source>
+        <translation>Wczytano %1 pomiarów. Rozpoczynanie serii pomiarów.</translation>
+    </message>
+    <message>
+        <location filename="eaqtdata.cpp" line="2292"/>
+        <source>Critical error. Terminating.</source>
+        <translation>Błąd krytyczny. Przerywam.</translation>
+    </message>
+    <message>
+        <location filename="eaqtdata.cpp" line="2490"/>
+        <location filename="eaqtdata.cpp" line="2492"/>
+        <location filename="eaqtdata.cpp" line="2499"/>
         <source>%1 mV</source>
         <translation>%1 mV</translation>
     </message>
     <message>
-        <location filename="eaqtdata.cpp" line="2465"/>
-        <location filename="eaqtdata.cpp" line="2486"/>
-        <location filename="eaqtdata.cpp" line="2489"/>
-        <location filename="eaqtdata.cpp" line="2492"/>
-        <location filename="eaqtdata.cpp" line="2498"/>
+        <location filename="eaqtdata.cpp" line="2513"/>
+        <location filename="eaqtdata.cpp" line="2534"/>
+        <location filename="eaqtdata.cpp" line="2537"/>
+        <location filename="eaqtdata.cpp" line="2540"/>
+        <location filename="eaqtdata.cpp" line="2546"/>
         <source>%1 µA</source>
         <translation>%1 µA</translation>
     </message>
     <message>
-        <location filename="eaqtdata.cpp" line="2468"/>
-        <location filename="eaqtdata.cpp" line="2471"/>
-        <location filename="eaqtdata.cpp" line="2474"/>
-        <location filename="eaqtdata.cpp" line="2495"/>
+        <location filename="eaqtdata.cpp" line="2516"/>
+        <location filename="eaqtdata.cpp" line="2519"/>
+        <location filename="eaqtdata.cpp" line="2522"/>
+        <location filename="eaqtdata.cpp" line="2543"/>
         <source>%1 nA</source>
         <translation>%1 nA</translation>
     </message>
     <message>
-        <location filename="eaqtdata.cpp" line="2477"/>
-        <location filename="eaqtdata.cpp" line="2480"/>
-        <location filename="eaqtdata.cpp" line="2483"/>
+        <location filename="eaqtdata.cpp" line="2525"/>
+        <location filename="eaqtdata.cpp" line="2528"/>
+        <location filename="eaqtdata.cpp" line="2531"/>
         <source>%1 mA</source>
         <translation>%1 mA</translation>
     </message>
     <message>
-        <location filename="eaqtdata.cpp" line="2672"/>
+        <location filename="eaqtdata.cpp" line="2712"/>
+        <location filename="eaqtdata.cpp" line="2775"/>
+        <location filename="eaqtdata.cpp" line="2781"/>
+        <source>Could not find any curve to save.</source>
+        <translation>Nie można znaleźć krzywej do zapisania.</translation>
+    </message>
+    <message>
+        <location filename="eaqtdata.cpp" line="2719"/>
+        <location filename="eaqtdata.cpp" line="2796"/>
         <source>Could not open file for writing.</source>
         <translation>Nie można otworzyć pliku do zapisu.</translation>
     </message>
     <message>
-        <location filename="eaqtdata.cpp" line="458"/>
-        <location filename="eaqtdata.cpp" line="469"/>
-        <location filename="eaqtdata.cpp" line="478"/>
-        <location filename="eaqtdata.cpp" line="497"/>
-        <location filename="eaqtdata.cpp" line="508"/>
-        <location filename="eaqtdata.cpp" line="517"/>
-        <location filename="eaqtdata.cpp" line="1413"/>
-        <location filename="eaqtdata.cpp" line="2672"/>
-        <location filename="eaqtdata.cpp" line="2798"/>
+        <location filename="eaqtdata.cpp" line="2788"/>
+        <source>Cannot export to TXT curves with different number of points.</source>
+        <translation>Nie można eksportować do TXT krzywych z różna ilością punktów pomiarowych.</translation>
+    </message>
+    <message>
+        <location filename="eaqtdata.cpp" line="464"/>
+        <location filename="eaqtdata.cpp" line="475"/>
+        <location filename="eaqtdata.cpp" line="484"/>
+        <location filename="eaqtdata.cpp" line="503"/>
+        <location filename="eaqtdata.cpp" line="514"/>
+        <location filename="eaqtdata.cpp" line="523"/>
+        <location filename="eaqtdata.cpp" line="571"/>
+        <location filename="eaqtdata.cpp" line="643"/>
+        <location filename="eaqtdata.cpp" line="694"/>
+        <location filename="eaqtdata.cpp" line="764"/>
+        <location filename="eaqtdata.cpp" line="1086"/>
+        <location filename="eaqtdata.cpp" line="1259"/>
+        <location filename="eaqtdata.cpp" line="1452"/>
+        <location filename="eaqtdata.cpp" line="2019"/>
+        <location filename="eaqtdata.cpp" line="2712"/>
+        <location filename="eaqtdata.cpp" line="2719"/>
+        <location filename="eaqtdata.cpp" line="2775"/>
+        <location filename="eaqtdata.cpp" line="2781"/>
+        <location filename="eaqtdata.cpp" line="2788"/>
+        <location filename="eaqtdata.cpp" line="2796"/>
         <source>Error</source>
         <translation>Błąd</translation>
     </message>
     <message>
-        <location filename="eaqtdata.cpp" line="1755"/>
+        <location filename="eaqtdata.cpp" line="1790"/>
         <source>Break: %1 mV    %2:%3 of %4:%5 </source>
         <translation>Przerwa: %1 mV    %2:%3 of %4:%5 </translation>
     </message>
     <message>
-        <location filename="eaqtdata.cpp" line="2798"/>
         <source>Failed to open file for writing</source>
-        <translation>Błąd w czasie zapisu pliku</translation>
+        <translation type="vanished">Błąd w czasie zapisu pliku</translation>
     </message>
 </context>
 <context>
@@ -732,209 +816,209 @@
         <translation>EAQt - oprogramowanie analizatora elektrochemicznego</translation>
     </message>
     <message>
-        <location filename="eaqtmainwindow.cpp" line="198"/>
+        <location filename="eaqtmainwindow.cpp" line="200"/>
         <source>curves: %1</source>
         <translation>krzywych: %1</translation>
     </message>
     <message>
-        <location filename="eaqtmainwindow.cpp" line="398"/>
+        <location filename="eaqtmainwindow.cpp" line="400"/>
         <source>Delete active</source>
         <translation>Usuń aktywne</translation>
     </message>
     <message>
-        <location filename="eaqtmainwindow.cpp" line="399"/>
+        <location filename="eaqtmainwindow.cpp" line="401"/>
         <source>Delete active curve from plot</source>
         <translation>Usuń krzywą aktywną z wykresu</translation>
     </message>
     <message>
-        <location filename="eaqtmainwindow.cpp" line="404"/>
+        <location filename="eaqtmainwindow.cpp" line="406"/>
         <source>Delete all</source>
         <translation>Usuń wszystkie</translation>
     </message>
     <message>
-        <location filename="eaqtmainwindow.cpp" line="405"/>
+        <location filename="eaqtmainwindow.cpp" line="407"/>
         <source>Delete all curves from plot</source>
         <translation>Usuń wszystkie krzywe z wykresu</translation>
     </message>
     <message>
-        <location filename="eaqtmainwindow.cpp" line="410"/>
+        <location filename="eaqtmainwindow.cpp" line="412"/>
         <source>Delete non-active</source>
-        <translation>Usuń nie aktywne</translation>
+        <translation>Usuń nieaktywne</translation>
     </message>
     <message>
-        <location filename="eaqtmainwindow.cpp" line="411"/>
+        <location filename="eaqtmainwindow.cpp" line="413"/>
         <source>Delete all non active curves from plot</source>
         <translation>Usuń nieaktywne krzywe z wykresu</translation>
     </message>
     <message>
-        <location filename="eaqtmainwindow.cpp" line="416"/>
+        <location filename="eaqtmainwindow.cpp" line="418"/>
         <source>Select all</source>
         <translation>Aktywuj wszystkie</translation>
     </message>
     <message>
-        <location filename="eaqtmainwindow.cpp" line="417"/>
+        <location filename="eaqtmainwindow.cpp" line="419"/>
         <source>Activate all curves on plot</source>
         <translation>Aktywuj wszystkie krzywe na wykresie</translation>
     </message>
     <message>
-        <location filename="eaqtmainwindow.cpp" line="422"/>
-        <location filename="eaqtmainwindow.cpp" line="1044"/>
+        <location filename="eaqtmainwindow.cpp" line="424"/>
+        <location filename="eaqtmainwindow.cpp" line="947"/>
         <source>Load</source>
         <translation>Wczytaj</translation>
     </message>
     <message>
-        <location filename="eaqtmainwindow.cpp" line="423"/>
+        <location filename="eaqtmainwindow.cpp" line="425"/>
         <source>Load curves from file</source>
         <translation>Wczytaj krzywą z pliku</translation>
     </message>
     <message>
-        <location filename="eaqtmainwindow.cpp" line="427"/>
+        <location filename="eaqtmainwindow.cpp" line="429"/>
         <source>Start PV</source>
         <translation>Start PV</translation>
     </message>
     <message>
-        <location filename="eaqtmainwindow.cpp" line="428"/>
+        <location filename="eaqtmainwindow.cpp" line="430"/>
         <source>Start measurement with the same settings as previuos</source>
         <translation>Rozpoczyna pomiar z takimi samymi ustawieniami jak poprzedni</translation>
     </message>
     <message>
-        <location filename="eaqtmainwindow.cpp" line="432"/>
+        <location filename="eaqtmainwindow.cpp" line="434"/>
         <source>Stop</source>
         <translation>Stop</translation>
     </message>
     <message>
-        <location filename="eaqtmainwindow.cpp" line="433"/>
+        <location filename="eaqtmainwindow.cpp" line="435"/>
         <source>Stop the measurement</source>
         <translation>Zatrzymuje pomiar</translation>
     </message>
     <message>
-        <location filename="eaqtmainwindow.cpp" line="438"/>
+        <location filename="eaqtmainwindow.cpp" line="440"/>
         <source>PV param</source>
         <translation>Parametry PV</translation>
     </message>
     <message>
-        <location filename="eaqtmainwindow.cpp" line="439"/>
+        <location filename="eaqtmainwindow.cpp" line="441"/>
         <source>Show dialog with PV settigns</source>
         <translation>Wyświetl ustawienia PV</translation>
     </message>
     <message>
-        <location filename="eaqtmainwindow.cpp" line="444"/>
+        <location filename="eaqtmainwindow.cpp" line="446"/>
         <source>LSV param</source>
         <translation>Parametry LSV</translation>
     </message>
     <message>
-        <location filename="eaqtmainwindow.cpp" line="446"/>
+        <location filename="eaqtmainwindow.cpp" line="448"/>
         <source>Show dialog with LSV settings</source>
         <translation>Wyświetl ustawienia LSV</translation>
     </message>
     <message>
-        <location filename="eaqtmainwindow.cpp" line="451"/>
+        <location filename="eaqtmainwindow.cpp" line="453"/>
         <source>On X axis:</source>
         <translation>Na osi X:</translation>
     </message>
     <message>
-        <location filename="eaqtmainwindow.cpp" line="456"/>
+        <location filename="eaqtmainwindow.cpp" line="458"/>
         <source>Potential</source>
         <translation>Potencjał</translation>
     </message>
     <message>
-        <location filename="eaqtmainwindow.cpp" line="457"/>
+        <location filename="eaqtmainwindow.cpp" line="459"/>
         <source>Time</source>
         <translation>Czas</translation>
     </message>
     <message>
-        <location filename="eaqtmainwindow.cpp" line="458"/>
+        <location filename="eaqtmainwindow.cpp" line="460"/>
         <source>Sample no</source>
         <translation>Nr próbki</translation>
     </message>
     <message>
-        <location filename="eaqtmainwindow.cpp" line="521"/>
+        <location filename="eaqtmainwindow.cpp" line="528"/>
         <source>%1</source>
         <translation>%1</translation>
     </message>
     <message>
-        <location filename="eaqtmainwindow.cpp" line="764"/>
+        <location filename="eaqtmainwindow.cpp" line="741"/>
         <source>curve #: %1; point #: %2; potential: %3; current %4</source>
         <translation>krzywa #: %1; punkt #: %2; potencjał: %3; prąd: %4</translation>
     </message>
     <message>
-        <location filename="eaqtmainwindow.cpp" line="934"/>
-        <location filename="eaqtmainwindow.cpp" line="940"/>
+        <location filename="eaqtmainwindow.cpp" line="837"/>
+        <location filename="eaqtmainwindow.cpp" line="843"/>
         <source>Not implemented</source>
         <translation>Nie zaimplemenetowano</translation>
     </message>
     <message>
-        <location filename="eaqtmainwindow.cpp" line="945"/>
+        <location filename="eaqtmainwindow.cpp" line="848"/>
         <source>&amp;Save curve</source>
         <translation>&amp;Zapisz krzywą</translation>
     </message>
     <message>
-        <location filename="eaqtmainwindow.cpp" line="947"/>
+        <location filename="eaqtmainwindow.cpp" line="850"/>
         <source>Add curve(s) to EAQt voltammogram file (.volt)</source>
         <translation>Dodaj krzywą(e) do pliku woltammogramów (.volt)</translation>
     </message>
     <message>
-        <location filename="eaqtmainwindow.cpp" line="950"/>
+        <location filename="eaqtmainwindow.cpp" line="853"/>
         <source>&amp;Load curve</source>
         <translation>&amp;Wczytaj krzywą</translation>
     </message>
     <message>
-        <location filename="eaqtmainwindow.cpp" line="952"/>
+        <location filename="eaqtmainwindow.cpp" line="855"/>
         <source>Load curve(s) from *.volt or *.vol files</source>
         <translation>Wczytuje krzywą(e) z plików *.volt lub *.vol</translation>
     </message>
     <message>
-        <location filename="eaqtmainwindow.cpp" line="955"/>
+        <location filename="eaqtmainwindow.cpp" line="858"/>
         <source>&amp;Export curve</source>
         <translation>&amp;Eksportuj krzywą</translation>
     </message>
     <message>
-        <location filename="eaqtmainwindow.cpp" line="956"/>
+        <location filename="eaqtmainwindow.cpp" line="859"/>
         <source>Export curve(s) as *.txt or *.csv</source>
         <translation>Eksportuj krzywą do pliku .txt lub .csv</translation>
     </message>
     <message>
-        <location filename="eaqtmainwindow.cpp" line="959"/>
+        <location filename="eaqtmainwindow.cpp" line="862"/>
         <source>Rename curve</source>
         <translation>Zmien nazwę krzywej</translation>
     </message>
     <message>
-        <location filename="eaqtmainwindow.cpp" line="963"/>
+        <location filename="eaqtmainwindow.cpp" line="866"/>
         <source>Repeat previous (PV)</source>
         <translation>Powtórz poprzedni (PV)</translation>
     </message>
     <message>
-        <location filename="eaqtmainwindow.cpp" line="964"/>
+        <location filename="eaqtmainwindow.cpp" line="867"/>
         <source>Start previous measurement</source>
         <translation>Rozposzcznij poprzedni pomiar</translation>
     </message>
     <message>
-        <location filename="eaqtmainwindow.cpp" line="967"/>
+        <location filename="eaqtmainwindow.cpp" line="870"/>
         <source>Settings - pulse techniques</source>
         <translation>Ustawienia - techniki impulsowe</translation>
     </message>
     <message>
-        <location filename="eaqtmainwindow.cpp" line="968"/>
+        <location filename="eaqtmainwindow.cpp" line="871"/>
         <source>Setup and start PV measurement</source>
         <translation>Ustawienia i start pomiaru PV</translation>
     </message>
     <message>
-        <location filename="eaqtmainwindow.cpp" line="971"/>
+        <location filename="eaqtmainwindow.cpp" line="874"/>
         <source>Settings - linear technique</source>
         <translation>Ustawienia - techniki liniowe</translation>
     </message>
     <message>
-        <location filename="eaqtmainwindow.cpp" line="972"/>
+        <location filename="eaqtmainwindow.cpp" line="875"/>
         <source>Setup and start LSV measurement</source>
         <translation>Ustawienia i start pomiaru LSV</translation>
     </message>
     <message>
-        <location filename="eaqtmainwindow.cpp" line="975"/>
+        <location filename="eaqtmainwindow.cpp" line="878"/>
         <source>Accessories</source>
         <translation>Akcesoria</translation>
     </message>
     <message>
-        <location filename="eaqtmainwindow.cpp" line="976"/>
+        <location filename="eaqtmainwindow.cpp" line="879"/>
         <source>Setup accessories</source>
         <translation>Ustawienia akcesoriów</translation>
     </message>
@@ -943,257 +1027,257 @@
         <translation type="obsolete">Ustawienia CGMDE</translation>
     </message>
     <message>
-        <location filename="eaqtmainwindow.cpp" line="983"/>
+        <location filename="eaqtmainwindow.cpp" line="886"/>
         <source>Copy settings</source>
         <translation>Kopiuj ustawienia</translation>
     </message>
     <message>
-        <location filename="eaqtmainwindow.cpp" line="984"/>
+        <location filename="eaqtmainwindow.cpp" line="887"/>
         <source>Copy selected curve measurement parameteres</source>
         <translation>Kopiuj ustawienia aktywnej krzywej</translation>
     </message>
     <message>
-        <location filename="eaqtmainwindow.cpp" line="988"/>
+        <location filename="eaqtmainwindow.cpp" line="891"/>
         <source>Load settings</source>
         <translation>Wczytaj ustawienia</translation>
     </message>
     <message>
-        <location filename="eaqtmainwindow.cpp" line="989"/>
+        <location filename="eaqtmainwindow.cpp" line="892"/>
         <source>Load measurement parameters from file (.vparam)</source>
         <translation>Wczytaj parametry z pliku *.vparam</translation>
     </message>
     <message>
-        <location filename="eaqtmainwindow.cpp" line="992"/>
+        <location filename="eaqtmainwindow.cpp" line="895"/>
         <source>Save settings</source>
         <translation>Zapisz ustawienia</translation>
     </message>
     <message>
-        <location filename="eaqtmainwindow.cpp" line="993"/>
+        <location filename="eaqtmainwindow.cpp" line="896"/>
         <source>Save current measurement parameteres to file</source>
         <translation>Zapisz ustawienia aktywnej krzywej do pliku</translation>
     </message>
     <message>
-        <location filename="eaqtmainwindow.cpp" line="1000"/>
+        <location filename="eaqtmainwindow.cpp" line="903"/>
         <source>Data cursor</source>
         <translation>Wskaźnik danych</translation>
     </message>
     <message>
-        <location filename="eaqtmainwindow.cpp" line="1001"/>
+        <location filename="eaqtmainwindow.cpp" line="904"/>
         <source>Show data cursor</source>
         <translation>Pokaż wskaźnik danych</translation>
     </message>
     <message>
-        <location filename="eaqtmainwindow.cpp" line="1099"/>
-        <location filename="eaqtmainwindow.cpp" line="1309"/>
+        <location filename="eaqtmainwindow.cpp" line="1002"/>
+        <location filename="eaqtmainwindow.cpp" line="1210"/>
         <source>Calibration</source>
         <translation>Kalibracja</translation>
     </message>
     <message>
-        <location filename="eaqtmainwindow.cpp" line="1037"/>
+        <location filename="eaqtmainwindow.cpp" line="940"/>
         <source>Perform calibration / standard addition analysis</source>
         <translation>Przeprowadź kalibrację / analizę metodą dodatku wzorca</translation>
     </message>
     <message>
-        <location filename="eaqtmainwindow.cpp" line="960"/>
+        <location filename="eaqtmainwindow.cpp" line="863"/>
         <source>Change name / comment of selected curve</source>
         <translation>Zmień nazwę / komentarz wybranej krzywej</translation>
     </message>
     <message>
-        <location filename="eaqtmainwindow.cpp" line="979"/>
+        <location filename="eaqtmainwindow.cpp" line="882"/>
         <source>Test CGMDE</source>
         <translation>Test CGMDE</translation>
     </message>
     <message>
-        <location filename="eaqtmainwindow.cpp" line="980"/>
+        <location filename="eaqtmainwindow.cpp" line="883"/>
         <source>Test CMDE</source>
         <translation>Test CGMDE</translation>
     </message>
     <message>
-        <location filename="eaqtmainwindow.cpp" line="996"/>
+        <location filename="eaqtmainwindow.cpp" line="899"/>
         <source>Averaging</source>
         <translation>Uśrednianie</translation>
     </message>
     <message>
-        <location filename="eaqtmainwindow.cpp" line="997"/>
+        <location filename="eaqtmainwindow.cpp" line="900"/>
         <source>Show dialog to average curves</source>
         <translation>Pokaż dialog uśredniania krzywych</translation>
     </message>
     <message>
-        <location filename="eaqtmainwindow.cpp" line="1004"/>
+        <location filename="eaqtmainwindow.cpp" line="907"/>
         <source>Fit background</source>
         <translation>Dopasuj tło</translation>
     </message>
     <message>
-        <location filename="eaqtmainwindow.cpp" line="1005"/>
+        <location filename="eaqtmainwindow.cpp" line="908"/>
         <source>Perform background correction</source>
         <translation>Wykonaj korektę linii bazowej</translation>
     </message>
     <message>
-        <location filename="eaqtmainwindow.cpp" line="1008"/>
+        <location filename="eaqtmainwindow.cpp" line="911"/>
         <source>Background correction settings</source>
         <translation>Ustawienia korekty linii bazowej</translation>
     </message>
     <message>
-        <location filename="eaqtmainwindow.cpp" line="1009"/>
+        <location filename="eaqtmainwindow.cpp" line="912"/>
         <source>Show settings of background correction.</source>
         <translation>Pokaż ustawienia korekty linii bazowej.</translation>
     </message>
     <message>
-        <location filename="eaqtmainwindow.cpp" line="1012"/>
+        <location filename="eaqtmainwindow.cpp" line="915"/>
         <source>Relative values</source>
         <translation>Wartości względne</translation>
     </message>
     <message>
-        <location filename="eaqtmainwindow.cpp" line="1013"/>
+        <location filename="eaqtmainwindow.cpp" line="916"/>
         <source>Show relative to line values</source>
         <translation>Pokaż wartości prądu względem linii</translation>
     </message>
     <message>
-        <location filename="eaqtmainwindow.cpp" line="1016"/>
+        <location filename="eaqtmainwindow.cpp" line="919"/>
         <source>Move curve</source>
         <translation>Przesuń krzywą</translation>
     </message>
     <message>
-        <location filename="eaqtmainwindow.cpp" line="1017"/>
+        <location filename="eaqtmainwindow.cpp" line="920"/>
         <source>Move curve up/down</source>
         <translation>Przesuń krzywą dół/góra</translation>
     </message>
     <message>
-        <location filename="eaqtmainwindow.cpp" line="1020"/>
+        <location filename="eaqtmainwindow.cpp" line="923"/>
         <source>SG-Smooth</source>
         <translation>Wygładzanie SG</translation>
     </message>
     <message>
-        <location filename="eaqtmainwindow.cpp" line="1021"/>
+        <location filename="eaqtmainwindow.cpp" line="924"/>
         <source>Savitzky golay smoothing</source>
         <translation>Wygładzanie metodą Savitzkiego-Golaya</translation>
     </message>
     <message>
-        <location filename="eaqtmainwindow.cpp" line="1024"/>
+        <location filename="eaqtmainwindow.cpp" line="927"/>
         <source>Advanced smoothing</source>
         <translation>Zaawansowane wygładzanie</translation>
     </message>
     <message>
-        <location filename="eaqtmainwindow.cpp" line="1025"/>
+        <location filename="eaqtmainwindow.cpp" line="928"/>
         <source>Advanced smoothing dialog</source>
         <translation>Okno zaawansowanego wygładzania</translation>
     </message>
     <message>
-        <location filename="eaqtmainwindow.cpp" line="1028"/>
+        <location filename="eaqtmainwindow.cpp" line="931"/>
         <source>Curves statistics</source>
         <translation>Statystyki krzywych</translation>
     </message>
     <message>
-        <location filename="eaqtmainwindow.cpp" line="1029"/>
+        <location filename="eaqtmainwindow.cpp" line="932"/>
         <source>Show standard deviation and other parameters of selcted range</source>
         <translation>Oblicza odchylenie standardowe i inne parametry wybranego przedziału</translation>
     </message>
     <message>
-        <location filename="eaqtmainwindow.cpp" line="1032"/>
+        <location filename="eaqtmainwindow.cpp" line="935"/>
         <source>Recalculate curve</source>
         <translation>Przelicz krzywą</translation>
     </message>
     <message>
-        <location filename="eaqtmainwindow.cpp" line="1033"/>
+        <location filename="eaqtmainwindow.cpp" line="936"/>
         <source>Reculculate curve&apos;s current values based on non-averaged measurement</source>
-        <translation>Przelicz krzywą na podstawie zarejestrowanych danych nie uśrednionych</translation>
+        <translation>Przelicz krzywą na podstawie zarejestrowanych danych nieuśrednionych</translation>
     </message>
     <message>
-        <location filename="eaqtmainwindow.cpp" line="1036"/>
+        <location filename="eaqtmainwindow.cpp" line="939"/>
         <source>Select range</source>
         <translation>Wybierz zakres</translation>
     </message>
     <message>
-        <location filename="eaqtmainwindow.cpp" line="1040"/>
+        <location filename="eaqtmainwindow.cpp" line="943"/>
         <source>Clear</source>
         <translation>Wyczyść</translation>
     </message>
     <message>
-        <location filename="eaqtmainwindow.cpp" line="1041"/>
+        <location filename="eaqtmainwindow.cpp" line="944"/>
         <source>Clear calibration data</source>
         <translation>Wyczyść kalibrację</translation>
     </message>
     <message>
-        <location filename="eaqtmainwindow.cpp" line="1045"/>
-        <location filename="eaqtmainwindow.cpp" line="1282"/>
-        <location filename="eaqtmainwindow.cpp" line="1284"/>
+        <location filename="eaqtmainwindow.cpp" line="948"/>
+        <location filename="eaqtmainwindow.cpp" line="1183"/>
+        <location filename="eaqtmainwindow.cpp" line="1185"/>
         <source>Load calibration</source>
         <translation>Wczytaj kalibrację</translation>
     </message>
     <message>
-        <location filename="eaqtmainwindow.cpp" line="1048"/>
+        <location filename="eaqtmainwindow.cpp" line="951"/>
         <source>Show</source>
         <translation>Pokaż</translation>
     </message>
     <message>
-        <location filename="eaqtmainwindow.cpp" line="1049"/>
+        <location filename="eaqtmainwindow.cpp" line="952"/>
         <source>Show current calibration</source>
         <translation>Pokaż bierzącą kalibracje</translation>
     </message>
     <message>
-        <location filename="eaqtmainwindow.cpp" line="1052"/>
-        <location filename="eaqtmainwindow.cpp" line="1347"/>
+        <location filename="eaqtmainwindow.cpp" line="955"/>
+        <location filename="eaqtmainwindow.cpp" line="1248"/>
         <source>Result</source>
         <translation>Wynik analizy</translation>
     </message>
     <message>
-        <location filename="eaqtmainwindow.cpp" line="1053"/>
+        <location filename="eaqtmainwindow.cpp" line="956"/>
         <source>Calculate result</source>
         <translation>Oblicza wynik, bazując na aktywnej krzywej</translation>
     </message>
     <message>
-        <location filename="eaqtmainwindow.cpp" line="1056"/>
+        <location filename="eaqtmainwindow.cpp" line="959"/>
         <source>Software</source>
         <translation>Oprogramowanie</translation>
     </message>
     <message>
-        <location filename="eaqtmainwindow.cpp" line="1057"/>
+        <location filename="eaqtmainwindow.cpp" line="960"/>
         <source>Show information about the software</source>
         <translation>Pokaż informację o oprogramowaniu</translation>
     </message>
     <message>
-        <location filename="eaqtmainwindow.cpp" line="1060"/>
+        <location filename="eaqtmainwindow.cpp" line="963"/>
         <source>Report issues</source>
         <translation>Zgłoś problem</translation>
     </message>
     <message>
-        <location filename="eaqtmainwindow.cpp" line="1061"/>
+        <location filename="eaqtmainwindow.cpp" line="964"/>
         <source>If you found any bugs or have some feature request report it on github</source>
         <translation>Jeżeli znalazłeś jakieś błędy lub masz jakieś sugestie zgłoś to przez github</translation>
     </message>
     <message>
-        <location filename="eaqtmainwindow.cpp" line="1064"/>
+        <location filename="eaqtmainwindow.cpp" line="967"/>
         <source>Source code</source>
         <translation>Kod źródłowy</translation>
     </message>
     <message>
-        <location filename="eaqtmainwindow.cpp" line="1065"/>
+        <location filename="eaqtmainwindow.cpp" line="968"/>
         <source>Source code for the program is available on github</source>
         <translation>Kod źródłowy programu</translation>
     </message>
     <message>
-        <location filename="eaqtmainwindow.cpp" line="1071"/>
+        <location filename="eaqtmainwindow.cpp" line="974"/>
         <source>&amp;File</source>
         <translation>&amp;Plik</translation>
     </message>
     <message>
-        <location filename="eaqtmainwindow.cpp" line="1077"/>
+        <location filename="eaqtmainwindow.cpp" line="980"/>
         <source>&amp;Measurement</source>
         <translation>&amp;Pomiar</translation>
     </message>
     <message>
-        <location filename="eaqtmainwindow.cpp" line="1087"/>
+        <location filename="eaqtmainwindow.cpp" line="990"/>
         <source>&amp;Analysis</source>
         <translation>&amp;Analiza</translation>
     </message>
     <message>
-        <location filename="eaqtmainwindow.cpp" line="1106"/>
+        <location filename="eaqtmainwindow.cpp" line="1009"/>
         <source>About</source>
         <translation>O programie</translation>
     </message>
     <message>
-        <location filename="eaqtmainwindow.cpp" line="1150"/>
-        <location filename="eaqtmainwindow.cpp" line="1188"/>
+        <location filename="eaqtmainwindow.cpp" line="1053"/>
+        <location filename="eaqtmainwindow.cpp" line="1091"/>
         <source>Cannot save - no curve(s) selected.</source>
         <translation>Nie można zapisać krzywych - nie wybrano krzywych.</translation>
     </message>
@@ -1202,70 +1286,69 @@
         <translation type="vanished">Dołącz krzywą do pliku</translation>
     </message>
     <message>
-        <location filename="eaqtmainwindow.cpp" line="1165"/>
+        <location filename="eaqtmainwindow.cpp" line="1068"/>
         <source>There was an error while saving the curves, please try again.</source>
         <translation>Wystąpił błąd podczas zapisu krzywej, spróbuj jeszcze raz.</translation>
     </message>
     <message>
-        <location filename="eaqtmainwindow.cpp" line="1165"/>
+        <location filename="eaqtmainwindow.cpp" line="1068"/>
         <source>Error.</source>
         <translation>Błąd.</translation>
     </message>
     <message>
-        <location filename="eaqtmainwindow.cpp" line="1174"/>
+        <location filename="eaqtmainwindow.cpp" line="1077"/>
         <source>Curve could not be selected for save, please try to select it again.</source>
         <translation>Nie można było wybrać krzywej do zapisu, proszę sprubować jeszcze raz.</translation>
     </message>
     <message>
-        <location filename="eaqtmainwindow.cpp" line="1174"/>
-        <location filename="eaqtmainwindow.cpp" line="1341"/>
-        <location filename="eaqtmainwindow.cpp" line="1349"/>
-        <location filename="eaqtmainwindow.cpp" line="1471"/>
+        <location filename="eaqtmainwindow.cpp" line="1077"/>
+        <location filename="eaqtmainwindow.cpp" line="1242"/>
+        <location filename="eaqtmainwindow.cpp" line="1250"/>
+        <location filename="eaqtmainwindow.cpp" line="1372"/>
         <source>Error</source>
         <translation>Błąd</translation>
     </message>
     <message>
-        <location filename="eaqtmainwindow.cpp" line="1194"/>
         <source>Export curve to file</source>
-        <translation>Eksportuj krzywą do pliku</translation>
+        <translation type="vanished">Eksportuj krzywą do pliku</translation>
     </message>
     <message>
-        <location filename="eaqtmainwindow.cpp" line="1201"/>
+        <location filename="eaqtmainwindow.cpp" line="1102"/>
         <source>This will overwrite existing file. Are you sure ?</source>
         <translation>Wybrany plik zostanie nadpisany. Kontynuować ?</translation>
     </message>
     <message>
-        <location filename="eaqtmainwindow.cpp" line="1202"/>
+        <location filename="eaqtmainwindow.cpp" line="1103"/>
         <source>Warning</source>
         <translation>Ostrzeżenie</translation>
     </message>
     <message>
-        <location filename="eaqtmainwindow.cpp" line="1282"/>
+        <location filename="eaqtmainwindow.cpp" line="1183"/>
         <source>eacal (.eacal)</source>
         <translation>eacal (.eacal)</translation>
     </message>
     <message>
-        <location filename="eaqtmainwindow.cpp" line="1312"/>
+        <location filename="eaqtmainwindow.cpp" line="1213"/>
         <source>Close</source>
         <translation>Zamknij</translation>
     </message>
     <message>
-        <location filename="eaqtmainwindow.cpp" line="1341"/>
+        <location filename="eaqtmainwindow.cpp" line="1242"/>
         <source>Cannot use curve in calibration -- points out of range.</source>
         <translation>Krzywej nie można użyć do kalibracji - kalibracja poza zakresem punktów.</translation>
     </message>
     <message>
-        <location filename="eaqtmainwindow.cpp" line="1347"/>
+        <location filename="eaqtmainwindow.cpp" line="1248"/>
         <source>Result of calibration: %1 %2</source>
         <translation>Wynik kalibracji: %1 %2</translation>
     </message>
     <message>
-        <location filename="eaqtmainwindow.cpp" line="1349"/>
+        <location filename="eaqtmainwindow.cpp" line="1250"/>
         <source>Calibration is not prepared.</source>
         <translation>Kalibracja nie gotowa.</translation>
     </message>
     <message>
-        <location filename="eaqtmainwindow.cpp" line="1471"/>
+        <location filename="eaqtmainwindow.cpp" line="1372"/>
         <source>Could not select curve for renaming.</source>
         <translation>Nie można było wybrać krzywej do zmiany nazwy.</translation>
     </message>
@@ -1419,12 +1502,12 @@
     <message>
         <location filename="displaycurveinfo.cpp" line="229"/>
         <source>two electrodes</source>
-        <translation>dwu elektrodowy</translation>
+        <translation>dwuelektrodowy</translation>
     </message>
     <message>
         <location filename="displaycurveinfo.cpp" line="232"/>
         <source>three electrodes</source>
-        <translation>trój elektrodowy</translation>
+        <translation>trójelektrodowy</translation>
     </message>
     <message>
         <location filename="displaycurveinfo.cpp" line="235"/>
@@ -1488,7 +1571,7 @@
         <translation>Położenie względne: </translation>
     </message>
     <message>
-        <location filename="eaqtmousehandler.cpp" line="643"/>
+        <location filename="eaqtmousehandler.cpp" line="647"/>
         <source>Data cursor:</source>
         <translation>Kursor:</translation>
     </message>
@@ -1717,12 +1800,12 @@
     <message>
         <location filename="eaqtparamdialog.cpp" line="196"/>
         <source>two electrodes</source>
-        <translation>dwu elektrodowy</translation>
+        <translation>dwuelektrodowy</translation>
     </message>
     <message>
         <location filename="eaqtparamdialog.cpp" line="197"/>
         <source>three electrodes</source>
-        <translation>trój elektrodowy</translation>
+        <translation>trójelektrodowy</translation>
     </message>
     <message>
         <location filename="eaqtparamdialog.cpp" line="198"/>
@@ -1854,7 +1937,7 @@
     <message>
         <location filename="eaqtparamdialog.cpp" line="383"/>
         <source>Use start potential</source>
-        <translation>Użyj potencjału startowe</translation>
+        <translation>Użyj potencjału startowego</translation>
     </message>
     <message>
         <location filename="eaqtparamdialog.cpp" line="386"/>
@@ -1905,7 +1988,7 @@
     <message>
         <location filename="eaqtparamdialog.cpp" line="439"/>
         <source>LSV sweep rate</source>
-        <translation>Szybkość przemiatania LSV</translation>
+        <translation>Szybkość polaryzacji LSV</translation>
     </message>
     <message>
         <location filename="eaqtparamdialog.cpp" line="446"/>
@@ -2159,22 +2242,37 @@ nieuśrednione</translation>
 <context>
     <name>EAQtSaveFiledialog</name>
     <message>
-        <location filename="eaqtsavefiledialog.cpp" line="70"/>
+        <location filename="eaqtsavefiledialog.cpp" line="67"/>
+        <source>Text file (*.txt)</source>
+        <translation>Plik tekstowy (*.txt)</translation>
+    </message>
+    <message>
+        <location filename="eaqtsavefiledialog.cpp" line="68"/>
+        <source>Comma separated values (*.csv)</source>
+        <translation>Plik CSV (*.csv)</translation>
+    </message>
+    <message>
+        <location filename="eaqtsavefiledialog.cpp" line="80"/>
         <source>Curve comment:</source>
         <translation>Komentarz:</translation>
     </message>
     <message>
-        <location filename="eaqtsavefiledialog.cpp" line="74"/>
+        <location filename="eaqtsavefiledialog.cpp" line="84"/>
         <source>Curve name:</source>
         <translation>Nazwa:</translation>
     </message>
     <message>
-        <location filename="eaqtsavefiledialog.cpp" line="86"/>
+        <location filename="eaqtsavefiledialog.cpp" line="97"/>
+        <source>Export</source>
+        <translation>Eksport</translation>
+    </message>
+    <message>
+        <location filename="eaqtsavefiledialog.cpp" line="99"/>
         <source>Save</source>
         <translation>Zapisz</translation>
     </message>
     <message>
-        <location filename="eaqtsavefiledialog.cpp" line="87"/>
+        <location filename="eaqtsavefiledialog.cpp" line="101"/>
         <source>Cancel</source>
         <translation>Anuluj</translation>
     </message>
@@ -2309,17 +2407,17 @@ nieuśrednione</translation>
 <context>
     <name>FILES</name>
     <message>
-        <location filename="const.h" line="34"/>
+        <location filename="const.h" line="43"/>
         <source>Compressed Voltammogram (*.voltc)</source>
         <translation>Skompresowane woltamperogramy (*.voltc)</translation>
     </message>
     <message>
-        <location filename="const.h" line="35"/>
+        <location filename="const.h" line="44"/>
         <source>Unompressed Voltammogram (*.volt)</source>
         <translation>Nieskompresowane woltamperogramy (*.volt)</translation>
     </message>
     <message>
-        <location filename="const.h" line="38"/>
+        <location filename="const.h" line="47"/>
         <source>Voltammograms (*.vol *.volt *.voltc)</source>
         <translation>Woltamperogramy (*.vol)</translation>
     </message>
