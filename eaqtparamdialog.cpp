@@ -554,7 +554,7 @@ QGroupBox* EAQtParamDialog::createAdvanced()
     meselay->addSpacing(0);
     meselay->addStretch(0);
     _advWidgets.useMesFile->setLayout(meselay);
-    _advWidgets.useMesFile->setChecked(_pData->getIsMesSeries());
+    _advWidgets.useMesFile->setChecked(_pData->getUseMesFile());
     gl->addWidget(_advWidgets.nonaveraged,0,0,1,1);
     gl->addWidget(_advWidgets.useMesFile,1,0,2,1);
     gl->addWidget(_advWidgets.isMultielectrode,0,1,3,1);
@@ -570,8 +570,8 @@ void EAQtParamDialog::toggleAdvanced()
 void EAQtParamDialog::setSeriaFile()
 {
     QFileDialog* qfd = new QFileDialog();
-    qfd->setNameFilter("EACfg (*.eacfg)");
-    QString fp = qfd->getOpenFileName();
+    //qfd->setNameFilter("EACfg (*.eacfg)");
+    QString fp = qfd->getOpenFileName(NULL,tr("Load measurement series"),"",QString("EACFG (*.eacfg)"));
     delete qfd;
     _advWidgets.mesFilePath->setText(fp);
 }
@@ -744,7 +744,7 @@ void EAQtParamDialog::prepareDialog()
         this->grboxAdvancedSettings->setEnabled(false);
         this->_butAdvancedSettings->setEnabled(false);
     } else {
-        if ( !_pData->getIsMesSeries()
+        if ( !_pData->getUseMesFile()
         && getParam(PARAM::multi) == 0
         && getParam(PARAM::nonaveragedsampling) != 0 ) {
             this->grboxAdvancedSettings->setVisible(false);
@@ -1016,13 +1016,15 @@ void EAQtParamDialog::saveParams()
         setParam(PARAM::nonaveragedsampling, (int32_t)(!_advWidgets.nonaveraged->isChecked()));
         if ( _advWidgets.useMesFile->isChecked() ) {
             QString fp = _advWidgets.mesFilePath->text();
+            _pData->setUseMesFile(true);
             if ( !fp.isEmpty() ) {
                 _pData->setMesSeriesFile(fp);
             } else {
-                _pData->setIsMesSeries(false);
+                _pData->setMesSeriesFile("");
+                _pData->setUseMesFile(false);
             }
         } else {
-            _pData->setIsMesSeries(false);
+            _pData->setUseMesFile(false);
         }
     }
     _wasSaved = true;
