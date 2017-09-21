@@ -1886,6 +1886,7 @@ void EAQtData::MesAfter()
         _pSeriesData = new MesCFG();
         _isMesSeries = false;
         _useSeriesFile = true;
+        _pUI->showMessageBox(tr("Measurement series completed."), tr("Measurement series"));
     }
     QFileInfo fi(saveDetails.fileName);
     this->_pUI->MeasurementAfter();
@@ -2242,17 +2243,17 @@ int EAQtData::safeAppend(QString pFileName, Curve* CurveToAppend)
     ////////////////////////////////////////////////////////////////////////////
 
     if ( !file->remove() ) {
-        this->_pUI->showMessageBox("IDS_info6");
+        this->_pUI->showMessageBox(tr("Cannot save to file."));
         return(-7);
     }
 
     if ( !outFile->rename(pFileName) ) {
-        this->_pUI->showMessageBox("IDS_info6");
+        this->_pUI->showMessageBox(tr("Cannot save to file."));
         return(-7);
     }
 
-    CurveToAppend->CName( appCurveName );
-    CurveToAppend->FName( pFileName );
+    CurveToAppend->CName(appCurveName);
+    CurveToAppend->FName(pFileName);
 
     return 0;
 }
@@ -2298,11 +2299,12 @@ void EAQtData::loadMesFile()
 /*
  * When there is delay between measurements is MeasurementSeries, this should be done
  */
-void EAQtData::seriaWait(int32_t delay)
+void EAQtData::seriaWait(int32_t delay_secs)
 {
-    QTime dieTime= QTime::currentTime().addSecs(delay*1000);
+    QTime dieTime= QTime::currentTime().addSecs(delay_secs);
     while (QTime::currentTime() < dieTime) {
         QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
+        _pUI->setLowLabelText(2,tr("Measurement series - timer: %1 s").arg(QTime::currentTime().secsTo(dieTime)));
     }
     return;
 }
@@ -2676,14 +2678,14 @@ void EAQtData::setChannelsEnabled(std::vector<bool> enabled)
     _PVParam[PARAM::multi] = multi;
 }
 
-bool EAQtData::getIsMesSeries()
+bool EAQtData::getUseMesFile()
 {
-   return _isMesSeries;
+   return _useSeriesFile;
 }
 
-void EAQtData::setIsMesSeries(bool is)
+void EAQtData::setUseMesFile(bool is)
 {
-    _isMesSeries = is;
+    _useSeriesFile = is;
 }
 
 QString EAQtData::getMesSeriesFile()
@@ -2694,7 +2696,6 @@ QString EAQtData::getMesSeriesFile()
 void EAQtData::setMesSeriesFile(QString fp)
 {
     _seriesFilePath = fp;
-    _useSeriesFile = (fp.isEmpty()?false:true);
 }
 
 EAQtSignalProcessing* EAQtData::getProcessing()

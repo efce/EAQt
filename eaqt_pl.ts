@@ -1730,7 +1730,7 @@
     <message>
         <location filename="eaqtparamdialog.cpp" line="40"/>
         <source>Parameters of </source>
-        <translation>Parametry:</translation>
+        <translation>Parametry </translation>
     </message>
     <message>
         <location filename="eaqtparamdialog.cpp" line="123"/>
@@ -2080,8 +2080,8 @@
  current samples</source>
         <oldsource>Record nonaveraged
  current samples</oldsource>
-        <translation>Zapisuj dane 
-nieuśrednione</translation>
+        <translation>Nie zapisuj danych 
+nieuśrednionych</translation>
     </message>
     <message>
         <location filename="eaqtparamdialog.cpp" line="515"/>

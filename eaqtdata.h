@@ -65,7 +65,7 @@ private:
     void createMatrix();
     void crmxSQW();
     void loadMesFile();
-    void seriaWait(int32_t);
+    void seriaWait(int32_t delay_secs);
 
     bool sendLSVToEA();
     bool sendPVToEA();
@@ -156,8 +156,8 @@ public:
     std::vector<bool> getChannelsEnabled();
     void setChannelsNames(QVector<QString>);
     void setChannelsEnabled(std::vector<bool>);
-    bool getIsMesSeries();
-    void setIsMesSeries(bool);
+    bool getUseMesFile();
+    void setUseMesFile(bool);
     QString getMesSeriesFile();
     void setMesSeriesFile(QString);
 

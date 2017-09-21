@@ -32,11 +32,11 @@ int main(int argc, char *argv[])
     f.setPixelSize(13);
     f.setKerning(true);
     a.setFont(f);
-
+/*
     QTranslator translator;
     translator.load("eaqt_pl",":/lang");
     a.installTranslator(&translator);
-
+*/
     EAQtMainWindow w;
     EAQtData::getInstance().initialUpdate((EAQtUIInterface*)&w);
     w.InitialUpdate(EAQtData::getInstance());

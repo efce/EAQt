@@ -54,8 +54,8 @@ public:
     virtual std::vector<bool> getChannelsEnabled() = 0;
     virtual void setChannelsNames(QVector<QString>) = 0;
     virtual void setChannelsEnabled(std::vector<bool>) = 0;
-    virtual bool getIsMesSeries() = 0;
-    virtual void setIsMesSeries(bool) = 0;
+    virtual bool getUseMesFile() = 0;
+    virtual void setUseMesFile(bool) = 0;
     virtual QString getMesSeriesFile() = 0;
     virtual void setMesSeriesFile(QString) = 0;
     virtual EAQtSignalProcessing* getProcessing() = 0;

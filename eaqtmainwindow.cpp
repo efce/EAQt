@@ -409,8 +409,8 @@ QGridLayout* EAQtMainWindow::createLayout()
     connect(butDeleteAll,SIGNAL(clicked(bool)),this,SLOT(deleteAll()));
 
     QPushButton *butDeleteNonactive;
-    butDeleteNonactive = new QPushButton(tr("Delete non-active"));
-    butDeleteNonactive->setStatusTip(tr("Delete all non active curves from plot"));
+    butDeleteNonactive = new QPushButton(tr("Delete inactive"));
+    butDeleteNonactive->setStatusTip(tr("Delete all inactive curves from plot"));
     this->_vecButtonsDisablable.append( butDeleteNonactive );
     connect(butDeleteNonactive,SIGNAL(clicked(bool)),this,SLOT(deleteNonactive()));
 
