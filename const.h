@@ -130,6 +130,7 @@ namespace PARAM {
         method_dpv = 2,
         method_sqw = 3,
         method_lsv = 4,
+        method_sqw_classic = 99,
 
         sampl = 1, //type of sampling (usually single sampling for SCV/LSV and double sampling for NPV/DPV/SQW)
         sampl_single = 0,
@@ -186,7 +187,7 @@ namespace PARAM {
         EstartLSV = 12,    //LSV multicyclic starting potential [mV]
         tp = 13,    //probing time [ms]
         tw = 14,    //waiting time [ms]
-        tk = 15,    //unknown [ms]
+        tk = 15,    //time of mercury drop [ms] -- not tested since 1980
         td = 15,    //before first potential step apply potential [ms]
         ts = 15,    //LSV multicyclic time of starting potential
         ptnr = 16,  //number of points of the curve
@@ -204,7 +205,7 @@ namespace PARAM {
         gtype = 44, /* offset of type of generation   */
         maxse = 45, /* nr of impulse in max. drop */
 
-        param46 = 46, // not in use
+        sqw_frequency = 46, // not in use
 
         inf_smooth = 47, //was curve smoothed
         inf_smooth_no = 0,

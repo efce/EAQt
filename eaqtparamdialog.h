@@ -63,6 +63,7 @@ public:
         vt_points,
         vt_secs,
         vt_mins,
+        vt_sqw_freq,
     };
     QIntValidator* getValidator(validatorType);
 
@@ -81,6 +82,7 @@ public slots:
     void methodChanged();
     void showPotentialProgram();
     void checkPotentialProgram();
+    void calculateFreq();
 
 private:
     QHBoxLayout* generateLayout();
@@ -109,6 +111,7 @@ private:
         lid_Ek,
         lid_Estep,
         lid_E0_dE,
+        lid_sqw_freq,
         lid_tp,
         lid_tw,
         lid_td,
@@ -135,6 +138,14 @@ private:
     QVector<QRadioButton*> _paramLSVdEdt;
     QVector<QRadioButton*> _paramElec;
     QVector<QRadioButton*> _paramMethod;
+    enum PVMethods {
+        method_scv,
+        method_npv,
+        method_dpv,
+        method_osqw,
+        method_csqw,
+        method_SIZE
+    };
     int _cgmdeTime;
     int _cgmdeDelay;
     int _cgmdeNr;

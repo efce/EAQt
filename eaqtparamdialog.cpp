@@ -287,6 +287,19 @@ QGroupBox *EAQtParamDialog::createRestItems()
         qgrid->addWidget(_lineEdits[i], pos, 1);
     }
 
+    _lineEdits[lid_sqw_freq] = new QLineEdit(tr("%1").arg(this->getParam(PARAM::sqw_frequency)));
+    _lineEdits[lid_sqw_freq]->setValidator(this->getValidator(EAQtParamDialog::vt_sqw_freq));
+    _lineEdits[lid_sqw_freq]->setAccessibleName("sqw_freq");
+    _lineEdits[lid_sqw_freq]->setVisible(false);
+    _lineEdits[lid_sqw_freq]->setFixedWidth(_metrics->width("9999999"));
+    _lineEdits[lid_sqw_freq]->setMaxLength(5);
+    connect(_lineEdits[lid_sqw_freq], SIGNAL(editingFinished()), this, SLOT(calculateFreq()));
+    _lineLabels[lid_sqw_freq] = new QLabel(tr("f [Hz]:"));
+    _lineLabels[lid_sqw_freq]->setVisible(false);
+    i=lid_sqw_freq;
+    qgrid->addWidget(_lineLabels[i], ++pos, 0);
+    qgrid->addWidget(_lineEdits[i], pos, 1);
+
     _lineEdits[lid_tp] = new QLineEdit(tr("%1").arg(this->getParam(PARAM::tp)));
     _lineEdits[lid_tp]->setAccessibleName("tp");
     //connect(lineEdits[lid_tp],SIGNAL(textEdited(QString)),this,SLOT(onlEditchanged(QString)));
@@ -406,16 +419,18 @@ QGroupBox *EAQtParamDialog::createMesTypeGroup()
 {
     QGroupBox *groupBox = new QGroupBox();
     if ( !this->_isLsv ) {
-        this->_paramMethod.resize(4);
+        this->_paramMethod.resize(method_SIZE);
         groupBox->setTitle(tr("Voltammetry"));
-        _paramMethod[PARAM::method_scv] = new QRadioButton(tr("staircase (SCV)"));
-        connect(_paramMethod[PARAM::method_scv],SIGNAL(toggled(bool)),this,SLOT(methodChanged()));
-        _paramMethod[PARAM::method_npv] = new QRadioButton(tr("normal pulse (NPV)"));
-        connect(_paramMethod[PARAM::method_npv],SIGNAL(toggled(bool)),this,SLOT(methodChanged()));
-        _paramMethod[PARAM::method_dpv] = new QRadioButton(tr("differential pulse (DPV)"));
-        connect(_paramMethod[PARAM::method_dpv],SIGNAL(toggled(bool)),this,SLOT(methodChanged()));
-        _paramMethod[PARAM::method_sqw] = new QRadioButton(tr("sqaure wave (SQW)"));
-        connect(_paramMethod[PARAM::method_sqw],SIGNAL(toggled(bool)),this,SLOT(methodChanged()));
+        _paramMethod[method_scv] = new QRadioButton(tr("staircase (SCV)"));
+        connect(_paramMethod[method_scv],SIGNAL(toggled(bool)),this,SLOT(methodChanged()));
+        _paramMethod[method_npv] = new QRadioButton(tr("normal pulse (NPV)"));
+        connect(_paramMethod[method_npv],SIGNAL(toggled(bool)),this,SLOT(methodChanged()));
+        _paramMethod[method_dpv] = new QRadioButton(tr("differential pulse (DPV)"));
+        connect(_paramMethod[method_dpv],SIGNAL(toggled(bool)),this,SLOT(methodChanged()));
+        _paramMethod[method_osqw] = new QRadioButton(tr("Osteryoung sqaurewave (OSQW)"));
+        connect(_paramMethod[method_osqw],SIGNAL(toggled(bool)),this,SLOT(methodChanged()));
+        _paramMethod[method_csqw] = new QRadioButton(tr("[NEW] sqaurewave (SQW)"));
+        connect(_paramMethod[method_csqw],SIGNAL(toggled(bool)),this,SLOT(methodChanged()));
 
         _butProgramPotential = new QPushButton;
         _butProgramPotential->setText(tr("Program E"));
@@ -625,6 +640,9 @@ QIntValidator* EAQtParamDialog::getValidator(validatorType vt)
     case vt_mins:
        vali = new QIntValidator(0,999);
        return vali;
+    case vt_sqw_freq:
+        vali = new QIntValidator(1,500);
+        return vali;
      default:
         throw 0;
     }
@@ -790,16 +808,26 @@ void EAQtParamDialog::prepareDialog()
         }
         this->_paramLSVdEdt[this->getParam(PARAM::dEdt)]->setChecked(true);
     } else {
-        this->_paramMethod[this->getParam(PARAM::method)]->setChecked(true);
-        if ( this->getParam(PARAM::method) == PARAM::method_scv ) {
-            _lineEdits[lid_E0_dE]->setDisabled(true);
+        switch (this->getParam(PARAM::method)) {
+        case PARAM::method_scv:
+            this->_paramMethod[method_scv]->setChecked(true);
+            break;
+        case PARAM::method_npv:
+            this->_paramMethod[method_npv]->setChecked(true);
+            break;
+        case PARAM::method_dpv:
+            this->_paramMethod[method_dpv]->setChecked(true);
+            break;
+        case PARAM::method_sqw:
+            this->_paramMethod[method_osqw]->setChecked(true);
+            break;
+        case PARAM::method_sqw_classic:
+            this->_paramMethod[method_csqw]->setChecked(true);
+            break;
         }
 
-        if ( this->getParam(PARAM::method) == PARAM::method_npv ) {
-            _lineLabels[lid_E0_dE]->setText(tr("E0 [mV]:"));
-        } else {
-            _lineLabels[lid_E0_dE]->setText(tr("dE [mV]:"));
-        }
+        _lineEdits[lid_sqw_freq]->setText(tr("%1").arg(this->getParam(PARAM::sqw_frequency)));
+
         if ( this->getParam(PARAM::Ep) != this->getParam(PARAM::Ek) ) {
             _lineEdits[lid_points]->setDisabled(true);
         }
@@ -968,7 +996,6 @@ void EAQtParamDialog::saveParams()
         }
     }
 
-
     for ( int i = 0; i<_paramCrangeMacro.size(); ++i ) {
         if ( this->_paramCrangeMacro[i]->isChecked() ) {
             this->setParam(PARAM::crange, i);
@@ -995,10 +1022,30 @@ void EAQtParamDialog::saveParams()
     } else {
         for ( int i = 0; i<_paramMethod.size(); ++i ) {
             if ( this->_paramMethod[i]->isChecked() ) {
-                this->setParam(PARAM::method, i);
+                switch (i) {
+                case method_scv:
+                    this->setParam(PARAM::method, PARAM::method_scv);
+                    break;
+                case method_npv:
+                    this->setParam(PARAM::method, PARAM::method_npv);
+                    break;
+                case method_dpv:
+                    this->setParam(PARAM::method, PARAM::method_dpv);
+                    break;
+                case method_osqw:
+                    this->setParam(PARAM::method, PARAM::method_sqw);
+                    break;
+                case method_csqw:
+                    this->setParam(PARAM::method, PARAM::method_sqw_classic);
+                    this->calculateFreq();
+                    this->setParam(PARAM::tp, this->_lineEdits[lid_tp]->text().toInt());
+                    this->setParam(PARAM::tw, this->_lineEdits[lid_tw]->text().toInt());
+                    break;
+                }
                 break;
             }
         }
+        this->setParam(PARAM::sqw_frequency, (int32_t)round(_lineEdits[lid_sqw_freq]->text().toDouble()));
         if ( _advWidgets.isMultielectrode->isChecked() ) {
             std::vector<bool> en;
             QVector<QString> names;
@@ -1033,18 +1080,35 @@ void EAQtParamDialog::saveParams()
 void EAQtParamDialog::methodChanged()
 {
     if ( !_checkboxIsPro->isChecked() ) {
-        if ( _paramMethod[PARAM::method_scv]->isChecked() ) {
-        _lineLabels[lid_E0_dE]->setEnabled(false);
-        _lineEdits[lid_E0_dE]->setEnabled(false);
-        } else if ( _paramMethod[PARAM::method_npv]->isChecked() ) {
+        _lineEdits[lid_tw]->setEnabled(true);
+        _lineEdits[lid_tp]->setEnabled(true);
+        _lineLabels[lid_tw]->setEnabled(true);
+        _lineLabels[lid_tp]->setEnabled(true);
         _lineLabels[lid_E0_dE]->setEnabled(true);
         _lineEdits[lid_E0_dE]->setEnabled(true);
-        _lineLabels[lid_E0_dE]->setText("E0 [mV]:");
-        } else if ( _paramMethod[PARAM::method_dpv]->isChecked()
-           || _paramMethod[PARAM::method_sqw]->isChecked() ) {
-        _lineLabels[lid_E0_dE]->setEnabled(true);
-        _lineEdits[lid_E0_dE]->setEnabled(true);
-        _lineLabels[lid_E0_dE]->setText("dE [mV]:");
+        _lineLabels[lid_sqw_freq]->setVisible(false);
+        _lineEdits[lid_sqw_freq]->setVisible(false);
+
+        if ( _paramMethod[method_scv]->isChecked() ) {
+            _lineLabels[lid_E0_dE]->setEnabled(false);
+            _lineEdits[lid_E0_dE]->setEnabled(false);
+            _lineLabels[lid_Estep]->setText("Estep [mV]:");
+        } else if ( _paramMethod[method_npv]->isChecked() ) {
+            _lineLabels[lid_E0_dE]->setText("E0 [mV]:");
+            _lineLabels[lid_Estep]->setText("Estep [mV]:");
+        } else if ( _paramMethod[method_dpv]->isChecked()
+        || _paramMethod[method_osqw]->isChecked() ) {
+            _lineLabels[lid_E0_dE]->setText("dE [mV]:");
+            _lineLabels[lid_Estep]->setText("Estep [mV]:");
+        } else if ( _paramMethod[method_csqw]->isChecked() ) { // == PARAM::method_sqw_classic
+            _lineEdits[lid_tw]->setEnabled(false);
+            _lineEdits[lid_tp]->setEnabled(false);
+            _lineLabels[lid_tw]->setEnabled(false);
+            _lineLabels[lid_tp]->setEnabled(false);
+            _lineLabels[lid_E0_dE]->setText("dE [mV]:");
+            _lineLabels[lid_Estep]->setText("Estep [mV]:");
+            _lineLabels[lid_sqw_freq]->setVisible(true);
+            _lineEdits[lid_sqw_freq]->setVisible(true);
         }
     }
 }
@@ -1073,4 +1137,14 @@ void EAQtParamDialog::checkPotentialProgram()
         _lineEdits[lid_breaks]->setEnabled(true);
         this->methodChanged();
     }
+}
+
+void EAQtParamDialog::calculateFreq()
+{
+    int desiredFreq = (int)round(_lineEdits[lid_sqw_freq]->text().toDouble());
+    int tp = (int)floor(1000.0 / (double)desiredFreq / 2.0);
+    double calculated = 1000.0/(2.0*(double)tp);
+    _lineEdits[lid_sqw_freq]->setText(tr("%1").arg(calculated));
+    _lineEdits[lid_tp]->setText(tr("%1").arg(tp));
+    _lineEdits[lid_tw]->setText("0");
 }

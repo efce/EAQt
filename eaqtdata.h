@@ -64,6 +64,17 @@ private:
     void initPtime();
     void createMatrix();
     void crmxSQW();
+
+    void prepareParamForSQWClassic(Curve*);
+    void recoverParamForSQWClassic(Curve*);
+    struct SqwClassicTemp {
+        bool isSQWClassic = false;
+        int32_t method = 0;
+        int32_t Ep = 0;
+        int32_t Ek = 0;
+        int32_t dE = 0;
+    } _sqwClassicTemp;
+
     void loadMesFile();
     void seriaWait(int32_t delay_secs);
 

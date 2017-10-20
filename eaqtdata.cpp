@@ -316,6 +316,34 @@ void EAQtData::crmxSQW()
     _measurementMatrix[curr] = 14; curr++;
 }
 
+void EAQtData::prepareParamForSQWClassic(Curve* c)
+{
+    if ( c->Param(PARAM::method) != PARAM::method_sqw_classic ) {
+        return;
+    }
+    _sqwClassicTemp.isSQWClassic = true;
+    _sqwClassicTemp.method = c->Param(PARAM::method);
+    _sqwClassicTemp.Ep = c->Param(PARAM::Ep);
+    _sqwClassicTemp.Ek = c->Param(PARAM::Ek);
+    _sqwClassicTemp.dE = c->Param(PARAM::dE);
+    c->Param(PARAM::method, PARAM::method_dpv);
+    c->Param(PARAM::Ep, (c->Param(PARAM::Ep) + c->Param(PARAM::dE)) );
+    c->Param(PARAM::Ek, (c->Param(PARAM::Ek) + c->Param(PARAM::dE)) );
+    c->Param(PARAM::dE, (-2*c->Param(PARAM::dE)) );
+}
+
+void EAQtData::recoverParamForSQWClassic(Curve* c)
+{
+    if ( _sqwClassicTemp.isSQWClassic == false ) {
+        return;
+    }
+    c->Param(PARAM::method, _sqwClassicTemp.method);
+    c->Param(PARAM::Ep, _sqwClassicTemp.Ep);
+    c->Param(PARAM::Ek, _sqwClassicTemp.Ek);
+    c->Param(PARAM::dE, _sqwClassicTemp.dE);
+    _sqwClassicTemp.isSQWClassic = false;
+}
+
 CurveCollection *EAQtData::getCurves()
 {
     return _curves;
@@ -837,7 +865,8 @@ void EAQtData::ProcessPacketFromEA(char* packet, bool nextPacketReady)
         }
         i = MEASUREMENT::PVstartData; // == 6
 
-        if (this->getMesCurves()->get(currentCurveNr)->Param(PARAM::method) < PARAM::method_sqw ) { // IMPULSOWE (nie SQW, nie LSV)
+        if (this->getMesCurves()->get(currentCurveNr)->Param(PARAM::method) != PARAM::method_sqw
+        && this->getMesCurves()->get(currentCurveNr)->Param(PARAM::method) != PARAM::method_lsv ) { // IMPULSOWE (nie SQW, nie LSV)
             while (DataLen > 0) {
                 work = ((uint16_t)RxBuf[i] | ((uint16_t)RxBuf[i+1]<<8));
                 workl = work;
@@ -1101,8 +1130,8 @@ void EAQtData::MesStart(bool isLsv)
             * !!! Obliczanie wektorów czasu i potencjału dla każdej krzywej
             */
             if ( (mesCurveIndex == 0)
-                 && (_LSVParam[PARAM::messc] == PARAM::messc_multicyclic )
-                 && (_LSVParam[PARAM::Escheck] == PARAM::Escheck_yes) ) {
+             && (_LSVParam[PARAM::messc] == PARAM::messc_multicyclic )
+             && (_LSVParam[PARAM::Escheck] == PARAM::Escheck_yes) ) {
                 /*
                 * Gdy interpretujemy potencjał startowy, to się dzieje :)
                 * nie uwzględniono multielektr !
@@ -1345,10 +1374,20 @@ void EAQtData::MesStart(bool isLsv)
             this->getMesCurves()->get(mesCurveIndex)->allocateMesArray();
         }
 
-        initEca();
-        initPtime();
-        //ilpw = this->getMesCurves()->get(0)->Param(PARAM::aver);
-        createMatrix();
+        {
+            // HACK -- very ugly code to allow for reasingment of variables
+            // only required for method_sqwclassic. It needs two functions
+            // to be executed prepare and recover !!
+            if ( _PVParam[PARAM::method] == PARAM::method_sqw_classic ) {
+                this->prepareParamForSQWClassic(getMesCurves()->get(0));
+            }
+            initEca();
+            initPtime();
+            //ilpw = this->getMesCurves()->get(0)->Param(PARAM::aver);
+            createMatrix();
+            this->recoverParamForSQWClassic(getMesCurves()->get(0));
+        }
+
         ainmat = 0;
         if (_measurementMatrix[0] == -1) {
             ainmat = 1;
@@ -1430,6 +1469,7 @@ void EAQtData::MesStart(bool isLsv)
             return ;
         } // błedy podczas transmisji parametrów lub EA odłaczony
     }
+
 }
 
 bool EAQtData::sendPVToEA()
@@ -1447,27 +1487,37 @@ bool EAQtData::sendPVToEA()
 
     int16_t lenE;
     int16_t E[1200];
-    if ( this->getMesCurves()->get(0)->Param(PARAM::pro) == 1 ) {
-        if ( _PVParam_PotentialProgram.size() < 3 ) {
-            _pUI->showMessageBox(tr("Potential program has to have more than 2 points"), tr("Error"));
-            return false;
-        }
-        lenE = _PVParam_PotentialProgram.size();
-        for ( int i=0; i<lenE; i++ ) {
-            //E[i] = i*10;
-            E[i]=_PVParam_PotentialProgram[i];
-        }
-        E1I = E[0];
-        E2I = E[1];
-        E3I = E[2];
-        //E3I = E2I - this->getMesCurves()->get(0)->Param(PARAM::dE);
-    }
 
-    for (i=0 ; i<PARAM::PARAMNUM ; i++) {
-        _TxBuf[TxN] = (unsigned char)(this->getMesCurves()->get(0)->Param(i) & 0x000000ff); TxN++;
-        _TxBuf[TxN] = (unsigned char)((this->getMesCurves()->get(0)->Param(i) >> 8) & 0x000000ff); TxN++;
-        _TxBuf[TxN] = (unsigned char)((this->getMesCurves()->get(0)->Param(i) >> 16) & 0x000000ff); TxN++;
-        _TxBuf[TxN] = (unsigned char)((this->getMesCurves()->get(0)->Param(i) >> 24) & 0x000000ff); TxN++;
+    {
+        // HACK -- very ugly code to allow for reasingment of variables
+        // only required for method_sqwclassic. It needs two functions
+        // to be executed prepare and recover !!
+        this->prepareParamForSQWClassic(getMesCurves()->get(0));
+
+        if ( this->getMesCurves()->get(0)->Param(PARAM::pro) == 1 ) {
+            if ( _PVParam_PotentialProgram.size() < 3 ) {
+                _pUI->showMessageBox(tr("Potential program has to have more than 2 points"), tr("Error"));
+                return false;
+            }
+            lenE = _PVParam_PotentialProgram.size();
+            for ( int i=0; i<lenE; i++ ) {
+                //E[i] = i*10;
+                E[i]=_PVParam_PotentialProgram[i];
+            }
+            E1I = E[0];
+            E2I = E[1];
+            E3I = E[2];
+            //E3I = E2I - this->getMesCurves()->get(0)->Param(PARAM::dE);
+        }
+
+        for (i=0 ; i<PARAM::PARAMNUM ; i++) {
+            _TxBuf[TxN] = (unsigned char)(this->getMesCurves()->get(0)->Param(i) & 0x000000ff); TxN++;
+            _TxBuf[TxN] = (unsigned char)((this->getMesCurves()->get(0)->Param(i) >> 8) & 0x000000ff); TxN++;
+            _TxBuf[TxN] = (unsigned char)((this->getMesCurves()->get(0)->Param(i) >> 16) & 0x000000ff); TxN++;
+            _TxBuf[TxN] = (unsigned char)((this->getMesCurves()->get(0)->Param(i) >> 24) & 0x000000ff); TxN++;
+        }
+
+        this->recoverParamForSQWClassic(getMesCurves()->get(0));
     }
 
     for (i=0 ; i<20 ; i++) {
@@ -1656,21 +1706,37 @@ void EAQtData::MesUpdate(int32_t nNrOfMesCurve, int32_t nPointFromDevice, bool f
     if ( _wasLSVMeasurement == 0 ) {
         if ( nNrOfMesCurve >= this->_multielectrodeNr ) {
             // powrot cyklicznej ...
-            res =  this->CountResultPV(
-                            (60*(getMesCurves()->get(nNrOfMesCurve)->getMesCurrent2Point(nPointFromDevice)
-                                  - getMesCurves()->get(nNrOfMesCurve)->getMesCurrent1Point(nPointFromDevice))
-                             / getMesCurves()->get(nNrOfMesCurve)->getMesTimePoint(nPointFromDevice))
-                            );
+            if ( getMesCurves()->get(nNrOfMesCurve)->Param(PARAM::method) == PARAM::method_sqw_classic ) {
+                res =  this->CountResultPV(
+                                (60*(getMesCurves()->get(nNrOfMesCurve)->getMesCurrent1Point(nPointFromDevice)
+                                      - getMesCurves()->get(nNrOfMesCurve)->getMesCurrent2Point(nPointFromDevice))
+                                 / getMesCurves()->get(nNrOfMesCurve)->getMesTimePoint(nPointFromDevice))
+                                );
+            } else {
+                res =  this->CountResultPV(
+                                (60*(getMesCurves()->get(nNrOfMesCurve)->getMesCurrent2Point(nPointFromDevice)
+                                      - getMesCurves()->get(nNrOfMesCurve)->getMesCurrent1Point(nPointFromDevice))
+                                 / getMesCurves()->get(nNrOfMesCurve)->getMesTimePoint(nPointFromDevice))
+                                );
+            }
             this->getMesCurves()->get(nNrOfMesCurve)->addDataPoint(
                         res
                         , nPointFromDevice
                         );
         } else {
-            res =  this->CountResultPV(
-                            (60*(getMesCurves()->get(nNrOfMesCurve)->getMesCurrent2Point(nPointFromDevice)
-                                  - getMesCurves()->get(nNrOfMesCurve)->getMesCurrent1Point(nPointFromDevice))
-                             / getMesCurves()->get(nNrOfMesCurve)->getMesTimePoint(nPointFromDevice))
-                            );
+            if ( getMesCurves()->get(nNrOfMesCurve)->Param(PARAM::method) == PARAM::method_sqw_classic ) {
+                res =  this->CountResultPV(
+                                (60*(getMesCurves()->get(nNrOfMesCurve)->getMesCurrent1Point(nPointFromDevice)
+                                      - getMesCurves()->get(nNrOfMesCurve)->getMesCurrent2Point(nPointFromDevice))
+                                 / getMesCurves()->get(nNrOfMesCurve)->getMesTimePoint(nPointFromDevice))
+                                );
+            } else {
+                res =  this->CountResultPV(
+                                (60*(getMesCurves()->get(nNrOfMesCurve)->getMesCurrent2Point(nPointFromDevice)
+                                      - getMesCurves()->get(nNrOfMesCurve)->getMesCurrent1Point(nPointFromDevice))
+                                 / getMesCurves()->get(nNrOfMesCurve)->getMesTimePoint(nPointFromDevice))
+                                );
+            }
             this->getMesCurves()->get(nNrOfMesCurve)->addDataPoint(
                         res
                         , nPointFromDevice
