@@ -1143,8 +1143,18 @@ void EAQtParamDialog::calculateFreq()
 {
     int desiredFreq = (int)round(_lineEdits[lid_sqw_freq]->text().toDouble());
     int tp = (int)floor(1000.0 / (double)desiredFreq / 2.0);
-    double calculated = 1000.0/(2.0*(double)tp);
+    int tw = 0;
+    if (tp > 6) {
+        tw = 3;
+        tp = tp - 3;
+    } else if ( tp > 3 ) {
+        tw = tp - 3;
+        tp = tp - tw;
+    } else {
+        tw = 0;
+    }
+    double calculated = 1000.0/(2.0*(double)(tp+tw));
     _lineEdits[lid_sqw_freq]->setText(tr("%1").arg(calculated));
     _lineEdits[lid_tp]->setText(tr("%1").arg(tp));
-    _lineEdits[lid_tw]->setText("0");
+    _lineEdits[lid_tw]->setText(tr("%1").arg(tw));
 }
