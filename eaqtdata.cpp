@@ -159,7 +159,7 @@ void EAQtData::initEca()
     E2I = this->getMesCurves()->get(0)->Param(PARAM::Ep);
     if (this->getMesCurves()->get(0)->Param(PARAM::method) == PARAM::method_dpv ) // DP
         E2I += this->getMesCurves()->get(0)->Param(PARAM::dE);
-    if (this->getMesCurves()->get(0)->Param(PARAM::method) == PARAM::method_sqw ) // SQW
+    if (this->getMesCurves()->get(0)->Param(PARAM::method) == PARAM::method_sqw_osteryoung ) // SQW
     {
         E3I = E2I - this->getMesCurves()->get(0)->Param(PARAM::dE);
         E2I += this->getMesCurves()->get(0)->Param(PARAM::dE);
@@ -176,7 +176,7 @@ void EAQtData::initPtime()
     int64_t work;
     //Count tr = tk-i*(tw+tp)  i=1,2 (sampling)
     work = this->getMesCurves()->get(0)->Param(PARAM::tw) + this->getMesCurves()->get(0)->Param(PARAM::tp);
-    if (this->getMesCurves()->get(0)->Param(PARAM::method) == PARAM::method_sqw ) // SQW
+    if (this->getMesCurves()->get(0)->Param(PARAM::method) == PARAM::method_sqw_osteryoung ) // SQW
         _trValue = this->getMesCurves()->get(0)->Param(PARAM::tk) - 5*work;
     else
         _trValue = this->getMesCurves()->get(0)->Param(PARAM::tk) - work;
@@ -865,7 +865,7 @@ void EAQtData::ProcessPacketFromEA(char* packet, bool nextPacketReady)
         }
         i = MEASUREMENT::PVstartData; // == 6
 
-        if (this->getMesCurves()->get(currentCurveNr)->Param(PARAM::method) != PARAM::method_sqw
+        if (this->getMesCurves()->get(currentCurveNr)->Param(PARAM::method) != PARAM::method_sqw_osteryoung
         && this->getMesCurves()->get(currentCurveNr)->Param(PARAM::method) != PARAM::method_lsv ) { // IMPULSOWE (nie SQW, nie LSV)
             while (DataLen > 0) {
                 work = ((uint16_t)RxBuf[i] | ((uint16_t)RxBuf[i+1]<<8));
@@ -915,7 +915,7 @@ void EAQtData::ProcessPacketFromEA(char* packet, bool nextPacketReady)
                 }
                 DataLen -= 2;
             }
-        } else if (this->getMesCurves()->get(currentCurveNr)->Param(PARAM::method) == PARAM::method_sqw )  {
+        } else if (this->getMesCurves()->get(currentCurveNr)->Param(PARAM::method) == PARAM::method_sqw_osteryoung )  {
             while (DataLen > 0) {
                 work = ((uint16_t)RxBuf[i] | ((uint16_t)RxBuf[i+1]<<8));
                 workl = work;
@@ -1392,7 +1392,7 @@ void EAQtData::MesStart(bool isLsv)
         if (_measurementMatrix[0] == -1) {
             ainmat = 1;
         }
-        if ( _PVParam[PARAM::method] == PARAM::method_sqw ) {
+        if ( _PVParam[PARAM::method] == PARAM::method_sqw_osteryoung ) {
             crmxSQW(); // SQW
         }
 
@@ -1820,7 +1820,7 @@ double EAQtData::CountResultPV(int64_t ResI)
 {
     static double dResI;
 
-    if (getMesCurves()->get(0)->Param(PARAM::method) == PARAM::method_sqw ) {
+    if (getMesCurves()->get(0)->Param(PARAM::method) == PARAM::method_sqw_osteryoung ) {
         if (getMesCurves()->get(0)->Param(PARAM::sampl) == PARAM::sampl_double) {
             ResI -= this->_IUE0;
         }

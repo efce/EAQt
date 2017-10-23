@@ -79,7 +79,7 @@ QString DisplayCurveInfo::getHTMLInfo()
           + (isLSV?
               tr("<tr><td colspan=2><b>Sweep rate:</b>&nbsp;%1&nbsp;mV/s</td></tr>").arg(sweepRate)
             : tr("<tr><td><b>Estep:</b>&nbsp;%1&nbsp;mV</td>").arg(_curve->Param(PARAM::Estep))
-                   + ((_curve->Param(PARAM::method)==PARAM::method_dpv)||(_curve->Param(PARAM::method)==PARAM::method_sqw)?
+                   + ((_curve->Param(PARAM::method)==PARAM::method_dpv)||(_curve->Param(PARAM::method)==PARAM::method_sqw_osteryoung)?
                           tr("<td><b>dE:</b>&nbsp;%1&nbsp;mV</td></tr>").arg(_curve->Param(PARAM::dE))
                         : ((_curve->Param(PARAM::method)==PARAM::method_npv)?
                               tr("<td><b>E0:</b>&nbsp;%1&nbsp;mV<td></tr>")
@@ -120,7 +120,7 @@ QString DisplayCurveInfo::getHTMLInfo()
                 + "<tr><th>" + QApplication::translate("EAQtMainWindow","electrode: ") +"</th><td>" + getElectr() + "</td></tr>"
                 + "<tr><th>" + QApplication::translate("EAQtMainWindow","cyclic: ") + "</th><td>" + getMessc() + "</td></tr>"
                 + "<tr><td>" + QApplication::translate("EAQtMainWindow","Ep: %1 mV</td><td>Ek: %2 mV").arg(_curve->Param(PARAM::Ep)).arg(_curve->Param(PARAM::Ek)) + "</td></tr>" );
-    if ( _curve->Param(PARAM::method) == PARAM::method_dpv || _curve->Param(PARAM::method) == PARAM::method_sqw ) {
+    if ( _curve->Param(PARAM::method) == PARAM::method_dpv || _curve->Param(PARAM::method) == PARAM::method_sqw_osteryoung ) {
         pte.append(QApplication::translate("EAQtMainWindow","<tr><td colspan=2>dE: %1 mV</td></tr>").arg(_curve->Param(PARAM::dE)));
     } else if (_curve->Param(PARAM::method) == PARAM::method_npv) {
         pte.append(QApplication::translate("EAQtMainWindow","<tr><td colspan=2>E0: %1 mV</td></tr>").arg(_curve->Param(PARAM::E0)));
@@ -195,8 +195,11 @@ inline QString DisplayCurveInfo::getMethod()
     case PARAM::method_dpv:
         method = QApplication::translate("EAQtMainWindow","DPV");
         break;
-    case PARAM::method_sqw:
-        method = QApplication::translate("EAQtMainWindow","SQW");
+    case PARAM::method_sqw_osteryoung:
+        method = QApplication::translate("EAQtMainWindow","O.SQW");
+        break;
+    case PARAM::method_sqw_classic:
+        method = QApplication::translate("EAQtMainWindow","[NEW] SQW");
         break;
     case PARAM::method_lsv:
         method = QApplication::translate("EAQtMainWindow","LSV");

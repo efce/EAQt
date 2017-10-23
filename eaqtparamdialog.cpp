@@ -818,7 +818,7 @@ void EAQtParamDialog::prepareDialog()
         case PARAM::method_dpv:
             this->_paramMethod[method_dpv]->setChecked(true);
             break;
-        case PARAM::method_sqw:
+        case PARAM::method_sqw_osteryoung:
             this->_paramMethod[method_osqw]->setChecked(true);
             break;
         case PARAM::method_sqw_classic:
@@ -1033,7 +1033,7 @@ void EAQtParamDialog::saveParams()
                     this->setParam(PARAM::method, PARAM::method_dpv);
                     break;
                 case method_osqw:
-                    this->setParam(PARAM::method, PARAM::method_sqw);
+                    this->setParam(PARAM::method, PARAM::method_sqw_osteryoung);
                     break;
                 case method_csqw:
                     this->setParam(PARAM::method, PARAM::method_sqw_classic);

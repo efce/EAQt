@@ -128,7 +128,7 @@ namespace PARAM {
         method_scv = 0,
         method_npv = 1,
         method_dpv = 2,
-        method_sqw = 3,
+        method_sqw_osteryoung = 3,
         method_lsv = 4,
         method_sqw_classic = 99,
 
