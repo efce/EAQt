@@ -1038,6 +1038,8 @@ void EAQtParamDialog::saveParams()
                 case method_csqw:
                     this->setParam(PARAM::method, PARAM::method_sqw_classic);
                     this->calculateFreq();
+                    int tp = this->_lineEdits[lid_tp]->text().toInt();
+                    int tw = this->_lineEdits[lid_tw]->text().toInt();
                     this->setParam(PARAM::tp, this->_lineEdits[lid_tp]->text().toInt());
                     this->setParam(PARAM::tw, this->_lineEdits[lid_tw]->text().toInt());
                     break;
@@ -1045,6 +1047,7 @@ void EAQtParamDialog::saveParams()
                 break;
             }
         }
+        double freq = round(_lineEdits[lid_sqw_freq]->text().toDouble());
         this->setParam(PARAM::sqw_frequency, (int32_t)round(_lineEdits[lid_sqw_freq]->text().toDouble()));
         if ( _advWidgets.isMultielectrode->isChecked() ) {
             std::vector<bool> en;
@@ -1142,13 +1145,10 @@ void EAQtParamDialog::checkPotentialProgram()
 void EAQtParamDialog::calculateFreq()
 {
     int desiredFreq = (int)round(_lineEdits[lid_sqw_freq]->text().toDouble());
-    int tp = (int)floor(1000.0 / (double)desiredFreq / 2.0);
+    int tp = (int)round(1000.0 / (double)desiredFreq / 2.0);
     int tw = 0;
-    if (tp > 6) {
-        tw = 3;
-        tp = tp - 3;
-    } else if ( tp > 3 ) {
-        tw = tp - 3;
+    if (tp > 5) {
+        tw = tp - 5;
         tp = tp - tw;
     } else {
         tw = 0;
