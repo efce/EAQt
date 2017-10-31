@@ -537,8 +537,12 @@ void EAQtMouseHandler::callUserFunction()
                     coords[i][0] = this->GetCursorPointIndex(cl_multipleSelect2);
                 }
             }
-            _vCursors[cl_multipleSelect1]->setSnapTo(_pData->getCurves()->get(_pData->Act())->getPlot());
-            _vCursors[cl_multipleSelect2]->setSnapTo(_pData->getCurves()->get(_pData->Act())->getPlot());
+            int act = _pData->Act();
+            if ( act < 0 ) {
+                act = 0;
+            }
+            _vCursors[cl_multipleSelect1]->setSnapTo(_pData->getCurves()->get(act)->getPlot());
+            _vCursors[cl_multipleSelect2]->setSnapTo(_pData->getCurves()->get(act)->getPlot());
             this->_pData->getProcessing()->calibrationData(coords);
             this->setDefaults();
             this->_pUI->PlotGetLayers()->Markers->replot();

@@ -168,7 +168,7 @@ EAQtCalibrationDialog::EAQtCalibrationDialog(CalibrationData *cd, QHash<QString,
         this->_leConcentrations[i] = new QLineEdit();
         this->_leConcentrations[i]->setValidator(validator);
         if ( _cd->xValues.size() == _cd->yValues.size() ) {
-            _leConcentrations[i]->setText(tr("%1").arg(_cd->xValues[i],0,'f',8));
+            _leConcentrations[i]->setText(tr("%1").arg(_cd->xValues[i],0,'g',8));
         } else {
             this->_leConcentrations[i]->setText("0.0");
         }
@@ -323,7 +323,7 @@ void EAQtCalibrationDialog::recalculateConc()
         } else {
             work = (v*stdConc) / (v+volSample);
         }
-        _leConcentrations[i]->setText(tr("%1").arg(work/multiplyConc, 0, 'f', 6));
+        _leConcentrations[i]->setText(tr("%1").arg(work/multiplyConc, 0, 'g', 6));
     }
 }
 

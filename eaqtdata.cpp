@@ -75,7 +75,7 @@ void EAQtData::initialUpdate(EAQtUIInterface *wp)
     _mesCurves = new CurveCollection(wp);
     _fileIndex = new MDirCollection();
     _network = new EAQtNetwork(this);
-    _processing = new EAQtSignalProcessing(_curves, wp->PlotAddQCPCurve());
+    _processing = new EAQtSignalProcessing(wp->PlotAddQCPCurve());
     _calibration = new CalibrationData();
 }
 
@@ -2936,9 +2936,10 @@ void EAQtData::undoExecute()
 {
     if ( undoStruct.undoReady == true
      && _measurementGo == 0 ) {
+        _curves->clear();
         delete _curves;
         _curves = undoStruct._curves;
-        undoStruct._curves = NULL;
+        undoStruct._curves = nullptr;
         for ( int i=0; i<_curves->count();++i) {
             _curves->get(i)->setPlot(_pUI->PlotAddQCPCurve());
         }

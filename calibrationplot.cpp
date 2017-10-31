@@ -107,7 +107,7 @@ void CalibrationPlot::update()
 
         text += tr("r = %1 <br>").arg(_cd->correlationCoef,0,'f',4);
         double confIntervalSlope = EAQtSignalProcessing::tinv0975(_cd->xValues.size()-1) * _cd->slopeStdDev / sqrt(_cd->xValues.size());
-        double confIntervalIntercept = EAQtSignalProcessing::tinv0975(_cd->xValues.size()-1) * _cd->slopeStdDev / sqrt(_cd->xValues.size());
+        double confIntervalIntercept = EAQtSignalProcessing::tinv0975(_cd->xValues.size()-1) * _cd->interceptStdDev / sqrt(_cd->xValues.size());
         text += tr("i = %1(±%2)c + %3(±%4) <br>").arg(_cd->slope,0,'f',4).arg(confIntervalSlope,0,'f',4).arg(_cd->intercept,0,'f',4).arg(confIntervalIntercept,0,'f',4);
         if ( _cd->x0StdDev > -1 ) {
             double confIntervalX0 = EAQtSignalProcessing::tinv0975(_cd->xValues.size()-1) * _cd->x0StdDev / sqrt(_cd->xValues.size());

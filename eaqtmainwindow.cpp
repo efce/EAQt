@@ -1171,6 +1171,10 @@ void EAQtMainWindow::showAverage()
 
 void EAQtMainWindow::startCalibration()
 {
+    if ( _pEAQtData->Act() < 0 ) {
+        this->showMessageBox(tr("One and only one curve can be selected during calibration."), tr("Error"));
+        return;
+    }
     if ( _pEAQtData->getCurves()->count() > 1 ) {
         this->_mouseHandler->ChangeMouseMode(EAQtMouseHandler::mm_place2markers,
                                          EAQtMouseHandler::uf_calibration_data);

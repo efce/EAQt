@@ -30,9 +30,8 @@ double EAQtSignalProcessing::_TINY = 1.0e-20;
 double EAQtSignalProcessing::_PI = 2*asin(1.0);
 int EAQtSignalProcessing::_selectedFitMethod = EAQtSignalProcessing::poly3;
 
-EAQtSignalProcessing::EAQtSignalProcessing(CurveCollection *cc, QCPCurve *graph) : QObject()
+EAQtSignalProcessing::EAQtSignalProcessing(QCPCurve *graph) : QObject()
 {
-    _curves = cc;
     graph->setVisible(false);
     _graph = graph;
     // TODO: probably to rewrite:
@@ -51,6 +50,7 @@ EAQtSignalProcessing::EAQtSignalProcessing(CurveCollection *cc, QCPCurve *graph)
 
 void EAQtSignalProcessing::shiftCurve(double dY)
 {
+    CurveCollection* _curves = EAQtData::getInstance().getCurves();
     Curve* c = _curves->get(EAQtData::getInstance().Act());
     if ( c == NULL )
         return;
@@ -62,6 +62,7 @@ void EAQtSignalProcessing::shiftCurve(double dY)
 
 void EAQtSignalProcessing::calibrationData(QVector<std::array<int,2>>& coords)
 {
+    CurveCollection* _curves = EAQtData::getInstance().getCurves();
     CalibrationData *calibration = EAQtData::getInstance()._calibration;
     static QHash<QString,QString> oldSettings;
     calibration->yValues.resize(_curves->count());
@@ -69,6 +70,9 @@ void EAQtSignalProcessing::calibrationData(QVector<std::array<int,2>>& coords)
         calibration->yValues[i] = relativeHeight(_curves->get(i), coords[i][0],coords[i][1]);
     }
     int act = EAQtData::getInstance().Act();
+    if ( act < 0 ) {
+        act = 0;
+    }
     calibration->pointStart = _curves->get(act)->getXVector().at(coords[act][1]);
     calibration->pointEnd = _curves->get(act)->getXVector().at(coords[act][0]);
     calibration->xAxis = EAQtData::getInstance().getXAxis();
@@ -80,6 +84,7 @@ void EAQtSignalProcessing::calibrationData(QVector<std::array<int,2>>& coords)
 
 void EAQtSignalProcessing::curvesStats(QVector<std::array<int,2>>& coords)
 {
+    CurveCollection* _curves = EAQtData::getInstance().getCurves();
     int n = _curves->count();
     QVector<double> vec;
     QVector<double> minmax(n);
@@ -207,13 +212,13 @@ void EAQtSignalProcessing::linearRegression(const QVector<double>& x, const QVec
     xavg/=n;
     yavg/=n;
     for ( i =0; i<n;++i ) {
-        sr += pow(((y[i]-ypred[i])/(n-2)),2);
+        sr += pow((y[i]-ypred[i]),2);
         sxx += pow((x[i]-xavg),2);
     }
-    sr = sqrt(sr);
+    sr = sqrt(sr/(n-2));
 
-    *interceptStdDev = sqrt(pow(sr,2)/sxx);
-    *slopeStdDev = sqrt((pow(sr,2)*sumx2)/(n*sxx));
+    *slopeStdDev = sqrt(pow(sr,2)/sxx);
+    *interceptStdDev = sqrt((pow(sr,2)*sumx2)/(n*sxx));
 
     int y0Index = -1;
     for ( i=0; i<n;++i) {
@@ -223,7 +228,7 @@ void EAQtSignalProcessing::linearRegression(const QVector<double>& x, const QVec
         }
     }
     if ( y0Index > -1 ) {
-        *x0StdDev = sr/(*intercept) * sqrt( 1+(1/n)+(pow(y[y0Index]-yavg,2)/(pow((*intercept),2)*sumx2)) );
+        *x0StdDev = sr/abs(*intercept) * sqrt( 1+(1/n)+(pow(y[y0Index]-yavg,2)/(pow((*intercept),2)*sxx)) );
     } else {
         *x0StdDev = -1;
     }
@@ -294,6 +299,7 @@ void EAQtSignalProcessing::sgSmooth(QVector<double> *y, int order, int span)
 
 void EAQtSignalProcessing::generateBackground(int32_t r1, int32_t r2, int32_t r3, int32_t r4)
 {
+    CurveCollection* _curves = EAQtData::getInstance().getCurves();
     QPen pn = QPen(COLOR::background);
     pn.setStyle(Qt::DashLine);
     pn.setWidth(2);
@@ -393,6 +399,7 @@ void EAQtSignalProcessing::generateBackground(int32_t r1, int32_t r2, int32_t r3
 
 void EAQtSignalProcessing::subtractBackground()
 {
+    CurveCollection* _curves = EAQtData::getInstance().getCurves();
     Curve* c = _curves->get(EAQtData::getInstance().Act());
     QVector<double> values = c->getYVector();
     for ( int i = 0 ; i<values.size(); ++i ) {

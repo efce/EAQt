@@ -25,7 +25,7 @@ class EAQtSignalProcessing : public QObject
     Q_OBJECT
 
 public:
-    EAQtSignalProcessing(CurveCollection* cc, QCPCurve* gr);
+    EAQtSignalProcessing(QCPCurve* gr);
     void generateBackground(int32_t a1, int32_t a2, int32_t b1, int32_t b2);
     void subtractBackground();
     void hideBackground();
@@ -56,7 +56,6 @@ public:
 
 
 private:
-    CurveCollection* _curves;
     static int _selectedFitMethod;
     QCPCurve* _graph;
     QVector<double> _backgroundX;
