@@ -44,7 +44,7 @@ namespace FILES {
     const QString saveDefUncompress = QApplication::translate("FILES", "Unompressed Voltammogram (*.volt)");
     const QString saveFile = saveDef + ";;" + saveDefUncompress;
     const QString saveCompressExt = QString(".voltc");
-    const QString openFile = QApplication::translate("FILES", "Voltammograms (*.vol *.volt *.voltc)");
+    const QString openFile = QApplication::translate("FILES", "Voltammograms (*.vol *.volt *.voltc);;Text files(*.txt *.csv)");
 }
 
 namespace MEASUREMENT {

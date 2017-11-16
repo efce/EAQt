@@ -66,7 +66,10 @@ void EAQtOpenFileDialog::updateList(QString fileToShow)
     }
     QFileInfo fi(file->fileName());
     _lastPath = fi.absoluteDir().canonicalPath();
-    if ( file->fileName().right(4).compare(".vol",Qt::CaseInsensitive) == 0 ) {
+    if ( file->fileName().right(4).compare(".txt", Qt::CaseInsensitive) == 0 ) {
+        file->close();
+        return;
+    } else if ( file->fileName().right(4).compare(".vol", Qt::CaseInsensitive) == 0 ) {
         this->_pData->MDirReadOld(*file);
         MDirCollection* vDir = this->_pData->getMDir();
         file->close();

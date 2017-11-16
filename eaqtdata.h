@@ -130,6 +130,7 @@ public:
     bool MDirReadPro(QFile &ff);
     void CurReadFilePro(QString *FileName, int PosNr);
     int CurReadCurveOld(QFile &ff, QString CName);
+    void CurImportTxtFile(QString *FileName);
     void ParamReadOld(QFile &ff);
     bool MDirReadOld(QFile &ff);
     void CurReadFileOld(QString *FileName, int PosNr);

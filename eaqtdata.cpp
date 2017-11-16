@@ -520,6 +520,62 @@ void EAQtData::CurReadFilePro(QString *FileName, int PosNr)
     this->_pUI->PlotRescaleAxes();
 }
 
+void EAQtData::CurImportTxtFile(QString* FileName)
+{
+    QFile ff(*FileName);
+    if( !ff.open(QIODevice::ReadOnly) ) {
+        ff.close();
+        _pUI->showMessageBox(tr("File is empty"),tr("Error"));
+        return;
+    }
+    QVector<QVector<double>> curves;
+    QByteArray line = ff.readLine();
+    char separator;
+    if ( line.contains(';') ) {
+        separator = ';';
+    } else if ( line.contains('\t') ) {
+        separator = '\t';
+    } else if ( line.contains(',') ) {
+        separator = ',';
+    } else {
+        separator = ' ';
+    }
+    QList<QByteArray> splitline = line.split(separator);
+    int nrcurves = splitline.size();
+    curves.resize(nrcurves);
+    for ( int i=0; i<nrcurves; ++i) {
+        curves[i].append(QString(splitline[i]).toDouble());
+    }
+
+    while (!ff.atEnd()) {
+        line = ff.readLine();
+        splitline = line.split(separator);
+        for ( int i=0; i<nrcurves; ++i) {
+            curves[i].append(QString(splitline[i]).toDouble());
+        }
+    }
+    ff.close();
+    for ( int i = 0; i<nrcurves; ++i ) {
+        int ptnr = curves[i].size();
+        TYPES::vectorindex_t index = this->_curves->addNew(ptnr);
+        Curve* c = _curves->get(index);
+        QVector<double> potential(ptnr);
+        for ( int ii = 0; ii < ptnr; ++ii ) {
+            c->addDataPoint(curves[i][ii]);
+            potential[ii] = ii;
+        }
+        c->setPotentialVector(potential);
+        c->setTimeVector(potential);
+        c->Param(PARAM::Ep, 1);
+        c->Param(PARAM::Ek, ptnr);
+        c->CName(tr("#%1").arg(i));
+        c->FName(*FileName);
+    }
+
+    this->_pUI->updateAll();
+    this->_pUI->PlotRescaleAxes();
+}
+
 void EAQtData::CurReadFileOld(QString *FileName, int PosNr)
 {
     QFile ff(*FileName);
@@ -758,7 +814,9 @@ void EAQtData::ParamReadOld(QFile &ff)
 
 void EAQtData::openFile(QString *filePath, int nrPos)
 {
-    if ( filePath->right(4).compare(".vol",Qt::CaseInsensitive) == 0 ) {
+    if ( filePath->right(4).compare(".txt", Qt::CaseInsensitive) == 0 ) {
+        this->CurImportTxtFile(filePath);
+    } else if ( filePath->right(4).compare(".vol", Qt::CaseInsensitive) == 0 ) {
         this->CurReadFileOld(filePath,nrPos);
     } else {
         this->CurReadFilePro(filePath, nrPos);
