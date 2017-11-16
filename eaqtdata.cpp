@@ -538,7 +538,9 @@ void EAQtData::CurImportTxtFile(QString* FileName)
     } else if ( line.contains(',') ) {
         separator = ',';
     } else {
-        separator = ' ';
+        ff.close();
+        _pUI->showMessageBox(tr("Could not determine the separator (allowed separators: ';', '\t', ',')."),tr("Error"));
+        return;
     }
     QList<QByteArray> splitline = line.split(separator);
     int nrcurves = splitline.size();
@@ -566,8 +568,9 @@ void EAQtData::CurImportTxtFile(QString* FileName)
         }
         c->setPotentialVector(potential);
         c->setTimeVector(potential);
-        c->Param(PARAM::Ep, 1);
+        c->Param(PARAM::Ep, 0);
         c->Param(PARAM::Ek, ptnr);
+        c->Param(PARAM::ptnr, ptnr);
         c->Param(PARAM::Estep, 1);
         c->Param(PARAM::tp, 1);
         c->Param(PARAM::tw, 0);
