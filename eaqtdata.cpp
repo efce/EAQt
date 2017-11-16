@@ -538,9 +538,7 @@ void EAQtData::CurImportTxtFile(QString* FileName)
     } else if ( line.contains(',') ) {
         separator = ',';
     } else {
-        ff.close();
-        _pUI->showMessageBox(tr("Could not determine the separator (allowed separators: ';', '\t', ',')."),tr("Error"));
-        return;
+        separator = ' ';
     }
     QList<QByteArray> splitline = line.split(separator);
     int nrcurves = splitline.size();
@@ -557,25 +555,46 @@ void EAQtData::CurImportTxtFile(QString* FileName)
         }
     }
     ff.close();
+    int ptnr = curves[0].size();
+    QVector<double> incVec(ptnr);
+    double step = curves[0][1] - curves[0][0];
+    bool firstIsPotential = true;
+    for ( int ii = 1; ii<ptnr; ++ii ) {
+        if ( (curves[0][ii]-curves[0][ii-1]) != step ) {
+            firstIsPotential = false;
+            break;
+        }
+    }
+    QVector<double> potential;
+    if ( firstIsPotential && nrcurves > 1 ) {
+        --nrcurves;
+        potential = QVector<double>(curves[0]);
+        curves.remove(0);
+    }
     for ( int i = 0; i<nrcurves; ++i ) {
-        int ptnr = curves[i].size();
         TYPES::vectorindex_t index = this->_curves->addNew(ptnr);
         Curve* c = _curves->get(index);
-        QVector<double> potential(ptnr);
         for ( int ii = 0; ii < ptnr; ++ii ) {
             c->addDataPoint(curves[i][ii]);
-            potential[ii] = ii;
+            incVec[ii] = ii;
         }
-        c->setPotentialVector(potential);
-        c->setTimeVector(potential);
-        c->Param(PARAM::Ep, 0);
-        c->Param(PARAM::Ek, ptnr);
+        if ( !firstIsPotential ) {
+            c->setPotentialVector(incVec);
+            c->setTimeVector(incVec);
+            c->Param(PARAM::Ep, 0);
+            c->Param(PARAM::Ek, ptnr);
+            c->Param(PARAM::Estep, 1);
+        } else {
+            c->setPotentialVector(potential);
+            c->setTimeVector(incVec);
+            c->Param(PARAM::Ep, potential[0]);
+            c->Param(PARAM::Ek, potential[0]+step*ptnr);
+            c->Param(PARAM::Estep, step);
+        }
         c->Param(PARAM::ptnr, ptnr);
-        c->Param(PARAM::Estep, 1);
         c->Param(PARAM::tp, 1);
         c->Param(PARAM::tw, 0);
         c->Param(PARAM::mespv, PARAM::mespv_voltammetry);
-
         c->CName(tr("#%1").arg(i));
         c->FName(*FileName);
     }
