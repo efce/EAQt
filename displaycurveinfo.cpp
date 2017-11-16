@@ -315,7 +315,7 @@ inline QString DisplayCurveInfo::getMespv()
     case PARAM::mespv_polarography:
         mespv = QApplication::translate("EAQtMainWindow","polarography");
         break;
-    case PARAM::mespv_voltamperometry:
+    case PARAM::mespv_voltammetry:
         mespv= QApplication::translate("EAQtMainWindow","voltammetry");
         break;
     }

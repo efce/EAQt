@@ -163,7 +163,7 @@ namespace PARAM {
 
         mespv = 6, //polarographic (DME) or voltamperometric (other)
         mespv_polarography = 0,
-        mespv_voltamperometry = 1,
+        mespv_voltammetry = 1,
 
         electr = 7, //type of electrode used
         electr_macro = 0,

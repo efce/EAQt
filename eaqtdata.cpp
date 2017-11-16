@@ -107,7 +107,7 @@ void EAQtData::initParam()
     _PVParam[PARAM::method] = PARAM::method_scv;
     _PVParam[PARAM::electr] = PARAM::electr_solid;
     _PVParam[PARAM::el23] = PARAM::el23_dummy;
-    _PVParam[PARAM::mespv] = PARAM::mespv_voltamperometry;
+    _PVParam[PARAM::mespv] = PARAM::mespv_voltammetry;
     _PVParam[PARAM::sampl] = PARAM::sampl_single;
     _PVParam[PARAM::crange] = PARAM::crange_macro_10uA;
     _PVParam[PARAM::gtype] = 0;
@@ -211,7 +211,7 @@ void EAQtData::createMatrix()
         _measurementMatrix[j] = -1;
     mxptr = 1;
     // if voltamper. && td <> 0
-    if ( (this->getMesCurves()->get(i)->Param(PARAM::mespv) == PARAM::mespv_voltamperometry)
+    if ( (this->getMesCurves()->get(i)->Param(PARAM::mespv) == PARAM::mespv_voltammetry)
          &&   (this->getMesCurves()->get(i)->Param(PARAM::td) != 0) ) {
         // CGMDE and seinf == 2 - do not put PROC1
         if (!(((this->getMesCurves()->get(i)->Param(PARAM::electr) == PARAM::electr_cgmde ) ||  // CGMDE
@@ -568,6 +568,11 @@ void EAQtData::CurImportTxtFile(QString* FileName)
         c->setTimeVector(potential);
         c->Param(PARAM::Ep, 1);
         c->Param(PARAM::Ek, ptnr);
+        c->Param(PARAM::Estep, 1);
+        c->Param(PARAM::tp, 1);
+        c->Param(PARAM::tw, 0);
+        c->Param(PARAM::mespv, PARAM::mespv_voltammetry);
+
         c->CName(tr("#%1").arg(i));
         c->FName(*FileName);
     }
