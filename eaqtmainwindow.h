@@ -142,6 +142,7 @@ private:
     QAction *_actDataCursor;
     QAction *_actBkgCorrection;
     QAction *_actBkgCorrectionSettings;
+    QAction *_actSubtractActive;
     QAction *_actRelativeValues;
     QAction *_actMoveUpDown;
     QAction *_actSmooth;
@@ -186,6 +187,7 @@ private slots:
     void showDataCursor();
     void showBackgroundCorrectionSettings();
     void startBackgroundCorrection();
+    void subtractActive();
     void startRelativeValues();
     void startMoveUpDown();
     void startSmooth();

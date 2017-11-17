@@ -912,6 +912,10 @@ void EAQtMainWindow::createActionsTopMenu()
     this->_actBkgCorrectionSettings->setStatusTip(tr("Show settings of background correction."));
     connect(_actBkgCorrectionSettings, SIGNAL(triggered(bool)),this,SLOT(showBackgroundCorrectionSettings()));
 
+    this->_actSubtractActive= new QAction(tr("Subtract active curve"), this);
+    this->_actSubtractActive->setStatusTip(tr("Subtracts active curve from all."));
+    connect(_actSubtractActive, SIGNAL(triggered(bool)),this,SLOT(subtractActive()));
+
     this->_actRelativeValues = new QAction(tr("Relative values"), this);
     this->_actRelativeValues->setStatusTip(tr("Show relative to line values"));
     connect(_actRelativeValues, SIGNAL(triggered(bool)),this,SLOT(startRelativeValues()));
@@ -992,6 +996,7 @@ void EAQtMainWindow::createMenusTopMenu()
     _menuAnalysis->addAction(this->_actDataCursor);
     _menuAnalysis->addAction(this->_actBkgCorrection);
     _menuAnalysis->addAction(this->_actBkgCorrectionSettings);
+    _menuAnalysis->addAction(this->_actSubtractActive);
     _menuAnalysis->addAction(this->_actRelativeValues);
     _menuAnalysis->addAction(this->_actMoveUpDown);
     //_menuAnalysis->addAction(this->_actSmooth);
@@ -1018,6 +1023,27 @@ void EAQtMainWindow::startBackgroundCorrection()
     && _pEAQtData->Act() >= 0 ) {
         _mouseHandler->ChangeMouseMode(EAQtMouseHandler::mm_place4markers,
                                        EAQtMouseHandler::uf_background_correction);
+    }
+}
+
+void EAQtMainWindow::subtractActive()
+{
+    if ( _pEAQtData->Act() >= 0
+    && _pEAQtData->getCurves()->count() > 1 ) {
+        _pEAQtData->undoPrepare();
+        CurveCollection *cc = _pEAQtData->getCurves();
+        QVector<double> tosub = cc->get(_pEAQtData->Act())->getYVector();
+        for ( int i = 0; i<cc->count(); ++i) {
+            Curve *c = cc->get(i);
+            QVector<double> cy = c->getYVector();
+            int points = (tosub.size() > cy.size() ? cy.size() : tosub.size());
+            for ( int ii = 0; ii<points; ++ii) {
+                c->setYValue(ii, cy[ii]-tosub[ii]);
+            }
+        }
+        this->updateAll();
+    } else {
+        showMessageBox(tr("There needs to be at least two curves loaded and one active."), tr("Error"));
     }
 }
 
