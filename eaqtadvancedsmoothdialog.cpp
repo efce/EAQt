@@ -43,7 +43,8 @@ QGridLayout* EAQtAdvancedSmoothDialog::generateLayout(int select)
     QGridLayout* gl = new QGridLayout();
 
     int vpos=0;
-    _radMethod.resize(3);
+    _radMethod.resize(4);
+
     _radMethod[method_sg] = new QRadioButton();
     _radMethod[method_sg]->setText(tr("Savitzky-Golay"));
     _radMethod[method_sg]->setChecked(true);
@@ -63,6 +64,13 @@ QGridLayout* EAQtAdvancedSmoothDialog::generateLayout(int select)
     gl->addWidget(_leSGSpan,vpos++,1,1,1);
     gl->addWidget(lOrder,vpos,0,1,1);
     gl->addWidget(_leSGOrder,vpos++,1,1,1);
+    gl->addItem(new QSpacerItem(1,10),vpos++,0,1,2);
+
+    _radMethod[method_median] = new QRadioButton();
+    _radMethod[method_median]->setText(tr("Median filter"));
+    _radMethod[method_median]->setChecked(false);
+    connect(_radMethod[method_median],SIGNAL(toggled(bool)),this,SLOT(methodChanged()));
+    gl->addWidget(_radMethod[method_median],vpos++,0,1,2);
     gl->addItem(new QSpacerItem(1,10),vpos++,0,1,2);
 
     _radMethod[method_spline] = new QRadioButton();
@@ -119,6 +127,10 @@ void EAQtAdvancedSmoothDialog::methodChanged()
         _leFTreshhold->setEnabled(false);
         _leSGOrder->setEnabled(true);
         _leSGSpan->setEnabled(true);
+    } else if ( _radMethod[method_median]->isChecked() ) {
+        _leFTreshhold->setDisabled(true);
+        _leSGOrder->setDisabled(true);
+        _leSGSpan->setDisabled(true);
     } else if ( _radMethod[method_spline]->isChecked() ) {
         _leFTreshhold->setDisabled(true);
         _leSGOrder->setDisabled(true);
@@ -232,10 +244,10 @@ void EAQtAdvancedSmoothDialog::apply()
                 CurveCollection* cc = EAQtData::getInstance().getCurves();
                 Curve *c;
                 for ( int32_t i = 0; i<cc->count(); ++i) {
-                c = cc->get(i);
-                if ( c != NULL ) {
-                    trySG(c,span,order);
-                }
+                    c = cc->get(i);
+                    if ( c != NULL ) {
+                        trySG(c,span,order);
+                    }
                 }
             } else {
                 Curve *c = EAQtData::getInstance().getCurves()->get(EAQtData::getInstance().Act());
@@ -244,6 +256,25 @@ void EAQtAdvancedSmoothDialog::apply()
                 }
             }
 
+            break;
+        }
+    case method_median:
+        {
+            if ( EAQtData::getInstance().Act() == SELECT::all ) {
+                CurveCollection* cc = EAQtData::getInstance().getCurves();
+                Curve *c;
+                for ( int32_t i = 0; i<cc->count(); ++i) {
+                    c = cc->get(i);
+                    if ( c != NULL ) {
+                        tryMedian(c, 5);
+                    }
+                }
+            } else {
+                Curve *c = EAQtData::getInstance().getCurves()->get(EAQtData::getInstance().Act());
+                if ( c != NULL ) {
+                    tryMedian(c, 5);
+                }
+            }
             break;
         }
 
@@ -276,6 +307,8 @@ void EAQtAdvancedSmoothDialog::trySG(Curve *c, int span, int order)
     if ( c->Param(PARAM::ptnr) <= span ) {
         QMessageBox mb(_dialog);
         mb.setText(tr("Span has to be smaller than number of points in curve."));
+        mb.exec();
+        return;
     }
     QVector<double> y = c->getYVector();
     EAQtSignalProcessing::sgSmooth(&y,order,span);
@@ -284,6 +317,23 @@ void EAQtAdvancedSmoothDialog::trySG(Curve *c, int span, int order)
         c->setYValue(i,y[i]);
     }
 
+}
+
+void EAQtAdvancedSmoothDialog::tryMedian(Curve *c, int windowSize)
+{
+    if ( c->Param(PARAM::ptnr) <= windowSize ) {
+        QMessageBox mb(_dialog);
+        mb.setText(tr("Curve has to be larger than %1.").arg(windowSize));
+        mb.exec();
+        return;
+    }
+    QVector<double> y = c->getYVector();
+    QVector<double> res;
+    EAQtSignalProcessing::medianfilter(y, res, windowSize);
+    int32_t sres = res.size();
+    for ( int32_t i = 0; i<sres;++i) {
+        c->setYValue(i,res[i]);
+    }
 }
 
 void EAQtAdvancedSmoothDialog::tryIFFT(Curve* c, double treshhold, double samplingFreq, QVector<double>& freq, QVector<double>& vImg, QVector<double>& vReal)

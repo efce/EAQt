@@ -182,7 +182,15 @@ void EAQtSignalProcessing::kissIFFT(double samplingFreq,
     }
 }
 
-void EAQtSignalProcessing::linearRegression(const QVector<double>& x, const QVector<double>& y, double* slope, double* slopeStdDev, double* intercept, double* interceptStdDev, double* x0StdDev)
+void EAQtSignalProcessing::linearRegression(
+        const QVector<double>& x,
+        const QVector<double>& y,
+        double* slope,
+        double* slopeStdDev,
+        double* intercept,
+        double* interceptStdDev,
+        double* x0StdDev
+    )
 {
     Eigen::MatrixXd A;
     int n = y.size();
@@ -294,6 +302,42 @@ void EAQtSignalProcessing::sgSmooth(QVector<double> *y, int order, int span)
             newy += coeff[ii]*pow(i+1,ii);
         }
         y->replace(i+y->size()-span-1,newy);
+    }
+}
+
+void EAQtSignalProcessing::medianfilter(
+        const QVector<double>& signal,
+        QVector<double>& result,
+        int windowSize
+    )
+{
+    // CODE BASED ON: http://www.librow.com/articles/article-1
+    result = signal;
+    const int N = signal.size();
+    //   Move window through all elements of the signal
+    for (int i = 2; i<N-2; ++i) {
+        //   Pick up window elements
+        double window[windowSize];
+        int halfWindow = (int)floor(windowSize/2);
+        for (int j = 0; j < windowSize; ++j) {
+            window[j] = signal[i-halfWindow+j];
+        }
+        //   Order elements (only half of them)
+        for (int j=0; j<halfWindow+1; ++j) {
+            //   Find position of minimum element
+            int min = j;
+            for (int k = j+1; k<windowSize; ++k) {
+                if (window[k] < window[min]) {
+                    min = k;
+                }
+            }
+            //   Put found minimum element in its place
+            const double temp = window[j];
+            window[j] = window[min];
+            window[min] = temp;
+        }
+        //   Get result - the middle element
+        result[i-halfWindow] = window[halfWindow];
     }
 }
 

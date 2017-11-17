@@ -572,234 +572,262 @@
     <name>EAQtData</name>
     <message>
         <location filename="eaqtdata.cpp" line="41"/>
-        <location filename="eaqtdata.cpp" line="2137"/>
-        <location filename="eaqtdata.cpp" line="2506"/>
+        <location filename="eaqtdata.cpp" line="2289"/>
+        <location filename="eaqtdata.cpp" line="2659"/>
         <source>%1</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="eaqtdata.cpp" line="464"/>
-        <location filename="eaqtdata.cpp" line="503"/>
+        <location filename="eaqtdata.cpp" line="492"/>
+        <location filename="eaqtdata.cpp" line="528"/>
+        <location filename="eaqtdata.cpp" line="614"/>
         <source>File is empty</source>
         <translation>Plik jest pusty</translation>
     </message>
     <message>
-        <location filename="eaqtdata.cpp" line="475"/>
-        <location filename="eaqtdata.cpp" line="484"/>
-        <location filename="eaqtdata.cpp" line="514"/>
-        <location filename="eaqtdata.cpp" line="523"/>
+        <location filename="eaqtdata.cpp" line="503"/>
+        <location filename="eaqtdata.cpp" line="512"/>
+        <location filename="eaqtdata.cpp" line="625"/>
+        <location filename="eaqtdata.cpp" line="634"/>
         <source>Error while reading the file</source>
         <translation>Błąd w czasie zapisu do pliku</translation>
     </message>
     <message>
-        <location filename="eaqtdata.cpp" line="571"/>
-        <location filename="eaqtdata.cpp" line="643"/>
-        <location filename="eaqtdata.cpp" line="694"/>
-        <location filename="eaqtdata.cpp" line="1086"/>
-        <location filename="eaqtdata.cpp" line="1259"/>
+        <location filename="eaqtdata.cpp" line="598"/>
+        <source>#%1</source>
+        <translation>#%1</translation>
+    </message>
+    <message>
+        <location filename="eaqtdata.cpp" line="682"/>
+        <location filename="eaqtdata.cpp" line="754"/>
+        <location filename="eaqtdata.cpp" line="805"/>
+        <location filename="eaqtdata.cpp" line="1200"/>
+        <location filename="eaqtdata.cpp" line="1373"/>
         <source>Could not add new curve. Maximum reached?</source>
         <translation>Nie można dodać nowej krzywej, Osiągnięto limit ?</translation>
     </message>
     <message>
-        <location filename="eaqtdata.cpp" line="764"/>
+        <location filename="eaqtdata.cpp" line="877"/>
         <source>Could not reappend curve.</source>
         <translation>Nie można dołączyć krzywej.</translation>
     </message>
     <message>
-        <location filename="eaqtdata.cpp" line="778"/>
+        <location filename="eaqtdata.cpp" line="891"/>
         <source>Delete all curves?</source>
         <translation>Usunąć wszystkie krzywe?</translation>
     </message>
     <message>
-        <location filename="eaqtdata.cpp" line="779"/>
+        <location filename="eaqtdata.cpp" line="892"/>
         <source>Are you sure</source>
         <translation>Jesteś pewny</translation>
     </message>
     <message>
-        <location filename="eaqtdata.cpp" line="997"/>
+        <location filename="eaqtdata.cpp" line="1111"/>
         <source>Start </source>
         <translation>Start </translation>
     </message>
     <message>
-        <location filename="eaqtdata.cpp" line="1036"/>
+        <location filename="eaqtdata.cpp" line="1150"/>
         <source>Press OK to continue the measurement series.</source>
         <translation>Naciśnij OK, aby kontynuować serię pomiarów.</translation>
     </message>
     <message>
-        <location filename="eaqtdata.cpp" line="1036"/>
+        <location filename="eaqtdata.cpp" line="1150"/>
         <source>Measurement Series</source>
         <translation>Seria Pomiarów</translation>
     </message>
     <message>
-        <location filename="eaqtdata.cpp" line="1452"/>
+        <location filename="eaqtdata.cpp" line="1584"/>
         <source>Potential program has to have more than 2 points</source>
         <translation>Program potencjału mus być dłuższy niż 2 punkty</translation>
     </message>
     <message>
-        <location filename="eaqtdata.cpp" line="1551"/>
+        <location filename="eaqtdata.cpp" line="1686"/>
         <source>Measurement was not initiated.</source>
         <translation>Pomiar nie został zainicjalizowany.</translation>
     </message>
     <message>
-        <location filename="eaqtdata.cpp" line="1726"/>
+        <location filename="eaqtdata.cpp" line="1877"/>
         <source> [FPS: %1]</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="eaqtdata.cpp" line="1781"/>
+        <location filename="eaqtdata.cpp" line="1932"/>
         <source>Applying Estart: %1 mV, %2 s</source>
         <translation>Przykładam Estart; %1 mV, %2 s</translation>
     </message>
     <message>
-        <location filename="eaqtdata.cpp" line="1831"/>
+        <location filename="eaqtdata.cpp" line="1982"/>
         <source>Save dialog</source>
         <translation>Zapisywanie</translation>
     </message>
     <message>
-        <location filename="eaqtdata.cpp" line="1832"/>
+        <location filename="eaqtdata.cpp" line="1983"/>
         <source>Do you want to save the result?</source>
         <translation>Chcesz zapisać wynik pomiaru?</translation>
     </message>
     <message>
-        <location filename="eaqtdata.cpp" line="2019"/>
+        <location filename="eaqtdata.cpp" line="2040"/>
+        <source>Measurement series completed.</source>
+        <translation>Zakończono serię pomiarową.</translation>
+    </message>
+    <message>
+        <location filename="eaqtdata.cpp" line="2040"/>
+        <source>Measurement series</source>
+        <translation>Seria pomiarowa</translation>
+    </message>
+    <message>
+        <location filename="eaqtdata.cpp" line="2171"/>
         <source>Could not append curve.</source>
         <translation>Nie można dołączyć krzywej.</translation>
     </message>
     <message>
-        <location filename="eaqtdata.cpp" line="2153"/>
+        <location filename="eaqtdata.cpp" line="2305"/>
         <source>Too many curves with the same name in file.</source>
         <translation>Zbyt wiele krzywych o tej samej nazwie w pliku.</translation>
     </message>
     <message>
-        <location filename="eaqtdata.cpp" line="2178"/>
+        <location filename="eaqtdata.cpp" line="2330"/>
         <source>Could not open tmp file. Curve not saved.</source>
         <translation>Nie można otworzyć pliku tmp. Nie zapisano krzywej.</translation>
     </message>
     <message>
-        <location filename="eaqtdata.cpp" line="2189"/>
+        <location filename="eaqtdata.cpp" line="2341"/>
         <source>Error while openning temp file. Curve not saved.</source>
         <translation>Nie można otworzyć pliku tmp. Nie zapisano krzywej.</translation>
     </message>
     <message>
-        <location filename="eaqtdata.cpp" line="2199"/>
+        <location filename="eaqtdata.cpp" line="2351"/>
         <source>Error while openning temp file, or file damaged. Curve not saved.</source>
         <translation>Nie można otworzyć pliku tmp. Nie zapisano krzywej.</translation>
     </message>
     <message>
-        <location filename="eaqtdata.cpp" line="2213"/>
+        <location filename="eaqtdata.cpp" line="2365"/>
         <source>Error while reading number of files from tmp. Curve not saved.</source>
         <translation>Nie można otworzyć pliku tmp. Nie zapisano krzywej.</translation>
     </message>
     <message>
-        <location filename="eaqtdata.cpp" line="2226"/>
+        <location filename="eaqtdata.cpp" line="2378"/>
         <source>Error while verifing size of tmp file (offset sum &gt; filesize). Curve not saved.</source>
         <translation>Błąd w czasie weryfikacji wielkości pliku tmp (offset sum &gt; filesize). Nie zapisano krzywej.</translation>
     </message>
     <message>
-        <location filename="eaqtdata.cpp" line="2235"/>
+        <location filename="eaqtdata.cpp" line="2387"/>
         <source>Error while verifing size of tmp file (offset sum != filesize). Curve not saved.</source>
         <translation>Błąd w czasie weryfikacji wielkości pliku tmp (offset sum != filesize). Nie zapisano krzywej.</translation>
     </message>
     <message>
-        <location filename="eaqtdata.cpp" line="2267"/>
+        <location filename="eaqtdata.cpp" line="2397"/>
+        <location filename="eaqtdata.cpp" line="2402"/>
+        <source>Cannot save to file.</source>
+        <translation>Nie można zapisać do pliku.</translation>
+    </message>
+    <message>
+        <location filename="eaqtdata.cpp" line="2419"/>
         <source>error loading file: </source>
         <translation>błąd w czasie wczytywania pliku: </translation>
     </message>
     <message>
-        <location filename="eaqtdata.cpp" line="2273"/>
+        <location filename="eaqtdata.cpp" line="2425"/>
         <source>Syntax error on line: %1</source>
         <translation>Błąd składni na lini %1</translation>
     </message>
     <message>
-        <location filename="eaqtdata.cpp" line="2285"/>
+        <location filename="eaqtdata.cpp" line="2437"/>
         <source>No measurements loaded, terminating.</source>
         <translation>Nie wczytano pomiarów. Przerywam.</translation>
     </message>
     <message>
-        <location filename="eaqtdata.cpp" line="2289"/>
+        <location filename="eaqtdata.cpp" line="2441"/>
         <source>Loaded: %1 measurements. Starting the measurement series.</source>
         <translation>Wczytano %1 pomiarów. Rozpoczynanie serii pomiarów.</translation>
     </message>
     <message>
-        <location filename="eaqtdata.cpp" line="2292"/>
+        <location filename="eaqtdata.cpp" line="2444"/>
         <source>Critical error. Terminating.</source>
         <translation>Błąd krytyczny. Przerywam.</translation>
     </message>
     <message>
-        <location filename="eaqtdata.cpp" line="2490"/>
-        <location filename="eaqtdata.cpp" line="2492"/>
-        <location filename="eaqtdata.cpp" line="2499"/>
+        <location filename="eaqtdata.cpp" line="2458"/>
+        <source>Measurement series - timer: %1 s</source>
+        <translation>Seria pomiarowa - odlcizanie: %1 s</translation>
+    </message>
+    <message>
+        <location filename="eaqtdata.cpp" line="2643"/>
+        <location filename="eaqtdata.cpp" line="2645"/>
+        <location filename="eaqtdata.cpp" line="2652"/>
         <source>%1 mV</source>
         <translation>%1 mV</translation>
     </message>
     <message>
-        <location filename="eaqtdata.cpp" line="2513"/>
-        <location filename="eaqtdata.cpp" line="2534"/>
-        <location filename="eaqtdata.cpp" line="2537"/>
-        <location filename="eaqtdata.cpp" line="2540"/>
-        <location filename="eaqtdata.cpp" line="2546"/>
+        <location filename="eaqtdata.cpp" line="2666"/>
+        <location filename="eaqtdata.cpp" line="2687"/>
+        <location filename="eaqtdata.cpp" line="2690"/>
+        <location filename="eaqtdata.cpp" line="2693"/>
+        <location filename="eaqtdata.cpp" line="2699"/>
         <source>%1 µA</source>
         <translation>%1 µA</translation>
     </message>
     <message>
-        <location filename="eaqtdata.cpp" line="2516"/>
-        <location filename="eaqtdata.cpp" line="2519"/>
-        <location filename="eaqtdata.cpp" line="2522"/>
-        <location filename="eaqtdata.cpp" line="2543"/>
+        <location filename="eaqtdata.cpp" line="2669"/>
+        <location filename="eaqtdata.cpp" line="2672"/>
+        <location filename="eaqtdata.cpp" line="2675"/>
+        <location filename="eaqtdata.cpp" line="2696"/>
         <source>%1 nA</source>
         <translation>%1 nA</translation>
     </message>
     <message>
-        <location filename="eaqtdata.cpp" line="2525"/>
-        <location filename="eaqtdata.cpp" line="2528"/>
-        <location filename="eaqtdata.cpp" line="2531"/>
+        <location filename="eaqtdata.cpp" line="2678"/>
+        <location filename="eaqtdata.cpp" line="2681"/>
+        <location filename="eaqtdata.cpp" line="2684"/>
         <source>%1 mA</source>
         <translation>%1 mA</translation>
     </message>
     <message>
-        <location filename="eaqtdata.cpp" line="2712"/>
-        <location filename="eaqtdata.cpp" line="2775"/>
-        <location filename="eaqtdata.cpp" line="2781"/>
+        <location filename="eaqtdata.cpp" line="2864"/>
+        <location filename="eaqtdata.cpp" line="2927"/>
+        <location filename="eaqtdata.cpp" line="2933"/>
         <source>Could not find any curve to save.</source>
         <translation>Nie można znaleźć krzywej do zapisania.</translation>
     </message>
     <message>
-        <location filename="eaqtdata.cpp" line="2719"/>
-        <location filename="eaqtdata.cpp" line="2796"/>
+        <location filename="eaqtdata.cpp" line="2871"/>
+        <location filename="eaqtdata.cpp" line="2948"/>
         <source>Could not open file for writing.</source>
         <translation>Nie można otworzyć pliku do zapisu.</translation>
     </message>
     <message>
-        <location filename="eaqtdata.cpp" line="2788"/>
+        <location filename="eaqtdata.cpp" line="2940"/>
         <source>Cannot export to TXT curves with different number of points.</source>
         <translation>Nie można eksportować do TXT krzywych z różna ilością punktów pomiarowych.</translation>
     </message>
     <message>
-        <location filename="eaqtdata.cpp" line="464"/>
-        <location filename="eaqtdata.cpp" line="475"/>
-        <location filename="eaqtdata.cpp" line="484"/>
+        <location filename="eaqtdata.cpp" line="492"/>
         <location filename="eaqtdata.cpp" line="503"/>
-        <location filename="eaqtdata.cpp" line="514"/>
-        <location filename="eaqtdata.cpp" line="523"/>
-        <location filename="eaqtdata.cpp" line="571"/>
-        <location filename="eaqtdata.cpp" line="643"/>
-        <location filename="eaqtdata.cpp" line="694"/>
-        <location filename="eaqtdata.cpp" line="764"/>
-        <location filename="eaqtdata.cpp" line="1086"/>
-        <location filename="eaqtdata.cpp" line="1259"/>
-        <location filename="eaqtdata.cpp" line="1452"/>
-        <location filename="eaqtdata.cpp" line="2019"/>
-        <location filename="eaqtdata.cpp" line="2712"/>
-        <location filename="eaqtdata.cpp" line="2719"/>
-        <location filename="eaqtdata.cpp" line="2775"/>
-        <location filename="eaqtdata.cpp" line="2781"/>
-        <location filename="eaqtdata.cpp" line="2788"/>
-        <location filename="eaqtdata.cpp" line="2796"/>
+        <location filename="eaqtdata.cpp" line="512"/>
+        <location filename="eaqtdata.cpp" line="528"/>
+        <location filename="eaqtdata.cpp" line="614"/>
+        <location filename="eaqtdata.cpp" line="625"/>
+        <location filename="eaqtdata.cpp" line="634"/>
+        <location filename="eaqtdata.cpp" line="682"/>
+        <location filename="eaqtdata.cpp" line="754"/>
+        <location filename="eaqtdata.cpp" line="805"/>
+        <location filename="eaqtdata.cpp" line="877"/>
+        <location filename="eaqtdata.cpp" line="1200"/>
+        <location filename="eaqtdata.cpp" line="1373"/>
+        <location filename="eaqtdata.cpp" line="1584"/>
+        <location filename="eaqtdata.cpp" line="2171"/>
+        <location filename="eaqtdata.cpp" line="2864"/>
+        <location filename="eaqtdata.cpp" line="2871"/>
+        <location filename="eaqtdata.cpp" line="2927"/>
+        <location filename="eaqtdata.cpp" line="2933"/>
+        <location filename="eaqtdata.cpp" line="2940"/>
+        <location filename="eaqtdata.cpp" line="2948"/>
         <source>Error</source>
         <translation>Błąd</translation>
     </message>
     <message>
-        <location filename="eaqtdata.cpp" line="1790"/>
+        <location filename="eaqtdata.cpp" line="1941"/>
         <source>Break: %1 mV    %2:%3 of %4:%5 </source>
         <translation>Przerwa: %1 mV    %2:%3 of %4:%5 </translation>
     </message>
@@ -842,12 +870,14 @@
     </message>
     <message>
         <location filename="eaqtmainwindow.cpp" line="412"/>
-        <source>Delete non-active</source>
+        <source>Delete inactive</source>
+        <oldsource>Delete non-active</oldsource>
         <translation>Usuń nieaktywne</translation>
     </message>
     <message>
         <location filename="eaqtmainwindow.cpp" line="413"/>
-        <source>Delete all non active curves from plot</source>
+        <source>Delete all inactive curves from plot</source>
+        <oldsource>Delete all non active curves from plot</oldsource>
         <translation>Usuń nieaktywne krzywe z wykresu</translation>
     </message>
     <message>
@@ -1068,7 +1098,7 @@
     </message>
     <message>
         <location filename="eaqtmainwindow.cpp" line="1002"/>
-        <location filename="eaqtmainwindow.cpp" line="1210"/>
+        <location filename="eaqtmainwindow.cpp" line="1214"/>
         <source>Calibration</source>
         <translation>Kalibracja</translation>
     </message>
@@ -1199,8 +1229,8 @@
     </message>
     <message>
         <location filename="eaqtmainwindow.cpp" line="948"/>
-        <location filename="eaqtmainwindow.cpp" line="1183"/>
-        <location filename="eaqtmainwindow.cpp" line="1185"/>
+        <location filename="eaqtmainwindow.cpp" line="1187"/>
+        <location filename="eaqtmainwindow.cpp" line="1189"/>
         <source>Load calibration</source>
         <translation>Wczytaj kalibrację</translation>
     </message>
@@ -1216,7 +1246,7 @@
     </message>
     <message>
         <location filename="eaqtmainwindow.cpp" line="955"/>
-        <location filename="eaqtmainwindow.cpp" line="1248"/>
+        <location filename="eaqtmainwindow.cpp" line="1252"/>
         <source>Result</source>
         <translation>Wynik analizy</translation>
     </message>
@@ -1302,9 +1332,10 @@
     </message>
     <message>
         <location filename="eaqtmainwindow.cpp" line="1077"/>
-        <location filename="eaqtmainwindow.cpp" line="1242"/>
-        <location filename="eaqtmainwindow.cpp" line="1250"/>
-        <location filename="eaqtmainwindow.cpp" line="1372"/>
+        <location filename="eaqtmainwindow.cpp" line="1175"/>
+        <location filename="eaqtmainwindow.cpp" line="1246"/>
+        <location filename="eaqtmainwindow.cpp" line="1254"/>
+        <location filename="eaqtmainwindow.cpp" line="1376"/>
         <source>Error</source>
         <translation>Błąd</translation>
     </message>
@@ -1323,32 +1354,37 @@
         <translation>Ostrzeżenie</translation>
     </message>
     <message>
-        <location filename="eaqtmainwindow.cpp" line="1183"/>
+        <location filename="eaqtmainwindow.cpp" line="1175"/>
+        <source>One and only one curve can be selected during calibration.</source>
+        <translation>Tylko jedna krzywa może być wybrana podczas kalibracji.</translation>
+    </message>
+    <message>
+        <location filename="eaqtmainwindow.cpp" line="1187"/>
         <source>eacal (.eacal)</source>
         <translation>eacal (.eacal)</translation>
     </message>
     <message>
-        <location filename="eaqtmainwindow.cpp" line="1213"/>
+        <location filename="eaqtmainwindow.cpp" line="1217"/>
         <source>Close</source>
         <translation>Zamknij</translation>
     </message>
     <message>
-        <location filename="eaqtmainwindow.cpp" line="1242"/>
+        <location filename="eaqtmainwindow.cpp" line="1246"/>
         <source>Cannot use curve in calibration -- points out of range.</source>
         <translation>Krzywej nie można użyć do kalibracji - kalibracja poza zakresem punktów.</translation>
     </message>
     <message>
-        <location filename="eaqtmainwindow.cpp" line="1248"/>
+        <location filename="eaqtmainwindow.cpp" line="1252"/>
         <source>Result of calibration: %1 %2</source>
         <translation>Wynik kalibracji: %1 %2</translation>
     </message>
     <message>
-        <location filename="eaqtmainwindow.cpp" line="1250"/>
+        <location filename="eaqtmainwindow.cpp" line="1254"/>
         <source>Calibration is not prepared.</source>
         <translation>Kalibracja nie gotowa.</translation>
     </message>
     <message>
-        <location filename="eaqtmainwindow.cpp" line="1372"/>
+        <location filename="eaqtmainwindow.cpp" line="1376"/>
         <source>Could not select curve for renaming.</source>
         <translation>Nie można było wybrać krzywej do zmiany nazwy.</translation>
     </message>
@@ -1481,76 +1517,82 @@
     </message>
     <message>
         <location filename="displaycurveinfo.cpp" line="199"/>
-        <source>SQW</source>
-        <translation></translation>
+        <source>O.SQW</source>
+        <oldsource>SQW</oldsource>
+        <translation>O.SQW</translation>
     </message>
     <message>
         <location filename="displaycurveinfo.cpp" line="202"/>
+        <source>[NEW] SQW</source>
+        <translation>[NOWE] SQW</translation>
+    </message>
+    <message>
+        <location filename="displaycurveinfo.cpp" line="205"/>
         <source>LSV</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="displaycurveinfo.cpp" line="214"/>
+        <location filename="displaycurveinfo.cpp" line="217"/>
         <source>single sampling</source>
         <translation>próbkowanie pojedyńcze</translation>
     </message>
     <message>
-        <location filename="displaycurveinfo.cpp" line="217"/>
+        <location filename="displaycurveinfo.cpp" line="220"/>
         <source>double sampling</source>
         <translation>próbkowanie podwójne</translation>
     </message>
     <message>
-        <location filename="displaycurveinfo.cpp" line="229"/>
+        <location filename="displaycurveinfo.cpp" line="232"/>
         <source>two electrodes</source>
         <translation>dwuelektrodowy</translation>
     </message>
     <message>
-        <location filename="displaycurveinfo.cpp" line="232"/>
+        <location filename="displaycurveinfo.cpp" line="235"/>
         <source>three electrodes</source>
         <translation>trójelektrodowy</translation>
     </message>
     <message>
-        <location filename="displaycurveinfo.cpp" line="235"/>
+        <location filename="displaycurveinfo.cpp" line="238"/>
         <source>internal</source>
         <translation>wewnętrzny</translation>
     </message>
     <message>
-        <location filename="displaycurveinfo.cpp" line="247"/>
+        <location filename="displaycurveinfo.cpp" line="250"/>
         <source>no</source>
         <translation>nie</translation>
     </message>
     <message>
-        <location filename="displaycurveinfo.cpp" line="250"/>
+        <location filename="displaycurveinfo.cpp" line="253"/>
         <source>yes</source>
         <translation>tak</translation>
     </message>
     <message>
-        <location filename="displaycurveinfo.cpp" line="253"/>
+        <location filename="displaycurveinfo.cpp" line="256"/>
         <source>multicyclic</source>
         <translation>wielocykliczny</translation>
     </message>
     <message>
-        <location filename="displaycurveinfo.cpp" line="313"/>
+        <location filename="displaycurveinfo.cpp" line="316"/>
         <source>polarography</source>
         <translation>polarografia</translation>
     </message>
     <message>
-        <location filename="displaycurveinfo.cpp" line="316"/>
+        <location filename="displaycurveinfo.cpp" line="319"/>
         <source>voltammetry</source>
         <translation>woltamperometria</translation>
     </message>
     <message>
-        <location filename="displaycurveinfo.cpp" line="331"/>
+        <location filename="displaycurveinfo.cpp" line="334"/>
         <source>solid</source>
         <translation>stała</translation>
     </message>
     <message>
-        <location filename="displaycurveinfo.cpp" line="340"/>
+        <location filename="displaycurveinfo.cpp" line="343"/>
         <source>µsolid</source>
         <translation>µstała</translation>
     </message>
     <message>
-        <location filename="displaycurveinfo.cpp" line="346"/>
+        <location filename="displaycurveinfo.cpp" line="349"/>
         <source>multielectrode</source>
         <translation>wieloelektrodowy</translation>
     </message>
@@ -1571,7 +1613,7 @@
         <translation>Położenie względne: </translation>
     </message>
     <message>
-        <location filename="eaqtmousehandler.cpp" line="647"/>
+        <location filename="eaqtmousehandler.cpp" line="651"/>
         <source>Data cursor:</source>
         <translation>Kursor:</translation>
     </message>
@@ -1858,12 +1900,17 @@
         <location filename="eaqtparamdialog.cpp" line="266"/>
         <location filename="eaqtparamdialog.cpp" line="277"/>
         <location filename="eaqtparamdialog.cpp" line="290"/>
-        <location filename="eaqtparamdialog.cpp" line="301"/>
-        <location filename="eaqtparamdialog.cpp" line="312"/>
+        <location filename="eaqtparamdialog.cpp" line="303"/>
+        <location filename="eaqtparamdialog.cpp" line="314"/>
         <location filename="eaqtparamdialog.cpp" line="325"/>
-        <location filename="eaqtparamdialog.cpp" line="336"/>
-        <location filename="eaqtparamdialog.cpp" line="347"/>
-        <location filename="eaqtparamdialog.cpp" line="358"/>
+        <location filename="eaqtparamdialog.cpp" line="338"/>
+        <location filename="eaqtparamdialog.cpp" line="349"/>
+        <location filename="eaqtparamdialog.cpp" line="360"/>
+        <location filename="eaqtparamdialog.cpp" line="371"/>
+        <location filename="eaqtparamdialog.cpp" line="829"/>
+        <location filename="eaqtparamdialog.cpp" line="1157"/>
+        <location filename="eaqtparamdialog.cpp" line="1158"/>
+        <location filename="eaqtparamdialog.cpp" line="1159"/>
         <source>%1</source>
         <translation></translation>
     </message>
@@ -1884,198 +1931,206 @@
     </message>
     <message>
         <location filename="eaqtparamdialog.cpp" line="283"/>
-        <location filename="eaqtparamdialog.cpp" line="801"/>
         <source>dE [mV]:</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="eaqtparamdialog.cpp" line="296"/>
+        <location filename="eaqtparamdialog.cpp" line="297"/>
+        <source>f [Hz]:</source>
+        <translation>f [Hz]:</translation>
+    </message>
+    <message>
+        <location filename="eaqtparamdialog.cpp" line="309"/>
         <source>tp [ms]:</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="eaqtparamdialog.cpp" line="302"/>
-        <location filename="eaqtparamdialog.cpp" line="313"/>
+        <location filename="eaqtparamdialog.cpp" line="315"/>
         <location filename="eaqtparamdialog.cpp" line="326"/>
-        <location filename="eaqtparamdialog.cpp" line="337"/>
-        <location filename="eaqtparamdialog.cpp" line="348"/>
-        <location filename="eaqtparamdialog.cpp" line="359"/>
+        <location filename="eaqtparamdialog.cpp" line="339"/>
+        <location filename="eaqtparamdialog.cpp" line="350"/>
+        <location filename="eaqtparamdialog.cpp" line="361"/>
+        <location filename="eaqtparamdialog.cpp" line="372"/>
         <source>nr%1</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="eaqtparamdialog.cpp" line="307"/>
+        <location filename="eaqtparamdialog.cpp" line="320"/>
         <source>tw [ms]:</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="eaqtparamdialog.cpp" line="318"/>
+        <location filename="eaqtparamdialog.cpp" line="331"/>
         <source>td [ms]:</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="eaqtparamdialog.cpp" line="331"/>
-        <location filename="eaqtparamdialog.cpp" line="661"/>
+        <location filename="eaqtparamdialog.cpp" line="344"/>
+        <location filename="eaqtparamdialog.cpp" line="679"/>
         <source>average:</source>
         <translation>średnia:</translation>
     </message>
     <message>
-        <location filename="eaqtparamdialog.cpp" line="342"/>
+        <location filename="eaqtparamdialog.cpp" line="355"/>
         <source>mixer [s]:</source>
         <translation>mieszadło [s]:</translation>
     </message>
     <message>
-        <location filename="eaqtparamdialog.cpp" line="353"/>
+        <location filename="eaqtparamdialog.cpp" line="366"/>
         <source>points:</source>
         <translation>punkty:</translation>
     </message>
     <message>
-        <location filename="eaqtparamdialog.cpp" line="366"/>
+        <location filename="eaqtparamdialog.cpp" line="379"/>
         <source>breaks:</source>
         <translation>przerwy:</translation>
     </message>
     <message>
-        <location filename="eaqtparamdialog.cpp" line="383"/>
+        <location filename="eaqtparamdialog.cpp" line="396"/>
         <source>Use start potential</source>
         <translation>Użyj potencjału startowego</translation>
     </message>
     <message>
-        <location filename="eaqtparamdialog.cpp" line="386"/>
+        <location filename="eaqtparamdialog.cpp" line="399"/>
         <source>tstart [s]:</source>
         <oldsource>tstart [ms]:</oldsource>
         <translation></translation>
     </message>
     <message>
-        <location filename="eaqtparamdialog.cpp" line="387"/>
+        <location filename="eaqtparamdialog.cpp" line="400"/>
         <source>Estart [mV]:</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="eaqtparamdialog.cpp" line="410"/>
+        <location filename="eaqtparamdialog.cpp" line="423"/>
         <source>Voltammetry</source>
         <translation>Woltamperometria</translation>
     </message>
     <message>
-        <location filename="eaqtparamdialog.cpp" line="411"/>
+        <location filename="eaqtparamdialog.cpp" line="424"/>
         <source>staircase (SCV)</source>
         <translation>schodkowa (SCV)</translation>
     </message>
     <message>
-        <location filename="eaqtparamdialog.cpp" line="413"/>
+        <location filename="eaqtparamdialog.cpp" line="426"/>
         <source>normal pulse (NPV)</source>
         <translation>impulsowa normalna (NPV)</translation>
     </message>
     <message>
-        <location filename="eaqtparamdialog.cpp" line="415"/>
+        <location filename="eaqtparamdialog.cpp" line="428"/>
         <source>differential pulse (DPV)</source>
         <translation>impulsowa różnicowa (DPV)</translation>
     </message>
     <message>
-        <location filename="eaqtparamdialog.cpp" line="417"/>
         <source>sqaure wave (SQW)</source>
-        <translation>fala prostokątna (SQW)</translation>
+        <translation type="vanished">fala prostokątna (SQW)</translation>
     </message>
     <message>
-        <location filename="eaqtparamdialog.cpp" line="421"/>
+        <location filename="eaqtparamdialog.cpp" line="436"/>
         <source>Program E</source>
         <translation>Program Potencjału</translation>
     </message>
     <message>
-        <location filename="eaqtparamdialog.cpp" line="423"/>
+        <location filename="eaqtparamdialog.cpp" line="438"/>
         <source>Potential change program</source>
         <translation>Program zmiany potencjału</translation>
     </message>
     <message>
-        <location filename="eaqtparamdialog.cpp" line="439"/>
+        <location filename="eaqtparamdialog.cpp" line="454"/>
         <source>LSV sweep rate</source>
         <translation>Szybkość polaryzacji LSV</translation>
     </message>
     <message>
-        <location filename="eaqtparamdialog.cpp" line="446"/>
-        <location filename="eaqtparamdialog.cpp" line="448"/>
+        <location filename="eaqtparamdialog.cpp" line="461"/>
+        <location filename="eaqtparamdialog.cpp" line="463"/>
         <source>%1 mV/s</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="eaqtparamdialog.cpp" line="450"/>
+        <location filename="eaqtparamdialog.cpp" line="465"/>
         <source>%1 V/s</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="eaqtparamdialog.cpp" line="463"/>
+        <location filename="eaqtparamdialog.cpp" line="478"/>
         <source>Electrode</source>
         <translation>Elektroda</translation>
     </message>
     <message>
-        <location filename="eaqtparamdialog.cpp" line="467"/>
+        <location filename="eaqtparamdialog.cpp" line="482"/>
         <source>DME</source>
         <translation>DME</translation>
     </message>
     <message>
-        <location filename="eaqtparamdialog.cpp" line="468"/>
+        <location filename="eaqtparamdialog.cpp" line="483"/>
         <source>CGMDE</source>
         <translation>CGMDE</translation>
     </message>
     <message>
-        <location filename="eaqtparamdialog.cpp" line="470"/>
+        <location filename="eaqtparamdialog.cpp" line="485"/>
         <source>Solid</source>
         <translation>Stała</translation>
     </message>
     <message>
-        <location filename="eaqtparamdialog.cpp" line="471"/>
+        <location filename="eaqtparamdialog.cpp" line="486"/>
         <source>µDME</source>
         <translation>µDME</translation>
     </message>
     <message>
-        <location filename="eaqtparamdialog.cpp" line="472"/>
+        <location filename="eaqtparamdialog.cpp" line="487"/>
         <source>µCGMDE</source>
         <translation>µCGMDE</translation>
     </message>
     <message>
-        <location filename="eaqtparamdialog.cpp" line="474"/>
+        <location filename="eaqtparamdialog.cpp" line="489"/>
         <source>µSolid</source>
         <translation>µStała</translation>
     </message>
     <message>
-        <location filename="eaqtparamdialog.cpp" line="480"/>
+        <location filename="eaqtparamdialog.cpp" line="495"/>
         <source>CGMDE settings</source>
         <translation>Ustawienia CGMDE</translation>
     </message>
     <message>
-        <location filename="eaqtparamdialog.cpp" line="494"/>
+        <location filename="eaqtparamdialog.cpp" line="509"/>
         <source>Probing</source>
         <translation>Próbkowanie</translation>
     </message>
     <message>
-        <location filename="eaqtparamdialog.cpp" line="496"/>
+        <location filename="eaqtparamdialog.cpp" line="511"/>
         <source>single</source>
         <comment>SAMPL</comment>
         <translation>pojedyńcze</translation>
     </message>
     <message>
-        <location filename="eaqtparamdialog.cpp" line="497"/>
+        <location filename="eaqtparamdialog.cpp" line="512"/>
         <source>double</source>
         <comment>SAMPL</comment>
         <translation>podwójne</translation>
     </message>
     <message>
-        <location filename="eaqtparamdialog.cpp" line="901"/>
-        <location filename="eaqtparamdialog.cpp" line="908"/>
+        <location filename="eaqtparamdialog.cpp" line="589"/>
+        <source>Load measurement series</source>
+        <translation>Wczytaj serie pomiarów</translation>
+    </message>
+    <message>
+        <location filename="eaqtparamdialog.cpp" line="929"/>
+        <location filename="eaqtparamdialog.cpp" line="936"/>
         <source>Error</source>
         <translation>Błąd</translation>
     </message>
     <message>
-        <location filename="eaqtparamdialog.cpp" line="902"/>
+        <location filename="eaqtparamdialog.cpp" line="930"/>
         <source>Potential program requires at least three points.</source>
         <translation>Program potecjału wymaga definicji przynajmniej trzech punktów.</translation>
     </message>
     <message>
-        <location filename="eaqtparamdialog.cpp" line="909"/>
+        <location filename="eaqtparamdialog.cpp" line="937"/>
         <source>Double sampling requires even number of points for potential program.</source>
         <translation>Próbkowanie podwójne wymaga parzystej ilości punktów w programie potencjału.</translation>
     </message>
     <message>
-        <location filename="eaqtparamdialog.cpp" line="513"/>
+        <location filename="eaqtparamdialog.cpp" line="528"/>
         <source>Do not record nonaveraged
  current samples</source>
         <oldsource>Record nonaveraged
@@ -2084,41 +2139,46 @@
 nieuśrednionych</translation>
     </message>
     <message>
-        <location filename="eaqtparamdialog.cpp" line="515"/>
+        <location filename="eaqtparamdialog.cpp" line="430"/>
+        <source>Osteryoung sqaurewave (OSQW)</source>
+        <translation>Osteryoung sqaurewave (OSQW)</translation>
+    </message>
+    <message>
+        <location filename="eaqtparamdialog.cpp" line="432"/>
+        <source>[NEW] sqaurewave (SQW)</source>
+        <translation>[NOWA] sqaurewave (SQW)</translation>
+    </message>
+    <message>
+        <location filename="eaqtparamdialog.cpp" line="530"/>
         <source>Measurement series</source>
         <translation>Seria pomiarowa</translation>
     </message>
     <message>
-        <location filename="eaqtparamdialog.cpp" line="517"/>
+        <location filename="eaqtparamdialog.cpp" line="532"/>
         <source>Multielectrode setup</source>
         <translation>Układ wieloelektrodowy</translation>
     </message>
     <message>
-        <location filename="eaqtparamdialog.cpp" line="546"/>
+        <location filename="eaqtparamdialog.cpp" line="561"/>
         <source>File path:</source>
         <translation>Ścieżka:</translation>
     </message>
     <message>
-        <location filename="eaqtparamdialog.cpp" line="548"/>
+        <location filename="eaqtparamdialog.cpp" line="563"/>
         <source>Select file</source>
         <translation>Wybierz plik</translation>
     </message>
     <message>
-        <location filename="eaqtparamdialog.cpp" line="640"/>
+        <location filename="eaqtparamdialog.cpp" line="658"/>
         <source>Ep cannot be equal to Ek in LSV mode.</source>
         <translation>Ep nie może być równe Ek w trybie LSV.</translation>
     </message>
     <message>
-        <location filename="eaqtparamdialog.cpp" line="657"/>
-        <location filename="eaqtparamdialog.cpp" line="787"/>
-        <location filename="eaqtparamdialog.cpp" line="789"/>
+        <location filename="eaqtparamdialog.cpp" line="675"/>
+        <location filename="eaqtparamdialog.cpp" line="805"/>
+        <location filename="eaqtparamdialog.cpp" line="807"/>
         <source>cycles:</source>
         <translation>ilość cykli:</translation>
-    </message>
-    <message>
-        <location filename="eaqtparamdialog.cpp" line="799"/>
-        <source>E0 [mV]:</source>
-        <translation></translation>
     </message>
 </context>
 <context>
@@ -2280,37 +2340,37 @@ nieuśrednionych</translation>
 <context>
     <name>EAQtSignalProcessing</name>
     <message>
-        <location filename="eaqtsignalprocessing.cpp" line="95"/>
+        <location filename="eaqtsignalprocessing.cpp" line="100"/>
         <source>Peak height: %1 ± %2 µA &lt;br&gt;</source>
         <translation>Wysokość piku: %1 ± %2 µA &lt;br&gt;</translation>
     </message>
     <message>
-        <location filename="eaqtsignalprocessing.cpp" line="96"/>
+        <location filename="eaqtsignalprocessing.cpp" line="101"/>
         <source>Baseline Standard Deviation: %1 µA &lt;br&gt;</source>
         <translation>Odchylenie standardowe tła: %1 µA &lt;br&gt;</translation>
     </message>
     <message>
-        <location filename="eaqtsignalprocessing.cpp" line="98"/>
+        <location filename="eaqtsignalprocessing.cpp" line="103"/>
         <source>Stats</source>
         <translation>Statystyki</translation>
     </message>
     <message>
-        <location filename="eaqtsignalprocessing.cpp" line="531"/>
+        <location filename="eaqtsignalprocessing.cpp" line="538"/>
         <source>y=p1*x+p2</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="eaqtsignalprocessing.cpp" line="532"/>
+        <location filename="eaqtsignalprocessing.cpp" line="539"/>
         <source>y=p1*x^2+p2*x+p3</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="eaqtsignalprocessing.cpp" line="533"/>
+        <location filename="eaqtsignalprocessing.cpp" line="540"/>
         <source>y=p1*x^3+p2*x^2+p3*x+p4</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="eaqtsignalprocessing.cpp" line="534"/>
+        <location filename="eaqtsignalprocessing.cpp" line="541"/>
         <source>y=p1*exp(x*p2)</source>
         <translation></translation>
     </message>
@@ -2418,8 +2478,9 @@ nieuśrednionych</translation>
     </message>
     <message>
         <location filename="const.h" line="47"/>
-        <source>Voltammograms (*.vol *.volt *.voltc)</source>
-        <translation>Woltamperogramy (*.vol)</translation>
+        <source>Voltammograms (*.vol *.volt *.voltc);;Text files(*.txt *.csv)</source>
+        <oldsource>Voltammograms (*.vol *.volt *.voltc)</oldsource>
+        <translation>Woltamperogramy (*.vol *.volt *.voltc);;Pliki tekstowe(*.txt *.csv)</translation>
     </message>
 </context>
 <context>

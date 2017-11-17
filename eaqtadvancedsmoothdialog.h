@@ -48,6 +48,7 @@ private:
     EAQtUIInterface *_pUI;
     enum method : int {
         method_sg,
+        method_median,
         method_spline,
         method_fourier
     };
@@ -61,6 +62,7 @@ private:
     void updateFrequencyPlot();
     void updateCurveFrequency(Curve* c);
     void trySG(Curve *c, int span, int order);
+    void tryMedian(Curve *c, int windowsSize);
     void tryIFFT(Curve* c, double treshhold, double samplingFreq, QVector<double>& freq, QVector<double>& vImg, QVector<double>& vReal);
 
 public:

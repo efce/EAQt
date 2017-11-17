@@ -40,6 +40,7 @@ public:
     static void dft(double samplingFrequency, const QVector<double>& values, QVector<double>& frequency, QVector<double>& freqReal, QVector<double>& freqImg);
     static void idft(const QVector<double>& freqImg, const QVector<double>& freqReal, QVector<double>& values);
     static void sgSmooth(QVector<double>* y, int order, int span);
+    static void medianfilter(const QVector<double>& signal, QVector<double>& result, int windowSize=5);
     static double relativeHeight(Curve* c, int32_t start, int32_t end);
     enum FitMethod : int {
         poly1,
