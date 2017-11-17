@@ -559,11 +559,15 @@ void EAQtData::CurImportTxtFile(QString* FileName)
     QVector<double> incVec(ptnr);
     double step = curves[0][1] - curves[0][0];
     bool firstIsPotential = true;
-    for ( int ii = 1; ii<ptnr; ++ii ) {
-        if ( (curves[0][ii]-curves[0][ii-1]) != step ) {
-            firstIsPotential = false;
-            break;
+    if (step != 0) {
+        for ( int ii = 1; ii<ptnr; ++ii ) {
+            if ( (curves[0][ii]-curves[0][ii-1]) != step ) {
+                firstIsPotential = false;
+                break;
+            }
         }
+    } else {
+        firstIsPotential = false;
     }
     QVector<double> potential;
     if ( firstIsPotential && nrcurves > 1 ) {
