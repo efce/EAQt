@@ -312,13 +312,14 @@ void EAQtSignalProcessing::medianfilter(
     )
 {
     // CODE BASED ON: http://www.librow.com/articles/article-1
-    result = signal;
+    QVector<double> result_temp = signal;
+    result = QVector<double>(signal);
     const int N = signal.size();
+    int halfWindow = (int)floor(windowSize/2);
     //   Move window through all elements of the signal
-    for (int i = 2; i<N-2; ++i) {
+    for (int i = halfWindow; i<N-2; ++i) {
         //   Pick up window elements
         double window[windowSize];
-        int halfWindow = (int)floor(windowSize/2);
         for (int j = 0; j < windowSize; ++j) {
             window[j] = signal[i-halfWindow+j];
         }
@@ -337,7 +338,10 @@ void EAQtSignalProcessing::medianfilter(
             window[min] = temp;
         }
         //   Get result - the middle element
-        result[i-halfWindow] = window[halfWindow];
+        result_temp[i-halfWindow] = window[halfWindow];
+    }
+    for ( int i=halfWindow; i<N-halfWindow; ++i) {
+        result[i] = result_temp[i-halfWindow];
     }
 }
 
