@@ -599,6 +599,7 @@ void EAQtData::CurImportTxtFile(QString* FileName)
         c->Param(PARAM::tp, 1);
         c->Param(PARAM::tw, 0);
         c->Param(PARAM::mespv, PARAM::mespv_voltammetry);
+        c->Param(PARAM::crange, PARAM::crange_macro_1uA);
         c->CName(tr("#%1").arg(i));
         c->FName(*FileName);
     }
