@@ -26,6 +26,8 @@
 int main(int argc, char *argv[])
 {
     QLocale::setDefault(QLocale("en_US"));
+    QSettings settings("EAQt", "EAQtApp");
+    QString langfile = settings.value("lang", "eaqt_en").toString();
 
     QApplication a(argc, argv);
     QFont f(":/fonts/fonts/LiberationSans-Regular.ttf");
@@ -34,10 +36,10 @@ int main(int argc, char *argv[])
     a.setFont(f);
 
     QTranslator translator;
-    translator.load("eaqt_pl",":/lang");
+    translator.load(langfile,":/lang");
     a.installTranslator(&translator);
 
-    EAQtMainWindow w;
+    EAQtMainWindow w(&settings, &translator);
     EAQtData::getInstance().initialUpdate((EAQtUIInterface*)&w);
     w.InitialUpdate(EAQtData::getInstance());
     QIcon logo(":/img/logo");

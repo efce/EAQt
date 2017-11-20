@@ -41,7 +41,7 @@ class EAQtMainWindow : public QMainWindow, EAQtUIInterface
     Q_OBJECT
 
 public:
-    explicit EAQtMainWindow(QWidget *parent = 0);
+    explicit EAQtMainWindow(QSettings *s, QTranslator *t, QWidget *parent = 0);
     ~EAQtMainWindow();
     void InitialUpdate(EAQtData& d);
      void updateAll(bool rescale = true);
@@ -84,6 +84,8 @@ private slots:
 private:
     Ui::MainWindow *ui;
     QGridLayout *_mainLayout;
+    QSettings* _settings;
+    QTranslator* _translator;
     EAQtData *_pEAQtData;
     EAQtMouseHandler *_mouseHandler;
     QTableWidget *_tableCurveMain;
@@ -122,6 +124,7 @@ private:
     QMenu *_menuInterpretation;
     QMenu *_menuAnalysis;
     QMenu *_menuCalibration;
+    QMenu *_menuLanguage;
     QMenu *_menuAbout;
 
     QAction *_actStartMeasurement;
@@ -159,6 +162,10 @@ private:
     QAction *_actSoftware;
     QAction *_actReportIssues;
     QAction *_actSourceCode;
+
+    QAction *_actLangPolish;
+    QAction *_actLangEnglish;
+    QActionGroup *_actGrLanguages;
 
 private slots:
     void toggleCurveInfo(bool);
@@ -199,6 +206,9 @@ private slots:
     void clearCalibration();
     void showCalibration();
     void resultCalibration();
+    void changeLanguageToPl();
+    void changeLanguageToEn();
+    void changeLanguage(QAction*);
     void showAboutSoftware();
     void showGithubIssues();
     void showGithub();

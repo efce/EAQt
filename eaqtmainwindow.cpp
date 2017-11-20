@@ -29,13 +29,15 @@
 #include "eaqtcurverenamedialog.h"
 #include "eaqtbackgroundcorrectiondialog.h"
 
-EAQtMainWindow::EAQtMainWindow(QWidget *parent) :
+EAQtMainWindow::EAQtMainWindow(QSettings *settings, QTranslator* t, QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
     ui->retranslateUi(this);
     //ui->statusBar->hide();
+    _settings = settings;
+    _translator = t;
     setGeometry(400, 250, 1100, 800);
     this->_timeOfMouse = new QTime();
     this->_mainLayout = createLayout();
@@ -960,6 +962,29 @@ void EAQtMainWindow::createActionsTopMenu()
     this->_actCalibrationResult->setStatusTip(tr("Calculate result"));
     connect(_actCalibrationResult, SIGNAL(triggered(bool)),this,SLOT(resultCalibration()));
 
+    _actGrLanguages = new QActionGroup(this);
+    _actGrLanguages->setExclusive(true);
+    connect(_actGrLanguages, SIGNAL(triggered(QAction*)), this, SLOT(changeLanguage(QAction*)));
+
+    this->_actLangEnglish = new QAction(tr("English"), _actGrLanguages);
+    _actGrLanguages->addAction(_actLangEnglish);
+    this->_actLangEnglish->setStatusTip(tr("Change language to english"));
+    _actLangEnglish->setCheckable(true);
+
+    this->_actLangPolish = new QAction(tr("Polski"), _actGrLanguages);
+    _actGrLanguages->addAction(_actLangPolish);
+    this->_actLangPolish->setStatusTip(tr("Zmień język na polski"));
+    _actLangPolish->setCheckable(true);
+
+    QString langfile = _settings->value("lang", "eaqt_en").toString();
+    if (langfile.compare("eaqt_en", Qt::CaseInsensitive) == 0 ) {
+        _actLangEnglish->setChecked(true);
+        _actLangPolish->setChecked(false);
+    } else {
+        _actLangEnglish->setChecked(false);
+        _actLangPolish->setChecked(true);
+    }
+
     _actSoftware = new QAction(tr("Software"),this);
     _actSoftware->setStatusTip(tr("Show information about the software"));
     connect(_actSoftware,SIGNAL(triggered(bool)),this,SLOT(showAboutSoftware()));
@@ -1010,6 +1035,10 @@ void EAQtMainWindow::createMenusTopMenu()
     _menuCalibration->addAction(this->_actCalibrationClear);
     _menuCalibration->addAction(this->_actCalibrationLoad);
     _menuCalibration->addAction(this->_actCalibrationResult);
+
+    _menuLanguage = this->menuBar()->addMenu(tr("Language"));
+    _menuLanguage->addAction(_actLangEnglish);
+    _menuLanguage->addAction(_actLangPolish);
 
     _menuAbout = this->menuBar()->addMenu(tr("About"));
     _menuAbout->addAction(_actSoftware);
@@ -1290,6 +1319,36 @@ void EAQtMainWindow::PlotRectangleZoom()
 {
     _isRectangleZoom = true;
     _butZoom->setDown(true);
+}
+
+void EAQtMainWindow::changeLanguage(QAction *actLang)
+{
+    bool cont = showQuestionBox(tr("Warning, the program will be restart for change to take place and all data will be lost. Are you sure ?"),tr("Warning"));
+    if ( !cont ) {
+        return;
+    }
+    if ( actLang == _actLangEnglish ) {
+        changeLanguageToEn();
+    } else {
+        changeLanguageToPl();
+    }
+    _settings->sync();
+    qApp->quit();
+    QProcess::startDetached(qApp->arguments()[0]);
+}
+
+void EAQtMainWindow::changeLanguageToPl()
+{
+    _settings->setValue("lang", "eaqt_pl");
+    QString langfile = _settings->value("lang", "eaqt_en").toString();
+    _translator->load(langfile,":/lang");
+}
+
+void EAQtMainWindow::changeLanguageToEn()
+{
+    _settings->setValue("lang", "eaqt_en");
+    QString langfile = _settings->value("lang", "eaqt_en").toString();
+    _translator->load(langfile,":/lang");
 }
 
 void EAQtMainWindow::showAboutSoftware()
