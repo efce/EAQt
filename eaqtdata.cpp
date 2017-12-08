@@ -600,6 +600,7 @@ void EAQtData::CurImportTxtFile(QString* FileName)
         c->Param(PARAM::tw, 0);
         c->Param(PARAM::mespv, PARAM::mespv_voltammetry);
         c->Param(PARAM::crange, PARAM::crange_macro_1uA);
+        //TODO: find the smallest difference between values and use it as a range ?
         c->CName(tr("#%1").arg(i));
         c->FName(*FileName);
     }
