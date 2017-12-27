@@ -48,7 +48,8 @@ bool EAQtNetwork::connectToEA()
         return true;
     }
     _socket->setSocketOption(QAbstractSocket::LowDelayOption,true);
-    this->_socket->connectToHost(this->_EA_IP,this->_EA_Port);
+    _socket->setSocketOption(QAbstractSocket::KeepAliveOption, true);
+    this->_socket->connectToHost(this->_EA_IP, this->_EA_Port);
     this->_socket->waitForConnected();
     conSuccess=(this->_socket->state() == QTcpSocket::ConnectedState);
     if ( conSuccess ) {
@@ -71,8 +72,9 @@ void EAQtNetwork::connectionError(QAbstractSocket::SocketError error)
 
     default:
         this->_pData->NetworkError(
-                                 tr("The following error occurred: %1.")
-                                 .arg(this->_socket->errorString()));
+             tr("The following error occurred: %1.")
+                .arg(this->_socket->errorString())
+         );
     }
 
     return;
