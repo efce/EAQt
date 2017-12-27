@@ -83,9 +83,12 @@ QString DisplayCurveInfo::getHTMLInfo()
                           tr("<td><b>dE:</b>&nbsp;%1&nbsp;mV</td></tr>").arg(_curve->Param(PARAM::dE))
                         : ((_curve->Param(PARAM::method)==PARAM::method_npv)?
                               tr("<td><b>E0:</b>&nbsp;%1&nbsp;mV<td></tr>")
-                            : tr("<td></td></tr>")
+                            : (_curve->Param(PARAM::method) == PARAM::method_sqw_classic?
+                                 tr("<td><b>dE:</b>&nbsp;%1&nbsp;mV</td></tr>").arg(_curve->Param(PARAM::dE)/2)
+                               : tr("<td></td></tr>")
                            )
                       )
+                   )
                   + tr("<tr><td><b>tp:</b>&nbsp;%1&nbsp;ms</td><td><b>tw:</b>&nbsp;%2&nbsp;ms</td></tr>").arg(_curve->Param(PARAM::tp)).arg(_curve->Param(PARAM::tw))
              )
           + tr("<tr><td><b>td:</b>&nbsp;%1&nbsp;ms</td><td></td></tr>").arg(_curve->Param(PARAM::td))
