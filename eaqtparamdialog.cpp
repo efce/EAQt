@@ -948,7 +948,11 @@ void EAQtParamDialog::saveParams()
             setParam(PARAM::Escheck,PARAM::Escheck_no);
         }
     }
-    this->setParam(PARAM::aver, this->_lineEdits[lid_aver]->text().toInt());
+    int aver = this->_lineEdits[lid_aver]->text().toInt();
+    if (aver <= 0) {
+        aver = 1;
+    }
+    this->setParam(PARAM::aver, aver);
     this->setParam(PARAM::breaknr, this->_lineEdits[lid_breaks]->text().toInt());
     this->setParam(PARAM::dE, this->_lineEdits[lid_E0_dE]->text().toInt());
     this->setParam(PARAM::Ek, this->_lineEdits[lid_Ek]->text().toInt());
