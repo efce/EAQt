@@ -705,31 +705,37 @@ void EAQtMainWindow::MeasurementUpdate(int32_t curveNr, int32_t pointNr)
     switch ( this->_pEAQtData->getXAxis() ) {
     case XAXIS::potential:
         while ( (curve=this->_pEAQtData->getMesCurves()->get(i)) != NULL ) {
-            curve->getPlot()->setData(
-                curve->getPotentialVector()->mid(0,curve->getNrOfDataPoints())
-                , curve->getCurrentVector()->mid(0,curve->getNrOfDataPoints())
-            );
+            if ( curve->wasModified() ) {
+                curve->getPlot()->setData(
+                    curve->getPotentialVector()->mid(0,curve->getNrOfDataPoints())
+                    , curve->getCurrentVector()->mid(0,curve->getNrOfDataPoints())
+                );
+            }
             ++i;
         }
         break;
 
     case XAXIS::time:
         while ( (curve=this->_pEAQtData->getMesCurves()->get(i)) != NULL ) {
-            curve->getPlot()->setData(
-                curve->getTimeVector()->mid(0,curve->getNrOfDataPoints())
-                ,curve->getCurrentVector()->mid(0,curve->getNrOfDataPoints())
-            );
+            if ( curve->wasModified() ) {
+                curve->getPlot()->setData(
+                    curve->getTimeVector()->mid(0,curve->getNrOfDataPoints())
+                    ,curve->getCurrentVector()->mid(0,curve->getNrOfDataPoints())
+                );
+            }
             ++i;
         }
         break;
 
     case XAXIS::nonaveraged:
         while ( (curve=this->_pEAQtData->getMesCurves()->get(i)) != NULL ) {
-            if ( curve->getNumberOfProbingPoints() > 0 ) {
-                curve->getPlot()->setData(
-                    curve->getProbingDataPointNumbers()->mid(0,curve->getNumberOfProbingPoints())
-                    ,curve->getProbingData()->mid(0,curve->getNumberOfProbingPoints())
-                );
+            if ( curve->wasModified() ) {
+                if ( curve->getNumberOfProbingPoints() > 0 ) {
+                    curve->getPlot()->setData(
+                        curve->getProbingDataPointNumbers()->mid(0,curve->getNumberOfProbingPoints())
+                        ,curve->getProbingData()->mid(0,curve->getNumberOfProbingPoints())
+                    );
+                }
             }
             ++i;
         }
