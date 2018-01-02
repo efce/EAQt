@@ -688,12 +688,14 @@ void EAQtMainWindow::userStartsMeasurement()
 void EAQtMainWindow::MeasurementSetup()
 {
     PlotRescaleAxes();
+    _plotMain->setAntialiasedElements(QCP::aeNone);
     this->_mouseHandler->ChangeMouseMode(EAQtMouseHandler::mm_measurement, EAQtMouseHandler::uf_none );
 }
 
 void EAQtMainWindow::MeasurementAfter()
 {
-    PlotRescaleAxes();
+    _plotMain->setAntialiasedElements(QCP::aeAll);
+    PlotRescaleAxes(); 
     this->_mouseHandler->ChangeMouseMode(EAQtMouseHandler::mm_normal, EAQtMouseHandler::uf_none);
 }
 

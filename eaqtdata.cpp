@@ -1794,41 +1794,43 @@ void EAQtData::MesUpdate(int32_t nNrOfMesCurve, int32_t nPointFromDevice, bool f
 
     ///////////// CALC RESULT ////////////////////
     double res;
+    Curve* mesCurve = getMesCurves()->get(nNrOfMesCurve);
     if ( _wasLSVMeasurement == 0 ) {
+
         if ( nNrOfMesCurve >= this->_multielectrodeNr ) {
             // powrot cyklicznej ...
-            if ( getMesCurves()->get(nNrOfMesCurve)->Param(PARAM::method) == PARAM::method_sqw_classic ) {
+            if ( mesCurve->Param(PARAM::method) == PARAM::method_sqw_classic ) {
                 res =  this->CountResultPV(
-                                (60*(getMesCurves()->get(nNrOfMesCurve)->getMesCurrent1Point(nPointFromDevice)
-                                      - getMesCurves()->get(nNrOfMesCurve)->getMesCurrent2Point(nPointFromDevice))
-                                 / getMesCurves()->get(nNrOfMesCurve)->getMesTimePoint(nPointFromDevice))
+                                (60*(mesCurve->getMesCurrent1Point(nPointFromDevice)
+                                      - mesCurve->getMesCurrent2Point(nPointFromDevice))
+                                 / mesCurve->getMesTimePoint(nPointFromDevice))
                                 );
             } else {
                 res =  this->CountResultPV(
-                                (60*(getMesCurves()->get(nNrOfMesCurve)->getMesCurrent2Point(nPointFromDevice)
-                                      - getMesCurves()->get(nNrOfMesCurve)->getMesCurrent1Point(nPointFromDevice))
-                                 / getMesCurves()->get(nNrOfMesCurve)->getMesTimePoint(nPointFromDevice))
+                                (60*(mesCurve->getMesCurrent2Point(nPointFromDevice)
+                                      - mesCurve->getMesCurrent1Point(nPointFromDevice))
+                                 / mesCurve->getMesTimePoint(nPointFromDevice))
                                 );
             }
-            this->getMesCurves()->get(nNrOfMesCurve)->addDataPoint(
+            mesCurve->addDataPoint(
                 res
                 , nPointFromDevice
             );
         } else {
-            if ( getMesCurves()->get(nNrOfMesCurve)->Param(PARAM::method) == PARAM::method_sqw_classic ) {
+            if ( mesCurve->Param(PARAM::method) == PARAM::method_sqw_classic ) {
                 res =  this->CountResultPV(
-                                (60*(getMesCurves()->get(nNrOfMesCurve)->getMesCurrent1Point(nPointFromDevice)
-                                      - getMesCurves()->get(nNrOfMesCurve)->getMesCurrent2Point(nPointFromDevice))
-                                 / getMesCurves()->get(nNrOfMesCurve)->getMesTimePoint(nPointFromDevice))
+                                (60*(mesCurve->getMesCurrent1Point(nPointFromDevice)
+                                      - mesCurve->getMesCurrent2Point(nPointFromDevice))
+                                 / mesCurve->getMesTimePoint(nPointFromDevice))
                                 );
             } else {
                 res =  this->CountResultPV(
-                                (60*(getMesCurves()->get(nNrOfMesCurve)->getMesCurrent2Point(nPointFromDevice)
-                                      - getMesCurves()->get(nNrOfMesCurve)->getMesCurrent1Point(nPointFromDevice))
-                                 / getMesCurves()->get(nNrOfMesCurve)->getMesTimePoint(nPointFromDevice))
+                                (60*(mesCurve->getMesCurrent2Point(nPointFromDevice)
+                                      - mesCurve->getMesCurrent1Point(nPointFromDevice))
+                                 / mesCurve->getMesTimePoint(nPointFromDevice))
                                 );
             }
-            this->getMesCurves()->get(nNrOfMesCurve)->addDataPoint(
+            mesCurve->addDataPoint(
                 res
                 , nPointFromDevice
             );
@@ -1840,11 +1842,11 @@ void EAQtData::MesUpdate(int32_t nNrOfMesCurve, int32_t nPointFromDevice, bool f
              */
             _prepareEstart = false;
             double res1 =  this->CountResultLSV(
-                                (60 * getMesCurves()->get(nNrOfMesCurve)->getMesCurrent1Point(nPointFromDevice)
-                                 / getMesCurves()->get(nNrOfMesCurve)->getMesTimePoint(nPointFromDevice))
+                                (60 * mesCurve->getMesCurrent1Point(nPointFromDevice)
+                                 / mesCurve->getMesTimePoint(nPointFromDevice))
                             );
-            for ( int i = 0; i<(getMesCurves()->get(0)->Param(PARAM::ptnr) - this->_ptnrFromEss); ++i ) {
-                this->getMesCurves()->get(nNrOfMesCurve)->addDataPoint(
+            for ( int i = 0; i<(mesCurve->Param(PARAM::ptnr) - this->_ptnrFromEss); ++i ) {
+                mesCurve->addDataPoint(
                     res1
                     , i
                 );
@@ -1852,31 +1854,33 @@ void EAQtData::MesUpdate(int32_t nNrOfMesCurve, int32_t nPointFromDevice, bool f
         }
         if ( nNrOfMesCurve % 2 == 0 ) {
             res =  this->CountResultLSV(
-                            (60 * getMesCurves()->get(nNrOfMesCurve)->getMesCurrent1Point(nPointFromDevice)
-                             / getMesCurves()->get(nNrOfMesCurve)->getMesTimePoint(nPointFromDevice))
+                            (60 * mesCurve->getMesCurrent1Point(nPointFromDevice)
+                             / mesCurve->getMesTimePoint(nPointFromDevice))
                             );
-            this->getMesCurves()->get(nNrOfMesCurve)->addDataPoint(
+            mesCurve->addDataPoint(
                 res
                 , nPointFromDevice
             );
         } else {
             res =  this->CountResultLSV(
-                            (60 * getMesCurves()->get(nNrOfMesCurve)->getMesCurrent1Point(nPointFromDevice)
-                             / getMesCurves()->get(nNrOfMesCurve)->getMesTimePoint(nPointFromDevice))
+                            (60 * mesCurve->getMesCurrent1Point(nPointFromDevice)
+                             / mesCurve->getMesTimePoint(nPointFromDevice))
                             );
-            this->getMesCurves()->get(nNrOfMesCurve)->addDataPoint(
+            mesCurve->addDataPoint(
                 res
                 , nPointFromDevice
             );
         }
     }
-/*
-    if ( getXAxis() == XAXIS::potential ) {
-        getMesCurves()->get(nNrOfMesCurve)->getPlot()->addData( getMesCurves()->get(nNrOfMesCurve)->getPotentialPoint(nPointFromDevice),res);
-    } else if ( getXAxis() == XAXIS::time ) {
-        getMesCurves()->get(nNrOfMesCurve)->getPlot()->addData( getMesCurves()->get(nNrOfMesCurve)->getTimePoint(nPointFromDevice),res);
-    }
-*/
+
+//    if ( getXAxis() == XAXIS::potential ) {
+//        mesCurve->getPlot()->addData( mesCurve->getPotentialPoint(nPointFromDevice), res);
+//    } else if ( getXAxis() == XAXIS::time ) {
+//        mesCurve->getPlot()->addData( mesCurve->getTimePoint(nPointFromDevice), res);
+//    } else if ( getXAxis() == XAXIS::nonaveraged ) {
+//        mesCurve->getPlot()->addData(mesCurve->getNumberOfProbingPoints(), res);
+//    }
+
     int msecnow = _fromUpdate.elapsed();
     if ( (nPointFromDevice == 1 && nNrOfMesCurve == 0)
     || (!freezUI && MEASUREMENT::displayDelay < msecnow) ) {
@@ -1892,13 +1896,14 @@ void EAQtData::MesUpdate(int32_t nNrOfMesCurve, int32_t nPointFromDevice, bool f
 double EAQtData::CountResultLSV(int64_t ResI)
 {
     static double dResI;
+    Curve* c = getMesCurves()->get(0);
 
     ResI -= this->_IUE0;
 
-    if ( getMesCurves()->get(0)->Param(PARAM::electr) < PARAM::electr_micro ) { //MACRO ELEKTRODA
-        dResI = (double)ResI * MEASUREMENT::scale_macro[getMesCurves()->get(0)->Param(PARAM::crange)] * MEASUREMENT::multiply;
+    if ( c->Param(PARAM::electr) < PARAM::electr_micro ) { //MACRO ELEKTRODA
+        dResI = (double)ResI * MEASUREMENT::scale_macro[c->Param(PARAM::crange)] * MEASUREMENT::multiply;
     } else {
-        dResI = (double)ResI * MEASUREMENT::scale_micro[getMesCurves()->get(0)->Param(PARAM::crange)] * MEASUREMENT::multiply;
+        dResI = (double)ResI * MEASUREMENT::scale_micro[c->Param(PARAM::crange)] * MEASUREMENT::multiply;
     }
 
     return dResI;
@@ -1910,21 +1915,22 @@ double EAQtData::CountResultLSV(int64_t ResI)
 double EAQtData::CountResultPV(int64_t ResI)
 {
     static double dResI;
+    Curve* c = getMesCurves()->get(0);
 
-    if (getMesCurves()->get(0)->Param(PARAM::method) == PARAM::method_sqw_osteryoung ) {
-        if (getMesCurves()->get(0)->Param(PARAM::sampl) == PARAM::sampl_double) {
+    if (c->Param(PARAM::method) == PARAM::method_sqw_osteryoung ) {
+        if (c->Param(PARAM::sampl) == PARAM::sampl_double) {
             ResI -= this->_IUE0;
         }
     } else { // not SQW
-        if (getMesCurves()->get(0)->Param(PARAM::sampl) == PARAM::sampl_single) {
+        if (c->Param(PARAM::sampl) == PARAM::sampl_single) {
             ResI -= this->_IUE0;
         }
     }
 
-    if ( getMesCurves()->get(0)->Param(PARAM::electr) < PARAM::electr_micro ) { //MACRO ELEKTRODA
-        dResI = (double)ResI * MEASUREMENT::scale_macro[getMesCurves()->get(0)->Param(PARAM::crange)] * MEASUREMENT::multiply;
+    if ( c->Param(PARAM::electr) < PARAM::electr_micro ) { //MACRO ELEKTRODA
+        dResI = (double)ResI * MEASUREMENT::scale_macro[c->Param(PARAM::crange)] * MEASUREMENT::multiply;
     } else {
-        dResI = (double)ResI * MEASUREMENT::scale_micro[getMesCurves()->get(0)->Param(PARAM::crange)] * MEASUREMENT::multiply;
+        dResI = (double)ResI * MEASUREMENT::scale_micro[c->Param(PARAM::crange)] * MEASUREMENT::multiply;
     }
 
     return dResI;
