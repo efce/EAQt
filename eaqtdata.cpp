@@ -1811,9 +1811,9 @@ void EAQtData::MesUpdate(int32_t nNrOfMesCurve, int32_t nPointFromDevice, bool f
                                 );
             }
             this->getMesCurves()->get(nNrOfMesCurve)->addDataPoint(
-                        res
-                        , nPointFromDevice
-                        );
+                res
+                , nPointFromDevice
+            );
         } else {
             if ( getMesCurves()->get(nNrOfMesCurve)->Param(PARAM::method) == PARAM::method_sqw_classic ) {
                 res =  this->CountResultPV(
@@ -1829,9 +1829,9 @@ void EAQtData::MesUpdate(int32_t nNrOfMesCurve, int32_t nPointFromDevice, bool f
                                 );
             }
             this->getMesCurves()->get(nNrOfMesCurve)->addDataPoint(
-                        res
-                        , nPointFromDevice
-                        );
+                res
+                , nPointFromDevice
+            );
         }
     } else {
         if ( this->_prepareEstart ) {
@@ -1845,9 +1845,9 @@ void EAQtData::MesUpdate(int32_t nNrOfMesCurve, int32_t nPointFromDevice, bool f
                             );
             for ( int i = 0; i<(getMesCurves()->get(0)->Param(PARAM::ptnr) - this->_ptnrFromEss); ++i ) {
                 this->getMesCurves()->get(nNrOfMesCurve)->addDataPoint(
-                            res1
-                            , i
-                            );
+                    res1
+                    , i
+                );
             }
         }
         if ( nNrOfMesCurve % 2 == 0 ) {
@@ -1856,18 +1856,18 @@ void EAQtData::MesUpdate(int32_t nNrOfMesCurve, int32_t nPointFromDevice, bool f
                              / getMesCurves()->get(nNrOfMesCurve)->getMesTimePoint(nPointFromDevice))
                             );
             this->getMesCurves()->get(nNrOfMesCurve)->addDataPoint(
-                        res
-                        , nPointFromDevice
-                        );
+                res
+                , nPointFromDevice
+            );
         } else {
             res =  this->CountResultLSV(
                             (60 * getMesCurves()->get(nNrOfMesCurve)->getMesCurrent1Point(nPointFromDevice)
                              / getMesCurves()->get(nNrOfMesCurve)->getMesTimePoint(nPointFromDevice))
                             );
             this->getMesCurves()->get(nNrOfMesCurve)->addDataPoint(
-                        res
-                        , nPointFromDevice
-                        );
+                res
+                , nPointFromDevice
+            );
         }
     }
 /*

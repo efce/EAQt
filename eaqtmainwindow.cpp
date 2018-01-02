@@ -706,9 +706,9 @@ void EAQtMainWindow::MeasurementUpdate(int32_t curveNr, int32_t pointNr)
     case XAXIS::potential:
         while ( (curve=this->_pEAQtData->getMesCurves()->get(i)) != NULL ) {
             curve->getPlot()->setData(
-                        curve->getPotentialVector()->mid(0,curve->getNrOfDataPoints())
-                        ,curve->getCurrentVector()->mid(0,curve->getNrOfDataPoints())
-                      );
+                curve->getPotentialVector()->mid(0,curve->getNrOfDataPoints())
+                , curve->getCurrentVector()->mid(0,curve->getNrOfDataPoints())
+            );
             ++i;
         }
         break;
@@ -716,9 +716,9 @@ void EAQtMainWindow::MeasurementUpdate(int32_t curveNr, int32_t pointNr)
     case XAXIS::time:
         while ( (curve=this->_pEAQtData->getMesCurves()->get(i)) != NULL ) {
             curve->getPlot()->setData(
-                        curve->getTimeVector()->mid(0,curve->getNrOfDataPoints())
-                        ,curve->getCurrentVector()->mid(0,curve->getNrOfDataPoints())
-                      );
+                curve->getTimeVector()->mid(0,curve->getNrOfDataPoints())
+                ,curve->getCurrentVector()->mid(0,curve->getNrOfDataPoints())
+            );
             ++i;
         }
         break;
@@ -727,9 +727,9 @@ void EAQtMainWindow::MeasurementUpdate(int32_t curveNr, int32_t pointNr)
         while ( (curve=this->_pEAQtData->getMesCurves()->get(i)) != NULL ) {
             if ( curve->getNumberOfProbingPoints() > 0 ) {
                 curve->getPlot()->setData(
-                            curve->getProbingDataPointNumbers()->mid(0,curve->getNumberOfProbingPoints())
-                            ,curve->getProbingData()->mid(0,curve->getNumberOfProbingPoints())
-                          );
+                    curve->getProbingDataPointNumbers()->mid(0,curve->getNumberOfProbingPoints())
+                    ,curve->getProbingData()->mid(0,curve->getNumberOfProbingPoints())
+                );
             }
             ++i;
         }
