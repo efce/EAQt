@@ -94,14 +94,14 @@ void EAQtNetwork::processPacket()
     }
     static int ba;
     static char test[NETWORK::RxBufLength];
-    char b[256];
+    //char b[256];
     while ( (ba=_socket->bytesAvailable()) >= NETWORK::RxBufLength ) {
         _rxSize = _socket->read(_pRxBuf, NETWORK::RxBufLength);
         if ( _rxSize < NETWORK::RxBufLength ) {
             throw("_rxSize less than RxBufLength");
         }
-        sprintf(b,"bytes read: %d;bytes avail: %d;",_rxSize,ba);
-        qDebug(b);
+        //sprintf(b,"bytes read: %d;bytes avail: %d;",_rxSize,ba);
+        //qDebug(b);
         // There is sometimes problem with bytesAbvaiable, so try to read next packet:
         bool nextPacketReady = ( _socket->peek(test, NETWORK::RxBufLength) == NETWORK::RxBufLength );
         this->_pData->ProcessPacketFromEA(this->_pRxBuf, nextPacketReady);

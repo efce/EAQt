@@ -1220,8 +1220,10 @@ void EAQtMainWindow::showDataCursor()
 {
     if ( _pEAQtData->getCurves()->count() > 0
     && this->_pEAQtData->Act() >= 0 ) {
-        this->_mouseHandler->ChangeMouseMode(EAQtMouseHandler::mm_dataCursor,
-                                         EAQtMouseHandler::uf_move_curve);
+        this->_mouseHandler->ChangeMouseMode(
+            EAQtMouseHandler::mm_dataCursor
+            ,EAQtMouseHandler::uf_none
+        );
     }
 }
 

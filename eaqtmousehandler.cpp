@@ -88,7 +88,7 @@ void EAQtMouseHandler::setDefaults()
     for ( int i=0; i<5; ++i) {
         this->_pUI->setLowLabelText(i,"");
     }
-    this->_pUI->updateAll();
+    this->_pUI->updateAll(false);
 }
 
 bool EAQtMouseHandler::userCanUseCurveList()
