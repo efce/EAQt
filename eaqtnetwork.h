@@ -33,7 +33,7 @@ public:
 
     //char TxBuf[NETWORK::TxBufLength];
     char *_pRxBuf;
-    static void paralelProcess(EAQtDataInterface *pd, char* buf, int num);
+    //static void paralelProcess(EAQtDataInterface *pd, char* buf, int num);
 private:
     QString _EA_IP;
     int _EA_Port;

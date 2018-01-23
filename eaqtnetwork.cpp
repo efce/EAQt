@@ -15,7 +15,6 @@
   *  along with this program; if not, write to the Free Software Foundation,
   *  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
   *******************************************************************************************************************/
-#include <QtConcurrent/QtConcurrent>
 #include "eaqtdata.h"
 #include "eaqtnetwork.h"
 
@@ -24,6 +23,7 @@ EAQtNetwork::EAQtNetwork(EAQtDataInterface* di) : QObject()
     this->_EA_IP = "192.168.173.64";
     this->_EA_Port = 7001;
     this->_socket = new QTcpSocket();
+    _socket->moveToThread(this->thread());
     this->connect( this->_socket, SIGNAL(error(QAbstractSocket::SocketError)),
                    this,         SLOT(connectionError(QAbstractSocket::SocketError)));
     //this->_socket->setReadBufferSize(10000*NETWORK::RxBufLength); // 600 kB -- it can have backlog of 10000 unprocessed packets.
@@ -88,7 +88,6 @@ int EAQtNetwork::sendToEA(char* TxBuf)
 
 void EAQtNetwork::processPacket()
 {
-    //static QThreadPool pool;
     if ( _socket->bytesAvailable() < NETWORK::RxBufLength ) {
         return;
     }
@@ -107,7 +106,7 @@ void EAQtNetwork::processPacket()
         this->_pData->ProcessPacketFromEA(this->_pRxBuf, nextPacketReady);
     }
 }
-
+/*
 void EAQtNetwork::paralelProcess(EAQtDataInterface* pd, char* buf, int num)
 {
     char b[NETWORK::RxBufLength];
@@ -116,3 +115,4 @@ void EAQtNetwork::paralelProcess(EAQtDataInterface* pd, char* buf, int num)
     }
     pd->ProcessPacketFromEA(b,num);
 }
+*/

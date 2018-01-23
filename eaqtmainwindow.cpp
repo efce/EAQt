@@ -801,7 +801,7 @@ EAQtSaveFiledialog::SaveDetails EAQtMainWindow::DialogSaveInFile()
         QFileInfo fi(nsd.fileName);
         _PathInUse = fi.absoluteDir().canonicalPath();
     }
-
+    sfd->deleteLater();
     delete sfd;
     return nsd;
 }

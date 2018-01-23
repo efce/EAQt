@@ -325,9 +325,9 @@ QGroupBox *EAQtParamDialog::createRestItems()
     _lineEdits[lid_td] = new QLineEdit(tr("%1").arg(this->getParam(PARAM::td)));
     _lineEdits[lid_td]->setAccessibleName(tr("nr%1").arg(PARAM::td));
     //connect(lineEdits[lid_td],SIGNAL(textEdited(QString)),this,SLOT(onlEditchanged(QString)));
-    _lineEdits[lid_td]->setValidator(this->getValidator(EAQtParamDialog::vt_potential_time));
-    _lineEdits[lid_td]->setMaxLength(3);
-    _lineEdits[lid_td]->setFixedWidth(_metrics->width("99999"));
+    _lineEdits[lid_td]->setValidator(this->getValidator(EAQtParamDialog::vt_repetitions));
+    _lineEdits[lid_td]->setMaxLength(4);
+    _lineEdits[lid_td]->setFixedWidth(_metrics->width("999999"));
     _lineLabels[lid_td] = new QLabel(tr("td [ms]:"));//15
     if ( !this->_isLsv ) {
         i=lid_td;
