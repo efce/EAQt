@@ -89,19 +89,18 @@ int EAQtNetwork::sendToEA(char* TxBuf)
 
 void EAQtNetwork::processPacket()
 {
-    if ( _socket->bytesAvailable() < NETWORK::RxBufLength ) {
-        return;
-    }
-    QByteArray rxdata = _socket->readAll();
-    if ( (rxdata.size() % NETWORK::RxBufLength) != 0 ) {
-        throw("Network error occured. Packets size does not match the expected value.");
-    }
-    int nextindex = 0;
-    _pRxBuf = rxdata.data();
-    while(nextindex < rxdata.size()) {
-        nextindex += NETWORK::RxBufLength;
-        bool nextPacketReady = (nextindex < rxdata.size());
-        this->_pData->ProcessPacketFromEA(_pRxBuf, nextPacketReady);
-        _pRxBuf += NETWORK::RxBufLength;
+    while ( _socket->bytesAvailable() ) {
+        QByteArray rxdata = _socket->readAll();
+        if ( (rxdata.size() % NETWORK::RxBufLength) != 0 ) {
+            throw("Network error occured. Packets size does not match the expected value.");
+        }
+        int nextindex = 0;
+        _pRxBuf = rxdata.data();
+        while(nextindex < rxdata.size()) {
+            nextindex += NETWORK::RxBufLength;
+            bool nextPacketReady = (nextindex < rxdata.size());
+            this->_pData->ProcessPacketFromEA(_pRxBuf, nextPacketReady);
+            _pRxBuf += NETWORK::RxBufLength;
+        }
     }
 }
