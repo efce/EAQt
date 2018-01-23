@@ -29,8 +29,8 @@ EAQtNetwork::EAQtNetwork(EAQtDataInterface* di) : QObject()
     //this->_socket->setReadBufferSize(10000*NETWORK::RxBufLength); // 600 kB -- it can have backlog of 10000 unprocessed packets.
     this->_socket->setReadBufferSize(0); // UNLIMITED buffer size.
     this->_pData = di;
-    this->_pRxBuf = new char[NETWORK::RxBufLength];
-    memset(this->_pRxBuf,0,NETWORK::RxBufLength);
+    //this->_pRxBuf = new char[NETWORK::RxBufLength];
+    //memset(this->_pRxBuf,0,NETWORK::RxBufLength);
     _rxSize = 0;
     _rcvNum = 0;
 }
@@ -86,33 +86,22 @@ int EAQtNetwork::sendToEA(char* TxBuf)
     _rcvNum = 0;
 }
 
+
 void EAQtNetwork::processPacket()
 {
     if ( _socket->bytesAvailable() < NETWORK::RxBufLength ) {
         return;
     }
-    static int ba;
-    static char test[NETWORK::RxBufLength];
-    //char b[256];
-    while ( (ba=_socket->bytesAvailable()) >= NETWORK::RxBufLength ) {
-        _rxSize = _socket->read(_pRxBuf, NETWORK::RxBufLength);
-        if ( _rxSize < NETWORK::RxBufLength ) {
-            throw("_rxSize less than RxBufLength");
-        }
-        //sprintf(b,"bytes read: %d;bytes avail: %d;",_rxSize,ba);
-        //qDebug(b);
-        // There is sometimes problem with bytesAbvaiable, so try to read next packet:
-        bool nextPacketReady = ( _socket->peek(test, NETWORK::RxBufLength) == NETWORK::RxBufLength );
-        this->_pData->ProcessPacketFromEA(this->_pRxBuf, nextPacketReady);
+    QByteArray rxdata = _socket->readAll();
+    if ( (rxdata.size() % NETWORK::RxBufLength) != 0 ) {
+        throw("Network error occured. Packets size does not match the expected value.");
+    }
+    int nextindex = 0;
+    _pRxBuf = rxdata.data();
+    while(nextindex < rxdata.size()) {
+        nextindex += NETWORK::RxBufLength;
+        bool nextPacketReady = (nextindex < rxdata.size());
+        this->_pData->ProcessPacketFromEA(_pRxBuf, nextPacketReady);
+        _pRxBuf += NETWORK::RxBufLength;
     }
 }
-/*
-void EAQtNetwork::paralelProcess(EAQtDataInterface* pd, char* buf, int num)
-{
-    char b[NETWORK::RxBufLength];
-    for ( int i = 0; i<NETWORK::RxBufLength;++i) {
-        b[i] = buf[i];
-    }
-    pd->ProcessPacketFromEA(b,num);
-}
-*/
