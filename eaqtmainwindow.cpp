@@ -1168,8 +1168,10 @@ void EAQtMainWindow::showExportCurve()
             return;
         }
     }
-    if ( fi.absoluteFilePath().right(4).compare(".txt",Qt::CaseInsensitive) == 0 ) {
+    if ( fi.absoluteFilePath().right(4).compare(".txt", Qt::CaseInsensitive) == 0 ) {
         _pEAQtData->exportToTXT(fi.absoluteFilePath());
+    } else if (fi.absoluteFilePath().right(4).compare(".vol", Qt::CaseInsensitive) == 0) {
+        _pEAQtData->exportToVOL(fi.absoluteFilePath());
     } else {
         _pEAQtData->exportToCSV(fi.absoluteFilePath());
     }

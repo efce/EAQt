@@ -65,7 +65,9 @@ EAQtSaveFiledialog::SaveDetails EAQtSaveFiledialog::getSaveDetails(bool allowFor
         connect(_fd,SIGNAL(filterSelected(QString)),this,SLOT(setSuffix(QString)));
     } else {
         _defFilter = tr("Text file (*.txt)");
-        QString filter = _defFilter + ";;" + tr("Comma separated values (*.csv)");
+        _filterCSV = tr("Comma separated values (*.csv)");
+        _filterVOL = tr("EAPro vol file (*.vol)");
+        QString filter = _defFilter + ";;" + _filterCSV + ";;" +_filterVOL;
         _fd->setNameFilter(filter);
         _fd->selectNameFilter(_defFilter);
         _fd->setDefaultSuffix("txt");
@@ -152,8 +154,10 @@ void EAQtSaveFiledialog::setSuffix(QString selectedFilter)
 void EAQtSaveFiledialog::setSuffixExport(QString selectedFilter)
 {
     QString news = selectedFilter;
-    if ( selectedFilter.compare(_defFilter) == 0 ) {
+    if (selectedFilter.compare(_defFilter) == 0) {
         _fd->setDefaultSuffix("txt");
+    } else if (selectedFilter.compare(_filterVOL) == 0) {
+        _fd->setDefaultSuffix("vol");
     } else {
         _fd->setDefaultSuffix("csv");
     }

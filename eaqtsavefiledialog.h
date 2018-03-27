@@ -48,6 +48,8 @@ private:
     QString _ccomment;
     QString _filename;
     QString _defFilter;
+    QString _filterVOL;
+    QString _filterCSV;
     QFileDialog* _fd;
 public slots:
     void updateCurveName(QString);

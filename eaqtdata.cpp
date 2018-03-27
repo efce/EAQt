@@ -457,7 +457,7 @@ bool EAQtData::MDirReadOld(QFile &ff)
     ff.seek(0);
     ff.read((char*)&iAux, sizeof(int16_t));
     int16_t curvesInFiles = iAux;
-    if ( curvesInFiles < PARAM::VOL_CMAX ) {
+    if ( curvesInFiles <= PARAM::VOL_CMAX ) {
         for(int16_t i = 0;i < curvesInFiles;++i) // nie zmieniać cmax (słownik vol)
         {
             ff.read(cAux, 10);
@@ -2864,6 +2864,138 @@ void EAQtData::setMesSeriesFile(QString fp)
 EAQtSignalProcessing* EAQtData::getProcessing()
 {
     return _processing;
+}
+
+void EAQtData::exportToVOL(QString path)
+{
+    Curve* c;
+    if (this->Act() >= 0) {
+        c = _curves->get(_act);
+        if ( c == NULL) {
+            _pUI->showMessageBox(tr("Could not find any curve to save."), tr("Error"));
+            return;
+        }
+        if (c->Param(PARAM::ptnr) > 1000) {
+            _pUI->showMessageBox(tr("Maximum number of points per curve in vol file is 1000."), tr("Error"));
+            return;
+        }
+    } else {
+        c = _curves->get(0);
+        int i = 0;
+        while ((c=_curves->get(i)) != NULL) {
+            ++i;
+            if (c->Param(PARAM::ptnr) > 1000) {
+                _pUI->showMessageBox(tr("Maximum number of points per curve in vol file is 1000."), tr("Error"));
+                return;
+            }
+        }
+        c = _curves->get(0);
+    }
+
+    QFile *ff = new QFile(path);
+    if ( !ff->open(QIODevice::ReadWrite) ) {
+        _pUI->showMessageBox(tr("Could not open file for writing."), tr("Error"));
+        return;
+    }
+
+    int16_t curveNum = 0;
+    if ( this->Act() == SELECT::all ) {
+        if ( this->_curves->count() > PARAM::VOL_CMAX ) {
+            _pUI->showMessageBox(tr("Vol file can only hold 50 curves."), tr("Error"));
+            return;
+        }
+        curveNum = _curves->count();
+    } else {
+        curveNum = 1;
+    }
+
+    QByteArray ba;
+    ba.append((char*) &curveNum, 2);
+
+    QVector<std::string> names;
+    for (int i=0; i<PARAM::VOL_CMAX; ++i) {
+        std::string name;
+        name.append(10, '\0');
+        c = _curves->get(i);
+        if ( c != NULL ) {
+            std::string str_name = c->CName().toStdString();
+            for (uint ii=0; ii<str_name.length(); ++ii) {
+                if (ii == 10) {
+                    break;
+                }
+                name[ii] = str_name[ii];
+            }
+        }
+        names.append(name);
+    }
+    int16_t offset = sizeof(int16_t) + (PARAM::VOL_CMAX*(10+sizeof(int16_t))) + ((PARAM::VOL_PMAX-2)*sizeof(int32_t));
+    QVector<QByteArray> curveDatas;
+    for (int16_t i=0; i<curveNum; ++i) {
+        QByteArray cba;
+        if (Act() > 0 ) {
+            c = _curves->get(Act());
+           cba = this->exportToVOLCurve(c);
+        } else {
+            c = _curves->get(i);
+           cba = this->exportToVOLCurve(c);
+        }
+        offset = 2 + cba.size();
+        curveDatas.append(cba);
+        ba.append(names[i].c_str(), 10);
+        ba.append((char*) &offset, sizeof(int16_t));
+    }
+    for (int i=curveNum; i<PARAM::VOL_CMAX; ++i) {
+        ba.append(names[i].c_str(), 10);
+        int16_t zer = 0;
+        ba.append((char*)&zer, sizeof(int16_t));
+    }
+    int32_t param[(PARAM::VOL_PMAX-2)];
+    for (int i=0; i<(PARAM::VOL_PMAX-2); ++i) {
+        param[i] = c->Param(i);
+    }
+    ba.append((char*) param, (PARAM::VOL_PMAX-2)*sizeof(int32_t));
+    for (int16_t i=0; i<curveNum; ++i) {
+        ba.append((char*) &i, sizeof(int16_t));
+        ba.append(curveDatas[i]);
+    }
+    ff->write(ba);
+    ff->close();
+}
+
+QByteArray EAQtData::exportToVOLCurve(Curve *c)
+{
+    QByteArray ba;
+    std::string name;
+    name.append(10, '\0');
+    if ( c != NULL ) {
+        std::string str_name = c->CName().toStdString();
+        for (uint ii=0; ii<str_name.length(); ++ii) {
+            if (ii == 10) {
+                break;
+            }
+            name[ii] = str_name[ii];
+        }
+    }
+    ba.append(name.c_str(), 10);
+    std::string comment;
+    comment.append(50, '\0');
+    std::string str_comment = c->Comment().toStdString();
+    for (uint i=0; i<str_comment.length();++i) {
+        if ( i == 50 ) {
+            break;
+        }
+        comment[i] = str_comment[i];
+    }
+    ba.append(comment.c_str(), 50);
+    int16_t pDiff = (PARAM::VOL_PMAX-2);
+    ba.append((char*) &pDiff, sizeof(int16_t));
+    for (int16_t i=0; i<pDiff; ++i) {
+        ba.append((char*) &i, sizeof(int16_t));
+        int32_t p = c->Param(i);
+        ba.append((char*) &p, sizeof(int32_t));
+    }
+    ba.append((char*) c->getCurrentVector()->data(), sizeof(double)*c->Param(PARAM::ptnr));
+    return ba;
 }
 
 void EAQtData::exportToCSV(QString path)
