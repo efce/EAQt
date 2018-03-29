@@ -466,6 +466,12 @@ QGridLayout* EAQtMainWindow::createLayout()
     comboWidget->setLayout(combo);
     combo->addWidget(_comboOnXAxis);
 
+    _butBkg = new QPushButton(tr("Fit bkg"));
+    //_butBkg->setFixedWidth(30);
+    //_butBkg->setFixedHeight(30);
+    this->_vecButtonsDisablable.append(_butBkg);
+    connect(_butBkg,SIGNAL(clicked(bool)),this,SLOT(startBackgroundCorrection()));
+
     _butUndo = new QPushButton("Undo");
     _butUndo->setEnabled(false);
     this->_vecButtonsDisablable.append(_butUndo);
@@ -490,12 +496,17 @@ QGridLayout* EAQtMainWindow::createLayout()
     mainButtonLayout->addWidget(butDeleteNonactive);
     mainButtonLayout->addWidget(butSelectAll);
     this->ui->mainToolBar->addWidget(butOpenFile);
+    this->ui->mainToolBar->addSeparator();
     this->ui->mainToolBar->addWidget(_butStartMes);
     this->ui->mainToolBar->addWidget(butStopMes);
     this->ui->mainToolBar->addWidget(butParamPV);
     this->ui->mainToolBar->addWidget(butParamLSV);
-    this->ui->mainToolBar->addWidget(comboWidget);
+    this->ui->mainToolBar->addSeparator();
+    this->ui->mainToolBar->addWidget(_butBkg);
     this->ui->mainToolBar->addWidget(_butUndo);
+    this->ui->mainToolBar->addSeparator();
+    this->ui->mainToolBar->addWidget(comboWidget);
+    this->ui->mainToolBar->addSeparator();
     this->ui->mainToolBar->addWidget(_butZoom);
     this->ui->mainToolBar->addWidget(butRescale);
 
@@ -1058,7 +1069,7 @@ void EAQtMainWindow::createMenusTopMenu()
 void EAQtMainWindow::startBackgroundCorrection()
 {
     if ( _pEAQtData->getCurves()->count() > 0
-    && _pEAQtData->Act() >= 0 ) {
+    && (_pEAQtData->Act() >= 0 || _pEAQtData->Act() == SELECT::all) ) {
         _mouseHandler->ChangeMouseMode(EAQtMouseHandler::mm_place4markers,
                                        EAQtMouseHandler::uf_background_correction);
     }

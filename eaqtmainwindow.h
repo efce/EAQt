@@ -101,6 +101,7 @@ private:
     QPushButton *_butZoom;
     QWidget *_curveInfoMain;
     QPushButton *_butCurveInfoToggle;
+    QPushButton *_butBkg;
     QPushButton *_butUndo;
     QTextEdit *_curveInfoData;
     EAQtUIInterface::PlotLayer _plotLayers;

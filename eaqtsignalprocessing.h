@@ -26,8 +26,10 @@ class EAQtSignalProcessing : public QObject
 
 public:
     EAQtSignalProcessing(QCPCurve* gr);
-    void generateBackground(int32_t a1, int32_t a2, int32_t b1, int32_t b2);
-    void subtractBackground();
+    QVector<double> generateBackground(Curve* c, int32_t a1, int32_t a2, int32_t b1, int32_t b2);
+    void subtractBackground(Curve* c, QVector<double> bkg_y);
+    void showBackground();
+    void showBackground(QVector<double> x, QVector<double> y);
     void hideBackground();
     void calibrationData(QVector<std::array<int,2>>&);
     void curvesStats(QVector<std::array<int,2>>&);
@@ -69,6 +71,7 @@ private:
     int nn;
     int bkg_flag;
     int _interParam[10];
+    uint32_t _cursorIndex[4];
     static double _PI;
     static double _TINY;
 };

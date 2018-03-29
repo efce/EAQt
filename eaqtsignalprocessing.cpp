@@ -345,14 +345,27 @@ void EAQtSignalProcessing::medianfilter(
     }
 }
 
-void EAQtSignalProcessing::generateBackground(int32_t r1, int32_t r2, int32_t r3, int32_t r4)
+void EAQtSignalProcessing::showBackground()
 {
-    CurveCollection* _curves = EAQtData::getInstance().getCurves();
+    this->showBackground(this->bkg_curveX, this->bkg_curveY);
+}
+
+void EAQtSignalProcessing::showBackground(QVector<double> x, QVector<double> y)
+{
     QPen pn = QPen(COLOR::background);
     pn.setStyle(Qt::DashLine);
     pn.setWidth(2);
     _graph->setPen(pn);
-    Curve *c = _curves->get(EAQtData::getInstance().Act());
+    _graph->setData(x, y);
+    _graph->setVisible(true);
+}
+
+QVector<double> EAQtSignalProcessing::generateBackground(Curve* c, int32_t r1, int32_t r2, int32_t r3, int32_t r4)
+{
+    this->_cursorIndex[0] = r1;
+    this->_cursorIndex[1] = r2;
+    this->_cursorIndex[2] = r3;
+    this->_cursorIndex[3] = r4;
     bkg_curveX = c->getXVector();
     QVector<double> bx;
     QVector<double> by;
@@ -441,19 +454,15 @@ void EAQtSignalProcessing::generateBackground(int32_t r1, int32_t r2, int32_t r3
         }
         break;
     }
-    _graph->setData(bkg_curveX, bkg_curveY);
-    _graph->setVisible(true);
+    return this->bkg_curveY;
 }
 
-void EAQtSignalProcessing::subtractBackground()
+void EAQtSignalProcessing::subtractBackground(Curve* c, QVector<double> bkg_y)
 {
-    CurveCollection* _curves = EAQtData::getInstance().getCurves();
-    Curve* c = _curves->get(EAQtData::getInstance().Act());
     QVector<double> values = c->getYVector();
-    for ( int i = 0 ; i<values.size(); ++i ) {
-        c->setYValue(i,values[i] - bkg_curveY[i]);
+    for (int i = 0 ; i<values.size(); ++i) {
+        c->setYValue(i,values[i] - bkg_y[i]);
     }
-    _graph->setVisible(false);
 }
 
 void EAQtSignalProcessing::hideBackground()

@@ -59,6 +59,7 @@ public:
     virtual QString getMesSeriesFile() = 0;
     virtual void setMesSeriesFile(QString) = 0;
     virtual EAQtSignalProcessing* getProcessing() = 0;
+    virtual void undoPrepare() = 0;
 };
 
 #endif // EAQTDATAINTERFACE_H

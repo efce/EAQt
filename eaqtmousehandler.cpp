@@ -124,9 +124,14 @@ bool EAQtMouseHandler::GetCursorVisible(cursorsList cursNum)
 
 void EAQtMouseHandler::SetCursorsOnActPlot()
 {
-    if ( this->_pData->Act() != SELECT::all
-    && this->_pData->Act() != SELECT::none ) {
-        QCPCurve* gr = this->_pData->getCurves()->get(this->_pData->Act())->getPlot();
+    if ( this->_pData->Act() != SELECT::none ) {
+        int act;
+        if ( this->_pData->Act() == SELECT::all ) {
+            act = 0;
+        } else {
+            act = this->_pData->Act();
+        }
+        QCPCurve* gr = this->_pData->getCurves()->get(act)->getPlot();
         if ( gr->visible() ) {
             for (int i=0;i<cl_LAST; ++i) {
                 this->_vCursors[i]->setSnapTo(gr);
@@ -499,16 +504,47 @@ void EAQtMouseHandler::callUserFunction()
             this->_pUI->updateAll(false);
             this->_pData->getProcessing()->hideBackground();
         } else if ( this->_timesPressed == 5 ) {
+            int act = 0;
+            if ( _pData->Act() != SELECT::all ) {
+                act = _pData->Act();
+            }
             this->_pData->getProcessing()->generateBackground(
-                    this->GetCursorPointIndex(cl_multipleSelect1)
+                    _pData->getCurves()->get(act)
+                    ,this->GetCursorPointIndex(cl_multipleSelect1)
                     ,this->GetCursorPointIndex(cl_multipleSelect2)
                     ,this->GetCursorPointIndex(cl_multipleSelect3)
                     ,this->GetCursorPointIndex(cl_multipleSelect4)
                 );
+            this->_pData->getProcessing()->showBackground();
             this->_pUI->PlotGetLayers()->Markers->replot();
         } else if ( this->_timesPressed > 5 ) {
-            //this->pData->PrepareUndoCurve();
-            this->_pData->getProcessing()->subtractBackground();
+            _pData->undoPrepare();
+            CurveCollection* _curves = _pData->getCurves();
+            if ( _pData->Act() == SELECT::all ) {
+                for ( int i=0; i<_curves->count(); ++i ) {
+                    Curve* c = _curves->get(i);
+                    QVector<double> bkg_y = _pData->getProcessing()->generateBackground(
+                                c
+                                ,this->GetCursorPointIndex(cl_multipleSelect1)
+                                ,this->GetCursorPointIndex(cl_multipleSelect2)
+                                ,this->GetCursorPointIndex(cl_multipleSelect3)
+                                ,this->GetCursorPointIndex(cl_multipleSelect4)
+                            );
+                    _pData->getProcessing()->subtractBackground(c, bkg_y);
+
+                }
+            } else {
+                Curve* c = _curves->get(this->_pData->Act());
+                QVector<double> bkg_y = _pData->getProcessing()->generateBackground(
+                            c
+                            ,this->GetCursorPointIndex(cl_multipleSelect1)
+                            ,this->GetCursorPointIndex(cl_multipleSelect2)
+                            ,this->GetCursorPointIndex(cl_multipleSelect3)
+                            ,this->GetCursorPointIndex(cl_multipleSelect4)
+                        );
+                _pData->getProcessing()->subtractBackground(c, bkg_y);
+
+            }
             this->_pData->getProcessing()->hideBackground();
             this->_pUI->updateAll(false);
         }
