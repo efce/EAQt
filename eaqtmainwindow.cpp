@@ -468,6 +468,7 @@ QGridLayout* EAQtMainWindow::createLayout()
 
     _butUndo = new QPushButton("Undo");
     _butUndo->setEnabled(false);
+    this->_vecButtonsDisablable.append(_butUndo);
     connect(_butUndo,SIGNAL(clicked(bool)),this,SLOT(undo()));
 
     _butZoom = new QPushButton();
