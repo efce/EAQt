@@ -60,6 +60,7 @@ public:
     virtual void updateCGMDETest() = 0;
     virtual void setPathInUse(QString) = 0;
     virtual QString getPathInUse() = 0;
+    virtual void clearPeaks() = 0;
 };
 
 #endif // GRAPHINTERFACE_H

@@ -39,6 +39,15 @@ EAQtPlotCursor::EAQtPlotCursor(QCPItemStraightLine* sl, QCPCurve* gr)
     this->_ypos = 0;
 }
 
+EAQtPlotCursor::~EAQtPlotCursor()
+{
+    QCustomPlot* qcp = _point->parentPlot();
+    _line->setVisible(false);
+    _point->setVisible(false);
+    qcp->removeItem(_line);
+    qcp->removePlottable(_point);
+}
+
 void EAQtPlotCursor::setVisible(bool b)
 {
     this->_line->setVisible(b);

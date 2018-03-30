@@ -24,6 +24,7 @@ class EAQtPlotCursor
 {
 public:
     EAQtPlotCursor(QCPItemStraightLine*, QCPCurve*);
+    ~EAQtPlotCursor();
     void setVisible(bool);
     bool getVisible();
     void setColor(QColor);

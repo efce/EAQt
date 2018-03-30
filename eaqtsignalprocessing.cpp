@@ -636,3 +636,29 @@ double EAQtSignalProcessing::calcStdDev(QVector<double> yvals)
     }
     return sqrt(wrk/((double)n-1.0));
 }
+
+QVector<uint> EAQtSignalProcessing::findPeaks(QVector<double> y)
+{
+    QVector<uint> peaks;
+    QVector<double> tmp;
+    medianfilter(y, tmp);
+    sgSmooth(&tmp, 3, 11);
+    sgSmooth(&tmp, 3, 15);
+    QVector<double> ydiff(tmp.size()-1);
+    for (uint i=0; i<(tmp.size()-1); ++i) {
+        ydiff[i] = tmp[i+1] - tmp[i];
+    }
+    int hits = 0;
+    int const hits_req = 7;
+    for (uint i=0; i<(ydiff.size()-1); ++i) {
+        if ( ydiff[i] > ydiff[i+1] ) {
+            hits++;
+        } else {
+            if (hits>=hits_req) {
+                peaks.append(floor(i-hits/2));
+            }
+            hits = 0;
+        }
+    }
+    return peaks;
+}

@@ -926,6 +926,10 @@ void EAQtMainWindow::createActionsTopMenu()
     this->_actDataCursor->setStatusTip(tr("Show data cursor"));
     connect(_actDataCursor, SIGNAL(triggered(bool)),this,SLOT(showDataCursor()));
 
+    this->_actFindPeaks = new QAction(tr("Find peaks"), this);
+    this->_actFindPeaks->setStatusTip(tr("Tries to find and display peaks"));
+    connect(_actFindPeaks, SIGNAL(triggered(bool)),this,SLOT(showPeaks()));
+
     this->_actBkgCorrection = new QAction(tr("Fit background"), this);
     this->_actBkgCorrection->setStatusTip(tr("Perform background correction"));
     connect(_actBkgCorrection, SIGNAL(triggered(bool)),this,SLOT(startBackgroundCorrection()));
@@ -1039,6 +1043,7 @@ void EAQtMainWindow::createMenusTopMenu()
     _menuAnalysis = this->menuBar()->addMenu(tr("&Analysis"));
     _menuAnalysis->addAction(this->_actAverage);
     _menuAnalysis->addAction(this->_actDataCursor);
+    _menuAnalysis->addAction(this->_actFindPeaks);
     _menuAnalysis->addAction(this->_actBkgCorrection);
     _menuAnalysis->addAction(this->_actBkgCorrectionSettings);
     _menuAnalysis->addAction(this->_actSubtractActive);
@@ -1514,6 +1519,34 @@ void EAQtMainWindow::startCurvesStats()
         _mouseHandler->ChangeMouseMode(EAQtMouseHandler::mm_place2markers,
                                     EAQtMouseHandler::uf_statistic_data);
     }
+}
+
+void EAQtMainWindow::showPeaks()
+{
+    if ( this->_pEAQtData->Act() < 0 ) {
+        showMessageBox(tr("Only one curve can be active."), tr("Error"));
+        return;
+    }
+    Curve* c = _pEAQtData->getCurves()->get(_pEAQtData->Act());
+    QVector<double> y = _pEAQtData->getCurves()->get(_pEAQtData->Act())->getYVector();
+    QVector<uint> peak_indexes = _pEAQtData->getProcessing()->findPeaks(y);
+    for (uint i=0; i<peak_indexes.size(); ++i) {
+        EAQtPlotCursor* cur = PlotAddCursor();
+        cur->move(c->getXVector()[peak_indexes[i]], c->getYVector()[peak_indexes[i]]);
+        cur->setVisible(true);
+        _peakMarkers.append(cur);
+    }
+    PlotReplot();
+}
+
+void EAQtMainWindow::clearPeaks()
+{
+    for (uint i=0; i<_peakMarkers.size(); ++i) {
+        delete _peakMarkers[i];
+    }
+    _peakMarkers.clear();
+    _plotLayers.Markers->replot();
+    _plotMain->repaint();
 }
 
 void EAQtMainWindow::undo()

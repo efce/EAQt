@@ -33,6 +33,7 @@ EAQtNetwork::EAQtNetwork(EAQtDataInterface* di) : QObject()
     //memset(this->_pRxBuf,0,NETWORK::RxBufLength);
     _rxSize = 0;
     _rcvNum = 0;
+    _pRxBuf = new char[1];
 }
 
 EAQtNetwork::~EAQtNetwork()

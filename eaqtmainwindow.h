@@ -90,6 +90,7 @@ private:
     EAQtMouseHandler *_mouseHandler;
     QTableWidget *_tableCurveMain;
     QCustomPlot *_plotMain;
+    QVector<EAQtPlotCursor*> _peakMarkers;
     QVector<QPushButton*> _vecButtonsDisablable;
     QPushButton* _butStartMes;
     QVector<QLabel*> _vecLowText;
@@ -113,6 +114,7 @@ private:
     void createMenusTopMenu();
     QWidget* createCurveInfo();
     void updateCurveInfo();
+    void clearPeaks();
     void PlotRegenerate();
     void TableRegenerate();
     void TableDrawSelection();
@@ -151,6 +153,7 @@ private:
     QAction *_actMoveUpDown;
     QAction *_actSmooth;
     QAction *_actAdvSmooth;
+    QAction *_actFindPeaks;
     QAction *_actStats;
     QAction *_actRecalculateCurve; // Change tp and tw based on nonaveraged measurement
 
@@ -193,6 +196,7 @@ private slots:
     void showRenameCurve();
     void showAverage();
     void showDataCursor();
+    void showPeaks();
     void showBackgroundCorrectionSettings();
     void startBackgroundCorrection();
     void subtractActive();

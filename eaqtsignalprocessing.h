@@ -56,6 +56,7 @@ public:
     static void setFitMethod(int);
     static double tinv0975(uint x);
     static double calcStdDev(QVector<double>);
+    QVector<uint> findPeaks(QVector<double> y);
 
 
 private:

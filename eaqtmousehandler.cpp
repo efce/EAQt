@@ -71,6 +71,7 @@ void EAQtMouseHandler::onSelectionChanged()
 void EAQtMouseHandler::setDefaults()
 {
     this->_pUI->enableAll();
+    this->_pUI->clearPeaks();
     this->_pUI->PlotSetInteraction(_plotInteractions.plotDefaultInteractions);
     _pUI->PlotConnectMouse();
     this->_timesPressed = 0;
