@@ -32,7 +32,6 @@ public:
     int sendToEA(char* TxBuf);
 
     //char TxBuf[NETWORK::TxBufLength];
-    char *_pRxBuf;
     //static void paralelProcess(EAQtDataInterface *pd, char* buf, int num);
 private:
     QString _EA_IP;

@@ -33,15 +33,12 @@ EAQtNetwork::EAQtNetwork(EAQtDataInterface* di) : QObject()
     //memset(this->_pRxBuf,0,NETWORK::RxBufLength);
     _rxSize = 0;
     _rcvNum = 0;
-    _pRxBuf = NULL;
 }
 
 EAQtNetwork::~EAQtNetwork()
 {
     this->_socket->close();
     delete this->_socket;
-    if (_pRxBuf != NULL )
-        delete[] this->_pRxBuf;
 }
 
 bool EAQtNetwork::connectToEA()
@@ -97,7 +94,7 @@ void EAQtNetwork::processPacket()
             throw("Network error occured. Packets size does not match the expected value.");
         }
         int nextindex = 0;
-        _pRxBuf = rxdata.data();
+        char* _pRxBuf = rxdata.data();
         while(nextindex < rxdata.size()) {
             nextindex += NETWORK::RxBufLength;
             bool nextPacketReady = (nextindex < rxdata.size());
