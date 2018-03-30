@@ -33,14 +33,15 @@ EAQtNetwork::EAQtNetwork(EAQtDataInterface* di) : QObject()
     //memset(this->_pRxBuf,0,NETWORK::RxBufLength);
     _rxSize = 0;
     _rcvNum = 0;
-    _pRxBuf = new char[1];
+    _pRxBuf = NULL;
 }
 
 EAQtNetwork::~EAQtNetwork()
 {
     this->_socket->close();
     delete this->_socket;
-    delete[] this->_pRxBuf;
+    if (_pRxBuf != NULL )
+        delete[] this->_pRxBuf;
 }
 
 bool EAQtNetwork::connectToEA()
@@ -103,5 +104,6 @@ void EAQtNetwork::processPacket()
             this->_pData->ProcessPacketFromEA(_pRxBuf, nextPacketReady);
             _pRxBuf += NETWORK::RxBufLength;
         }
+        rxdata.clear();
     }
 }
