@@ -796,9 +796,9 @@
     </message>
     <message>
         <location filename="eaqtdata.cpp" line="2875"/>
-        <location filename="eaqtdata.cpp" line="3008"/>
-        <location filename="eaqtdata.cpp" line="3071"/>
-        <location filename="eaqtdata.cpp" line="3077"/>
+        <location filename="eaqtdata.cpp" line="3041"/>
+        <location filename="eaqtdata.cpp" line="3104"/>
+        <location filename="eaqtdata.cpp" line="3110"/>
         <source>Could not find any curve to save.</source>
         <translation>Nie można znaleźć krzywej do zapisania.</translation>
     </message>
@@ -810,8 +810,8 @@
     </message>
     <message>
         <location filename="eaqtdata.cpp" line="2897"/>
-        <location filename="eaqtdata.cpp" line="3015"/>
-        <location filename="eaqtdata.cpp" line="3092"/>
+        <location filename="eaqtdata.cpp" line="3048"/>
+        <location filename="eaqtdata.cpp" line="3125"/>
         <source>Could not open file for writing.</source>
         <translation>Nie można otworzyć pliku do zapisu.</translation>
     </message>
@@ -821,7 +821,7 @@
         <translation>W pliku vol może znajdować się maksymalnie 50 krzywych.</translation>
     </message>
     <message>
-        <location filename="eaqtdata.cpp" line="3084"/>
+        <location filename="eaqtdata.cpp" line="3117"/>
         <source>Cannot export to TXT curves with different number of points.</source>
         <translation>Nie można eksportować do TXT krzywych z różna ilością punktów pomiarowych.</translation>
     </message>
@@ -846,12 +846,12 @@
         <location filename="eaqtdata.cpp" line="2888"/>
         <location filename="eaqtdata.cpp" line="2897"/>
         <location filename="eaqtdata.cpp" line="2904"/>
-        <location filename="eaqtdata.cpp" line="3008"/>
-        <location filename="eaqtdata.cpp" line="3015"/>
-        <location filename="eaqtdata.cpp" line="3071"/>
-        <location filename="eaqtdata.cpp" line="3077"/>
-        <location filename="eaqtdata.cpp" line="3084"/>
-        <location filename="eaqtdata.cpp" line="3092"/>
+        <location filename="eaqtdata.cpp" line="3041"/>
+        <location filename="eaqtdata.cpp" line="3048"/>
+        <location filename="eaqtdata.cpp" line="3104"/>
+        <location filename="eaqtdata.cpp" line="3110"/>
+        <location filename="eaqtdata.cpp" line="3117"/>
+        <location filename="eaqtdata.cpp" line="3125"/>
         <source>Error</source>
         <translation>Błąd</translation>
     </message>
@@ -1140,6 +1140,11 @@
         <location filename="eaqtmainwindow.cpp" line="469"/>
         <source>Fit bkg</source>
         <translation>Dop. tło</translation>
+    </message>
+    <message>
+        <location filename="eaqtmainwindow.cpp" line="475"/>
+        <source>Undo</source>
+        <translation>Cofnij</translation>
     </message>
     <message>
         <location filename="eaqtmainwindow.cpp" line="885"/>
@@ -1718,17 +1723,17 @@
 <context>
     <name>EAQtNetwork</name>
     <message>
-        <location filename="eaqtnetwork.cpp" line="62"/>
+        <location filename="eaqtnetwork.cpp" line="60"/>
         <source>Could not connect to electrochemical anlyzer</source>
         <translation>Nie można podłączyć do analizatora</translation>
     </message>
     <message>
-        <location filename="eaqtnetwork.cpp" line="72"/>
+        <location filename="eaqtnetwork.cpp" line="70"/>
         <source>The connection was closed.</source>
         <translation>Połączenie zakmnięte.</translation>
     </message>
     <message>
-        <location filename="eaqtnetwork.cpp" line="77"/>
+        <location filename="eaqtnetwork.cpp" line="75"/>
         <source>The following error occurred: %1.</source>
         <translation>Wystąpił następujący błąd: %1.</translation>
     </message>

@@ -472,7 +472,7 @@ QGridLayout* EAQtMainWindow::createLayout()
     this->_vecButtonsDisablable.append(_butBkg);
     connect(_butBkg,SIGNAL(clicked(bool)),this,SLOT(startBackgroundCorrection()));
 
-    _butUndo = new QPushButton("Undo");
+    _butUndo = new QPushButton(tr("Undo"));
     _butUndo->setEnabled(false);
     this->_vecButtonsDisablable.append(_butUndo);
     connect(_butUndo,SIGNAL(clicked(bool)),this,SLOT(undo()));

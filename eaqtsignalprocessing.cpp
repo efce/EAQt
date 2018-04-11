@@ -643,13 +643,13 @@ QVector<uint> EAQtSignalProcessing::findPeaks(QVector<double> y)
     QVector<double> tmp;
     medianfilter(y, tmp);
     sgSmooth(&tmp, 3, 11);
-    sgSmooth(&tmp, 3, 15);
+    //sgSmooth(&tmp, 3, 15);
     QVector<double> ydiff(tmp.size()-1);
     for (uint i=0; i<(tmp.size()-1); ++i) {
         ydiff[i] = tmp[i+1] - tmp[i];
     }
     int hits = 0;
-    int const hits_req = 7;
+    int const hits_req = 9;
     for (uint i=0; i<(ydiff.size()-1); ++i) {
         if ( ydiff[i] > ydiff[i+1] ) {
             hits++;
