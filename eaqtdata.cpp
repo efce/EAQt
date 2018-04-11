@@ -795,11 +795,11 @@ int EAQtData::CurReadCurveOld(QFile &ff, QString CName)
         timestep = MEASUREMENT::LSVtime[this->getCurves()->get(j1)->Param(PARAM::dEdt)];
     }
     double potential = this->getCurves()->get(j1)->Param(PARAM::Ep);
-    double estep = ( this->getCurves()->get(j1)->Param(PARAM::Ek) - this->getCurves()->get(j1)->Param(PARAM::Ep) ) / this->getCurves()->get(j1)->Param(PARAM::ptnr);
+    double estep = ( (double)this->getCurves()->get(j1)->Param(PARAM::Ek) - (double)this->getCurves()->get(j1)->Param(PARAM::Ep) ) / (double)this->getCurves()->get(j1)->Param(PARAM::ptnr);
     for (TYPES::vectorindex_t ii=0 ; ii<this->getCurves()->get(j1)->Param(PARAM::ptnr) ; ++ii) {
         ff.read((char*)&dwork, sizeof(double));
         this->getCurves()->get(j1)->addDataPoint(time, potential, dwork);
-        potential +=estep;
+        potential += estep;
         time += timestep;
     }
     this->setCurrentRange(getCurves()->get(j1)->Param(PARAM::crange),this->getCurves()->get(j1)->Param(PARAM::electr));
@@ -2925,6 +2925,26 @@ void EAQtData::exportToVOL(QString path)
                 }
                 name[ii] = str_name[ii];
             }
+            bool has_name = true;
+            while (has_name) {
+                has_name = false;
+                for (int ii=0; ii<names.length(); ++ii) {
+                    if (name.compare(names[ii]) == 0) {
+                        has_name = true;
+                        int ni;
+                        for (ni=0; ni<11; ++ni) {
+                            if (ni == 10) {
+                                ff->remove();
+                                return;
+                            }
+                            if (name[ni] == '\0') {
+                                name[ni] = '-';
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
         }
         names.append(name);
     }
@@ -2953,6 +2973,7 @@ void EAQtData::exportToVOL(QString path)
     for (int i=0; i<(PARAM::VOL_PMAX-2); ++i) {
         param[i] = c->Param(i);
     }
+    param[PARAM::messc] = 0;
     ba.append((char*) param, (PARAM::VOL_PMAX-2)*sizeof(int32_t));
     for (int16_t i=0; i<curveNum; ++i) {
         ba.append((char*) &i, sizeof(int16_t));
@@ -2991,10 +3012,22 @@ QByteArray EAQtData::exportToVOLCurve(Curve *c)
     ba.append((char*) &pDiff, sizeof(int16_t));
     for (int16_t i=0; i<pDiff; ++i) {
         ba.append((char*) &i, sizeof(int16_t));
-        int32_t p = c->Param(i);
-        ba.append((char*) &p, sizeof(int32_t));
+        if (i == PARAM::messc) {
+            // Remove messc info from vol file
+            int32_t z = 0;
+            ba.append((char*) &z, sizeof(int32_t));
+        } else {
+            int32_t p = c->Param(i);
+            ba.append((char*) &p, sizeof(int32_t));
+        }
     }
-    ba.append((char*) c->getCurrentVector()->data(), sizeof(double)*c->Param(PARAM::ptnr));
+    if (c->Param(PARAM::Ep) == c->getPotentialVector()->at(0)) {
+        ba.append((char*) c->getCurrentVector()->data(), sizeof(double)*c->Param(PARAM::ptnr));
+    } else{
+        std::vector<double> v_rev = c->getCurrentVector()->toStdVector();
+        std::reverse(v_rev.begin(), v_rev.end());
+        ba.append((char*) v_rev.data(), sizeof(double)*c->Param(PARAM::ptnr));
+    }
     return ba;
 }
 
