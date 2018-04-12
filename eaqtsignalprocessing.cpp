@@ -644,21 +644,77 @@ QVector<uint> EAQtSignalProcessing::findPeaks(QVector<double> y)
     medianfilter(y, tmp);
     sgSmooth(&tmp, 3, 11);
     //sgSmooth(&tmp, 3, 15);
+    if (tmp.length() < 10) {
+        return peaks;
+    }
+    for (int i=4; i<tmp.length()-4; ++i) {
+        if ( (tmp[i-2] < tmp[i-1])
+        && (tmp[i-1] < tmp[i])
+        && (tmp[i] > tmp[i+1])
+        && (tmp[i+1] > tmp[i+2]) ) {
+            peaks.append(i);
+        }
+        if ( (tmp[i-2] > tmp[i-1])
+        && (tmp[i-1] > tmp[i])
+        && (tmp[i] < tmp[i+1])
+        && (tmp[i+1] < tmp[i+2]) ) {
+            peaks.append(i);
+        }
+    }
+    return peaks;
+    /*
     QVector<double> ydiff(tmp.size()-1);
     for (uint i=0; i<(tmp.size()-1); ++i) {
         ydiff[i] = tmp[i+1] - tmp[i];
     }
-    int hits = 0;
-    int const hits_req = 9;
-    for (uint i=0; i<(ydiff.size()-1); ++i) {
-        if ( ydiff[i] > ydiff[i+1] ) {
-            hits++;
-        } else {
-            if (hits>=hits_req) {
-                peaks.append(floor(i-hits/2));
+    const int test_req[3] = {2, 7, 2};
+    int test_count[4] = {0, 0, 0, 0};
+    bool test_positive_slope = true;
+    int test_step = -1;
+    for (int i=0; i<(ydiff.size()-1); ++i) {
+        if (test_step == 3) { // Peak was found //
+            peaks.append(i - test_count[1] - ceil((double)test_count[2]/2.0));
+            test_count[0] = 0;
+            test_count[1] = 0;
+            test_count[2] = 0;
+            test_step = -1;
+            i = (i - test_count[2]) + 1;
+        }
+        if ( test_step == -1 ) {
+            if (ydiff[i] > ydiff[i+1]) {
+                test_positive_slope = false;
+                test_step = 0;
+            } else if (ydiff[i] < ydiff[i+1]) {
+                test_positive_slope = true;
+                test_step = 0;
             }
-            hits = 0;
+        } else {
+            bool grow = (ydiff[i] < ydiff[i+1]);
+            if ( (grow && test_positive_slope)
+            || (!grow && !test_positive_slope)
+            || (ydiff[i] == ydiff[i+1]) ) {
+                test_count[test_step] += 1;
+            } else {
+                if (test_count[test_step] >= test_req[test_step]) {
+                    test_step += 1;
+                    test_count[test_step] = 1;
+                    test_positive_slope = !test_positive_slope;
+                } else {
+                    int go_back = test_count[0] + test_count[1] + test_count[2] - 2;
+                    if (go_back > 0) {
+                        if ((i - go_back) > 0) {
+                            i -= go_back;
+                        }
+                    }
+                    test_step = -1;
+                    test_count[0] = 0;
+                    test_count[1] = 0;
+                    test_count[2] = 0;
+                    test_count[3] = 0;
+                }
+            }
         }
     }
     return peaks;
+    */
 }
