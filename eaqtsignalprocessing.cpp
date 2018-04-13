@@ -217,16 +217,16 @@ void EAQtSignalProcessing::linearRegression(
         yavg += y[i];
         sumx2 += pow(x[i],2);
     }
-    xavg/=n;
-    yavg/=n;
+    xavg = xavg / n;
+    yavg = yavg / n;
     for ( i =0; i<n;++i ) {
         sr += pow((y[i]-ypred[i]),2);
         sxx += pow((x[i]-xavg),2);
     }
     sr = sqrt(sr/(n-2));
 
-    *slopeStdDev = sqrt(pow(sr,2)/sxx);
-    *interceptStdDev = sqrt((pow(sr,2)*sumx2)/(n*sxx));
+    *slopeStdDev = sr/sqrt(sxx);
+    *interceptStdDev = sr*sqrt(sumx2/(n*sxx));
 
     int y0Index = -1;
     for ( i=0; i<n;++i) {
@@ -236,7 +236,7 @@ void EAQtSignalProcessing::linearRegression(
         }
     }
     if ( y0Index > -1 ) {
-        *x0StdDev = sr/abs(*intercept) * sqrt( 1+(1/n)+(pow(y[y0Index]-yavg,2)/(pow((*intercept),2)*sxx)) );
+        *x0StdDev = sr / *slope * sqrt(1 + (1/n) + (pow(y[y0Index]-yavg, 2) / (pow(*slope, 2) * sxx)));
     } else {
         *x0StdDev = -1;
     }
@@ -620,6 +620,10 @@ double EAQtSignalProcessing::tinv0975(uint degreesOfFreedom)
         return 4.303;
     case 3:
         return 3.182;
+    case 4:
+        return 2.7764;
+    case 5:
+        return 2.5706;
     default:
         return (exp(2.378/(double)degreesOfFreedom) + 0.96);
     }

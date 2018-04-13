@@ -71,13 +71,14 @@ void CalibrationPlot::update()
     _plot->setVisible(true);
     _calibrationPoints->setData(_cd->xValues,_cd->yValues,false);
     QString text = tr("for α=0.05:<br>");
+    int deg_freedom = _cd->xValues.size()-2;
+    double talpha = EAQtSignalProcessing::tinv0975(deg_freedom);
+    double confIntervalSlope = talpha * _cd->slopeStdDev;// / sqrt(_cd->xValues.size());
+    double confIntervalIntercept = talpha * _cd->interceptStdDev;// / sqrt(_cd->xValues.size());
     if ( _cd->slope == 0 || !qIsFinite(_cd->intercept) ) {
         text += tr("Regression line cannot be plotted.<br>");
         text += tr("r = %1 <br>").arg(_cd->correlationCoef,0,'f',4);
-        double confIntervalSlope = EAQtSignalProcessing::tinv0975(_cd->xValues.size()-1) * _cd->slopeStdDev / sqrt(_cd->xValues.size());
-        double confIntervalIntercept = EAQtSignalProcessing::tinv0975(_cd->xValues.size()-1) * _cd->slopeStdDev / sqrt(_cd->xValues.size());
         text += tr("i = %1(±%2)c + %3(±%4)<br>").arg(_cd->slope,0,'f',4).arg(confIntervalSlope,0,'f',4).arg(_cd->intercept,0,'f',4).arg(confIntervalIntercept,0,'f',4);
-
         _calibrationLine->setVisible(false);
         _plot->xAxis->setLabel(tr("c / %1").arg(_cd->xUnits));
         _plot->yAxis->setLabel(tr("i / %1").arg(_cd->yUnits));
@@ -104,10 +105,7 @@ void CalibrationPlot::update()
         _plot->yAxis->setRangeUpper(_plot->yAxis->range().upper + (0.1*spany));
         _plot->yAxis->setLabel(tr("i / %1").arg(_cd->yUnits));
         _plot->replot();
-
         text += tr("r = %1 <br>").arg(_cd->correlationCoef,0,'f',4);
-        double confIntervalSlope = EAQtSignalProcessing::tinv0975(_cd->xValues.size()-1) * _cd->slopeStdDev / sqrt(_cd->xValues.size());
-        double confIntervalIntercept = EAQtSignalProcessing::tinv0975(_cd->xValues.size()-1) * _cd->interceptStdDev / sqrt(_cd->xValues.size());
         text += tr("i = %1(±%2)c + %3(±%4) <br>").arg(_cd->slope,0,'f',4).arg(confIntervalSlope,0,'f',4).arg(_cd->intercept,0,'f',4).arg(confIntervalIntercept,0,'f',4);
         if ( _cd->x0StdDev > -1 ) {
             double confIntervalX0 = EAQtSignalProcessing::tinv0975(_cd->xValues.size()-1) * _cd->x0StdDev / sqrt(_cd->xValues.size());
