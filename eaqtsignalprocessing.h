@@ -44,6 +44,7 @@ public:
     static void sgSmooth(QVector<double>* y, int order, int span);
     static void medianfilter(const QVector<double>& signal, QVector<double>& result, int windowSize=5);
     static double relativeHeight(Curve* c, int32_t start, int32_t end);
+    static int secondSignificantDigitDecimalPlace(double value);
     enum FitMethod : int {
         poly1,
         poly2,

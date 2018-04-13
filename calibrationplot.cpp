@@ -73,12 +73,14 @@ void CalibrationPlot::update()
     QString text = tr("for α=0.05:<br>");
     int deg_freedom = _cd->xValues.size()-2;
     double talpha = EAQtSignalProcessing::tinv0975(deg_freedom);
-    double confIntervalSlope = talpha * _cd->slopeStdDev;// / sqrt(_cd->xValues.size());
-    double confIntervalIntercept = talpha * _cd->interceptStdDev;// / sqrt(_cd->xValues.size());
+    double confIntervalSlope = talpha * _cd->slopeStdDev;
+    int slopeDecimals = EAQtSignalProcessing::secondSignificantDigitDecimalPlace(confIntervalSlope);
+    double confIntervalIntercept = talpha * _cd->interceptStdDev;
+    int interceptDecimals = EAQtSignalProcessing::secondSignificantDigitDecimalPlace(confIntervalIntercept);
     if ( _cd->slope == 0 || !qIsFinite(_cd->intercept) ) {
         text += tr("Regression line cannot be plotted.<br>");
         text += tr("r = %1 <br>").arg(_cd->correlationCoef,0,'f',4);
-        text += tr("i = %1(±%2)c + %3(±%4)<br>").arg(_cd->slope,0,'f',4).arg(confIntervalSlope,0,'f',4).arg(_cd->intercept,0,'f',4).arg(confIntervalIntercept,0,'f',4);
+        text += tr("i = %1(±%2)c + %3(±%4)<br>").arg(_cd->slope,0,'f',slopeDecimals).arg(confIntervalSlope,0,'f',slopeDecimals).arg(_cd->intercept,0,'f',interceptDecimals).arg(confIntervalIntercept,0,'f',interceptDecimals);
         _calibrationLine->setVisible(false);
         _plot->xAxis->setLabel(tr("c / %1").arg(_cd->xUnits));
         _plot->yAxis->setLabel(tr("i / %1").arg(_cd->yUnits));
@@ -106,10 +108,11 @@ void CalibrationPlot::update()
         _plot->yAxis->setLabel(tr("i / %1").arg(_cd->yUnits));
         _plot->replot();
         text += tr("r = %1 <br>").arg(_cd->correlationCoef,0,'f',4);
-        text += tr("i = %1(±%2)c + %3(±%4) <br>").arg(_cd->slope,0,'f',4).arg(confIntervalSlope,0,'f',4).arg(_cd->intercept,0,'f',4).arg(confIntervalIntercept,0,'f',4);
+        text += tr("i = %1(±%2)c + %3(±%4) <br>").arg(_cd->slope,0,'f',slopeDecimals).arg(confIntervalSlope,0,'f',slopeDecimals).arg(_cd->intercept,0,'f',interceptDecimals).arg(confIntervalIntercept,0,'f',interceptDecimals);
         if ( _cd->x0StdDev > -1 ) {
-            double confIntervalX0 = EAQtSignalProcessing::tinv0975(_cd->xValues.size()-1) * _cd->x0StdDev / sqrt(_cd->xValues.size());
-            text += tr("result: (%1±%2) %3").arg(-x0,0,'f',4).arg(confIntervalX0,0,'f',4).arg(_cd->xUnits);
+            double confIntervalX0 = talpha * _cd->x0StdDev;
+            int x0Decimals = EAQtSignalProcessing::secondSignificantDigitDecimalPlace(confIntervalX0);
+            text += tr("result: (%1±%2) %3").arg(-x0,0,'f',x0Decimals).arg(confIntervalX0,0,'f',x0Decimals).arg(_cd->xUnits);
         }
     }
     _te->setText(text);

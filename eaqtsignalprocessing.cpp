@@ -722,3 +722,14 @@ QVector<uint> EAQtSignalProcessing::findPeaks(QVector<double> y)
     return peaks;
     */
 }
+
+int EAQtSignalProcessing::secondSignificantDigitDecimalPlace(double value)
+{
+    double l = floor(log10(value));
+    if(l>0.0) {
+        return 0;
+    } else {
+        return int(-(l-1.0));
+    }
+
+}
