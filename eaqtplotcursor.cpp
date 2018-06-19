@@ -34,7 +34,7 @@ EAQtPlotCursor::EAQtPlotCursor(QCPItemStraightLine* sl, QCPCurve* gr)
     QPen qpp = this->_point->pen();
     qpp.setColor(col);
     this->_point->setPen(qpp);
-    this->_snappedTo = NULL;
+    this->_snappedTo = nullptr;
     this->_xpos = 0;
     this->_ypos = 0;
 }
@@ -84,7 +84,7 @@ void EAQtPlotCursor::setMarker(QCPScatterStyle ss)
 
 void EAQtPlotCursor::move(double x, double y)
 {
-    if ( this->_snappedTo == NULL ) {
+    if ( this->_snappedTo == nullptr ) {
         this->_line->point1->setCoords(x,y);
         this->_line->point2->setCoords(x,y+1);
         this->_point->data()->clear();

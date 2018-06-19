@@ -1153,7 +1153,7 @@ void EAQtMainWindow::showSaveCurve()
     } else {
         int act = _pEAQtData->Act();
         Curve* curve = _pEAQtData->getCurves()->get(act);
-        if ( curve == NULL ) {
+        if ( curve == nullptr ) {
             showMessageBox(tr("Curve could not be selected for save, please try to select it again."),tr("Error"));
         }
         this->_pEAQtData->safeAppend(savePath, curve);
@@ -1314,7 +1314,7 @@ void EAQtMainWindow::resultCalibration()
     if ( _pEAQtData->_calibration->wasFitted == true ) {
         CalibrationData* cd = _pEAQtData->_calibration;
         Curve* c = _pEAQtData->getCurves()->get(_pEAQtData->Act());
-        if ( c == NULL ) {
+        if ( c == nullptr ) {
             return;
         }
         int xAxisSave = _pEAQtData->getXAxis();
@@ -1416,7 +1416,7 @@ void EAQtMainWindow::showGithub()
 void EAQtMainWindow::updateCurveInfo()
 {
     Curve* c = _pEAQtData->getCurves()->get(_pEAQtData->Act());
-    if ( c == NULL ) {
+    if ( c == nullptr ) {
         _curveInfoData->setText("");
         return;
     }
@@ -1486,7 +1486,7 @@ void EAQtMainWindow::updateCGMDETest()
 void EAQtMainWindow::showRenameCurve()
 {
     Curve *c = EAQtData::getInstance().getCurves()->get(EAQtData::getInstance().Act());
-    if ( c == NULL ) {
+    if ( c == nullptr ) {
         showMessageBox(tr("Could not select curve for renaming."), tr("Error"));
         return;
     }

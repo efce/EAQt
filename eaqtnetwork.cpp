@@ -32,7 +32,6 @@ EAQtNetwork::EAQtNetwork(EAQtDataInterface* di) : QObject()
     //this->_pRxBuf = new char[NETWORK::RxBufLength];
     //memset(this->_pRxBuf,0,NETWORK::RxBufLength);
     _rxSize = 0;
-    _rcvNum = 0;
 }
 
 EAQtNetwork::~EAQtNetwork()
@@ -79,10 +78,12 @@ void EAQtNetwork::connectionError(QAbstractSocket::SocketError error)
     return;
 }
 
-int EAQtNetwork::sendToEA(char* TxBuf)
+int EAQtNetwork::sendToEA(const char* TxBuf)
 {
-    return this->_socket->write(TxBuf,NETWORK::TxBufLength);
-    _rcvNum = 0;
+    return static_cast<int>(this->_socket->write(
+                TxBuf,
+                static_cast<qint64>(NETWORK::TxBufLength)
+           ));
 }
 
 

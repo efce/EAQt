@@ -52,7 +52,7 @@ void EAQtSignalProcessing::shiftCurve(double dY)
 {
     CurveCollection* _curves = EAQtData::getInstance().getCurves();
     Curve* c = _curves->get(EAQtData::getInstance().Act());
-    if ( c == NULL )
+    if ( c == nullptr )
         return;
     QVector<double> values = c->getYVector();
     for ( int i = 0; i<values.size(); ++i ) {

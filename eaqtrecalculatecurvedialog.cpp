@@ -60,7 +60,7 @@ EAQtRecalculateCurveDialog::EAQtRecalculateCurveDialog(EAQtUIInterface *pui) : Q
 
     } else {
         Curve *c = cc->get(EAQtData::getInstance().Act());
-        if ( c == NULL || c->getNumberOfProbingPoints() == 0 ) {
+        if ( c == nullptr || c->getNumberOfProbingPoints() == 0 ) {
             //TODO: error
             return;
         }

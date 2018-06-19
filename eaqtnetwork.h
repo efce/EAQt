@@ -29,17 +29,16 @@ public:
     ~EAQtNetwork();
 
     bool connectToEA();
-    int sendToEA(char* TxBuf);
+    int sendToEA(const char* TxBuf);
 
     //char TxBuf[NETWORK::TxBufLength];
     //static void paralelProcess(EAQtDataInterface *pd, char* buf, int num);
 private:
     QString _EA_IP;
-    int _EA_Port;
+    uint16_t _EA_Port;
     QTcpSocket *_socket;
     EAQtDataInterface *_pData;
     int _rxSize;
-    int _rcvNum;
 
 public slots:
     void processPacket();

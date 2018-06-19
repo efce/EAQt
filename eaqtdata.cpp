@@ -1241,7 +1241,7 @@ void EAQtData::MesStart(bool isLsv)
                             vecMesPotential[p] = _LSVParam[PARAM::EstartLSV];
                             vecMesTime[p] = MEASUREMENT::LSVtime[_LSVParam[PARAM::dEdt]];
                         }
-                        for ( p=p; p<_LSVParam[PARAM::ptnr]; ++p ) {
+                        for ( ; p<_LSVParam[PARAM::ptnr]; ++p ) {
                             vecMesPotential[p]=(double)( _LSVParam[PARAM::Ep] + ((double)p * MEASUREMENT::LSVstepE[_LSVParam[PARAM::dEdt]]) );
                             vecMesTime[p]=( timeCounter++ * MEASUREMENT::LSVtime[_LSVParam[PARAM::dEdt]] );
                         }
@@ -2636,7 +2636,7 @@ void EAQtData::setXAxis(int newtype)
             }
         } else {
             c = getCurves()->get(Act());
-            if ( c == NULL ) {
+            if ( c == nullptr ) {
                 this->_pUI->updateAll();
                 return;
             }
@@ -2871,7 +2871,7 @@ void EAQtData::exportToVOL(QString path)
     Curve* c;
     if (this->Act() >= 0) {
         c = _curves->get(_act);
-        if ( c == NULL) {
+        if ( c == nullptr) {
             _pUI->showMessageBox(tr("Could not find any curve to save."), tr("Error"));
             return;
         }
@@ -3037,7 +3037,7 @@ void EAQtData::exportToCSV(QString path)
     QByteArray eol = QByteArrayLiteral("\r\n");
     if (this->Act() >= 0) {
         c = _curves->get(_act);
-        if ( c == NULL) {
+        if ( c == nullptr) {
             _pUI->showMessageBox(tr("Could not find any curve to save."), tr("Error"));
             return;
         }
@@ -3100,13 +3100,13 @@ void EAQtData::exportToTXT(QString path)
     QByteArray eol = QByteArrayLiteral("\r\n");
     if (this->Act() >= 0) {
         c = _curves->get(_act);
-        if ( c == NULL) {
+        if ( c == nullptr) {
             _pUI->showMessageBox(tr("Could not find any curve to save."), tr("Error"));
             return;
         }
         sizeData = c->getYVector().size();
     } else if ( Act() == SELECT::all ) {
-        if ( (c=_curves->get(0)) == NULL ) {
+        if ( (c=_curves->get(0)) == nullptr ) {
             _pUI->showMessageBox(tr("Could not find any curve to save."), tr("Error"));
             return;
         }

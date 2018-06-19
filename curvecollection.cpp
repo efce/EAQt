@@ -37,7 +37,7 @@ CurveCollection::CurveCollection(CurveCollection* toCopy)
 CurveCollection::~CurveCollection()
 {
     for ( auto i=0; i<_vCurves.size(); ++i) {
-        if ( _vCurves[i] == NULL ) {
+        if ( _vCurves[i] == nullptr ) {
             continue;
         }
         delete this->_vCurves[i];
@@ -74,7 +74,7 @@ Curve* CurveCollection::get(TYPES::vectorindex_t index)
     if ( index < _vCurves.size() && index >= 0 ) {
         return _vCurves[index];
     } else {
-        return NULL;
+        return nullptr;
     }
 }
 
@@ -114,7 +114,7 @@ void CurveCollection::unset(TYPES::vectorindex_t index)
     */
     if ( this->_vCurves.size() > index
     && index >= 0 ) {
-        this->_vCurves[index] = NULL;
+        this->_vCurves[index] = nullptr;
         this->_vCurves.erase(this->_vCurves.begin()+index);
     } else {
         throw std::invalid_argument( "Curve index out of range" );
@@ -138,7 +138,7 @@ void CurveCollection::unset(Curve* curve)
 void CurveCollection::clear()
 {
     for ( TYPES::vectorindex_t i=0; i<_vCurves.size(); ++i) {
-        if ( _vCurves[i] == NULL ) {
+        if (_vCurves[i] == nullptr) {
             continue;
         }
         this->_pUI->PlotRemoveQCPCurve(this->_vCurves[i]->getPlot());
