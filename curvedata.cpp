@@ -162,49 +162,49 @@ double CurveData::getTime(TYPES::vectorindex_t index)
 	return this->_vTime[index];
 }
 
-void CurveData::setMesCurrent1Point(TYPES::vectorindex_t nr, int64_t value)
+void CurveData::setMesCurrent1Point(TYPES::vectorindex_t index, int64_t value)
 {
-	this->mesResCurrent1[nr] = value;
+    this->mesResCurrent1[index] = value;
 }
 
-void CurveData::addToMesCurrent1Point(TYPES::vectorindex_t nr, int64_t value)
+void CurveData::addToMesCurrent1Point(TYPES::vectorindex_t index, int64_t value)
 {
-    this->mesResCurrent1[nr] += value;
+    this->mesResCurrent1[index] += value;
 }
 
-void CurveData::setMesCurrent2Point(TYPES::vectorindex_t nr, int64_t value)
+void CurveData::setMesCurrent2Point(TYPES::vectorindex_t index, int64_t value)
 {
-	this->mesResCurrent2[nr] = value;
+    this->mesResCurrent2[index] = value;
 }
 
-void CurveData::addToMesCurrent2Point(TYPES::vectorindex_t nr, int64_t value)
+void CurveData::addToMesCurrent2Point(TYPES::vectorindex_t index, int64_t value)
 {
-    this->mesResCurrent2[nr] += value;
+    this->mesResCurrent2[index] += value;
 }
 
-void CurveData::setMesTimePoint(TYPES::vectorindex_t nr, int64_t value)
+void CurveData::setMesTimePoint(TYPES::vectorindex_t index, int64_t value)
 {
-	this->mesResTime[nr] = value;
+    this->mesResTime[index] = value;
 }
 
-void CurveData::addToMesTimePoint(TYPES::vectorindex_t nr, int64_t value)
+void CurveData::addToMesTimePoint(TYPES::vectorindex_t index, int64_t value)
 {
-    this->mesResTime[nr] += value;
+    this->mesResTime[index] += value;
 }
 
-int64_t CurveData::getMesTimePoint(TYPES::vectorindex_t nr)
+int64_t CurveData::getMesTimePoint(TYPES::vectorindex_t index)
 {
-    return this->mesResTime[nr];
+    return this->mesResTime[index];
 }
 
-int64_t CurveData::getMesCurrent1Point(TYPES::vectorindex_t nr)
+int64_t CurveData::getMesCurrent1Point(TYPES::vectorindex_t index)
 {
-    return this->mesResCurrent1[nr];
+    return this->mesResCurrent1[index];
 }
 
-int64_t CurveData::getMesCurrent2Point(TYPES::vectorindex_t nr)
+int64_t CurveData::getMesCurrent2Point(TYPES::vectorindex_t index)
 {
-    return this->mesResCurrent2[nr];
+    return this->mesResCurrent2[index];
 }
 
 void CurveData::allocateMesArray(TYPES::vectorindex_t numberOfFields, bool allocateTwoCurrent)

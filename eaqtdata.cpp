@@ -906,8 +906,7 @@ void EAQtData::deleteAllCurvesFromGraph()
 
 void EAQtData::ProcessPacketFromEA(const char* packet, bool nextPacketReady)
 {
-    uint8_t* RxBuf;
-    RxBuf = (uint8_t*)packet;
+    uint8_t* RxBuf = (uint8_t*)packet;
 
     int Cmd, i;
     int16_t work;
@@ -915,17 +914,17 @@ void EAQtData::ProcessPacketFromEA(const char* packet, bool nextPacketReady)
     int32_t DataLen;
     static int32_t twCounter;
     static int32_t ActSampl1, ActSampl2;
-    static int32_t previousPointNr, currentPointNr, previousCurveNr;
-    Curve* curve = nullptr;
-    int32_t currentCurveNr = 0;
+    static int32_t previousPointNum, currentPointNum, previousCurveNum;
+    Curve* mesCurve = nullptr;
+    int32_t currentCurveNum = 0;
 
     Cmd = RxBuf[0];
 
     switch (Cmd) {
     case EA2PC_RECORDS::calibPV:
         _IUE0 = ((uint16_t)RxBuf[2] | ((uint16_t)RxBuf[3]<<8));
-        previousPointNr = 0;
-        previousCurveNr =0;
+        previousPointNum = 0;
+        previousCurveNum = 0;
         ActSampl1 = 0;
         ActSampl2 = 0;
         _ctnrSQW = 6;
@@ -933,102 +932,102 @@ void EAQtData::ProcessPacketFromEA(const char* packet, bool nextPacketReady)
 
     case EA2PC_RECORDS::calibLSV:
         _IUE0 = ((uint16_t)RxBuf[2] | ((uint16_t)RxBuf[3]<<8));
-        previousPointNr = 0;
-        previousCurveNr =0;
+        previousPointNum = 0;
+        previousCurveNum =0;
         break;
 
     case EA2PC_RECORDS::recordPV:
         this->_endOfMes = RxBuf[1];
         DataLen = ((uint16_t)RxBuf[2] | ((uint16_t)RxBuf[3]<<8))-8;
-        currentPointNr = ((uint16_t)RxBuf[4] | ((uint16_t)RxBuf[5]<<8));
-        currentCurveNr = ((uint16_t)RxBuf[6] | ((uint16_t)RxBuf[7]<<8));
+        currentPointNum = ((uint16_t)RxBuf[4] | ((uint16_t)RxBuf[5]<<8));
+        currentCurveNum = ((uint16_t)RxBuf[6] | ((uint16_t)RxBuf[7]<<8));
 
         if ( this->_endOfMes ) {
             _measurementGo = 0;
         }
 
-        if ( currentPointNr != previousPointNr
-        || previousCurveNr != currentCurveNr ) {
+        if ( currentPointNum != previousPointNum
+        || previousCurveNum != currentCurveNum ) {
             ActSampl1 = 0;
             ActSampl2 = 0;
             twCounter = 0;
             _ctnrSQW = 6;	// nr ms w 1. i 2. próbkowaniu
-            this->MesUpdate(previousCurveNr, previousPointNr, nextPacketReady);
+            this->MesUpdate(previousCurveNum, previousPointNum, nextPacketReady);
         }
         i = MEASUREMENT::PVstartData; // == 6
-        curve = this->getMesCurves()->get(currentCurveNr);
+        mesCurve = this->getMesCurves()->get(currentCurveNum);
 
-        if (curve->Param(PARAM::method) != PARAM::method_sqw_osteryoung
-        && curve->Param(PARAM::method) != PARAM::method_lsv ) { // IMPULSOWE (nie SQW, nie LSV)
+        if (mesCurve->Param(PARAM::method) != PARAM::method_sqw_osteryoung
+        && mesCurve->Param(PARAM::method) != PARAM::method_lsv ) { // IMPULSOWE (nie SQW, nie LSV)
             while (DataLen > 0) {
                 work = ((uint16_t)RxBuf[i] | ((uint16_t)RxBuf[i+1]<<8));
                 workl = work;
                 twCounter++;
-                if (curve->Param(PARAM::nonaveragedsampling) != 0 ) {
+                if (mesCurve->Param(PARAM::nonaveragedsampling) != 0 ) {
                     // pomiar idzie dla tp i tw, robimy cos innego
-                    curve->addProbingDataPoint(this->CountResultPV(60L*workl));
-                    if ( twCounter <= curve->Param(PARAM::tw) ) {
+                    mesCurve->addProbingDataPoint(this->CountResultPV(workl));
+                    if ( twCounter <= mesCurve->Param(PARAM::tw) ) {
                         // jestesmy w trakcie tw
                         i+= 2;
                         DataLen -=2 ;
                         continue;
                     }
-                    if (curve->Param(PARAM::sampl) == PARAM::sampl_double ) {
-                        if (( twCounter <= 2*curve->Param(PARAM::tw)+ curve->Param(PARAM::tp))
-                        && ( twCounter > curve->Param(PARAM::tw)+ curve->Param(PARAM::tp))) {
+                    if (mesCurve->Param(PARAM::sampl) == PARAM::sampl_double ) {
+                        if (( twCounter <= 2*mesCurve->Param(PARAM::tw)+ mesCurve->Param(PARAM::tp))
+                        && ( twCounter > mesCurve->Param(PARAM::tw)+ mesCurve->Param(PARAM::tp))) {
                             // jestesmy w trakcie tw
                             i+= 2;
                             DataLen -=2 ;
                             continue;
                         }
                     }
-                    if ( (curve->Param(PARAM::sampl) == PARAM::sampl_double)
-                    &&   (ActSampl1 < curve->Param(PARAM::tp)) ) {
-                        curve->addToMesCurrent1Point(currentPointNr, workl);
+                    if ( (mesCurve->Param(PARAM::sampl) == PARAM::sampl_double)
+                    &&   (ActSampl1 < mesCurve->Param(PARAM::tp)) ) {
+                        mesCurve->addToMesCurrent1Point(currentPointNum, workl);
                         i+= 2;
                         ActSampl1 ++;
                     } else {
-                        curve->addToMesCurrent2Point(currentPointNr, workl);
+                        mesCurve->addToMesCurrent2Point(currentPointNum, workl);
                         i+= 2;
                         ActSampl2 ++;
-                        curve->addToMesTimePoint(currentPointNr, 1);
+                        mesCurve->addToMesTimePoint(currentPointNum, 1);
                     }
                 } else {
-                    if ( (curve->Param(PARAM::sampl) == PARAM::sampl_double)
-                    &&   (ActSampl1 < curve->Param(PARAM::tp)) ) {
-                        curve->addToMesCurrent1Point(currentPointNr, workl);
+                    if ( (mesCurve->Param(PARAM::sampl) == PARAM::sampl_double)
+                    &&   (ActSampl1 < mesCurve->Param(PARAM::tp)) ) {
+                        mesCurve->addToMesCurrent1Point(currentPointNum, workl);
                         i+= 2;
                         ActSampl1 ++;
                     } else {
-                        curve->addToMesCurrent2Point(currentPointNr,  workl);
+                        mesCurve->addToMesCurrent2Point(currentPointNum,  workl);
                         i+= 2;
                         ActSampl2 ++;
-                        curve->addToMesTimePoint(currentPointNr, 1);
+                        mesCurve->addToMesTimePoint(currentPointNum, 1);
                     }
                 }
                 DataLen -= 2;
             }
-        } else if (curve->Param(PARAM::method) == PARAM::method_sqw_osteryoung )  {
+        } else if (mesCurve->Param(PARAM::method) == PARAM::method_sqw_osteryoung )  {
             while (DataLen > 0) {
                 work = ((uint16_t)RxBuf[i] | ((uint16_t)RxBuf[i+1]<<8));
                 workl = work;
-                if ( (curve->Param(PARAM::sampl) == PARAM::sampl_double)
-                &&   (ActSampl1 < curve->Param(PARAM::tp))  ) {
-                    curve->addToMesCurrent1Point(currentPointNr,  workl);
+                if ( (mesCurve->Param(PARAM::sampl) == PARAM::sampl_double)
+                &&   (ActSampl1 < mesCurve->Param(PARAM::tp))  ) {
+                    mesCurve->addToMesCurrent1Point(currentPointNum,  workl);
                     i+= 2;
                     ActSampl1 ++;
                 } else {
                     if ((_ctnrSQW == 6) || (_ctnrSQW == 4) || (_ctnrSQW == 2)) {
-                        curve->addToMesCurrent2Point(currentPointNr,  workl/3);
+                        mesCurve->addToMesCurrent2Point(currentPointNum,  workl/3);
                     } else {
-                        curve->addToMesCurrent2Point(currentPointNr,  workl/3);
+                        mesCurve->addToMesCurrent2Point(currentPointNum,  workl/3);
                     }
                     if (_ctnrSQW == 6) {
-                        curve->addToMesTimePoint(currentPointNr, 1);
+                        mesCurve->addToMesTimePoint(currentPointNum, 1);
                     }
                     i+= 2;
                     ActSampl2 ++;
-                    if ( ActSampl2 == curve->Param(PARAM::tp) ) {
+                    if ( ActSampl2 == mesCurve->Param(PARAM::tp) ) {
                         ActSampl2 = 0;
                         _ctnrSQW--;
                     }
@@ -1037,8 +1036,8 @@ void EAQtData::ProcessPacketFromEA(const char* packet, bool nextPacketReady)
             }
         }
 
-        previousPointNr = currentPointNr;
-        previousCurveNr = currentCurveNr;
+        previousPointNum = currentPointNum;
+        previousCurveNum = currentCurveNum;
 
         if ( this->_endOfMes ) {
             this->MesAfter();
@@ -1055,23 +1054,23 @@ void EAQtData::ProcessPacketFromEA(const char* packet, bool nextPacketReady)
         }
 
         i = MEASUREMENT::LSVstartData; // == 8
-        curve = this->getMesCurves()->get(currentCurveNr);
+        mesCurve = this->getMesCurves()->get(currentCurveNum);
 
         while ( DataLen > 0 ) {
-            currentCurveNr = ((uint16_t)RxBuf[i] | ((uint16_t)RxBuf[i+1]<<8));
+            currentCurveNum = ((uint16_t)RxBuf[i] | ((uint16_t)RxBuf[i+1]<<8));
             i+= 2;
-            currentPointNr = ((uint16_t)RxBuf[i] | ((uint16_t)RxBuf[i+1]<<8));
+            currentPointNum = ((uint16_t)RxBuf[i] | ((uint16_t)RxBuf[i+1]<<8));
             i+= 2;
             workl = ((int32_t)RxBuf[i] | ((int32_t)RxBuf[i+1]<<8) | ((int32_t)RxBuf[i+2]<<16) | ((int32_t)RxBuf[i+3]<<24));
             i += 4;
             DataLen -= 8;
             if ( firstCycle ) {
-                curve->addToMesTimePoint(currentPointNr, _samplingTime);
-            } else if (curve->getMesTimePoint(currentPointNr) == 0) {
-                curve->addToMesTimePoint(currentPointNr, _samplingTime);
+                mesCurve->addToMesTimePoint(currentPointNum, _samplingTime);
+            } else if (mesCurve->getMesTimePoint(currentPointNum) == 0) {
+                mesCurve->addToMesTimePoint(currentPointNum, _samplingTime);
             }
-            curve->addToMesCurrent1Point(currentPointNr, workl);
-            this->MesUpdate(currentCurveNr,currentPointNr, nextPacketReady);
+            mesCurve->addToMesCurrent1Point(currentPointNum, workl);
+            this->MesUpdate(currentCurveNum,currentPointNum, nextPacketReady);
         }
         if ( this->_endOfMes ) {
             this->MesAfter();
@@ -1804,13 +1803,13 @@ void EAQtData::MesUpdate(int32_t nNrOfMesCurve, int32_t nPointFromDevice, bool f
             // powrot cyklicznej ...
             if ( mesCurve->Param(PARAM::method) == PARAM::method_sqw_classic ) {
                 res =  this->CountResultPV(
-                                (60*(mesCurve->getMesCurrent1Point(nPointFromDevice)
+                                ((mesCurve->getMesCurrent1Point(nPointFromDevice)
                                       - mesCurve->getMesCurrent2Point(nPointFromDevice))
                                  / mesCurve->getMesTimePoint(nPointFromDevice))
                                 );
             } else {
                 res =  this->CountResultPV(
-                                (60*(mesCurve->getMesCurrent2Point(nPointFromDevice)
+                                ((mesCurve->getMesCurrent2Point(nPointFromDevice)
                                       - mesCurve->getMesCurrent1Point(nPointFromDevice))
                                  / mesCurve->getMesTimePoint(nPointFromDevice))
                                 );
@@ -1822,13 +1821,13 @@ void EAQtData::MesUpdate(int32_t nNrOfMesCurve, int32_t nPointFromDevice, bool f
         } else {
             if ( mesCurve->Param(PARAM::method) == PARAM::method_sqw_classic ) {
                 res =  this->CountResultPV(
-                                (60*(mesCurve->getMesCurrent1Point(nPointFromDevice)
+                                ((mesCurve->getMesCurrent1Point(nPointFromDevice)
                                       - mesCurve->getMesCurrent2Point(nPointFromDevice))
                                  / mesCurve->getMesTimePoint(nPointFromDevice))
                                 );
             } else {
                 res =  this->CountResultPV(
-                                (60*(mesCurve->getMesCurrent2Point(nPointFromDevice)
+                                ((mesCurve->getMesCurrent2Point(nPointFromDevice)
                                       - mesCurve->getMesCurrent1Point(nPointFromDevice))
                                  / mesCurve->getMesTimePoint(nPointFromDevice))
                                 );
@@ -1845,7 +1844,7 @@ void EAQtData::MesUpdate(int32_t nNrOfMesCurve, int32_t nPointFromDevice, bool f
              */
             _prepareEstart = false;
             double res1 =  this->CountResultLSV(
-                                (60 * mesCurve->getMesCurrent1Point(nPointFromDevice)
+                                (mesCurve->getMesCurrent1Point(nPointFromDevice)
                                  / mesCurve->getMesTimePoint(nPointFromDevice))
                             );
             for ( int i = 0; i<(mesCurve->Param(PARAM::ptnr) - this->_ptnrFromEss); ++i ) {
@@ -1857,7 +1856,7 @@ void EAQtData::MesUpdate(int32_t nNrOfMesCurve, int32_t nPointFromDevice, bool f
         }
         if ( nNrOfMesCurve % 2 == 0 ) {
             res =  this->CountResultLSV(
-                            (60 * mesCurve->getMesCurrent1Point(nPointFromDevice)
+                            (mesCurve->getMesCurrent1Point(nPointFromDevice)
                              / mesCurve->getMesTimePoint(nPointFromDevice))
                             );
             mesCurve->addDataPoint(
@@ -1866,7 +1865,7 @@ void EAQtData::MesUpdate(int32_t nNrOfMesCurve, int32_t nPointFromDevice, bool f
             );
         } else {
             res =  this->CountResultLSV(
-                            (60 * mesCurve->getMesCurrent1Point(nPointFromDevice)
+                            (mesCurve->getMesCurrent1Point(nPointFromDevice)
                              / mesCurve->getMesTimePoint(nPointFromDevice))
                             );
             mesCurve->addDataPoint(
