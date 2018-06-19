@@ -80,10 +80,12 @@ void EAQtNetwork::connectionError(QAbstractSocket::SocketError error)
 
 int EAQtNetwork::sendToEA(const char* TxBuf)
 {
-    return static_cast<int>(this->_socket->write(
+    return static_cast<int>(
+        this->_socket->write(
                 TxBuf,
                 static_cast<qint64>(NETWORK::TxBufLength)
-           ));
+           )
+    );
 }
 
 

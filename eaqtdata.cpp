@@ -916,6 +916,7 @@ void EAQtData::ProcessPacketFromEA(char* packet, bool nextPacketReady)
     static int32_t twCounter;
     static int32_t ActSampl1, ActSampl2;
     static int32_t previousPointNr, currentPointNr, previousCurveNr;
+    Curve* curve = nullptr;
     int32_t currentCurveNr = 0;
 
     Cmd = RxBuf[0];
@@ -955,78 +956,79 @@ void EAQtData::ProcessPacketFromEA(char* packet, bool nextPacketReady)
             this->MesUpdate(previousCurveNr, previousPointNr, nextPacketReady);
         }
         i = MEASUREMENT::PVstartData; // == 6
+        curve = this->getMesCurves()->get(currentCurveNr);
 
-        if (this->getMesCurves()->get(currentCurveNr)->Param(PARAM::method) != PARAM::method_sqw_osteryoung
-        && this->getMesCurves()->get(currentCurveNr)->Param(PARAM::method) != PARAM::method_lsv ) { // IMPULSOWE (nie SQW, nie LSV)
+        if (curve->Param(PARAM::method) != PARAM::method_sqw_osteryoung
+        && curve->Param(PARAM::method) != PARAM::method_lsv ) { // IMPULSOWE (nie SQW, nie LSV)
             while (DataLen > 0) {
                 work = ((uint16_t)RxBuf[i] | ((uint16_t)RxBuf[i+1]<<8));
                 workl = work;
                 twCounter++;
-                if ( this->getMesCurves()->get(currentCurveNr)->Param(PARAM::nonaveragedsampling) != 0 ) {
+                if (curve->Param(PARAM::nonaveragedsampling) != 0 ) {
                     // pomiar idzie dla tp i tw, robimy cos innego
-                    this->getMesCurves()->get(currentCurveNr)->addProbingDataPoint(this->CountResultPV(60L*workl));
-                    if ( twCounter <= this->getMesCurves()->get(currentCurveNr)->Param(PARAM::tw) ) {
+                    curve->addProbingDataPoint(this->CountResultPV(60L*workl));
+                    if ( twCounter <= curve->Param(PARAM::tw) ) {
                         // jestesmy w trakcie tw
                         i+= 2;
                         DataLen -=2 ;
                         continue;
                     }
-                    if ( this->getMesCurves()->get(currentCurveNr)->Param(PARAM::sampl) == PARAM::sampl_double ) {
-                        if (( twCounter <= 2*this->getMesCurves()->get(currentCurveNr)->Param(PARAM::tw)+ this->getMesCurves()->get(currentCurveNr)->Param(PARAM::tp))
-                                && ( twCounter > this->getMesCurves()->get(currentCurveNr)->Param(PARAM::tw)+ this->getMesCurves()->get(currentCurveNr)->Param(PARAM::tp))) {
+                    if (curve->Param(PARAM::sampl) == PARAM::sampl_double ) {
+                        if (( twCounter <= 2*curve->Param(PARAM::tw)+ curve->Param(PARAM::tp))
+                        && ( twCounter > curve->Param(PARAM::tw)+ curve->Param(PARAM::tp))) {
                             // jestesmy w trakcie tw
                             i+= 2;
                             DataLen -=2 ;
                             continue;
                         }
                     }
-                    if ( (this->getMesCurves()->get(currentCurveNr)->Param(PARAM::sampl) == PARAM::sampl_double)
-                    &&   (ActSampl1 < this->getMesCurves()->get(currentCurveNr)->Param(PARAM::tp)) ) {
-                        this->getMesCurves()->get(currentCurveNr)->addToMesCurrent1Point(currentPointNr, workl);
+                    if ( (curve->Param(PARAM::sampl) == PARAM::sampl_double)
+                    &&   (ActSampl1 < curve->Param(PARAM::tp)) ) {
+                        curve->addToMesCurrent1Point(currentPointNr, workl);
                         i+= 2;
                         ActSampl1 ++;
                     } else {
-                        this->getMesCurves()->get(currentCurveNr)->addToMesCurrent2Point(currentPointNr, workl);
+                        curve->addToMesCurrent2Point(currentPointNr, workl);
                         i+= 2;
                         ActSampl2 ++;
-                        this->getMesCurves()->get(currentCurveNr)->addToMesTimePoint(currentPointNr, 1);
+                        curve->addToMesTimePoint(currentPointNr, 1);
                     }
                 } else {
-                    if ( (this->getMesCurves()->get(currentCurveNr)->Param(PARAM::sampl) == PARAM::sampl_double)
-                    &&   (ActSampl1 < this->getMesCurves()->get(currentCurveNr)->Param(PARAM::tp)) ) {
-                        this->getMesCurves()->get(currentCurveNr)->addToMesCurrent1Point(currentPointNr, workl);
+                    if ( (curve->Param(PARAM::sampl) == PARAM::sampl_double)
+                    &&   (ActSampl1 < curve->Param(PARAM::tp)) ) {
+                        curve->addToMesCurrent1Point(currentPointNr, workl);
                         i+= 2;
                         ActSampl1 ++;
                     } else {
-                        this->getMesCurves()->get(currentCurveNr)->addToMesCurrent2Point(currentPointNr,  workl);
+                        curve->addToMesCurrent2Point(currentPointNr,  workl);
                         i+= 2;
                         ActSampl2 ++;
-                        this->getMesCurves()->get(currentCurveNr)->addToMesTimePoint(currentPointNr, 1);
+                        curve->addToMesTimePoint(currentPointNr, 1);
                     }
                 }
                 DataLen -= 2;
             }
-        } else if (this->getMesCurves()->get(currentCurveNr)->Param(PARAM::method) == PARAM::method_sqw_osteryoung )  {
+        } else if (curve->Param(PARAM::method) == PARAM::method_sqw_osteryoung )  {
             while (DataLen > 0) {
                 work = ((uint16_t)RxBuf[i] | ((uint16_t)RxBuf[i+1]<<8));
                 workl = work;
-                if ( (this->getMesCurves()->get(currentCurveNr)->Param(PARAM::sampl) == PARAM::sampl_double)
-                &&   (ActSampl1 < this->getMesCurves()->get(currentCurveNr)->Param(PARAM::tp))  ) {
-                    this->getMesCurves()->get(currentCurveNr)->addToMesCurrent1Point(currentPointNr,  workl);
+                if ( (curve->Param(PARAM::sampl) == PARAM::sampl_double)
+                &&   (ActSampl1 < curve->Param(PARAM::tp))  ) {
+                    curve->addToMesCurrent1Point(currentPointNr,  workl);
                     i+= 2;
                     ActSampl1 ++;
                 } else {
                     if ((_ctnrSQW == 6) || (_ctnrSQW == 4) || (_ctnrSQW == 2)) {
-                        this->getMesCurves()->get(currentCurveNr)->addToMesCurrent2Point(currentPointNr,  workl/3);
+                        curve->addToMesCurrent2Point(currentPointNr,  workl/3);
                     } else {
-                        this->getMesCurves()->get(currentCurveNr)->addToMesCurrent2Point(currentPointNr,  workl/3);
+                        curve->addToMesCurrent2Point(currentPointNr,  workl/3);
                     }
                     if (_ctnrSQW == 6) {
-                        this->getMesCurves()->get(currentCurveNr)->addToMesTimePoint(currentPointNr, 1);
+                        curve->addToMesTimePoint(currentPointNr, 1);
                     }
                     i+= 2;
                     ActSampl2 ++;
-                    if ( ActSampl2 == this->getMesCurves()->get(currentCurveNr)->Param(PARAM::tp) ) {
+                    if ( ActSampl2 == curve->Param(PARAM::tp) ) {
                         ActSampl2 = 0;
                         _ctnrSQW--;
                     }
@@ -1053,6 +1055,7 @@ void EAQtData::ProcessPacketFromEA(char* packet, bool nextPacketReady)
         }
 
         i = MEASUREMENT::LSVstartData; // == 8
+        curve = this->getMesCurves()->get(currentCurveNr);
 
         while ( DataLen > 0 ) {
             currentCurveNr = ((uint16_t)RxBuf[i] | ((uint16_t)RxBuf[i+1]<<8));
@@ -1063,11 +1066,11 @@ void EAQtData::ProcessPacketFromEA(char* packet, bool nextPacketReady)
             i += 4;
             DataLen -= 8;
             if ( firstCycle ) {
-                this->getMesCurves()->get(currentCurveNr)->addToMesTimePoint(currentPointNr, _samplingTime);
-            } else if (this->getMesCurves()->get(currentCurveNr)->getMesTimePoint(currentPointNr) == 0) {
-                this->getMesCurves()->get(currentCurveNr)->addToMesTimePoint(currentPointNr, _samplingTime);
+                curve->addToMesTimePoint(currentPointNr, _samplingTime);
+            } else if (curve->getMesTimePoint(currentPointNr) == 0) {
+                curve->addToMesTimePoint(currentPointNr, _samplingTime);
             }
-            this->getMesCurves()->get(currentCurveNr)->addToMesCurrent1Point(currentPointNr, workl);
+            curve->addToMesCurrent1Point(currentPointNr, workl);
             this->MesUpdate(currentCurveNr,currentPointNr, nextPacketReady);
         }
         if ( this->_endOfMes ) {
