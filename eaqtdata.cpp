@@ -904,7 +904,7 @@ void EAQtData::deleteAllCurvesFromGraph()
     }
 }
 
-void EAQtData::ProcessPacketFromEA(char* packet, bool nextPacketReady)
+void EAQtData::ProcessPacketFromEA(const char* packet, bool nextPacketReady)
 {
     uint8_t* RxBuf;
     RxBuf = (uint8_t*)packet;

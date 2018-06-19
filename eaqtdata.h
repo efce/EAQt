@@ -152,7 +152,7 @@ public:
     const QVector<int16_t>& getPotentialProgram();
     void setPotentialProgram(QVector<int16_t> pp);
 
-    void ProcessPacketFromEA(char* packet, bool nextPacketReady);
+    void ProcessPacketFromEA(const char* packet, bool nextPacketReady);
     void sendAccessories();
     bool sendTestCGMDE();
     void sendTestCGMDEStop();
