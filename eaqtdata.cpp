@@ -1104,7 +1104,7 @@ void EAQtData::ProcessPacketFromEA(const char* packet, bool nextPacketReady)
 
 bool EAQtData::isMeasurement()
 {
-    return (bool)_measurementGo;
+    return static_cast<bool>(_measurementGo);
 }
 
 // --------------------------------------------------------------------------------------
@@ -1898,6 +1898,8 @@ void EAQtData::MesUpdate(int32_t nNrOfMesCurve, int32_t nPointFromDevice, bool f
 double EAQtData::CountResultLSV(int64_t ResI)
 {
     static double dResI;
+    ResI *= 60L;
+
     Curve* c = getMesCurves()->get(0);
 
     ResI -= this->_IUE0;
@@ -1917,6 +1919,8 @@ double EAQtData::CountResultLSV(int64_t ResI)
 double EAQtData::CountResultPV(int64_t ResI)
 {
     static double dResI;
+    ResI *= 60L;
+
     Curve* c = getMesCurves()->get(0);
 
     if (c->Param(PARAM::method) == PARAM::method_sqw_osteryoung ) {
