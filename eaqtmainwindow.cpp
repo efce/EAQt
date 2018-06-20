@@ -724,6 +724,7 @@ void EAQtMainWindow::MeasurementUpdate(int32_t curveNr, int32_t pointNr)
                     curve->getPotentialVector()->mid(0,curve->getNrOfDataPoints())
                     , curve->getCurrentVector()->mid(0,curve->getNrOfDataPoints())
                 );
+                curve->wasModified(false);
             }
             ++i;
         }
@@ -736,6 +737,7 @@ void EAQtMainWindow::MeasurementUpdate(int32_t curveNr, int32_t pointNr)
                     curve->getTimeVector()->mid(0,curve->getNrOfDataPoints())
                     ,curve->getCurrentVector()->mid(0,curve->getNrOfDataPoints())
                 );
+                curve->wasModified(false);
             }
             ++i;
         }
@@ -749,6 +751,7 @@ void EAQtMainWindow::MeasurementUpdate(int32_t curveNr, int32_t pointNr)
                         curve->getProbingDataPointNumbers()->mid(0,curve->getNumberOfProbingPoints())
                         ,curve->getProbingData()->mid(0,curve->getNumberOfProbingPoints())
                     );
+                    curve->wasModified(false);
                 }
             }
             ++i;
