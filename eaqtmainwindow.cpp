@@ -226,7 +226,7 @@ void EAQtMainWindow::TableRegenerate()
     int i = 0;
     QFont striked = _tableCurveMain->font();
     striked.setStrikeOut(true);
-    while ( (curve=this->_pEAQtData->getCurves()->get(i)) != NULL ) {
+    while ( (curve=this->_pEAQtData->getCurves()->get(i)) != nullptr ) {
         QTableWidgetItem *qtifile = new QTableWidgetItem(curve->FName());
         qtifile->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
         qtifile->setSelected(false);
@@ -255,7 +255,7 @@ void EAQtMainWindow::PlotRegenerate()
     this->_plotMain->setUpdatesEnabled(false);
     this->_plotMain->blockSignals(true);
     Curve* curve;
-    while ( (curve=this->_pEAQtData->getCurves()->get(i)) != NULL ) {
+    while ( (curve=this->_pEAQtData->getCurves()->get(i)) != nullptr ) {
         curve->getPlot()->setData(curve->getXVector(), curve->getYVector());
         curve->getPlot()->setPen(QPen(COLOR::regular));
         curve->getPlot()->setLayer(_plotLayers.NonActive);
@@ -292,7 +292,7 @@ void EAQtMainWindow::PlotDrawSelection()
     this->_plotMain->setUpdatesEnabled(false);
     this->_plotMain->blockSignals(true);
     Curve* curve;
-    while ( (curve=this->_pEAQtData->getCurves()->get(i)) != NULL ) {
+    while ( (curve=this->_pEAQtData->getCurves()->get(i)) != nullptr ) {
         if ( this->_pEAQtData->Act() == i
         || this->_pEAQtData->Act() == SELECT::all ) {
             curve->getPlot()->setLayer(_plotLayers.Active);
@@ -323,7 +323,7 @@ void EAQtMainWindow::TableDrawSelection()
     if ( this->_pEAQtData->Act() == SELECT::all ) {
         this->_tableCurveMain->selectAll();
     } else {
-        while ( (curve=this->_pEAQtData->getCurves()->get(i)) != NULL ) {
+        while ( (curve=this->_pEAQtData->getCurves()->get(i)) != nullptr ) {
             if ( i == this->_pEAQtData->Act() ) {
                 this->_tableCurveMain->item(i,0)->setSelected(true);
                 this->_tableCurveMain->item(i,1)->setSelected(true);
@@ -350,7 +350,7 @@ void EAQtMainWindow::PlotSelectionChanged()
 
     foreach (QCPAbstractPlottable* gg, ql) {
         int i = 0;
-        while ( (curve=this->_pEAQtData->getCurves()->get(i)) != NULL ) {
+        while ( (curve=this->_pEAQtData->getCurves()->get(i)) != nullptr ) {
             if ( gg == curve->getPlot() ) {
                 selectedGraphID = i;
                 break;
@@ -718,7 +718,7 @@ void EAQtMainWindow::MeasurementUpdate(int32_t curveNr, int32_t pointNr)
 
     switch ( this->_pEAQtData->getXAxis() ) {
     case XAXIS::potential:
-        while ( (curve=this->_pEAQtData->getMesCurves()->get(i)) != NULL ) {
+        while ( (curve=this->_pEAQtData->getMesCurves()->get(i)) != nullptr ) {
             if ( curve->wasModified() ) {
                 curve->getPlot()->setData(
                     curve->getPotentialVector()->mid(0,curve->getNrOfDataPoints())
@@ -730,7 +730,7 @@ void EAQtMainWindow::MeasurementUpdate(int32_t curveNr, int32_t pointNr)
         break;
 
     case XAXIS::time:
-        while ( (curve=this->_pEAQtData->getMesCurves()->get(i)) != NULL ) {
+        while ( (curve=this->_pEAQtData->getMesCurves()->get(i)) != nullptr ) {
             if ( curve->wasModified() ) {
                 curve->getPlot()->setData(
                     curve->getTimeVector()->mid(0,curve->getNrOfDataPoints())
@@ -742,7 +742,7 @@ void EAQtMainWindow::MeasurementUpdate(int32_t curveNr, int32_t pointNr)
         break;
 
     case XAXIS::nonaveraged:
-        while ( (curve=this->_pEAQtData->getMesCurves()->get(i)) != NULL ) {
+        while ( (curve=this->_pEAQtData->getMesCurves()->get(i)) != nullptr ) {
             if ( curve->wasModified() ) {
                 if ( curve->getNumberOfProbingPoints() > 0 ) {
                     curve->getPlot()->setData(
@@ -831,7 +831,7 @@ void EAQtMainWindow::ComboOnAxisSelected(int v)
 void EAQtMainWindow::paramCopy()
 {
     Curve* c = _pEAQtData->getCurves()->get(_pEAQtData->Act());
-    if ( c != NULL ) {
+    if ( c != nullptr ) {
         if ( c->Param(PARAM::method) == PARAM::method_lsv ) {
             for ( int i=0; i<PARAM::PARAMNUM; ++i ) {
                 this->_pEAQtData->ParamLSV(i,c->Param(i));
@@ -1142,7 +1142,7 @@ void EAQtMainWindow::showSaveCurve()
         uint i = 0;
         int err;
         Curve* curve;
-        while ( (curve=this->_pEAQtData->getCurves()->get(i)) != NULL ) {
+        while ( (curve=this->_pEAQtData->getCurves()->get(i)) != nullptr ) {
             err = this->_pEAQtData->safeAppend(savePath, curve);
             if ( err != 0 ) {
                 showMessageBox(tr("There was an error while saving the curves, please try again."),tr("Error."));

@@ -395,7 +395,7 @@ void EAQtData::Act(TYPES::vectorindex_t toAct)
     || toAct == SELECT::all ) {
         _act = toAct;
         Curve* c = getCurves()->get(_act);
-        if ( c != NULL ) {
+        if ( c != nullptr ) {
             setCurrentRange(c->Param(PARAM::crange), c->Param(PARAM::electr));
             if ( getXAxis() == XAXIS::potential ) {
                 _pUI->PlotSetInverted( (c->Param(PARAM::Ek) < c->Param(PARAM::Ep)) );
@@ -861,7 +861,7 @@ void EAQtData::deleteActiveCurveFromGraph()
     if ( this->Act() == SELECT::all ) {
         this->undoPrepare();
         this->deleteAllCurvesFromGraph();
-    } else if ( this->Act() >= 0 && this->getCurves()->get(this->Act()) != NULL ) {
+    } else if ( this->Act() >= 0 && this->getCurves()->get(this->Act()) != nullptr ) {
         this->undoPrepare();
         this->getCurves()->remove(this->Act());
         this->Act(SELECT::none);
@@ -871,7 +871,7 @@ void EAQtData::deleteActiveCurveFromGraph()
 
 void EAQtData::deleteNonactiveCurvesFromGraph()
 {
-    if ( this->getCurves()->get(this->Act()) != NULL ) {
+    if ( this->getCurves()->get(this->Act()) != nullptr ) {
         this->undoPrepare();
         Curve *c = this->getCurves()->get(this->Act());
         this->getCurves()->unset(this->Act());
@@ -1774,7 +1774,7 @@ void EAQtData::MesUpdate(int32_t nNrOfMesCurve, int32_t nPointFromDevice, bool f
         this->_pUI->MeasurementSetup();
 
         int ic = 0;
-        while ( getMesCurves()->get(ic) != NULL ) {
+        while ( getMesCurves()->get(ic) != nullptr ) {
             if ( !getMesCurves()->get(ic)->hasPlot() ) {
                 getMesCurves()->get(ic)->setPlot(this->_pUI->PlotAddQCPCurve());
                 getMesCurves()->get(ic)->changeToMesPlot();
@@ -2107,7 +2107,7 @@ int EAQtData::MesSaveAll(QString UserCName, QString UserFName, QString UserComme
 
 
     int num = 0;
-    while ( this->getMesCurves()->get(num) != NULL ) {
+    while ( this->getMesCurves()->get(num) != nullptr ) {
         this->getMesCurves()->get(num)->setDate();
         if ( this->getMesCurves()->get(num)->Param(PARAM::electr) == PARAM::electr_multi ) {
             // wieloelektrodowy
@@ -2168,7 +2168,7 @@ int EAQtData::MesSaveAll(QString UserCName, QString UserFName, QString UserComme
     }
 
     num=0;
-    while ( getMesCurves()->get(num) != NULL ) {
+    while ( getMesCurves()->get(num) != nullptr ) {
         if ( (err = safeAppend(getMesCurves()->get(num)->FName(), getMesCurves()->get(num))) < 0 ) {
             //AfxMessageBox(IDS_info6, MB_OK);
             return -1;
@@ -2177,7 +2177,7 @@ int EAQtData::MesSaveAll(QString UserCName, QString UserFName, QString UserComme
     }
 
 
-    while ( getMesCurves()->get(0) != NULL ) {
+    while ( getMesCurves()->get(0) != nullptr ) {
         TYPES::vectorindex_t index;
         try {
             index = this->getCurves()->append(this->getMesCurves()->get(0));
@@ -2631,7 +2631,7 @@ void EAQtData::setXAxis(int newtype)
     } else {
         Curve* c;
         if ( _measurementGo ) {
-            if ( getMesCurves()->get(0) != NULL ) {
+            if ( getMesCurves()->get(0) != nullptr ) {
                 c = getMesCurves()->get(0);
             } else {
                 return;
@@ -2884,7 +2884,7 @@ void EAQtData::exportToVOL(QString path)
     } else {
         c = _curves->get(0);
         int i = 0;
-        while ((c=_curves->get(i)) != NULL) {
+        while ((c=_curves->get(i)) != nullptr) {
             ++i;
             if (c->Param(PARAM::ptnr) > 1000) {
                 _pUI->showMessageBox(tr("Maximum number of points per curve in vol file is 1000."), tr("Error"));
@@ -2919,7 +2919,7 @@ void EAQtData::exportToVOL(QString path)
         std::string name;
         name.append(10, '\0');
         c = _curves->get(i);
-        if ( c != NULL ) {
+        if ( c != nullptr ) {
             std::string str_name = c->CName().toStdString();
             for (uint ii=0; ii<str_name.length(); ++ii) {
                 if (ii == 10) {
@@ -2990,7 +2990,7 @@ QByteArray EAQtData::exportToVOLCurve(Curve *c)
     QByteArray ba;
     std::string name;
     name.append(10, '\0');
-    if ( c != NULL ) {
+    if ( c != nullptr ) {
         std::string str_name = c->CName().toStdString();
         for (uint ii=0; ii<str_name.length(); ++ii) {
             if (ii == 10) {
@@ -3203,7 +3203,7 @@ void EAQtData::undoExecute()
         _curves->clear();
         delete _curves;
         _curves = undoStruct._curves;
-        undoStruct._curves = nullptr;
+        undoStruct._curves = NULL;
         for ( int i=0; i<_curves->count();++i) {
             _curves->get(i)->setPlot(_pUI->PlotAddQCPCurve());
         }

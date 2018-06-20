@@ -245,13 +245,13 @@ void EAQtAdvancedSmoothDialog::apply()
                 Curve *c;
                 for ( int32_t i = 0; i<cc->count(); ++i) {
                     c = cc->get(i);
-                    if ( c != NULL ) {
+                    if ( c != nullptr ) {
                         trySG(c,span,order);
                     }
                 }
             } else {
                 Curve *c = EAQtData::getInstance().getCurves()->get(EAQtData::getInstance().Act());
-                if ( c != NULL ) {
+                if ( c != nullptr ) {
                 trySG(c, span, order);
                 }
             }
@@ -265,13 +265,13 @@ void EAQtAdvancedSmoothDialog::apply()
                 Curve *c;
                 for ( int32_t i = 0; i<cc->count(); ++i) {
                     c = cc->get(i);
-                    if ( c != NULL ) {
+                    if ( c != nullptr ) {
                         tryMedian(c, 5);
                     }
                 }
             } else {
                 Curve *c = EAQtData::getInstance().getCurves()->get(EAQtData::getInstance().Act());
-                if ( c != NULL ) {
+                if ( c != nullptr ) {
                     tryMedian(c, 5);
                 }
             }
