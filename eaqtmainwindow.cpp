@@ -209,7 +209,7 @@ void EAQtMainWindow::updateAll(bool rescale)
     this->TableDrawSelection();
     this->PlotDrawSelection();
     if ( rescale ) {
-        PlotRescaleAxes();
+        PlotRescaleAxes(false);
     } else {
         PlotReplot();
     }
@@ -611,38 +611,64 @@ void EAQtMainWindow::PlotRescaleAxes(bool manual)
         _plotMain->replot();
     } else {
          /*
-         * Manual rescaling:
+         * Manual measurement rescaling:
          */
-        CurveCollection* cc = _pEAQtData->getCurves();
+        CurveCollection* cc = _pEAQtData->getMesCurves();
         if ( cc->count() > 0 ) {
             int32_t sizecc = cc->count();
-            double minx = *std::min_element(cc->get(0)->getXVector().constBegin(),cc->get(0)->getXVector().constEnd());
-            double maxx = *std::max_element(cc->get(0)->getXVector().constBegin(),cc->get(0)->getXVector().constEnd());
-            double miny = *std::min_element(cc->get(0)->getYVector().constBegin(),cc->get(0)->getYVector().constEnd());
-            double maxy = *std::max_element(cc->get(0)->getYVector().constBegin(),cc->get(0)->getYVector().constEnd());
-            for ( int32_t i = 0; i<sizecc; ++i ) {
-                static double lmaxx, lminx, lmaxy, lminy;
-                lminx = *std::min_element(cc->get(i)->getXVector().constBegin(),cc->get(i)->getXVector().constEnd());
-                lmaxx = *std::max_element(cc->get(i)->getXVector().constBegin(),cc->get(i)->getXVector().constEnd());
-                lminy = *std::min_element(cc->get(i)->getYVector().constBegin(),cc->get(i)->getYVector().constEnd());
-                lmaxy = *std::max_element(cc->get(i)->getYVector().constBegin(),cc->get(i)->getYVector().constEnd());
-                if ( lminx < minx ) {
-                    minx = lminx;
+            if (cc->get(0)->getNrOfDataPoints() < 2) {
+                _plotMain->rescaleAxes(true);
+            }
+            double minx, maxx, miny, maxy;
+
+            QVector<double> xv = cc->get(0)->getXVector();
+            QVector<double> yv = cc->get(0)->getYVector();
+            auto mmx = std::minmax_element(
+                xv.constBegin(),
+                xv.constEnd()
+            );
+            auto mmy = std::minmax_element(
+                yv.constBegin(),
+                yv.constEnd()
+            );
+            minx = *mmx.first;
+            maxx = *mmx.second;
+            miny = *mmy.first;
+            maxy = *mmy.second;
+            for ( int32_t i = 1; i<sizecc; ++i ) {
+                xv = cc->get(i)->getXVector();
+                yv = cc->get(i)->getYVector();
+
+                auto lmmx = std::minmax_element(
+                    xv.constBegin(),
+                    xv.constEnd()
+                );
+                auto lmmy = std::minmax_element(
+                    yv.constBegin(),
+                    yv.constEnd()
+                );
+
+                if ( *lmmx.first < minx ) {
+                    minx = *lmmx.first;
                 }
-                if ( lmaxx > maxx ) {
-                    maxx = lmaxx;
+                if ( *lmmx.second > maxx ) {
+                    maxx = *lmmx.second;
                 }
-                if ( lminy < miny ) {
-                    miny = lminy;
+                if ( *lmmy.first < miny ) {
+                    miny = *lmmy.first;
                 }
-                if ( lmaxy > maxy ) {
-                    maxy = lmaxy;
+                if ( *lmmy.second > maxy ) {
+                    maxy = *lmmy.second;
                 }
             }
-            _plotMain->xAxis->setRangeLower(minx);
-            _plotMain->xAxis->setRangeUpper(maxx);
-            _plotMain->yAxis->setRangeLower(miny);
-            _plotMain->yAxis->setRangeUpper(maxy);
+            if (_plotMain->xAxis->range().lower > minx)
+                _plotMain->xAxis->setRangeLower(minx);
+            if (_plotMain->xAxis->range().upper < maxx)
+                _plotMain->xAxis->setRangeUpper(maxx);
+            if (_plotMain->yAxis->range().lower > miny)
+                _plotMain->yAxis->setRangeLower(miny);
+            if (_plotMain->yAxis->range().upper < maxy)
+                _plotMain->yAxis->setRangeUpper(maxy);
             _plotMain->replot();
         } else {
             /* No curves loaded -- try automatic
@@ -699,7 +725,7 @@ void EAQtMainWindow::userStartsMeasurement()
 
 void EAQtMainWindow::MeasurementSetup()
 {
-    PlotRescaleAxes();
+    PlotRescaleAxes(false);
     _plotMain->setAntialiasedElements(QCP::aeNone);
     this->_mouseHandler->ChangeMouseMode(EAQtMouseHandler::mm_measurement, EAQtMouseHandler::uf_none );
 }
@@ -707,7 +733,7 @@ void EAQtMainWindow::MeasurementSetup()
 void EAQtMainWindow::MeasurementAfter()
 {
     _plotMain->setAntialiasedElements(QCP::aeAll);
-    PlotRescaleAxes(); 
+    PlotRescaleAxes(false);
     this->_mouseHandler->ChangeMouseMode(EAQtMouseHandler::mm_normal, EAQtMouseHandler::uf_none);
 }
 
@@ -763,12 +789,15 @@ void EAQtMainWindow::MeasurementUpdate(int32_t curveNr, int32_t pointNr)
     }
 
     curve = _pEAQtData->getMesCurves()->get(curveNr);
-    setLowLabelText(0,tr("curve #: %1; point #: %2; potential: %3; current %4")
-                                  .arg(curveNr)
-                                  .arg(pointNr)
-                                  .arg(_pEAQtData->dispE(curve->getPotentialVector()->at(pointNr)))
-                                  .arg(_pEAQtData->dispI(curve->getCurrentVector()->at(pointNr))));
-    PlotRescaleAxes();
+    setLowLabelText(
+        0,
+        tr("curve #: %1; point #: %2; potential: %3; current %4")
+          .arg(curveNr)
+          .arg(pointNr)
+          .arg(_pEAQtData->dispE(curve->getPotentialVector()->at(pointNr)))
+          .arg(_pEAQtData->dispI(curve->getCurrentVector()->at(pointNr)))
+    );
+    PlotRescaleAxes(false);
 }
 
 void EAQtMainWindow::showMessageBox(QString text, QString title)
@@ -1533,7 +1562,7 @@ void EAQtMainWindow::showPeaks()
     Curve* c = _pEAQtData->getCurves()->get(_pEAQtData->Act());
     QVector<double> y = _pEAQtData->getCurves()->get(_pEAQtData->Act())->getYVector();
     QVector<uint> peak_indexes = _pEAQtData->getProcessing()->findPeaks(y);
-    for (uint i=0; i<peak_indexes.size(); ++i) {
+    for (int i=0; i<peak_indexes.size(); ++i) {
         EAQtPlotCursor* cur = PlotAddCursor();
         cur->move(c->getXVector()[peak_indexes[i]], c->getYVector()[peak_indexes[i]]);
         cur->setVisible(true);
@@ -1544,7 +1573,7 @@ void EAQtMainWindow::showPeaks()
 
 void EAQtMainWindow::clearPeaks()
 {
-    for (uint i=0; i<_peakMarkers.size(); ++i) {
+    for (int i=0; i<_peakMarkers.size(); ++i) {
         delete _peakMarkers[i];
     }
     _peakMarkers.clear();

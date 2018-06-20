@@ -517,7 +517,7 @@ void EAQtData::CurReadFilePro(QString *FileName, int PosNr)
 
     ff.close();
     this->_pUI->updateAll();
-    this->_pUI->PlotRescaleAxes();
+    this->_pUI->PlotRescaleAxes(false);
 }
 
 void EAQtData::CurImportTxtFile(QString* FileName)
@@ -606,7 +606,7 @@ void EAQtData::CurImportTxtFile(QString* FileName)
     }
 
     this->_pUI->updateAll();
-    this->_pUI->PlotRescaleAxes();
+    this->_pUI->PlotRescaleAxes(false);
 }
 
 void EAQtData::CurReadFileOld(QString *FileName, int PosNr)
@@ -645,7 +645,7 @@ void EAQtData::CurReadFileOld(QString *FileName, int PosNr)
 
     ff.close();
     this->_pUI->updateAll();
-    this->_pUI->PlotRescaleAxes();
+    this->_pUI->PlotRescaleAxes(false);
 }
 
 // --------------------------------------------------------
@@ -1281,7 +1281,7 @@ void EAQtData::MesStart(bool isLsv)
                             vecMesPotential[p] = _LSVParam[PARAM::EstartLSV];
                             vecMesTime[p] = MEASUREMENT::LSVtime[_LSVParam[PARAM::dEdt]];
                         }
-                        for ( p=p; p<_LSVParam[PARAM::ptnr]; ++p ) {
+                        for ( ; p<_LSVParam[PARAM::ptnr]; ++p ) {
                             vecMesPotential[p]=(double)( _LSVParam[PARAM::Ep] - ((double)p * MEASUREMENT::LSVstepE[_LSVParam[PARAM::dEdt]]) );
                             vecMesTime[p]=( timeCounter++ * MEASUREMENT::LSVtime[_LSVParam[PARAM::dEdt]] );
                         }
