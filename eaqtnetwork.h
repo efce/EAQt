@@ -36,6 +36,8 @@ public:
 private:
     QString _EA_IP;
     uint16_t _EA_Port;
+    volatile bool _process1_busy;
+    volatile bool _process2_busy;
     QTcpSocket *_socket;
     EAQtDataInterface *_pData;
     int _rxSize;
@@ -43,7 +45,12 @@ private:
 public slots:
     void processPacket();
     void connectionError(QAbstractSocket::SocketError);
+    void process1_ui(QByteArray);
+    void process2_no_ui(QByteArray);
 
+signals:
+    void go_process1(QByteArray);
+    void go_process2(QByteArray);
 };
 
 #endif // EAQTNETWORK_H

@@ -32,6 +32,11 @@ EAQtNetwork::EAQtNetwork(EAQtDataInterface* di) : QObject()
     //this->_pRxBuf = new char[NETWORK::RxBufLength];
     //memset(this->_pRxBuf,0,NETWORK::RxBufLength);
     _rxSize = 0;
+
+    _process1_busy = false;
+    _process2_busy = false;
+    this->connect(this, SIGNAL(go_process1(QByteArray)), this, SLOT(process1_ui(QByteArray)));
+    this->connect(this, SIGNAL(go_process2(QByteArray)), this, SLOT(process2_no_ui(QByteArray)));
 }
 
 EAQtNetwork::~EAQtNetwork()
@@ -91,19 +96,47 @@ int EAQtNetwork::sendToEA(const char* TxBuf)
 
 void EAQtNetwork::processPacket()
 {
-    while ( _socket->bytesAvailable() ) {
+    if (_socket->bytesAvailable()) {
         QByteArray rxdata = _socket->readAll();
-        if ( (rxdata.size() % NETWORK::RxBufLength) != 0 ) {
+        if ( false ) {
             throw("Network error occured. Packets size does not match the expected value.");
         }
-        int nextindex = 0;
-        char* _pRxBuf = rxdata.data();
-        while(nextindex < rxdata.size()) {
-            nextindex += NETWORK::RxBufLength;
-            bool nextPacketReady = (nextindex < rxdata.size());
-            this->_pData->ProcessPacketFromEA(_pRxBuf, nextPacketReady);
-            _pRxBuf += NETWORK::RxBufLength;
+        if (!_process1_busy) {
+            emit go_process1(rxdata);
+        } else if (!_process2_busy) {
+            emit go_process2(rxdata);
+        } else {
+            throw('All processes busy.');
         }
-        rxdata.clear();
     }
+}
+
+
+void EAQtNetwork::process1_ui(QByteArray rxdata)
+{
+    _process1_busy = true;
+    int nextindex = 0;
+    char* _pRxBuf = rxdata.data();
+    while(nextindex < rxdata.size()) {
+        nextindex += NETWORK::RxBufLength;
+        bool nextPacketReady = (nextindex < rxdata.size());
+        this->_pData->ProcessPacketFromEA(_pRxBuf, nextPacketReady);
+        _pRxBuf += NETWORK::RxBufLength;
+    }
+    _process1_busy = false;
+}
+
+
+void EAQtNetwork::process2_no_ui(QByteArray rxdata)
+{
+    _process2_busy = true;
+    int nextindex = 0;
+    char* _pRxBuf = rxdata.data();
+    while(nextindex < rxdata.size()) {
+        nextindex += NETWORK::RxBufLength;
+        bool nextPacketReady = (nextindex < rxdata.size());
+        this->_pData->ProcessPacketFromEA(_pRxBuf, true);
+        _pRxBuf += NETWORK::RxBufLength;
+    }
+    _process2_busy = false;
 }
