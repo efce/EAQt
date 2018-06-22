@@ -40,6 +40,7 @@ private:
     volatile bool _process2_busy;
     QTcpSocket *_socket;
     EAQtDataInterface *_pData;
+    QTimer* _network_timer;
     int _rxSize;
 
 public slots:

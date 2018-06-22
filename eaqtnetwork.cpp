@@ -35,6 +35,7 @@ EAQtNetwork::EAQtNetwork(EAQtDataInterface* di) : QObject()
 
     _process1_busy = false;
     _process2_busy = false;
+    _network_timer = nullptr;
     this->connect(this, SIGNAL(go_process1(QByteArray)), this, SLOT(process1_ui(QByteArray)));
     this->connect(this, SIGNAL(go_process2(QByteArray)), this, SLOT(process2_no_ui(QByteArray)));
 }
@@ -57,8 +58,12 @@ bool EAQtNetwork::connectToEA()
     this->_socket->waitForConnected();
     conSuccess=(this->_socket->state() == QTcpSocket::ConnectedState);
     if ( conSuccess ) {
-        this->connect(this->_socket, SIGNAL(readyRead()),
-                      this,         SLOT(processPacket()));
+        if (_network_timer == nullptr) {
+            _network_timer = new QTimer(this);
+            connect(_network_timer, SIGNAL(timeout()), this, SLOT(processPacket()));
+            _network_timer->setInterval(50);
+            _network_timer->start();
+        }
     } else {
         this->_socket->disconnectFromHost();
         this->_pData->NetworkError(tr("Could not connect to electrochemical anlyzer"));
@@ -98,15 +103,10 @@ void EAQtNetwork::processPacket()
 {
     if (_socket->bytesAvailable()) {
         QByteArray rxdata = _socket->readAll();
-        if ( false ) {
-            throw("Network error occured. Packets size does not match the expected value.");
-        }
         if (!_process1_busy) {
             emit go_process1(rxdata);
-        } else if (!_process2_busy) {
-            emit go_process2(rxdata);
         } else {
-            throw('All processes busy.');
+            return;
         }
     }
 }
@@ -116,12 +116,12 @@ void EAQtNetwork::process1_ui(QByteArray rxdata)
 {
     _process1_busy = true;
     int nextindex = 0;
-    char* _pRxBuf = rxdata.data();
+    char* rx_ptr = rxdata.data();
     while(nextindex < rxdata.size()) {
         nextindex += NETWORK::RxBufLength;
         bool nextPacketReady = (nextindex < rxdata.size());
-        this->_pData->ProcessPacketFromEA(_pRxBuf, nextPacketReady);
-        _pRxBuf += NETWORK::RxBufLength;
+        this->_pData->ProcessPacketFromEA(rx_ptr, nextPacketReady);
+        rx_ptr += NETWORK::RxBufLength;
     }
     _process1_busy = false;
 }
@@ -129,14 +129,15 @@ void EAQtNetwork::process1_ui(QByteArray rxdata)
 
 void EAQtNetwork::process2_no_ui(QByteArray rxdata)
 {
+    qDebug() << "===> 2 <=====";
     _process2_busy = true;
     int nextindex = 0;
-    char* _pRxBuf = rxdata.data();
+    char* rx_ptr = rxdata.data();
     while(nextindex < rxdata.size()) {
         nextindex += NETWORK::RxBufLength;
-        bool nextPacketReady = (nextindex < rxdata.size());
-        this->_pData->ProcessPacketFromEA(_pRxBuf, true);
-        _pRxBuf += NETWORK::RxBufLength;
+        //bool nextPacketReady = (nextindex < rxdata.size());
+        this->_pData->ProcessPacketFromEA(rx_ptr, true);
+        rx_ptr += NETWORK::RxBufLength;
     }
     _process2_busy = false;
 }
