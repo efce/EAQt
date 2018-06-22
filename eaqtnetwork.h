@@ -18,7 +18,9 @@
 #ifndef EAQTNETWORK_H
 #define EAQTNETWORK_H
 
-#include <QtNetwork/QTcpSocket>
+#include <sys/socket.h>
+#include <netinet/in.h>
+
 #include "eaqtdatainterface.h"
 class EAQtNetwork : public QObject
 {
@@ -31,21 +33,22 @@ public:
     bool connectToEA();
     int sendToEA(const char* TxBuf);
 
-    //char TxBuf[NETWORK::TxBufLength];
+    char _RxBuf[NETWORK::RxBufLength];
     //static void paralelProcess(EAQtDataInterface *pd, char* buf, int num);
 private:
-    QString _EA_IP;
-    uint16_t _EA_Port;
+    int _socket;
+    struct sockaddr_in _address;
+    struct sockaddr_in _serv_addr;
+
     volatile bool _process1_busy;
     volatile bool _process2_busy;
-    QTcpSocket *_socket;
     EAQtDataInterface *_pData;
     QTimer* _network_timer;
     int _rxSize;
+    bool setSocketBlockingEnabled(int fd, bool blocking);
 
 public slots:
     void processPacket();
-    void connectionError(QAbstractSocket::SocketError);
     void process1_ui(QByteArray);
     void process2_no_ui(QByteArray);
 
