@@ -61,6 +61,7 @@ private:
     QLabel *_labelAddition;
     QWidget *_scrollAreaWidget;
     QPushButton *_butSaveCal;
+    QPushButton *_butSaveAsPNG;
 
     QVector<double> _signals;
     CalibrationPlot *_calibrationPlot;

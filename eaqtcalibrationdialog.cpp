@@ -15,6 +15,7 @@
   *  along with this program; if not, write to the Free Software Foundation,
   *  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
   *******************************************************************************************************************/
+#include "eaqtuiinterface.h"
 #include "eaqtcalibrationdialog.h"
 #include "eaqtdata.h"
 #include "eaqtsignalprocessing.h"
@@ -212,7 +213,7 @@ EAQtCalibrationDialog::EAQtCalibrationDialog(CalibrationData *cd, QHash<QString,
     connect(butCancel,SIGNAL(clicked(bool)),this->_dialog,SLOT(close()));
     connect(butCal,SIGNAL(clicked(bool)), this,SLOT(drawCalibration()));
     this->_dialog->setLayout(glm);
-    _dialog->setMinimumHeight(600);
+    _dialog->setMinimumHeight(700);
 }
 
 EAQtCalibrationDialog::~EAQtCalibrationDialog()
@@ -354,3 +355,4 @@ void EAQtCalibrationDialog::saveInFile(QString fileName)
     _cd->save(&f,includeCurves);
     f.close();
 }
+

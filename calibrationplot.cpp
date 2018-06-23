@@ -25,17 +25,39 @@ CalibrationPlot::CalibrationPlot(CalibrationData *cd) : QWidget()
     setupPlot();
     setupTextEdit();
     this->setLayout(_layout);
+    foreach(QWidget *widget, qApp->topLevelWidgets())
+    {
+        if (EAQtMainWindow *mainWindow = qobject_cast<EAQtMainWindow*>(widget))
+        {
+            _ui = mainWindow;
+        }
+    }
 }
 
 
 void CalibrationPlot::setupPlot()
 {
+    QSettings settings("EAQt", "EAQtApp");
+    int plot_label_font_size = settings.value("plot_labels_font_size", 13).toInt();
+    int plot_tick_font_size = settings.value("plot_ticks_font_size", 13).toInt();
     _plot = new QCustomPlot();
     _plot->xAxis->setLabel(tr("c / %1").arg(_cd->xUnits));
     _plot->yAxis->setLabel(tr("i / %1").arg(_cd->yUnits));
     _plot->setVisible(true);
     _plot->setMinimumWidth(500);
     _plot->setMinimumHeight(450);
+    QFont f(":/fonts/fonts/LiberationSans-Regular.ttf");
+    f.setPixelSize(plot_label_font_size);
+    f.setKerning(true);
+    _plot->setFont(f);
+    _plot->xAxis->setLabelFont(f);
+    _plot->yAxis->setLabelFont(f);
+    QFont f2(":/fonts/fonts/LiberationSans-Regular.ttf");
+    f2.setPixelSize(plot_tick_font_size);
+    f2.setKerning(true);
+    _plot->xAxis->setTickLabelFont(f2);
+    _plot->yAxis->setTickLabelFont(f2);
+
     //connect(_plot,SIGNAL(beforeReplot()),this,SLOT(beforeReplot()));
     QPen pen;
     pen.setColor(COLOR::measurement);
@@ -49,6 +71,7 @@ void CalibrationPlot::setupPlot()
     _calibrationPoints->setScatterStyle(QCPScatterStyle::ssCircle);
     _calibrationPoints->setPen(QPen(COLOR::regular));
     _layout->addWidget(_plot);
+    _layout->addSpacing(1);
 }
 
 CalibrationPlot::~CalibrationPlot()
@@ -64,6 +87,9 @@ void CalibrationPlot::setupTextEdit()
     _te->setReadOnly(true);
     _layout->addWidget(_te);
     _te->setAlignment(Qt::AlignCenter);
+    _butSaveAsPNG = new QPushButton(tr("Save as PNG"));
+    QObject::connect(_butSaveAsPNG, SIGNAL(clicked(bool)), this, SLOT(saveAsPNG()));
+    _layout->addWidget(_butSaveAsPNG);
 }
 
 void CalibrationPlot::update()
@@ -126,3 +152,15 @@ void CalibrationPlot::beforeReplot()
     _plot->xAxis->setOffset(-_plot->axisRect()->height()-_plot->axisRect()->top()+pxx);
     _plot->yAxis->setOffset(_plot->axisRect()->left()-pxy);
 }
+
+
+QCustomPlot* CalibrationPlot::getPlotArea()
+{
+    return _plot;
+}
+
+void CalibrationPlot::saveAsPNG()
+{
+    _ui->savePlotScreenshot(_plot);
+}
+

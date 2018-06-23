@@ -19,20 +19,27 @@
 #define CALIBRATIONPLOT_H
 
 #include <QTextEdit>
+#include <QPushButton>
 #include "Qcustomplot/qcustomplot.h"
+#include "eaqtmainwindow.h"
 #include "calibrationdata.h"
 
 class CalibrationPlot: public QWidget
 {
+    Q_OBJECT
+
 public:
     CalibrationPlot(CalibrationData* cd);
     ~CalibrationPlot();
     void update();
+    QCustomPlot* getPlotArea();
 
 private:
+    EAQtMainWindow* _ui;
     CalibrationData *_cd;
     QCustomPlot *_plot;
     QTextEdit *_te;
+    QPushButton *_butSaveAsPNG;
     QVBoxLayout *_layout;
     void setupPlot();
     void setupTextEdit();
@@ -40,7 +47,9 @@ private:
     QCPGraph *_calibrationPoints;
 
 private slots:
+    void saveAsPNG();
     void beforeReplot(); //NOT USED
+
 };
 
 #endif // CALIBRATIONPLOT_H

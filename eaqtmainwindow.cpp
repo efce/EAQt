@@ -1430,6 +1430,95 @@ void EAQtMainWindow::changeLanguageToPl()
     _translator->load(langfile,":/lang");
 }
 
+void EAQtMainWindow::savePlotScreenshot(QCustomPlot* plot)
+{
+    QFileDialog *fd;
+    fd = new QFileDialog(0,tr("Save image"),"",tr("PNG file (*.png)"));
+    QString fileName = fd->getSaveFileName(this,tr("Save image"),"",QString("PNG file (*.png)"));
+    if (fileName.isEmpty()) {
+        delete fd;
+        return;
+    }
+    delete fd;
+
+    if (!fileName.endsWith(".png", Qt::CaseInsensitive)) {
+        fileName.append(".png");
+    }
+
+    int line_with = _settings->value("screenshot_line_width", 1).toInt();
+
+    QVector<int> widths(0);
+    QListIterator<QObject *> i(plot->children());
+    while (i.hasNext()) {
+        QObject* obj = i.next();
+        QCPAbstractPlottable* c = qobject_cast<QCPAbstractPlottable*>(obj);
+        if (c != NULL) {
+            QPen p = c->pen();
+            widths.append(p.width());
+            p.setWidth(line_with);
+            c->setPen(p);
+        } else {
+            QCPItemStraightLine* line = qobject_cast<QCPItemStraightLine*>(obj);
+            if (line != NULL) {
+                QPen p = line->pen();
+                widths.append(p.width());
+                p.setWidth(line_with);
+                line->setPen(p);
+            }
+        }
+    }
+    QPen px= plot->xAxis->basePen();
+    int xax = px.width();
+    px.setWidth(line_with);
+    plot->xAxis->setBasePen(px);
+    plot->xAxis->setTickPen(px);
+    plot->xAxis->grid()->setZeroLinePen(px);
+
+    QPen py = plot->yAxis->basePen();
+    int yax = py.width();
+    py.setWidth(line_with);
+    plot->yAxis->setBasePen(py);
+    plot->yAxis->setTickPen(py);
+    plot->yAxis->grid()->setZeroLinePen(px);
+
+    //_plotMain->savePng("/home/fc/test.png", _plotMain->size().width(), _plotMain->size().height(), 3.0);
+
+    plot->replot();
+    QPixmap pixmap(plot->size());
+    plot->render(&pixmap, QPoint(), plot->rect());
+    pixmap.save(fileName);
+
+    QListIterator<QObject *> i2(plot->children());
+    while (i2.hasNext()) {
+        QObject* obj = i2.next();
+        QCPAbstractPlottable* c = qobject_cast<QCPAbstractPlottable*>(obj);
+        if (c != NULL) {
+            QPen p = c->pen();
+            p.setWidth(widths.takeFirst());
+            c->setPen(p);
+        } else {
+            QCPItemStraightLine* line = qobject_cast<QCPItemStraightLine*>(obj);
+            if (line != NULL) {
+                QPen p = line->pen();
+                p.setWidth(widths.takeFirst());
+                line->setPen(p);
+            }
+        }
+    }
+
+    px.setWidth(xax);
+    plot->xAxis->setBasePen(px);
+    plot->xAxis->setTickPen(px);
+    plot->xAxis->grid()->setZeroLinePen(px);
+
+    py.setWidth(yax);
+    plot->yAxis->setBasePen(py);
+    plot->yAxis->setTickPen(py);
+    plot->yAxis->grid()->setZeroLinePen(px);
+
+    plot->replot();
+}
+
 void EAQtMainWindow::changeLanguageToEn()
 {
     _settings->setValue("lang", "eaqt_en");
@@ -1439,40 +1528,7 @@ void EAQtMainWindow::changeLanguageToEn()
 
 void EAQtMainWindow::takeScreenshot()
 {
-    int line_with = _settings->value("screenshot_line_width", 1).toInt();
-
-    QPen pen;
-    if (_pEAQtData->getCurves()->count() > 0) {
-        pen = _pEAQtData->getCurves()->get(0)->getPlot()->pen();
-        int i = 0;
-        Curve* c;
-        while(( c = _pEAQtData->getCurves()->get(i)) != nullptr) {
-            c->getPlot()->setPen(QPen(COLOR::regular, line_with, Qt::SolidLine));
-            ++i;
-        }
-        _plotMain->replot();
-    }
-
-    QPixmap pixmap(_plotMain->size());
-    _plotMain->render(&pixmap, QPoint(), _plotMain->rect());
-    QFileDialog *fd;
-    fd = new QFileDialog(0,tr("Save image"),"",tr("PNG file (*.png)"));
-    QString fileName = fd->getSaveFileName(this,tr("Save image"),"",QString("PNG file (*.png)"));
-    if (!fileName.endsWith(".png", Qt::CaseInsensitive)) {
-        fileName.append(".png");
-    }
-    pixmap.save(fileName);
-    delete fd;
-
-    if (_pEAQtData->getCurves()->count() > 0) {
-        int i = 0;
-        Curve* c;
-        while(( c = _pEAQtData->getCurves()->get(i)) != nullptr) {
-            c->getPlot()->setPen(pen);
-            ++i;
-        }
-        _plotMain->replot();
-    }
+    this->savePlotScreenshot(_plotMain);
 }
 
 void EAQtMainWindow::showAboutSoftware()

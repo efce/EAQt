@@ -61,6 +61,7 @@ public:
     virtual void setPathInUse(QString) = 0;
     virtual QString getPathInUse() = 0;
     virtual void clearPeaks() = 0;
+    virtual void savePlotScreenshot(QCustomPlot* plot) = 0;
 };
 
 #endif // GRAPHINTERFACE_H

@@ -43,7 +43,8 @@ class EAQtMainWindow : public QMainWindow, EAQtUIInterface
 public:
     explicit EAQtMainWindow(QSettings *s, QTranslator *t, QWidget *parent = 0);
     ~EAQtMainWindow();
-    void InitialUpdate(EAQtData& d);
+     QSettings* _settings;
+     void InitialUpdate(EAQtData& d);
      void updateAll(bool rescale = true);
      EAQtUIInterface* getUIInterface();
      QCPCurve* PlotAddQCPCurve();
@@ -72,6 +73,8 @@ public:
      void updateCGMDETest();
      void setPathInUse(QString path);
      QString getPathInUse();
+     void savePlotScreenshot(QCustomPlot* plot);
+
 public slots:
      void PlotRescaleAxes(bool manual = false);
 
@@ -84,7 +87,6 @@ private slots:
 private:
     Ui::MainWindow *ui;
     QGridLayout *_mainLayout;
-    QSettings* _settings;
     QTranslator* _translator;
     EAQtData *_pEAQtData;
     EAQtMouseHandler *_mouseHandler;
