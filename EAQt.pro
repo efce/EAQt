@@ -60,7 +60,8 @@ SOURCES += main.cpp\
     eaqtaveragedialog.cpp \
     eaqtparampotentialprogram.cpp \
     eaqtcurverenamedialog.cpp \
-    eaqtbackgroundcorrectiondialog.cpp
+    eaqtbackgroundcorrectiondialog.cpp \
+    settingsdialog.cpp
 
 HEADERS  += \
     Qcustomplot/qcustomplot.h \
@@ -400,7 +401,8 @@ HEADERS  += \
     eaqtparampotentialprogram.h \
     eaqtcurverenamedialog.h \
     eaqtbackgroundcorrectiondialog.h \
-    ui_mainwindow.h
+    ui_mainwindow.h \
+    settingsdialog.h
 
 FORMS    +=
 

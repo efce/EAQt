@@ -28,6 +28,7 @@
 #include "eaqtaveragedialog.h"
 #include "eaqtcurverenamedialog.h"
 #include "eaqtbackgroundcorrectiondialog.h"
+#include "settingsdialog.h"
 
 EAQtMainWindow::EAQtMainWindow(QSettings *settings, QTranslator* t, QWidget *parent) :
     QMainWindow(parent),
@@ -511,6 +512,20 @@ QGridLayout* EAQtMainWindow::createLayout()
     this->ui->mainToolBar->addWidget(butRescale);
 
     this->_plotMain = new QCustomPlot();
+    int plot_label_font_size = _settings->value("plot_labels_font_size", 13).toInt();
+    int plot_tick_font_size = _settings->value("plot_ticks_font_size", 13).toInt();
+    QFont f(":/fonts/fonts/LiberationSans-Regular.ttf");
+    f.setPixelSize(plot_label_font_size);
+    f.setKerning(true);
+    _plotMain->setFont(f);
+    _plotMain->xAxis->setLabelFont(f);
+    _plotMain->yAxis->setLabelFont(f);
+    QFont f2(":/fonts/fonts/LiberationSans-Regular.ttf");
+    f2.setPixelSize(plot_tick_font_size);
+    f2.setKerning(true);
+    _plotMain->xAxis->setTickLabelFont(f2);
+    _plotMain->yAxis->setTickLabelFont(f2);
+
     _plotMain->setNoAntialiasingOnDrag(false);
     this->_plotMain->addLayer("Nonactive");
     _plotLayers.NonActive = _plotMain->layer("Nonactive");
@@ -913,6 +928,10 @@ void EAQtMainWindow::createActionsTopMenu()
     _actExportCurve->setStatusTip(tr("Export curve(s) as *.txt or *.csv"));
     connect(_actExportCurve, SIGNAL(triggered(bool)), this, SLOT(showExportCurve()));
 
+    _actTakeScreenshot = new QAction(tr("Save plot as png"),this);
+    _actTakeScreenshot->setStatusTip(tr("Save plot as png"));
+    connect(_actTakeScreenshot,SIGNAL(triggered(bool)),this,SLOT(takeScreenshot()));
+
     this->_actRenameCurve = new QAction(tr("Rename curve"), this);
     _actRenameCurve->setStatusTip(tr("Change name / comment of selected curve"));
     connect(_actRenameCurve, SIGNAL(triggered(bool)), this, SLOT(showRenameCurve()));
@@ -1052,6 +1071,10 @@ void EAQtMainWindow::createActionsTopMenu()
     _actSourceCode = new QAction(tr("Source code"),this);
     _actSourceCode->setStatusTip(tr("Source code for the program is available on github"));
     connect(_actSourceCode,SIGNAL(triggered(bool)),this,SLOT(showGithub()));
+
+    _actSettings = new QAction(tr("Settings"),this);
+    _actSettings->setStatusTip(tr("Show settings menu"));
+    connect(_actSettings,SIGNAL(triggered(bool)),this,SLOT(showSettings()));
 }
 
 void EAQtMainWindow::createMenusTopMenu()
@@ -1061,6 +1084,7 @@ void EAQtMainWindow::createMenusTopMenu()
     _menuFile->addAction(this->_actSaveCurve);
     _menuFile->addAction(this->_actExportCurve);
     _menuFile->addAction(this->_actRenameCurve);
+    _menuFile->addAction(this->_actTakeScreenshot);
 
     _menuMeasurement = this->menuBar()->addMenu(tr("&Measurement"));
     _menuMeasurement->addAction(this->_actStartMeasurement);
@@ -1101,6 +1125,7 @@ void EAQtMainWindow::createMenusTopMenu()
     _menuAbout->addAction(_actSoftware);
     _menuAbout->addAction(_actReportIssues);
     _menuAbout->addAction(_actSourceCode);
+    _menuAbout->addAction(_actSettings);
 }
 
 void EAQtMainWindow::startBackgroundCorrection()
@@ -1412,6 +1437,44 @@ void EAQtMainWindow::changeLanguageToEn()
     _translator->load(langfile,":/lang");
 }
 
+void EAQtMainWindow::takeScreenshot()
+{
+    int line_with = _settings->value("screenshot_line_width", 1).toInt();
+
+    QPen pen;
+    if (_pEAQtData->getCurves()->count() > 0) {
+        pen = _pEAQtData->getCurves()->get(0)->getPlot()->pen();
+        int i = 0;
+        Curve* c;
+        while(( c = _pEAQtData->getCurves()->get(i)) != nullptr) {
+            c->getPlot()->setPen(QPen(COLOR::regular, line_with, Qt::SolidLine));
+            ++i;
+        }
+        _plotMain->replot();
+    }
+
+    QPixmap pixmap(_plotMain->size());
+    _plotMain->render(&pixmap, QPoint(), _plotMain->rect());
+    QFileDialog *fd;
+    fd = new QFileDialog(0,tr("Save image"),"",tr("PNG file (*.png)"));
+    QString fileName = fd->getSaveFileName(this,tr("Save image"),"",QString("PNG file (*.png)"));
+    if (!fileName.endsWith(".png", Qt::CaseInsensitive)) {
+        fileName.append(".png");
+    }
+    pixmap.save(fileName);
+    delete fd;
+
+    if (_pEAQtData->getCurves()->count() > 0) {
+        int i = 0;
+        Curve* c;
+        while(( c = _pEAQtData->getCurves()->get(i)) != nullptr) {
+            c->getPlot()->setPen(pen);
+            ++i;
+        }
+        _plotMain->replot();
+    }
+}
+
 void EAQtMainWindow::showAboutSoftware()
 {
     QFile f(":/README.md");
@@ -1443,6 +1506,12 @@ void EAQtMainWindow::showGithub()
 {
     QString link = "https://github.com/efce/EAQt";
     QDesktopServices::openUrl(QUrl(link));
+}
+
+void EAQtMainWindow::showSettings()
+{
+    SettingsDialog *sd = new SettingsDialog(_settings);
+    sd->show();
 }
 
 void EAQtMainWindow::updateCurveInfo()

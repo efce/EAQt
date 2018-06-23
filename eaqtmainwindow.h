@@ -143,6 +143,7 @@ private:
     QAction *_actSaveCurve;
     QAction *_actExportCurve;
     QAction *_actRenameCurve;
+    QAction *_actTakeScreenshot;
 
     QAction *_actAverage;
     QAction *_actDataCursor;
@@ -166,6 +167,7 @@ private:
     QAction *_actSoftware;
     QAction *_actReportIssues;
     QAction *_actSourceCode;
+    QAction *_actSettings;
 
     QAction *_actLangPolish;
     QAction *_actLangEnglish;
@@ -217,6 +219,8 @@ private slots:
     void showAboutSoftware();
     void showGithubIssues();
     void showGithub();
+    void showSettings();
+    void takeScreenshot();
     void undo();
 };
 

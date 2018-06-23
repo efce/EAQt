@@ -28,10 +28,11 @@ int main(int argc, char *argv[])
     QLocale::setDefault(QLocale("en_US"));
     QSettings settings("EAQt", "EAQtApp");
     QString langfile = settings.value("lang", "eaqt_en").toString();
+    int main_font_size = settings.value("main_font_size", 13).toInt();
 
     QApplication a(argc, argv);
     QFont f(":/fonts/fonts/LiberationSans-Regular.ttf");
-    f.setPixelSize(13);
+    f.setPixelSize(main_font_size);
     f.setKerning(true);
     a.setFont(f);
 
