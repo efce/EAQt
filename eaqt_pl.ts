@@ -1747,7 +1747,17 @@
         <translation>Położenie względne: </translation>
     </message>
     <message>
-        <location filename="eaqtmousehandler.cpp" line="688"/>
+        <location filename="eaqtmousehandler.cpp" line="521"/>
+        <source>Data must have at least %1 points</source>
+        <translation>Dane muszę składać się z przynajmniej %1 punktów</translation>
+    </message>
+    <message>
+        <location filename="eaqtmousehandler.cpp" line="521"/>
+        <source>Error</source>
+        <translation>Błąd</translation>
+    </message>
+    <message>
+        <location filename="eaqtmousehandler.cpp" line="694"/>
         <source>Data cursor:</source>
         <translation>Kursor:</translation>
     </message>
@@ -2494,22 +2504,22 @@ nieuśrednionych</translation>
         <translation>Statystyki</translation>
     </message>
     <message>
-        <location filename="eaqtsignalprocessing.cpp" line="595"/>
+        <location filename="eaqtsignalprocessing.cpp" line="607"/>
         <source>y=p1*x+p2</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="eaqtsignalprocessing.cpp" line="596"/>
+        <location filename="eaqtsignalprocessing.cpp" line="608"/>
         <source>y=p1*x^2+p2*x+p3</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="eaqtsignalprocessing.cpp" line="597"/>
+        <location filename="eaqtsignalprocessing.cpp" line="609"/>
         <source>y=p1*x^3+p2*x^2+p3*x+p4</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="eaqtsignalprocessing.cpp" line="598"/>
+        <location filename="eaqtsignalprocessing.cpp" line="610"/>
         <source>y=p1*exp(x*p2)</source>
         <translation></translation>
     </message>

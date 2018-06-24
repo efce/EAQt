@@ -509,13 +509,19 @@ void EAQtMouseHandler::callUserFunction()
             if ( _pData->Act() != SELECT::all ) {
                 act = _pData->Act();
             }
-            this->_pData->getProcessing()->generateBackground(
-                    _pData->getCurves()->get(act)
-                    ,this->GetCursorPointIndex(cl_multipleSelect1)
-                    ,this->GetCursorPointIndex(cl_multipleSelect2)
-                    ,this->GetCursorPointIndex(cl_multipleSelect3)
-                    ,this->GetCursorPointIndex(cl_multipleSelect4)
-                );
+            try {
+                this->_pData->getProcessing()->generateBackground(
+                        _pData->getCurves()->get(act)
+                        ,this->GetCursorPointIndex(cl_multipleSelect1)
+                        ,this->GetCursorPointIndex(cl_multipleSelect2)
+                        ,this->GetCursorPointIndex(cl_multipleSelect3)
+                        ,this->GetCursorPointIndex(cl_multipleSelect4)
+                    );
+            } catch (int e) {
+                _pUI->showMessageBox(tr("Data must have at least %1 points").arg(e), tr("Error"));
+                _timesPressed = 4;
+                return;
+            }
             this->_pData->getProcessing()->showBackground();
             this->_pUI->PlotGetLayers()->Markers->replot();
         } else if ( this->_timesPressed > 5 ) {

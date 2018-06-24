@@ -420,6 +420,9 @@ QVector<double> EAQtSignalProcessing::generateBackground(Curve* c, int32_t r1, i
     QVector<double> coeff;
     switch (EAQtSignalProcessing::_selectedFitMethod) {
     case poly1:
+        if (bx.size()<2) {
+            throw(2);
+        }
         polynomialFit(bx,by,1,&coeff);
         bkg_curveY.resize(bkg_curveX.size());
         for ( int i = 0; i<c->getXVector().size(); ++i ) {
@@ -427,6 +430,9 @@ QVector<double> EAQtSignalProcessing::generateBackground(Curve* c, int32_t r1, i
         }
         break;
     case poly2:
+        if (bx.size()<3) {
+            throw(3);
+        }
         polynomialFit(bx,by,2,&coeff);
         bkg_curveY.resize(bkg_curveX.size());
         for ( int i = 0; i<c->getXVector().size(); ++i ) {
@@ -435,6 +441,9 @@ QVector<double> EAQtSignalProcessing::generateBackground(Curve* c, int32_t r1, i
         break;
     default:
     case poly3:
+        if (bx.size()<4) {
+            throw(4);
+        }
         polynomialFit(bx,by,3,&coeff);
         bkg_curveY.resize(bkg_curveX.size());
         for ( int i = 0; i<c->getXVector().size(); ++i ) {
@@ -442,6 +451,9 @@ QVector<double> EAQtSignalProcessing::generateBackground(Curve* c, int32_t r1, i
         }
         break;
     case exponential:
+        if (bx.size()<4) {
+            throw(4);
+        }
         int nn = by.size();
         QVector<double> ylog(nn);
         for ( int i =0; i<nn;++i ) {
