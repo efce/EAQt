@@ -135,6 +135,7 @@ void EAQtParamPotentialProgram::clickedOK()
 
 void EAQtParamPotentialProgram::clickedCancel()
 {
+    this->close();
     this->destroy();
 }
 
