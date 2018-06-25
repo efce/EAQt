@@ -18,10 +18,8 @@
 #ifndef EAQTNETWORK_H
 #define EAQTNETWORK_H
 
-#include <sys/socket.h>
-#include <netinet/in.h>
-
 #include "eaqtdatainterface.h"
+
 class EAQtNetwork : public QObject
 {
     Q_OBJECT
@@ -36,7 +34,13 @@ public:
     char _RxBuf[NETWORK::RxBufLength];
     //static void paralelProcess(EAQtDataInterface *pd, char* buf, int num);
 private:
+#ifdef _WIN32
+    SOCKET _socket;
+    bool setSocketBlockingEnabled(SOCKET fd, bool blocking);
+#else
     int _socket;
+    bool setSocketBlockingEnabled(int fd, bool blocking);
+#endif
     struct sockaddr_in _address;
     struct sockaddr_in _serv_addr;
 
@@ -45,7 +49,7 @@ private:
     EAQtDataInterface *_pData;
     QTimer* _network_timer;
     int _rxSize;
-    bool setSocketBlockingEnabled(int fd, bool blocking);
+
 
 public slots:
     void processPacket();

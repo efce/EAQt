@@ -11,6 +11,8 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets printsupport
 TARGET = EAQt
 TEMPLATE = app
 
+LIBS += -lws2_32
+
 CONFIG += c++11
 
 QMAKE_CXXFLAGS += -Wno-int-in-bool-context
