@@ -16,39 +16,23 @@
   *  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
   *******************************************************************************************************************/
 
-
-
-#ifdef _WIN32
-  /* See http://stackoverflow.com/questions/12765743/getaddrinfo-on-win32 */
-  #ifndef _WIN32_WINNT
-    #define _WIN32_WINNT 0x0501  /* Windows XP. */
-  #endif
-  #include <winsock2.h>
-  #include <Ws2tcpip.h>
-#else
-  /* Assume that any non-Windows platform uses POSIX-style sockets instead. */
-  #include <sys/socket.h>
-  #include <arpa/inet.h>
-  #include <unistd.h> /* Needed for close() */
-#endif
 #include <stdio.h>
 #include <fcntl.h>
 
 #include "eaqtdata.h"
 #include "eaqtnetwork.h"
 
+
 EAQtNetwork::EAQtNetwork(EAQtDataInterface* di) : QObject()
 {
-
-
 #ifdef _WIN32
-    WSADATA wsa_data = {0};
+    WSADATA wsa_data;
     WSAStartup(MAKEWORD(1,1), &wsa_data);
 #endif
 
     this->_pData = di;
     _rxSize = 0;
-    if ((_socket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)) < 0) {
+    if ((_socket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)) <= 0) {
         qDebug() << QT_MESSAGELOG_LINE << "Socket creation error";
         throw("Could not create socket.");
     }
@@ -91,6 +75,7 @@ EAQtNetwork::~EAQtNetwork()
     ::shutdown(_socket, 2);
 }
 
+
 bool EAQtNetwork::connectToEA()
 {
     qDebug() << QT_MESSAGELOG_LINE << "CONNECTING";
@@ -124,8 +109,9 @@ bool EAQtNetwork::connectToEA()
 int EAQtNetwork::sendToEA(const char* TxBuf)
 {
     qDebug() << QT_MESSAGELOG_LINE << "SENDING...";
-    return ::send(_socket, TxBuf, NETWORK::TxBufLength, NULL);
+    return ::send(_socket, TxBuf, NETWORK::TxBufLength, 0);
 }
+
 
 void EAQtNetwork::processPacket()
 {

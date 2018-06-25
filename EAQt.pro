@@ -11,7 +11,9 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets printsupport
 TARGET = EAQt
 TEMPLATE = app
 
-LIBS += -lws2_32
+win32 {
+    LIBS += -lws2_32
+}
 
 CONFIG += c++11
 
