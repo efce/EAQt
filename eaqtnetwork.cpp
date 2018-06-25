@@ -15,95 +15,147 @@
   *  along with this program; if not, write to the Free Software Foundation,
   *  Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301  USA
   *******************************************************************************************************************/
+
+#include <stdio.h>
+#include <fcntl.h>
+
 #include "eaqtdata.h"
 #include "eaqtnetwork.h"
 
+
 EAQtNetwork::EAQtNetwork(EAQtDataInterface* di) : QObject()
 {
-    this->_EA_IP = "192.168.173.64";
-    this->_EA_Port = 7001;
-    this->_socket = new QTcpSocket();
-    _socket->moveToThread(this->thread());
-    this->connect( this->_socket, SIGNAL(error(QAbstractSocket::SocketError)),
-                   this,         SLOT(connectionError(QAbstractSocket::SocketError)));
-    //this->_socket->setReadBufferSize(10000*NETWORK::RxBufLength); // 600 kB -- it can have backlog of 10000 unprocessed packets.
-    this->_socket->setReadBufferSize(0); // UNLIMITED buffer size.
+#ifdef _WIN32
+    WSADATA wsa_data;
+    WSAStartup(MAKEWORD(1,1), &wsa_data);
+#endif
+
     this->_pData = di;
-    //this->_pRxBuf = new char[NETWORK::RxBufLength];
-    //memset(this->_pRxBuf,0,NETWORK::RxBufLength);
     _rxSize = 0;
+    if ((_socket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)) <= 0) {
+        qDebug() << QT_MESSAGELOG_LINE << "Socket creation error";
+        throw("Could not create socket.");
+    }
+    qDebug() << QT_MESSAGELOG_LINE << "SOCKET ID: " << _socket;
+
+    memset(&_serv_addr, '0', sizeof(_serv_addr));
+    _serv_addr.sin_family = AF_INET;
+    _serv_addr.sin_port = htons(7001);
+    _serv_addr.sin_addr.s_addr = inet_addr("192.168.173.64");
+
+    _process1_busy = false;
+    _process2_busy = false;
+    _network_timer = nullptr;
+    this->connect(this, SIGNAL(go_process1(QByteArray)), this, SLOT(process1_ui(QByteArray)));
+    this->connect(this, SIGNAL(go_process2(QByteArray)), this, SLOT(process2_no_ui(QByteArray)));
 }
+
+
+#ifdef _WIN32
+bool EAQtNetwork::setSocketBlockingEnabled(SOCKET fd, bool blocking)
+{
+   unsigned long mode = blocking ? 0 : 1;
+   return (ioctlsocket(fd, FIONBIO, &mode) == 0) ? true : false;
+}
+#else
+bool EAQtNetwork::setSocketBlockingEnabled(int fd, bool blocking)
+{
+   int flags = fcntl(fd, F_GETFL, 0);
+   if (flags == -1) return false;
+   flags = blocking ? (flags & ~O_NONBLOCK) : (flags | O_NONBLOCK);
+   return (fcntl(fd, F_SETFL, flags) == 0) ? true : false;
+}
+#endif
 
 EAQtNetwork::~EAQtNetwork()
 {
-    this->_socket->close();
-    delete this->_socket;
+#ifdef _WIN32
+    WSACleanup();
+#endif
+    ::shutdown(_socket, 2);
 }
+
 
 bool EAQtNetwork::connectToEA()
 {
+    qDebug() << QT_MESSAGELOG_LINE << "CONNECTING";
     static bool conSuccess = false;
     if ( conSuccess == true ) {
+        qDebug() << QT_MESSAGELOG_LINE << "WAS CONNECTED";
         return true;
     }
-    _socket->setSocketOption(QAbstractSocket::LowDelayOption,true);
-    _socket->setSocketOption(QAbstractSocket::KeepAliveOption, true);
-    this->_socket->connectToHost(this->_EA_IP, this->_EA_Port);
-    this->_socket->waitForConnected();
-    conSuccess=(this->_socket->state() == QTcpSocket::ConnectedState);
-    if ( conSuccess ) {
-        this->connect(this->_socket, SIGNAL(readyRead()),
-                      this,         SLOT(processPacket()));
-    } else {
-        this->_socket->disconnectFromHost();
-        this->_pData->NetworkError(tr("Could not connect to electrochemical anlyzer"));
-        return false;
+
+    if (::connect(_socket, (struct sockaddr *)&_serv_addr, sizeof(_serv_addr)) != 0)
+    {
+        if (errno != EINPROGRESS) {
+            qDebug() << QT_MESSAGELOG_LINE << "CONNECT FAILED: " << errno;
+            return false;
+        }
     }
+    bool setblock = setSocketBlockingEnabled(_socket, false);
+    qDebug() << QT_MESSAGELOG_LINE << "SET BLOCKING SUCCESS? " << setblock;
+    if (_network_timer == nullptr) {
+        _network_timer = new QTimer(this);
+        connect(_network_timer, SIGNAL(timeout()), this, SLOT(processPacket()));
+        _network_timer->setInterval(10);
+        _network_timer->start();
+    }
+    conSuccess = true;
+    qDebug() << QT_MESSAGELOG_LINE << "CONNECT SUCCESS";
     return true;
 }
 
-void EAQtNetwork::connectionError(QAbstractSocket::SocketError error)
-{
-    switch (error) {
-    case QAbstractSocket::RemoteHostClosedError:
-        this->_pData->NetworkError(tr("The connection was closed."));
-        break;
-
-    default:
-        this->_pData->NetworkError(
-             tr("The following error occurred: %1.")
-                .arg(this->_socket->errorString())
-         );
-    }
-    return;
-}
 
 int EAQtNetwork::sendToEA(const char* TxBuf)
 {
-    return static_cast<int>(
-        this->_socket->write(
-                TxBuf,
-                static_cast<qint64>(NETWORK::TxBufLength)
-           )
-    );
+    qDebug() << QT_MESSAGELOG_LINE << "SENDING...";
+    return ::send(_socket, TxBuf, NETWORK::TxBufLength, 0);
 }
 
 
 void EAQtNetwork::processPacket()
 {
-    while ( _socket->bytesAvailable() ) {
-        QByteArray rxdata = _socket->readAll();
-        if ( (rxdata.size() % NETWORK::RxBufLength) != 0 ) {
-            throw("Network error occured. Packets size does not match the expected value.");
-        }
-        int nextindex = 0;
-        char* _pRxBuf = rxdata.data();
-        while(nextindex < rxdata.size()) {
-            nextindex += NETWORK::RxBufLength;
-            bool nextPacketReady = (nextindex < rxdata.size());
-            this->_pData->ProcessPacketFromEA(_pRxBuf, nextPacketReady);
-            _pRxBuf += NETWORK::RxBufLength;
-        }
-        rxdata.clear();
+    //qDebug() << QT_MESSAGELOG_LINE << "CHECKING SOCKET";
+    int bytes_read;
+    static char _RxBuf2[NETWORK::RxBufLength];
+    bytes_read = ::recv(_socket, _RxBuf, NETWORK::RxBufLength, 0);
+    while (bytes_read > 0) {
+        qDebug() << QT_MESSAGELOG_LINE << "DATA FOUND, CHECKING NEXT DATA";
+        bytes_read = ::recv(_socket, _RxBuf2, NETWORK::RxBufLength, 0);
+        qDebug() << QT_MESSAGELOG_LINE << "NEXT DATA SIZE: " << bytes_read << "B, PROCESSING";
+        _pData->ProcessPacketFromEA(_RxBuf, (bytes_read>0?true:false));
+        qDebug() << QT_MESSAGELOG_LINE << "PROCESSED";
+        memcpy(&_RxBuf, &_RxBuf2, NETWORK::RxBufLength);
     }
+}
+
+
+void EAQtNetwork::process1_ui(QByteArray rxdata)
+{
+    _process1_busy = true;
+    int nextindex = 0;
+    char* rx_ptr = rxdata.data();
+    while(nextindex < rxdata.size()) {
+        nextindex += NETWORK::RxBufLength;
+        bool nextPacketReady = (nextindex < rxdata.size());
+        this->_pData->ProcessPacketFromEA(rx_ptr, nextPacketReady);
+        rx_ptr += NETWORK::RxBufLength;
+    }
+    _process1_busy = false;
+}
+
+
+void EAQtNetwork::process2_no_ui(QByteArray rxdata)
+{
+    qDebug() << "===> 2 <=====";
+    _process2_busy = true;
+    int nextindex = 0;
+    char* rx_ptr = rxdata.data();
+    while(nextindex < rxdata.size()) {
+        nextindex += NETWORK::RxBufLength;
+        //bool nextPacketReady = (nextindex < rxdata.size());
+        this->_pData->ProcessPacketFromEA(rx_ptr, true);
+        rx_ptr += NETWORK::RxBufLength;
+    }
+    _process2_busy = false;
 }

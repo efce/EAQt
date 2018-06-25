@@ -18,8 +18,21 @@
 #ifndef EAQTNETWORK_H
 #define EAQTNETWORK_H
 
-#include <QtNetwork/QTcpSocket>
+#ifdef _WIN32
+  /* See http://stackoverflow.com/questions/12765743/getaddrinfo-on-win32 */
+  #ifndef _WIN32_WINNT
+    #define _WIN32_WINNT 0x0501  /* Windows XP. */
+  #endif
+  #include <winsock2.h>
+  #include <Ws2tcpip.h>
+#else
+  /* Assume that any non-Windows platform uses POSIX-style sockets instead. */
+  #include <sys/socket.h>
+  #include <arpa/inet.h>
+  #include <unistd.h> /* Needed for close() */
+#endif
 #include "eaqtdatainterface.h"
+
 class EAQtNetwork : public QObject
 {
     Q_OBJECT
@@ -31,19 +44,34 @@ public:
     bool connectToEA();
     int sendToEA(const char* TxBuf);
 
-    //char TxBuf[NETWORK::TxBufLength];
+    char _RxBuf[NETWORK::RxBufLength];
     //static void paralelProcess(EAQtDataInterface *pd, char* buf, int num);
 private:
-    QString _EA_IP;
-    uint16_t _EA_Port;
-    QTcpSocket *_socket;
+#ifdef _WIN32
+    SOCKET _socket;
+    bool setSocketBlockingEnabled(SOCKET fd, bool blocking);
+#else
+    int _socket;
+    bool setSocketBlockingEnabled(int fd, bool blocking);
+#endif
+    struct sockaddr_in _address;
+    struct sockaddr_in _serv_addr;
+
+    volatile bool _process1_busy;
+    volatile bool _process2_busy;
     EAQtDataInterface *_pData;
+    QTimer* _network_timer;
     int _rxSize;
+
 
 public slots:
     void processPacket();
-    void connectionError(QAbstractSocket::SocketError);
+    void process1_ui(QByteArray);
+    void process2_no_ui(QByteArray);
 
+signals:
+    void go_process1(QByteArray);
+    void go_process2(QByteArray);
 };
 
 #endif // EAQTNETWORK_H
