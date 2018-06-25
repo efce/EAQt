@@ -81,8 +81,10 @@ bool EAQtNetwork::connectToEA()
     }
     if (::connect(_socket, (struct sockaddr *)&_serv_addr, sizeof(_serv_addr)) < 0)
     {
-        qDebug() << QT_MESSAGELOG_LINE << "CONNECT FAILED";
-        return false;
+        if (errno != EINPROGRESS) {
+            qDebug() << QT_MESSAGELOG_LINE << "CONNECT FAILED: " << errno;
+            return false;
+        }
     }
     if (_network_timer == nullptr) {
         _network_timer = new QTimer(this);
