@@ -23,7 +23,7 @@
 
 class EAQtDataInterface {
 public:
-    virtual void ProcessPacketFromEA(const char*, bool) = 0;
+    virtual void ProcessPacketFromEA(const char* packet, bool freezeUI) = 0;
     virtual void NetworkError(QString) = 0;
     virtual int32_t ParamPV(int32_t) = 0;
     virtual void ParamPV(int32_t, int32_t) = 0;

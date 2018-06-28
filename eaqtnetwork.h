@@ -57,21 +57,19 @@ private:
     struct sockaddr_in _address;
     struct sockaddr_in _serv_addr;
 
-    volatile bool _process1_busy;
-    volatile bool _process2_busy;
+    volatile bool _process_busy;
     EAQtDataInterface *_pData;
     QTimer* _network_timer;
     int _rxSize;
 
 
 public slots:
-    void processPacket();
-    void process1_ui(QByteArray);
-    void process2_no_ui(QByteArray);
+    void checkSocket();
+    void startProcessing();
+
 
 signals:
-    void go_process1(QByteArray);
-    void go_process2(QByteArray);
+    void start_processing();
 };
 
 #endif // EAQTNETWORK_H

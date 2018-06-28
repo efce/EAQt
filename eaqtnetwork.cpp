@@ -43,11 +43,9 @@ EAQtNetwork::EAQtNetwork(EAQtDataInterface* di) : QObject()
     _serv_addr.sin_port = htons(7001);
     _serv_addr.sin_addr.s_addr = inet_addr("192.168.173.64");
 
-    _process1_busy = false;
-    _process2_busy = false;
+    _process_busy = false;
     _network_timer = nullptr;
-    this->connect(this, SIGNAL(go_process1(QByteArray)), this, SLOT(process1_ui(QByteArray)));
-    this->connect(this, SIGNAL(go_process2(QByteArray)), this, SLOT(process2_no_ui(QByteArray)));
+    this->connect(this, SIGNAL(start_processing()), this, SLOT(startProcessing()));
 }
 
 
@@ -96,8 +94,8 @@ bool EAQtNetwork::connectToEA()
     qDebug() << QT_MESSAGELOG_LINE << "SET BLOCKING SUCCESS? " << setblock;
     if (_network_timer == nullptr) {
         _network_timer = new QTimer(this);
-        connect(_network_timer, SIGNAL(timeout()), this, SLOT(processPacket()));
-        _network_timer->setInterval(10);
+        connect(_network_timer, SIGNAL(timeout()), this, SLOT(checkSocket()));
+        _network_timer->setInterval(20);
         _network_timer->start();
     }
     conSuccess = true;
@@ -113,49 +111,36 @@ int EAQtNetwork::sendToEA(const char* TxBuf)
 }
 
 
-void EAQtNetwork::processPacket()
+void EAQtNetwork::checkSocket()
 {
     //qDebug() << QT_MESSAGELOG_LINE << "CHECKING SOCKET";
+    if (_process_busy) {
+        return;
+    }
+    int bytes_read = ::recv(_socket, _RxBuf, NETWORK::RxBufLength, 0);
+    if (bytes_read > 0) {
+        emit start_processing();
+    }
+}
+
+
+void EAQtNetwork::startProcessing()
+{
+    _process_busy = true;
+    static char RxBuf2[NETWORK::RxBufLength];
     int bytes_read;
-    static char _RxBuf2[NETWORK::RxBufLength];
-    bytes_read = ::recv(_socket, _RxBuf, NETWORK::RxBufLength, 0);
-    while (bytes_read > 0) {
-        qDebug() << QT_MESSAGELOG_LINE << "DATA FOUND, CHECKING NEXT DATA";
-        bytes_read = ::recv(_socket, _RxBuf2, NETWORK::RxBufLength, 0);
-        qDebug() << QT_MESSAGELOG_LINE << "NEXT DATA SIZE: " << bytes_read << "B, PROCESSING";
-        _pData->ProcessPacketFromEA(_RxBuf, (bytes_read>0?true:false));
-        qDebug() << QT_MESSAGELOG_LINE << "PROCESSED";
-        memcpy(&_RxBuf, &_RxBuf2, NETWORK::RxBufLength);
+
+    qDebug() << QT_MESSAGELOG_LINE << "PROCESSING ...";
+    while ((bytes_read = ::recv(_socket, RxBuf2, NETWORK::RxBufLength, 0)) > 0) {
+        qDebug() << QT_MESSAGELOG_LINE << "NEXT DATA SIZE: " << bytes_read << "B";
+        _pData->ProcessPacketFromEA(_RxBuf, true);
+        qDebug() << QT_MESSAGELOG_LINE << "PACKET PROCESSED";
+        memcpy(_RxBuf, RxBuf2, NETWORK::RxBufLength);
     }
+    qDebug() << QT_MESSAGELOG_LINE << "FINAL PROCESSING, UPDATING UI";
+    _pData->ProcessPacketFromEA(_RxBuf, false);
+    qDebug() << QT_MESSAGELOG_LINE << "PROCESSED, UI UPDATED";
+
+    _process_busy = false;
 }
 
-
-void EAQtNetwork::process1_ui(QByteArray rxdata)
-{
-    _process1_busy = true;
-    int nextindex = 0;
-    char* rx_ptr = rxdata.data();
-    while(nextindex < rxdata.size()) {
-        nextindex += NETWORK::RxBufLength;
-        bool nextPacketReady = (nextindex < rxdata.size());
-        this->_pData->ProcessPacketFromEA(rx_ptr, nextPacketReady);
-        rx_ptr += NETWORK::RxBufLength;
-    }
-    _process1_busy = false;
-}
-
-
-void EAQtNetwork::process2_no_ui(QByteArray rxdata)
-{
-    qDebug() << "===> 2 <=====";
-    _process2_busy = true;
-    int nextindex = 0;
-    char* rx_ptr = rxdata.data();
-    while(nextindex < rxdata.size()) {
-        nextindex += NETWORK::RxBufLength;
-        //bool nextPacketReady = (nextindex < rxdata.size());
-        this->_pData->ProcessPacketFromEA(rx_ptr, true);
-        rx_ptr += NETWORK::RxBufLength;
-    }
-    _process2_busy = false;
-}
