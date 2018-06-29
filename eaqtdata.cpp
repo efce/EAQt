@@ -904,7 +904,7 @@ void EAQtData::deleteAllCurvesFromGraph()
     }
 }
 
-void EAQtData::ProcessPacketFromEA(const char* packet, bool nextPacketReady)
+void EAQtData::ProcessPacketFromEA(const char* packet)
 {
     uint8_t* RxBuf = (uint8_t*)packet;
 
@@ -952,7 +952,7 @@ void EAQtData::ProcessPacketFromEA(const char* packet, bool nextPacketReady)
             ActSampl2 = 0;
             twCounter = 0;
             _ctnrSQW = 6;	// nr ms w 1. i 2. próbkowaniu
-            this->MesUpdate(previousCurveNum, previousPointNum, nextPacketReady);
+            this->MesUpdate(previousCurveNum, previousPointNum);
         }
         i = MEASUREMENT::PVstartData; // == 6
         mesCurve = this->getMesCurves()->get(currentCurveNum);
@@ -1070,7 +1070,7 @@ void EAQtData::ProcessPacketFromEA(const char* packet, bool nextPacketReady)
                 mesCurve->addToMesTimePoint(currentPointNum, _samplingTime);
             }
             mesCurve->addToMesCurrent1Point(currentPointNum, workl);
-            this->MesUpdate(currentCurveNum,currentPointNum, nextPacketReady);
+            this->MesUpdate(currentCurveNum, currentPointNum);
         }
         if ( this->_endOfMes ) {
             this->MesAfter();
@@ -1115,6 +1115,7 @@ void EAQtData::MesStart(bool isLsv)
     int32_t work;
     int32_t mesCurveIndex;
     int i;
+    _mesReadyForUI = false;
 
     this->_pUI->changeStartButtonText(tr("Start ") + (isLsv?"LSV":"PV"));
 
@@ -1748,7 +1749,7 @@ bool EAQtData::sendLSVToEA()
     }
 }
 
-void EAQtData::MesUpdate(int32_t nNrOfMesCurve, int32_t nPointFromDevice, bool freezUI)
+void EAQtData::MesUpdate(int32_t nNrOfMesCurve, int32_t nPointFromDevice)
 {
     ///////////////// SETUP //////////////////
     if ( this->_performSetup == true && !this->_endOfMes ) {
@@ -1874,20 +1875,17 @@ void EAQtData::MesUpdate(int32_t nNrOfMesCurve, int32_t nPointFromDevice, bool f
             );
         }
     }
+    _lastCurve = nNrOfMesCurve;
+    _lastPoint = nPointFromDevice;
+    _mesReadyForUI = true;
+}
 
-//    if ( getXAxis() == XAXIS::potential ) {
-//        mesCurve->getPlot()->addData( mesCurve->getPotentialPoint(nPointFromDevice), res);
-//    } else if ( getXAxis() == XAXIS::time ) {
-//        mesCurve->getPlot()->addData( mesCurve->getTimePoint(nPointFromDevice), res);
-//    } else if ( getXAxis() == XAXIS::nonaveraged ) {
-//        mesCurve->getPlot()->addData(mesCurve->getNumberOfProbingPoints(), res);
-//    }
-
+void EAQtData::MesPrepareUIUpdate()
+{
     int msecnow = _fromUpdate.elapsed();
-    if ( (nPointFromDevice == 1 && nNrOfMesCurve == 0)
-    || (!freezUI /*&& MEASUREMENT::displayDelay < msecnow*/) ) {
+    if (_mesReadyForUI) {
         _pUI->setLowLabelText(1,tr(" [FPS: %1]").arg( 1.0 / ((double)msecnow/1000.0) ));
-        this->_pUI->MeasurementUpdate(nNrOfMesCurve, nPointFromDevice);
+        this->_pUI->MeasurementUpdate(_lastCurve, _lastPoint);
         _fromUpdate.restart();
     }
 }
@@ -1986,6 +1984,7 @@ void EAQtData::MesAfter()
 {
     int work_act, err;
 
+    _mesReadyForUI = false;
     _conductingMeasurement = 0;
     work_act = this->Act();
     // nie wiem czy trzeba: m_nStopInfo = 1;

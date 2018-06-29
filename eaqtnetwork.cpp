@@ -76,30 +76,25 @@ EAQtNetwork::~EAQtNetwork()
 
 bool EAQtNetwork::connectToEA()
 {
-    qDebug() << QT_MESSAGELOG_LINE << "CONNECTING";
     static bool conSuccess = false;
     if ( conSuccess == true ) {
-        qDebug() << QT_MESSAGELOG_LINE << "WAS CONNECTED";
         return true;
     }
 
     if (::connect(_socket, (struct sockaddr *)&_serv_addr, sizeof(_serv_addr)) != 0)
     {
         if (errno != EINPROGRESS) {
-            qDebug() << QT_MESSAGELOG_LINE << "CONNECT FAILED: " << errno;
             return false;
         }
     }
     bool setblock = setSocketBlockingEnabled(_socket, false);
-    qDebug() << QT_MESSAGELOG_LINE << "SET BLOCKING SUCCESS? " << setblock;
     if (_network_timer == nullptr) {
         _network_timer = new QTimer(this);
         connect(_network_timer, SIGNAL(timeout()), this, SLOT(checkSocket()));
-        _network_timer->setInterval(20);
+        _network_timer->setInterval(MEASUREMENT::socketUpdateTime);
         _network_timer->start();
     }
     conSuccess = true;
-    qDebug() << QT_MESSAGELOG_LINE << "CONNECT SUCCESS";
     return true;
 }
 
@@ -113,7 +108,6 @@ int EAQtNetwork::sendToEA(const char* TxBuf)
 
 void EAQtNetwork::checkSocket()
 {
-    //qDebug() << QT_MESSAGELOG_LINE << "CHECKING SOCKET";
     if (_process_busy) {
         return;
     }
@@ -127,19 +121,18 @@ void EAQtNetwork::checkSocket()
 void EAQtNetwork::startProcessing()
 {
     _process_busy = true;
+
     static char RxBuf2[NETWORK::RxBufLength];
     int bytes_read;
 
-    qDebug() << QT_MESSAGELOG_LINE << "PROCESSING ...";
     while ((bytes_read = ::recv(_socket, RxBuf2, NETWORK::RxBufLength, 0)) > 0) {
-        qDebug() << QT_MESSAGELOG_LINE << "NEXT DATA SIZE: " << bytes_read << "B";
-        _pData->ProcessPacketFromEA(_RxBuf, true);
-        qDebug() << QT_MESSAGELOG_LINE << "PACKET PROCESSED";
+        _pData->ProcessPacketFromEA(_RxBuf);
         memcpy(_RxBuf, RxBuf2, NETWORK::RxBufLength);
+        memset(RxBuf2, 0, NETWORK::RxBufLength);
     }
-    qDebug() << QT_MESSAGELOG_LINE << "FINAL PROCESSING, UPDATING UI";
-    _pData->ProcessPacketFromEA(_RxBuf, false);
-    qDebug() << QT_MESSAGELOG_LINE << "PROCESSED, UI UPDATED";
+    _pData->ProcessPacketFromEA(_RxBuf);
+    memset(_RxBuf, 0, NETWORK::RxBufLength);
+    _pData->MesPrepareUIUpdate();
 
     _process_busy = false;
 }

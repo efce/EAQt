@@ -146,13 +146,14 @@ public:
     void MesStop();
     void MesClear();
     void MesAfter();
-    void MesUpdate(int32_t, int32_t, bool);
+    void MesUpdate(int32_t, int32_t);
+    void MesPrepareUIUpdate();
     int  MesSaveAll(QString UserCName, QString UserFName, QString UserComment);
     bool isMeasurement();
     const QVector<int16_t>& getPotentialProgram();
     void setPotentialProgram(QVector<int16_t> pp);
 
-    void ProcessPacketFromEA(const char* packet, bool nextPacketReady);
+    void ProcessPacketFromEA(const char* packet);
     void sendAccessories();
     bool sendTestCGMDE();
     void sendTestCGMDEStop();
@@ -219,6 +220,9 @@ private:
    int _calculatedNrOfPoints;
    int _displayCurveNr;
    int _currentPointOnCurve;
+   int _lastPoint;
+   int _lastCurve;
+   bool _mesReadyForUI;
 
    QVector<QString> _vChannelNamesOfMultielectrode {};
 

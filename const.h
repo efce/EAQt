@@ -64,7 +64,7 @@ namespace MEASUREMENT {
 
     const double multiply = (1.0 / 60.0 * 5000.0 / 32768.0 * 2.5 * -1.0 * 8.0 / 1000000.0 * 2.0);
 
-    const int displayDelay = 50; //Delay display to update every 50 ms (in EAQtData::MesUpdate)
+    const int socketUpdateTime = 20; //Delay display to update every 50 ms (in EAQtData::MesUpdate)
 }
 
 namespace NETWORK {
