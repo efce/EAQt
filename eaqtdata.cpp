@@ -1054,10 +1054,10 @@ void EAQtData::ProcessPacketFromEA(const char* packet)
         }
 
         i = MEASUREMENT::LSVstartData; // == 8
-        mesCurve = this->getMesCurves()->get(currentCurveNum);
 
         while ( DataLen > 0 ) {
             currentCurveNum = ((uint16_t)RxBuf[i] | ((uint16_t)RxBuf[i+1]<<8));
+            mesCurve = this->getMesCurves()->get(currentCurveNum);
             i+= 2;
             currentPointNum = ((uint16_t)RxBuf[i] | ((uint16_t)RxBuf[i+1]<<8));
             i+= 2;
@@ -1072,6 +1072,8 @@ void EAQtData::ProcessPacketFromEA(const char* packet)
             mesCurve->addToMesCurrent1Point(currentPointNum, workl);
             this->MesUpdate(currentCurveNum, currentPointNum);
         }
+        previousPointNum = currentPointNum;
+        previousCurveNum = currentCurveNum;
         if ( this->_endOfMes ) {
             this->MesAfter();
         }
