@@ -690,6 +690,11 @@
         <translation>Seria Pomiarów</translation>
     </message>
     <message>
+        <location filename="eaqtdata.cpp" line="1180"/>
+        <source>Start and end potential cannot be equal in LSV</source>
+        <translation>Początkowy i końcowy potencjał nie mogą być równe w LSV</translation>
+    </message>
+    <message>
         <location filename="eaqtdata.cpp" line="1595"/>
         <source>Potential program has to have more than 2 points</source>
         <translation>Program potencjału mus być dłuższy niż 2 punkty</translation>
@@ -733,6 +738,26 @@
         <location filename="eaqtdata.cpp" line="2190"/>
         <source>Could not append curve.</source>
         <translation>Nie można dołączyć krzywej.</translation>
+    </message>
+    <message>
+        <location filename="eaqtdata.cpp" line="2234"/>
+        <source>Could not create file</source>
+        <translation>Nie mozna utworzyć pliku</translation>
+    </message>
+    <message>
+        <location filename="eaqtdata.cpp" line="2238"/>
+        <source>Could not access file created file</source>
+        <translation>Nie udało się uzyskać dostępu do utworzonego pliku</translation>
+    </message>
+    <message>
+        <location filename="eaqtdata.cpp" line="2243"/>
+        <source>Could not access existing file</source>
+        <translation>Nie udało się uzyskać dostępu do istniejącego pliku</translation>
+    </message>
+    <message>
+        <location filename="eaqtdata.cpp" line="2255"/>
+        <source>File is larger than %1 or empty.</source>
+        <translation>Plik jest większy niż %1 lub pusty.</translation>
     </message>
     <message>
         <location filename="eaqtdata.cpp" line="2324"/>
@@ -784,6 +809,17 @@
         <location filename="eaqtdata.cpp" line="2444"/>
         <source>Syntax error on line: %1</source>
         <translation>Błąd składni na lini %1</translation>
+    </message>
+    <message>
+        <location filename="eaqtdata.cpp" line="2448"/>
+        <source>The file is not compatible with this version of EAQt</source>
+        <oldsource>The file if not compatible with this version of EAQt</oldsource>
+        <translation>Plik nie jest kompatybilny z tą wersją EAQt</translation>
+    </message>
+    <message>
+        <location filename="eaqtdata.cpp" line="2452"/>
+        <source>Error while loading the file</source>
+        <translation>Błąd w czasie wczytywania pliku</translation>
     </message>
     <message>
         <location filename="eaqtdata.cpp" line="2456"/>
@@ -1485,6 +1521,10 @@
 
 
 </source>
+        <oldsource>Build date: %1 %2
+
+
+</oldsource>
         <translation>Data kompilacji: %1 %2
 
 
@@ -1809,6 +1849,11 @@
         <translation>Położenie względne: </translation>
     </message>
     <message>
+        <location filename="eaqtmousehandler.cpp" line="500"/>
+        <source>Background correction: set four markers to generate fit</source>
+        <translation>Korekcja linii bazowej: ustaw 4 markery aby wygenerować tło</translation>
+    </message>
+    <message>
         <location filename="eaqtmousehandler.cpp" line="521"/>
         <source>Data must have at least %1 points</source>
         <translation>Dane muszę składać się z przynajmniej %1 punktów</translation>
@@ -1817,6 +1862,31 @@
         <location filename="eaqtmousehandler.cpp" line="521"/>
         <source>Error</source>
         <translation>Błąd</translation>
+    </message>
+    <message>
+        <location filename="eaqtmousehandler.cpp" line="563"/>
+        <source>Calibration: set two markers on the plot</source>
+        <translation>Kalibracja: ustaw dwa markery na wykresie</translation>
+    </message>
+    <message>
+        <location filename="eaqtmousehandler.cpp" line="598"/>
+        <source>Analysis: set two markers on the plot</source>
+        <translation>Analiza: ustaw dwa markery na wykresie</translation>
+    </message>
+    <message>
+        <location filename="eaqtmousehandler.cpp" line="629"/>
+        <source>Regression: set two markers on the plot</source>
+        <translation>Regresja: ustaw dwa markery na wykresie</translation>
+    </message>
+    <message>
+        <location filename="eaqtmousehandler.cpp" line="651"/>
+        <source>Move: use left mouse button to move the curve up or down</source>
+        <translation>Przesuwanie: użyj lewego przycisku myszu aby przenieść&#xa0;krzywą w dól lub górę</translation>
+    </message>
+    <message>
+        <location filename="eaqtmousehandler.cpp" line="667"/>
+        <source>Relative height: use left mouse button to set first and second point for baseline</source>
+        <translation>Wysokość względna: użyj lewego przycisku myszy aby ustawić pierwszy i drugi punkt krzywej bazowej</translation>
     </message>
     <message>
         <location filename="eaqtmousehandler.cpp" line="694"/>
@@ -2689,6 +2759,19 @@ nieuśrednionych</translation>
         <source>Voltammograms (*.vol *.volt *.voltc);;Text files(*.txt *.csv)</source>
         <oldsource>Voltammograms (*.vol *.volt *.voltc)</oldsource>
         <translation>Woltamperogramy (*.vol *.volt *.voltc);;Pliki tekstowe(*.txt *.csv)</translation>
+    </message>
+</context>
+<context>
+    <name>MAIN</name>
+    <message>
+        <location filename="main.cpp" line="59"/>
+        <source>Error</source>
+        <translation>Błąd</translation>
+    </message>
+    <message>
+        <location filename="main.cpp" line="60"/>
+        <source>Unsupported file type.</source>
+        <translation>Nieobsługiwany typ pliku</translation>
     </message>
 </context>
 <context>

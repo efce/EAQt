@@ -497,7 +497,7 @@ void EAQtMouseHandler::callUserFunction()
     case uf_background_correction:
         if ( this->_isFunctionSetupNeeded ) {
             this->_isFunctionSetupNeeded = false;
-            this->_pUI->setStatusText("IDS_mysz1");
+            this->_pUI->setStatusText(tr("Background correction: set four markers to generate fit"));
             this->_pUI->updateAll(false);
             return;
         }
@@ -560,7 +560,7 @@ void EAQtMouseHandler::callUserFunction()
     case uf_calibration_data:
         if ( this->_isFunctionSetupNeeded ) { // tylko na poczatku
             this->_isFunctionSetupNeeded = false;
-            this->_pUI->setStatusText("IDS_mysz2"); // DANE DO KALIBRACJI: Ustaw dwa wskaŸniki. U¿yj lewego przycisku myszy, aby dodaæ wskaŸnik. U¿yj prawego, aby cofn¹æ operacjê.
+            this->_pUI->setStatusText(tr("Calibration: set two markers on the plot")); // DANE DO KALIBRACJI: Ustaw dwa wskaŸniki. U¿yj lewego przycisku myszy, aby dodaæ wskaŸnik. U¿yj prawego, aby cofn¹æ operacjê.
             this->_pUI->updateAll(false);
             return;
         }
@@ -595,7 +595,7 @@ void EAQtMouseHandler::callUserFunction()
     case uf_statistic_data:
         if ( this->_isFunctionSetupNeeded ) { // tylko na poczatku
             this->_isFunctionSetupNeeded = false;
-            this->_pUI->setStatusText("IDS_mysz3"); // ANALIZA PIKU/FALI: Ustaw dwa wskaŸniki. U¿yj lewego przycisku myszy dodaæ wskaŸnik. U¿yj prawego, aby cofn¹æ operacjê.
+            this->_pUI->setStatusText(tr("Analysis: set two markers on the plot")); // ANALIZA PIKU/FALI: Ustaw dwa wskaŸniki. U¿yj lewego przycisku myszy dodaæ wskaŸnik. U¿yj prawego, aby cofn¹æ operacjê.
             this->_pUI->updateAll(false);
             return;
         }
@@ -626,7 +626,7 @@ void EAQtMouseHandler::callUserFunction()
     case uf_reg_data:
         if ( this->_isFunctionSetupNeeded ) { // tylko na poczatku
             this->_isFunctionSetupNeeded = false;
-            this->_pUI->setStatusText("IDS_mysz4"); // ANALIZA REGRESJI: Ustaw dwa wskaŸniki. U¿yj lewego przycisku myszy, aby dodaæ wskaŸnik. U¿yj prawego, aby cofn¹æ operacjê.
+            this->_pUI->setStatusText(tr("Regression: set two markers on the plot")); // ANALIZA REGRESJI: Ustaw dwa wskaŸniki. U¿yj lewego przycisku myszy, aby dodaæ wskaŸnik. U¿yj prawego, aby cofn¹æ operacjê.
             this->_pUI->updateAll();
             return;
         }
@@ -648,7 +648,7 @@ void EAQtMouseHandler::callUserFunction()
     case uf_move_curve:
         if ( this->_isFunctionSetupNeeded ) { // tylko na poczatku
             this->_isFunctionSetupNeeded = false;
-            this->_pUI->setStatusText("IDS_mysz5"); // PRZESUWANIE KRZYWEJ: U¿yj lewego przycisku myszy aby przesun¹æ aktywn¹ krzyw¹. U¿yj prawego aby zakoñczyæ operacjê.
+            this->_pUI->setStatusText(tr("Move: use left mouse button to move the curve up or down")); // PRZESUWANIE KRZYWEJ: U¿yj lewego przycisku myszy aby przesun¹æ aktywn¹ krzyw¹. U¿yj prawego aby zakoñczyæ operacjê.
             this->_pUI->updateAll();
             return;
         }
@@ -664,7 +664,7 @@ void EAQtMouseHandler::callUserFunction()
     case uf_relative_height:
         if ( this->_isFunctionSetupNeeded ) { // tylko na poczatku
             this->_isFunctionSetupNeeded = false;
-            this->_pUI->setStatusText("IDS_mysz6"); // WYSOKOŒÆ WZGLÊDNA: U¿yj lewego przycisku myszy aby ustawiæ pierwszy punkt krzywej bazowej. U¿yj prawego, aby cofn¹æ operacjê.
+            this->_pUI->setStatusText(tr("Relative height: use left mouse button to set first and second point for baseline")); // WYSOKOŒÆ WZGLÊDNA: U¿yj lewego przycisku myszy aby ustawiæ pierwszy punkt krzywej bazowej. U¿yj prawego, aby cofn¹æ operacjê.
             this->_pUI->PlotGetLayers()->Markers->replot();
             return;
         }

@@ -56,8 +56,8 @@ int main(int argc, char *argv[])
                 EAQtData::getInstance().CurReadFileOld(&name,0);
             } else {
                 QMessageBox mb;
-                mb.setWindowTitle(w.tr("Error"));
-                mb.setText(w.tr("Unsupported file type."));
+                mb.setWindowTitle(QApplication::translate("MAIN", "Error"));
+                mb.setText(QApplication::translate("MAIN", "Unsupported file type."));
                 mb.exec();
             }
         }

@@ -1177,7 +1177,7 @@ void EAQtData::MesStart(bool isLsv)
         if ( _LSVParam[PARAM::Ek] == _LSVParam[PARAM::Ep] ) {
             //            CString	m_String;
             //            m_String.LoadString(IDS_info15);
-            this->_pUI->showMessageBox("IDS_info15");
+            this->_pUI->showMessageBox(tr("Start and end potential cannot be equal in LSV"));
             return;
         }
 
@@ -2231,16 +2231,16 @@ int EAQtData::safeAppend(QString pFileName, Curve* CurveToAppend)
             file->write((char*)&nCurveCntr,sizeof(TYPES::vectorindex_t));
             file->close();
             if ( !file->open(QIODevice::ReadOnly) ) {
-                this->_pUI->showMessageBox("IDS_info6");
+                this->_pUI->showMessageBox(tr("Could not create file"));
                 return(-1);
             }
         } else {
-            this->_pUI->showMessageBox("IDS_info6");
+            this->_pUI->showMessageBox(tr("Could not access file created file"));
             return(-1); // brak dostepu do pliku
         }
     } else {
         if ( !file->open(QIODevice::ReadOnly) ) {
-            this->_pUI->showMessageBox("IDS_info6");
+            this->_pUI->showMessageBox(tr("Could not access existing file"));
             return(-1);
         }
     }
@@ -2252,7 +2252,7 @@ int EAQtData::safeAppend(QString pFileName, Curve* CurveToAppend)
     // Sprawdzanie czy plik nie jest za duzy do zaladowania do pamieci lub pusty
     if ( fileLen > TYPES::maxFileSize ||  fileLen < 4 )
     {
-        this->_pUI->showMessageBox("IDS_info6");
+        this->_pUI->showMessageBox(tr("File is larger than %1 or empty.").arg(TYPES::maxFileSize));
         file->close();
         return(-2);
     }
@@ -2445,11 +2445,11 @@ void EAQtData::loadMesFile()
         this->_isMesSeries = false;
         return;
     } else if ( res == -2 ) {
-        this->_pUI->showMessageBox("IDS_info25");
+        this->_pUI->showMessageBox(tr("The file is not compatible with this version of EAQt"));
         this->_isMesSeries = false;
         return;
     } else if ( res == -3 ) {
-        this->_pUI->showMessageBox("IDS_info4");
+        this->_pUI->showMessageBox(tr("Error while loading the file"));
         this->_isMesSeries = false;
         return;
     } else if ( res == 0 ) {
