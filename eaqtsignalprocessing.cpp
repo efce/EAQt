@@ -86,16 +86,19 @@ void EAQtSignalProcessing::curvesStats(QVector<std::array<int,2>>& coords)
 {
     CurveCollection* _curves = EAQtData::getInstance().getCurves();
     int n = _curves->count();
-    QVector<double> vec;
+    QVector<double> bkg_std_vec;
     QVector<double> minmax(n);
+    double stdDev = 0;
+    double peakMean = 0;
     for ( int i = 0; i < n; ++i ) {
-        vec.append(_curves->get(i)->getYVector().mid(coords[i][0], coords[i][1]));
+        QVector<double> v_tmp = _curves->get(i)->getYVector().mid(coords[i][0], coords[i][1]-coords[i][0]);
+        stdDev += calcStdDev(v_tmp);
         minmax[i] = relativeHeight(_curves->get(i), coords[i][0], coords[i][1]);
+        peakMean += minmax[i];
     }
-    double stdDev = calcStdDev(vec);
-    double peakStdDev = calcStdDev(minmax);
-    double peakMean = std::accumulate(minmax.begin(), minmax.end(),0.0);
+    stdDev /= n;
     peakMean /= n;
+    double peakStdDev = calcStdDev(minmax);
     QString text;
     text += tr("Peak height: %1 ± %2 µA <br>").arg(peakMean,0,'f',4).arg(peakStdDev,0,'f',4);
     text += tr("Baseline Standard Deviation: %1 µA <br>").arg(stdDev,0,'f',4);
@@ -650,7 +653,7 @@ double EAQtSignalProcessing::calcStdDev(QVector<double> yvals)
     for ( int i = 0; i<n; ++i ) {
         wrk += pow((mean - yvals[i]),2);
     }
-    return sqrt(wrk/((double)n-1.0));
+    return sqrt(wrk/(static_cast<double>(n)-1.0));
 }
 
 QVector<uint> EAQtSignalProcessing::findPeaks(QVector<double> y)
