@@ -1480,6 +1480,17 @@
         <translation>Plik PNG (*.png)</translation>
     </message>
     <message>
+        <location filename="eaqtmainwindow.cpp" line="1549"/>
+        <source>Build date: %1 %2
+
+
+</source>
+        <translation>Data kompilacji: %1 %2
+
+
+</translation>
+    </message>
+    <message>
         <location filename="eaqtmainwindow.cpp" line="1690"/>
         <source>Calculation of LOD requires completed calibration.</source>
         <translation>Obliczanie LOD wymaga najpierw ukończenia kalibracji.</translation>
