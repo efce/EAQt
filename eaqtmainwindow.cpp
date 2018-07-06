@@ -28,6 +28,7 @@
 #include "eaqtaveragedialog.h"
 #include "eaqtcurverenamedialog.h"
 #include "eaqtbackgroundcorrectiondialog.h"
+#include "eaqtcalculateloddialog.h"
 #include "settingsdialog.h"
 
 EAQtMainWindow::EAQtMainWindow(QSettings *settings, QTranslator* t, QWidget *parent) :
@@ -1037,6 +1038,10 @@ void EAQtMainWindow::createActionsTopMenu()
     this->_actCalibrationResult->setStatusTip(tr("Calculate result"));
     connect(_actCalibrationResult, SIGNAL(triggered(bool)),this,SLOT(resultCalibration()));
 
+    this->_actLOD = new QAction(tr("Calculate LOD"), this);
+    this->_actLOD->setStatusTip(tr("Calculate Limit of Detection for current calibration"));
+    connect(_actLOD, SIGNAL(triggered(bool)),this,SLOT(showLOD()));
+
     _actGrLanguages = new QActionGroup(this);
     _actGrLanguages->setExclusive(true);
     connect(_actGrLanguages, SIGNAL(triggered(QAction*)), this, SLOT(changeLanguage(QAction*)));
@@ -1116,6 +1121,7 @@ void EAQtMainWindow::createMenusTopMenu()
     _menuCalibration->addAction(this->_actCalibrationClear);
     _menuCalibration->addAction(this->_actCalibrationLoad);
     _menuCalibration->addAction(this->_actCalibrationResult);
+    _menuCalibration->addAction(this->_actLOD);
 
     _menuLanguage = this->menuBar()->addMenu(tr("Language"));
     _menuLanguage->addAction(_actLangEnglish);
@@ -1671,6 +1677,17 @@ void EAQtMainWindow::startCurvesStats()
     if ( _pEAQtData->getCurves()->count() > 0 ) {
         _mouseHandler->ChangeMouseMode(EAQtMouseHandler::mm_place2markers,
                                     EAQtMouseHandler::uf_statistic_data);
+    }
+}
+
+void EAQtMainWindow::showLOD()
+{
+    if (_pEAQtData->_calibration->wasFitted) {
+        EAQtCalculateLODDialog *dlod = new EAQtCalculateLODDialog(_pEAQtData->_calibration);
+        dlod->exec();
+        delete dlod;
+    } else {
+        showMessageBox(tr("Calculation of LOD requires completed calibration."), tr("Error"));
     }
 }
 

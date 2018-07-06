@@ -746,5 +746,9 @@ int EAQtSignalProcessing::secondSignificantDigitDecimalPlace(double value)
     } else {
         return int(-(l-1.0));
     }
+}
 
+double EAQtSignalProcessing::calcLOD(double slope, double slopeStdDev, double intercept, double interceptStdDev, double blankStdDev, double k)
+{
+    return (k/slope) * sqrt(pow(blankStdDev, 2) + pow(interceptStdDev, 2) + pow(slopeStdDev, 2)*pow((intercept/slope), 2));
 }

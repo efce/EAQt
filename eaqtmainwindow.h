@@ -164,6 +164,7 @@ private:
     QAction *_actCalibrationLoad;
     QAction *_actCalibrationResult;
     QAction *_actCalibrationShow;
+    QAction *_actLOD;
     QAction *_actCalibrationClear;
 
     QAction *_actSoftware;
@@ -209,6 +210,7 @@ private slots:
     void startSmooth();
     void showAdvancedSmooth();
     void startCurvesStats();
+    void showLOD();
     void showRecalculateCurve();
     void startCalibration();
     void loadCalibration();
