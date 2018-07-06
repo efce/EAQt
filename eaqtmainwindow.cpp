@@ -1546,7 +1546,7 @@ void EAQtMainWindow::showAboutSoftware()
     QLabel *l;
     l = new QLabel();
     //l->setTextFormat();
-    l->setText(content);
+    l->setText(tr("Build date: %1 %2\n\r\n\r").arg(__DATE__).arg(__TIME__) + content);
     l->setFixedWidth(700);
     l->setWordWrap(true);
     vbl->addWidget(l);
