@@ -31,7 +31,6 @@ class CalibrationPlot: public QWidget
 public:
     CalibrationPlot(CalibrationData* cd);
     ~CalibrationPlot();
-    void update();
     QCustomPlot* getPlotArea();
 
 private:
@@ -40,11 +39,15 @@ private:
     QCustomPlot *_plot;
     QTextEdit *_te;
     QPushButton *_butSaveAsPNG;
+    QCheckBox *_checkConfidence;
     QVBoxLayout *_layout;
     void setupPlot();
     void setupTextEdit();
     QCPItemStraightLine *_calibrationLine;
     QCPGraph *_calibrationPoints;
+
+public slots:
+    void update();
 
 private slots:
     void saveAsPNG();

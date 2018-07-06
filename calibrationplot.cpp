@@ -89,24 +89,37 @@ void CalibrationPlot::setupTextEdit()
     _te->setAlignment(Qt::AlignCenter);
     _butSaveAsPNG = new QPushButton(tr("Save as PNG"));
     QObject::connect(_butSaveAsPNG, SIGNAL(clicked(bool)), this, SLOT(saveAsPNG()));
-    _layout->addWidget(_butSaveAsPNG);
+    _checkConfidence = new QCheckBox(tr("Confidence intervals"));
+    _checkConfidence->setChecked(false);
+    this->connect(_checkConfidence, SIGNAL(clicked(bool)), this, SLOT(update()));
+    QHBoxLayout *container = new QHBoxLayout();
+    container->addWidget(_butSaveAsPNG);
+    container->addWidget(_checkConfidence);
+    _layout->addLayout(container);
 }
 
 void CalibrationPlot::update()
 {
+    bool useConfidence = _checkConfidence->isChecked();
     _plot->setVisible(true);
     _calibrationPoints->setData(_cd->xValues,_cd->yValues,false);
-    QString text = tr("for α=0.05:<br>");
-    int deg_freedom = _cd->xValues.size()-2;
-    double talpha = EAQtSignalProcessing::tinv0975(deg_freedom);
+    QString text;
+    double talpha = 1;
+    if (useConfidence) {
+        text = tr("Confidence intervals for α=0.05:<br>");
+        int deg_freedom = _cd->xValues.size()-2;
+        talpha = EAQtSignalProcessing::tinv0975(deg_freedom);
+    } else {
+        text = tr("Standard deviations:<br>");
+    }
     double confIntervalSlope = talpha * _cd->slopeStdDev;
     int slopeDecimals = EAQtSignalProcessing::secondSignificantDigitDecimalPlace(confIntervalSlope);
     double confIntervalIntercept = talpha * _cd->interceptStdDev;
     int interceptDecimals = EAQtSignalProcessing::secondSignificantDigitDecimalPlace(confIntervalIntercept);
     if ( _cd->slope == 0 || !qIsFinite(_cd->intercept) ) {
         text += tr("Regression line cannot be plotted.<br>");
-        text += tr("r = %1 <br>").arg(_cd->correlationCoef,0,'f',4);
-        text += tr("i = %1(±%2)c + %3(±%4)<br>").arg(_cd->slope,0,'f',slopeDecimals).arg(confIntervalSlope,0,'f',slopeDecimals).arg(_cd->intercept,0,'f',interceptDecimals).arg(confIntervalIntercept,0,'f',interceptDecimals);
+        text += tr("r = %1 <br>").arg(_cd->correlationCoef, 0, 'f',4);
+        text += tr("i = %1(±%2)c + %3(±%4)<br>").arg(_cd->slope, 0, 'f',slopeDecimals).arg(confIntervalSlope,0,'f',slopeDecimals).arg(_cd->intercept,0,'f',interceptDecimals).arg(confIntervalIntercept,0,'f',interceptDecimals);
         _calibrationLine->setVisible(false);
         _plot->xAxis->setLabel(tr("c / %1").arg(_cd->xUnits));
         _plot->yAxis->setLabel(tr("i / %1").arg(_cd->yUnits));
@@ -143,6 +156,7 @@ void CalibrationPlot::update()
     }
     _te->setText(text);
     _te->setVisible(true);
+    _te->update();
 }
 
 void CalibrationPlot::beforeReplot()
