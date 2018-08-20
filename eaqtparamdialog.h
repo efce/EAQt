@@ -73,6 +73,7 @@ public slots:
     void onlEditchanged(QString);
     void multicyclicChanged(bool);
     void microelectrodeChanged(bool);
+    void multielectrodeChange(bool);
     void checkCGMDE();
     void saveAndQuit();
     void cancelAndQuit();

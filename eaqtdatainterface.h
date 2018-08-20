@@ -53,8 +53,8 @@ public:
     virtual QString dispTIME1(double) = 0;
     virtual QVector<QString> getChannelsNames() = 0;
     virtual std::vector<bool> getChannelsEnabled() = 0;
-    virtual void setChannelsNames(QVector<QString>) = 0;
-    virtual void setChannelsEnabled(std::vector<bool>) = 0;
+    virtual void setChannelName(uint channelNum, QString name) = 0;
+    virtual void setChannelEnabled(uint channelNum, bool enabled) = 0;
     virtual bool getUseMesFile() = 0;
     virtual void setUseMesFile(bool) = 0;
     virtual QString getMesSeriesFile() = 0;

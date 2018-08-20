@@ -2827,24 +2827,29 @@ std::vector<bool> EAQtData::getChannelsEnabled()
 {
     std::vector<bool> enabled;
     enabled.resize(_vChannelNamesOfMultielectrode.size());
-    int32_t multi = _PVParam[PARAM::multi];
+    uint32_t multi = _PVParam[PARAM::multi];
     for ( uint i = 0 ; i<enabled.size(); ++i ) {
-        enabled[i] = (bool)(multi & 1<<i);
+        enabled[i] = (bool)(multi & 0x00000080);
+        multi = multi << 1;
     }
     return enabled;
 }
 
-void EAQtData::setChannelsNames(QVector<QString> names)
+void EAQtData::setChannelName(uint channelNum, QString name)
 {
-    _vChannelNamesOfMultielectrode = names;
+    if (channelNum >= _vChannelNamesOfMultielectrode.size())
+        throw 1;
+    _vChannelNamesOfMultielectrode[channelNum] = name;
 }
 
-void EAQtData::setChannelsEnabled(std::vector<bool> enabled)
+void EAQtData::setChannelEnabled(uint channelNum, bool enabled)
 {
-    int32_t multi = 0;
-    for ( uint i = 0 ; i<enabled.size(); ++i ) {
-        multi |= ( (int32_t)enabled[i]<<i);
-    }
+    if (channelNum >= _vChannelNamesOfMultielectrode.size())
+        throw 1;
+    int32_t multi = _PVParam[PARAM::multi];
+    int32_t pos = 7 - channelNum;
+    multi &= ~(1 << pos);
+    multi |= (enabled << pos);
     _PVParam[PARAM::multi] = multi;
 }
 

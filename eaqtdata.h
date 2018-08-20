@@ -169,8 +169,8 @@ public:
 
     QVector<QString> getChannelsNames();
     std::vector<bool> getChannelsEnabled();
-    void setChannelsNames(QVector<QString>);
-    void setChannelsEnabled(std::vector<bool>);
+    void setChannelName(uint channelNum, QString name);
+    void setChannelEnabled(uint channelNum, bool enabled);
     bool getUseMesFile();
     void setUseMesFile(bool);
     QString getMesSeriesFile();

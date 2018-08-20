@@ -532,6 +532,7 @@ QGroupBox* EAQtParamDialog::createAdvanced()
     _advWidgets.isMultielectrode = new QGroupBox(tr("Multielectrode setup"));
     _advWidgets.isMultielectrode->setCheckable(true);
     _advWidgets.isMultielectrode->setChecked( (this->getParam(PARAM::multi)!=0) );
+    this->connect(_advWidgets.isMultielectrode, SIGNAL(toggled(bool)), this, SLOT(multielectrodeChange(bool)));
     std::vector<bool> enabled = _pData->getChannelsEnabled();
     QVector<QString> names = _pData->getChannelsNames();
     _advWidgets.useChannel.resize(enabled.size());
@@ -778,10 +779,16 @@ void EAQtParamDialog::prepareDialog()
     } else {
         this->_butManageBreaks->setEnabled(true);
     }
-
-    this->_paramElec[this->getParam(PARAM::electr)]->setChecked(true);
-    if ( this->getParam(PARAM::electr) >= PARAM::electr_micro ) {
-        int crange = this->getParam(PARAM::crange);
+    if (this->getParam(PARAM::electr) >= PARAM::electr_multi) {
+        this->_paramElec[PARAM::electr_microSolid]->setChecked(true);
+    } else {
+        this->_paramElec[this->getParam(PARAM::electr)]->setChecked(true);
+    }
+    if (this->getParam(PARAM::electr) >= PARAM::electr_multi) {
+        this->_paramCrangeMicro[this->getParam(PARAM::crange)]->setChecked(true);
+        _checkboxIsMicro->setChecked(true);
+        this->multielectrodeChange(true);
+    } else if ( this->getParam(PARAM::electr) >= PARAM::electr_micro ) {
         this->microelectrodeChanged(true);
         this->_paramCrangeMicro[this->getParam(PARAM::crange)]->setChecked(true);
         _checkboxIsMicro->setChecked(true);
@@ -1059,16 +1066,11 @@ void EAQtParamDialog::saveParams()
         double freq = round(_lineEdits[lid_sqw_freq]->text().toDouble());
         this->setParam(PARAM::sqw_frequency, (int32_t)round(_lineEdits[lid_sqw_freq]->text().toDouble()));
         if ( _advWidgets.isMultielectrode->isChecked() ) {
-            std::vector<bool> en;
-            QVector<QString> names;
-            en.resize(_advWidgets.useChannel.size());
-            names.resize(en.size());
-            for ( uint i = 0; i<en.size(); ++i ) {
-                en[i] = _advWidgets.useChannel[i]->isChecked();
-                names[i] = _advWidgets.channelNames[i]->text();
+            for ( uint i = 0; i<_advWidgets.useChannel.size(); ++i ) {
+                _pData->setChannelName(i, _advWidgets.channelNames[i]->text());
+                _pData->setChannelEnabled(i, _advWidgets.useChannel[i]->isChecked());
             }
-            _pData->setChannelsEnabled(en);
-            _pData->setChannelsNames(names);
+            setParam(PARAM::electr, PARAM::electr_multiSolid);
         } else {
             setParam(PARAM::multi, 0);
         }
@@ -1166,4 +1168,18 @@ void EAQtParamDialog::calculateFreq()
     _lineEdits[lid_sqw_freq]->setText(tr("%1").arg(calculated));
     _lineEdits[lid_tp]->setText(tr("%1").arg(tp));
     _lineEdits[lid_tw]->setText(tr("%1").arg(tw));
+}
+
+void EAQtParamDialog::multielectrodeChange(bool status)
+{
+    if (status) {
+        this->_checkboxIsMicro->setChecked(true);
+        this->microelectrodeChanged(true);
+        this->_checkboxIsMicro->setDisabled(true);
+        this->_paramElec[PARAM::electr_microSolid]->setChecked(true);
+        this->_paramElec[PARAM::electr_microCgmde]->setDisabled(true);
+    } else {
+        this->_checkboxIsMicro->setDisabled(false);
+        this->_paramElec[PARAM::electr_microCgmde]->setDisabled(false);
+    }
 }
