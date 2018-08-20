@@ -682,7 +682,7 @@ void EAQtParamDialog::multicyclicChanged(bool state)
 
 void EAQtParamDialog::microelectrodeChanged(bool state)
 {
-    int checked = 0;
+    int checked = -1;
     if ( state == true ) {
         for ( int i = 0; i<this->_paramCrangeMacro.size(); ++i ) {
             if ( this->_paramCrangeMacro[i]->isChecked() ) {
@@ -694,7 +694,9 @@ void EAQtParamDialog::microelectrodeChanged(bool state)
         for ( int i = 0;i<this->_paramCrangeMicro.size(); ++i ) {
             this->_paramCrangeMicro[i]->setVisible(true);
         }
-        if ( checked >= this->_paramCrangeMicro.size() ) {
+        if ( checked < 0 ) {
+            ;
+        } else if ( checked >= this->_paramCrangeMicro.size() ) {
             this->_paramCrangeMicro[this->_paramCrangeMicro.size()-1]->setChecked(true);
         } else {
             this->_paramCrangeMicro[checked]->setChecked(true);
@@ -726,7 +728,9 @@ void EAQtParamDialog::microelectrodeChanged(bool state)
             this->_paramCrangeMicro[i]->setChecked(false);
             this->_paramCrangeMicro[i]->setVisible(false);
         }
-        this->_paramCrangeMacro[checked]->setChecked(true);
+        if (checked >=0) {
+            this->_paramCrangeMacro[checked]->setChecked(true);
+        }
 
         if ( this->_paramElec[PARAM::electr_microCgmde]->isChecked() ) {
             this->_paramElec[PARAM::electr_microCgmde]->setChecked(false);
@@ -777,6 +781,7 @@ void EAQtParamDialog::prepareDialog()
 
     this->_paramElec[this->getParam(PARAM::electr)]->setChecked(true);
     if ( this->getParam(PARAM::electr) >= PARAM::electr_micro ) {
+        int crange = this->getParam(PARAM::crange);
         this->microelectrodeChanged(true);
         this->_paramCrangeMicro[this->getParam(PARAM::crange)]->setChecked(true);
         _checkboxIsMicro->setChecked(true);
