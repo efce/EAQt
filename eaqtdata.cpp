@@ -1351,7 +1351,8 @@ void EAQtData::MesStart(bool isLsv)
             nrOfCurvesMeasured = 0; //wg. okna dialogowego
             work = _PVParam[PARAM::multi] & 0x000000ff;
             for (int i=0 ; i<8; i++) {
-                if ((work & 0x0080) != 0) nrOfCurvesMeasured++;
+                if ((work & 0x0080) != 0)
+                    nrOfCurvesMeasured++;
                 work = work << 1;
             }
             nrOfElectrodes = nrOfCurvesMeasured;
@@ -1385,7 +1386,7 @@ void EAQtData::MesStart(bool isLsv)
                 throw e;
             }
             getMesCurves()->get(mesCurveIndex)->getPlot()->setLayer(_pUI->PlotGetLayers()->Measurement);
-            getMesCurves()->get(mesCurveIndex)->changeToMesPlot();
+            getMesCurves()->get(mesCurveIndex)->changeToMesPlot(mesCurveIndex % nrOfElectrodes);
             for (i=0 ; i<PARAM::PARAMNUM ; i++) {
                 this->getMesCurves()->get(mesCurveIndex)->Param(i, _PVParam[i]);
             }

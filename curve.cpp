@@ -329,25 +329,25 @@ void Curve::changeToMesPlot(int electroNum/*=0*/)
                 qp.setColor(COLOR::measurement);
 				break;
 			case 1:
-                qp.setColor(QColor( 0, 100, 0 ));
+                qp.setColor(QColor(64, 180, 64));
 				break;
 			case 2:
-                qp.setColor(QColor( 100, 0, 0 ));
+                qp.setColor(QColor(227, 27, 27));
 				break;
 			case 3:
-                qp.setColor(QColor( 30, 30, 100 ));
+                qp.setColor(QColor(55, 128, 184));
 				break;
 			case 4:
-                qp.setColor(QColor( 100, 100, 100 ));
+                qp.setColor(QColor(155, 75, 164));
 				break;
 			case 5:
-                qp.setColor(QColor( 0, 100, 100 ));
+                qp.setColor(QColor(230, 128, 16));
 				break;
 			case 6:
-                qp.setColor(QColor( 100, 100, 0 ));
+                qp.setColor(QColor(150,105,45));
 				break;
 			case 7:
-                qp.setColor(QColor( 100, 0, 100 ));
+                qp.setColor(QColor(250,130, 180));
 				break;
 			default:
                 qp.setColor(COLOR::measurement);
