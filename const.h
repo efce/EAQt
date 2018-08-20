@@ -37,6 +37,13 @@ namespace COLOR {
     const QColor measurement = QColor(0,0,0);
     const QColor active = QColor(240,20,20);
     const QColor background = QColor(150, 10, 10);
+    const QColor channel1 = QColor(180, 180, 180);
+    const QColor channel2 =  QColor(0, 10, 230);
+    const QColor channel3 = QColor(80, 190, 230);
+    const QColor channel4 = QColor(85, 165, 60);
+    const QColor channel5 = QColor(70, 250, 20);
+    const QColor channel6 = QColor(240, 240, 30);
+    const QColor channel7 = QColor(227, 27, 27);
 }
 
 namespace FILES {

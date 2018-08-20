@@ -1346,16 +1346,21 @@ void EAQtData::MesStart(bool isLsv)
         }
 
         int nrOfElectrodes = 1;
+        std::vector<int> channel_num {};
 
         if ( _PVParam[PARAM::electr] == PARAM::electr_multi ) { //Wieloelektrodowy
             nrOfCurvesMeasured = 0; //wg. okna dialogowego
             work = _PVParam[PARAM::multi] & 0x000000ff;
             for (int i=0 ; i<8; i++) {
-                if ((work & 0x0080) != 0)
+                if ((work & 0x0080) != 0) {
+                    channel_num.push_back(i);
                     nrOfCurvesMeasured++;
+                }
                 work = work << 1;
             }
             nrOfElectrodes = nrOfCurvesMeasured;
+        } else {
+            channel_num.push_back(0);
         }
         if ( _PVParam[PARAM::messc] == 1 )
             nrOfCurvesMeasured *= 2; // cykliczny
@@ -1386,7 +1391,7 @@ void EAQtData::MesStart(bool isLsv)
                 throw e;
             }
             getMesCurves()->get(mesCurveIndex)->getPlot()->setLayer(_pUI->PlotGetLayers()->Measurement);
-            getMesCurves()->get(mesCurveIndex)->changeToMesPlot(mesCurveIndex % nrOfElectrodes);
+            getMesCurves()->get(mesCurveIndex)->changeToMesPlot(channel_num[mesCurveIndex % nrOfElectrodes]);
             for (i=0 ; i<PARAM::PARAMNUM ; i++) {
                 this->getMesCurves()->get(mesCurveIndex)->Param(i, _PVParam[i]);
             }

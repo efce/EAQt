@@ -538,11 +538,25 @@ QGroupBox* EAQtParamDialog::createAdvanced()
     _advWidgets.useChannel.resize(enabled.size());
     _advWidgets.channelNames.resize(enabled.size());
     QGridLayout *multiLay = new QGridLayout();
+    std::vector<QColor> colors = {
+        COLOR::measurement,
+        COLOR::channel1,
+        COLOR::channel2,
+        COLOR::channel3,
+        COLOR::channel4,
+        COLOR::channel5,
+        COLOR::channel6,
+        COLOR::channel7,
+    };
     for ( uint i = 0; i<enabled.size(); ++i ) {
         _advWidgets.useChannel[i] = new QCheckBox();
         _advWidgets.channelNames[i] = new QLineEdit();
         _advWidgets.channelNames[i]->setText(names[i]);
         _advWidgets.channelNames[i]->setMaxLength(10);
+        QPalette palette;
+        palette.setColor(QPalette::Base, colors[i]);
+        palette.setColor(QPalette::Text, QColor(255,255,255));
+        _advWidgets.channelNames[i]->setPalette(palette);
         multiLay->addWidget(_advWidgets.useChannel[i],i,0,1,1);
         multiLay->addWidget(_advWidgets.channelNames[i],i,1,1,1);
         connect(_advWidgets.useChannel[i]
