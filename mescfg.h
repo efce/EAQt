@@ -27,8 +27,8 @@ class MesCFG
 public:
     MesCFG();
     ~MesCFG();
-    int LoadFromFile(string);
-    int SaveToFile(string);
+    int LoadFromFile(std::string);
+    int SaveToFile(std::string);
 #if defined(WIN32) || defined(_WIN32) || defined(__WIN32)
     int SaveToFile(wstring);
 #endif
@@ -50,14 +50,14 @@ public:
     int getFirstDelay();
     void setWaitForInput(bool);
     bool getWaitForInput();
-    void setFileName(string);
-    string getFileName();
-    void setCurveName(string);
-    string getCurveName();
-    void setCurveComment(string);
-    string getCurveComment();
-    void setMesName(string);
-    string getMesName();
+    void setFileName(std::string);
+    std::string getFileName();
+    void setCurveName(std::string);
+    std::string getCurveName();
+    void setCurveComment(std::string);
+    std::string getCurveComment();
+    void setMesName(std::string);
+    std::string getMesName();
     bool Mes_Start();
     bool Mes_Next();
     int Mes_Param(int);
@@ -65,12 +65,12 @@ public:
 	int Mes_PotentialProgramLength();
     bool Mes_WaitForUser();
     int Mes_Delay();
-    string Mes_FileName();
-    string Mes_CName();
-    string Mes_CComment();
+    std::string Mes_FileName();
+    std::string Mes_CName();
+    std::string Mes_CComment();
     void Mes_Stop();
     SingleMesCFG** pMes;
-    string lasterroron;
+    std::string lasterroron;
 
 private:
     int nActiveMes;

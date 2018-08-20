@@ -74,13 +74,13 @@ SingleMesCFG::SingleMesCFG(SingleMesCFG *mesOrigin)
     initialized_check4=4;
 }
 
-string SingleMesCFG::to_string(int value)
+std::string SingleMesCFG::to_string(int value)
 {
-  //create an output string stream
+  //create an output std::string stream
   std::ostringstream os ;
-  //throw the value into the string stream
+  //throw the value into the std::string stream
   os << value ;
-  //convert the string stream into a string and return
+  //convert the std::string stream into a std::string and return
   return os.str() ;
 }
 
@@ -170,11 +170,11 @@ bool SingleMesCFG::getWaitForInput()
     return this->bWaitForInput;
 }
 
-void SingleMesCFG::setFileName(string sFileName)
+void SingleMesCFG::setFileName(std::string sFileName)
 {
     this->sFileName=sFileName;
     return;
-    string notallowed  ("\\/:*?\"<>|");
+    std::string notallowed  ("\\/:*?\"<>|");
     if ( sFileName.length() <= MAXFILENAME )
         if ( sFileName.find_first_of( notallowed ) == false )
             this->sFileName=sFileName;
@@ -185,12 +185,12 @@ void SingleMesCFG::setFileName(string sFileName)
     return;
 }
 
-string SingleMesCFG::getFileName()
+std::string SingleMesCFG::getFileName()
 {
     return this->sFileName;
 }
 
-void SingleMesCFG::setCurveName(string sCurveName)
+void SingleMesCFG::setCurveName(std::string sCurveName)
 {
     if ( sCurveName.length() <= MAXCURVENAME && sCurveName.length()> 0 )
         this->sCurveName = sCurveName;
@@ -199,12 +199,12 @@ void SingleMesCFG::setCurveName(string sCurveName)
     return;
 }
 
-string SingleMesCFG::getCurveName()
+std::string SingleMesCFG::getCurveName()
 {
     return this->sCurveName;
 }
 
-void SingleMesCFG::setCurveComment(string sCurveComment)
+void SingleMesCFG::setCurveComment(std::string sCurveComment)
 {
     if ( sCurveComment.length() <= MAXCURVECOMMENT )
         this->sCurveComment = sCurveComment;
@@ -213,12 +213,12 @@ void SingleMesCFG::setCurveComment(string sCurveComment)
     return;
 }
 
-string SingleMesCFG::getCurveComment()
+std::string SingleMesCFG::getCurveComment()
 {
     return this->sCurveComment;
 }
 
-void SingleMesCFG::setMesName(string sMesName)
+void SingleMesCFG::setMesName(std::string sMesName)
 {
     if ( sMesName.length() <= MAXMESNAME )
         this->sMesName = sMesName;
@@ -227,12 +227,12 @@ void SingleMesCFG::setMesName(string sMesName)
     return;
 }
 
-string SingleMesCFG::getMesName()
+std::string SingleMesCFG::getMesName()
 {
     return this->sMesName;
 }
 
-string SingleMesCFG::serialize()
+std::string SingleMesCFG::serialize()
 {
     if ( initialized_check1!=1
         && initialized_check2!=2
@@ -241,7 +241,7 @@ string SingleMesCFG::serialize()
         return "";
 
     using namespace std;
-    string serialized;
+    std::string serialized;
     serialized = "{";
     serialized = serialized + "*:\""+this->to_string(nMesRepetitions)+"\";";
     serialized = serialized + "mesname:\"" + sMesName + "\";";
@@ -267,7 +267,7 @@ string SingleMesCFG::serialize()
     return serialized;
 }
 
-int SingleMesCFG::unserialize(string sSM)
+int SingleMesCFG::unserialize(std::string sSM)
 {
     using namespace std;
     if ( sSM.empty() || sSM.substr(0,1) != "{" ) {
@@ -275,8 +275,8 @@ int SingleMesCFG::unserialize(string sSM)
         return -1;
     }
     sSM=sSM.substr(1);
-    string sParam;
-    string sValue;
+    std::string sParam;
+    std::string sValue;
     int iParamsSet = 0;
     int pos;
     while ( sSM.length() > 0 ) {
@@ -328,7 +328,7 @@ int SingleMesCFG::unserialize(string sSM)
     return 0;
 }
 
-string SingleMesCFG::escape(string toEsc)
+std::string SingleMesCFG::escape(std::string toEsc)
 {
     int pos;
     pos=0;
@@ -354,7 +354,7 @@ string SingleMesCFG::escape(string toEsc)
     return toEsc;
 }
 
-string SingleMesCFG::unescape(string toUnesc)
+std::string SingleMesCFG::unescape(std::string toUnesc)
 {
     int pos;
     pos=0;
@@ -393,7 +393,7 @@ char* SingleMesCFG::generateHeader()
     return header;
 }
 
-bool SingleMesCFG::isHeaderOK(string sHeader)
+bool SingleMesCFG::isHeaderOK(std::string sHeader)
 {
     if ( atoi( &sHeader.substr(0,1)[0] ) != FILETYPE )
         return false;

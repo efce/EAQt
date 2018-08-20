@@ -127,47 +127,47 @@ bool MesCFG::getWaitForInput()
     return this->pMes[this->nActiveMes]->getWaitForInput();
 }
 
-void MesCFG::setFileName(string sFN)
+void MesCFG::setFileName(std::string sFN)
 {
     this->pMes[this->nActiveMes]->setFileName(sFN);
 }
 
-string MesCFG::getFileName()
+std::string MesCFG::getFileName()
 {
     return this->pMes[this->nActiveMes]->getFileName();
 }
 
-void MesCFG::setCurveName(string sCN)
+void MesCFG::setCurveName(std::string sCN)
 {
     this->pMes[this->nActiveMes]->setCurveName(sCN);
 }
 
-string MesCFG::getCurveName()
+std::string MesCFG::getCurveName()
 {
     return this->pMes[this->nActiveMes]->getCurveName();
 }
 
-void MesCFG::setCurveComment(string sCC)
+void MesCFG::setCurveComment(std::string sCC)
 {
     this->pMes[this->nActiveMes]->setCurveComment(sCC);
 }
 
-string MesCFG::getCurveComment()
+std::string MesCFG::getCurveComment()
 {
     return this->pMes[this->nActiveMes]->getCurveComment();
 }
 
-void MesCFG::setMesName(string sMN)
+void MesCFG::setMesName(std::string sMN)
 {
     this->pMes[this->nActiveMes]->setMesName(sMN);
 }
 
-string MesCFG::getMesName()
+std::string MesCFG::getMesName()
 {
     return this->pMes[this->nActiveMes]->getMesName();
 }
 
-int MesCFG::LoadFromFile(string sFileName)
+int MesCFG::LoadFromFile(std::string sFileName)
 {
     //zwraca ilosc wczytanych serii pomiarowych
     // -3 błąd w czasie wczytywania
@@ -181,7 +181,7 @@ int MesCFG::LoadFromFile(string sFileName)
     this->nNumberOfMes = 1;
 
     int nLineNumber = 0;
-	string line;
+    std::string line;
 	this->lasterroron += sFileName.c_str();
 	this->lasterroron += "; ";
 	ifstream eacfgfile (sFileName.c_str());
@@ -236,7 +236,7 @@ int MesCFG::LoadFromFile(string sFileName)
     }
 }
 
-int MesCFG::SaveToFile(string sFileName)
+int MesCFG::SaveToFile(std::string sFileName)
 {
     ofstream eacfgfile (sFileName.c_str());
     if (eacfgfile.is_open()) {
@@ -263,7 +263,7 @@ int MesCFG::SaveToFile(wstring sFileName)
         fwrite(SingleMesCFG::generateHeader(), sizeof(char), 4, fp);
         int nSavingMes = 0;
         while ( this->pMes[nSavingMes] != NULL ) {
-            string s = this->pMes[nSavingMes]->serialize();
+            std::string s = this->pMes[nSavingMes]->serialize();
             fwrite(s.data(), sizeof(char), s.size(), fp);
             nSavingMes++;
         }
@@ -355,17 +355,17 @@ int MesCFG::Mes_Param(int nParamNum)
 	return this->getParam(nParamNum);
 }
 
-string MesCFG::Mes_FileName()
+std::string MesCFG::Mes_FileName()
 {
     return this->getFileName();
 }
 
-string MesCFG::Mes_CName()
+std::string MesCFG::Mes_CName()
 {
     return this->getCurveName();
 }
 
-string MesCFG::Mes_CComment()
+std::string MesCFG::Mes_CComment()
 {
     return this->getCurveComment();
 }
