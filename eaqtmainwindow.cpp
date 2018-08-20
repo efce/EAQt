@@ -748,6 +748,9 @@ void EAQtMainWindow::MeasurementSetup()
 
 void EAQtMainWindow::MeasurementAfter()
 {
+    setLowLabelText(0, "");
+    setLowLabelText(1, "");
+    setLowLabelText(2, "");
     _plotMain->setAntialiasedElements(QCP::aeAll);
     PlotRescaleAxes(false);
     this->_mouseHandler->ChangeMouseMode(EAQtMouseHandler::mm_normal, EAQtMouseHandler::uf_none);

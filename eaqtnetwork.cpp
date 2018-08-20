@@ -131,8 +131,8 @@ void EAQtNetwork::startProcessing()
         memset(RxBuf2, 0, NETWORK::RxBufLength);
     }
     _pData->ProcessPacketFromEA(_RxBuf);
-    memset(_RxBuf, 0, NETWORK::RxBufLength);
     _pData->MesPrepareUIUpdate();
+    memset(_RxBuf, 0, NETWORK::RxBufLength);
 
     _process_busy = false;
 }

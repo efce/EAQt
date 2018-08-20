@@ -1886,6 +1886,7 @@ void EAQtData::MesUpdate(int32_t nNrOfMesCurve, int32_t nPointFromDevice)
     _lastCurve = nNrOfMesCurve;
     _lastPoint = nPointFromDevice;
     _mesReadyForUI = true;
+    _pUI->setLowLabelText(2, ""); // Cleanup break info etc. //
 }
 
 void EAQtData::MesPrepareUIUpdate()
@@ -1962,7 +1963,7 @@ void EAQtData::updateELSV()
  */
 void EAQtData::updatePause()
 {
-    _pUI->setLowLabelText(0,tr("Break: %1 mV    %2:%3 of %4:%5 ").arg(_break.currentE)
+    _pUI->setLowLabelText(2, tr("Break: %1 mV    %2:%3 of %4:%5 ").arg(_break.currentE)
                                                                  .arg(_break.currentMin)
                                                                  .arg(_break.currentSec,2,10,QChar('0'))
                                                                  .arg(_break.targetMin)
