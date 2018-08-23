@@ -27,8 +27,9 @@ EAQtParamDialog::EAQtParamDialog(EAQtDataInterface *pd, bool isLsv)
     this->_isLsv = isLsv;
 
     this->_cgmdeTime = getParam(PARAM::valveTime);
-    this->_cgmdeDelay= getParam(PARAM::valveDelay);
-    this->_cgmdeNr= getParam(PARAM::valveCntr);
+    this->_cgmdeDelay = getParam(PARAM::valveDelay);
+    this->_cgmdeNr = getParam(PARAM::valveCntr);
+    this->_cgmdeMode = getParam(PARAM::cgmdeMode);
 
     for ( int i = 0; i<21; ++i ) {
         this->_breaksData[i] = this->getParam(PARAM::breakCntr+1+i);
@@ -912,6 +913,9 @@ void EAQtParamDialog::setCGMDE(int num, int val)
     case PARAM::valveDelay:
         this->_cgmdeDelay = val;
         break;
+     case PARAM::cgmdeMode:
+        this->_cgmdeMode = val;
+        break;
     default:
         return;
     }
@@ -928,6 +932,9 @@ int EAQtParamDialog::getCGMDE(int num)
         break;
     case PARAM::valveDelay:
         return this->_cgmdeDelay;
+        break;
+    case PARAM::cgmdeMode:
+        return this->_cgmdeMode;
         break;
     default:
         return 0;
@@ -992,6 +999,7 @@ void EAQtParamDialog::saveParams()
     this->setParam(PARAM::valveCntr,this->_cgmdeNr);
     this->setParam(PARAM::valveTime,this->_cgmdeTime);
     this->setParam(PARAM::valveDelay,this->_cgmdeDelay);
+    this->setParam(PARAM::cgmdeMode,this->_cgmdeMode);
 
     for ( int i = 0; i< 21; ++i ) {
         this->setParam(PARAM::breakCntr+1+i,this->_breaksData[i]);

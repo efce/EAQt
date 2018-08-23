@@ -19,6 +19,7 @@
 #define EAQTPARAMCGMDE_H
 
 #include <QDialog>
+#include <QGroupBox>
 
 class EAQtParamCGMDE : public QObject
 {
@@ -32,6 +33,7 @@ public slots:
 private:
     QObject* _parent;
     QDialog* _dialog;
+    QGroupBox* _cgmdeMode;
 };
 
 #endif // EAQTPARAMCGMDE_H
