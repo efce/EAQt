@@ -26,12 +26,12 @@ EAQtParamDialog::EAQtParamDialog(EAQtDataInterface *pd, bool isLsv)
     this->_pData = pd;
     this->_isLsv = isLsv;
 
-    this->_cgmdeTime = getParam(PARAM::imptime);
-    this->_cgmdeDelay= getParam(PARAM::inttime);
-    this->_cgmdeNr= getParam(PARAM::impnr);
+    this->_cgmdeTime = getParam(PARAM::valveTime);
+    this->_cgmdeDelay= getParam(PARAM::valveDelay);
+    this->_cgmdeNr= getParam(PARAM::valveCntr);
 
     for ( int i = 0; i<21; ++i ) {
-        this->_breaksData[i] = this->getParam(PARAM::breaknr+1+i);
+        this->_breaksData[i] = this->getParam(PARAM::breakCntr+1+i);
     }
 
     this->_metrics = new QFontMetrics(QApplication::font());
@@ -346,8 +346,8 @@ QGroupBox *EAQtParamDialog::createRestItems()
     qgrid->addWidget(_lineLabels[i], ++pos, 0);
     qgrid->addWidget(_lineEdits[i], pos, 1);
 
-    _lineEdits[lid_mixer] = new QLineEdit(tr("%1").arg(this->getParam(PARAM::mix)));
-    _lineEdits[lid_mixer]->setAccessibleName(tr("nr%1").arg(PARAM::mix));
+    _lineEdits[lid_mixer] = new QLineEdit(tr("%1").arg(this->getParam(PARAM::mesStirrerDelay)));
+    _lineEdits[lid_mixer]->setAccessibleName(tr("nr%1").arg(PARAM::mesStirrerDelay));
     //connect(lineEdits[lid_points],SIGNAL(textEdited(QString)),this,SLOT(onlEditchanged(QString)));
     _lineEdits[lid_mixer]->setValidator(this->getValidator(EAQtParamDialog::vt_mixer));
     _lineEdits[lid_mixer]->setMaxLength(3);
@@ -368,8 +368,8 @@ QGroupBox *EAQtParamDialog::createRestItems()
     qgrid->addWidget(_lineLabels[i], ++pos, 0);
     qgrid->addWidget(_lineEdits[i], pos, 1);
 
-    _lineEdits[lid_breaks] = new QLineEdit(tr("%1").arg(this->getParam(PARAM::breaknr))); // ZLE bo to jeszcze moze byc ts
-    _lineEdits[lid_breaks]->setAccessibleName(tr("nr%1").arg(PARAM::breaknr));
+    _lineEdits[lid_breaks] = new QLineEdit(tr("%1").arg(this->getParam(PARAM::breakCntr))); // ZLE bo to jeszcze moze byc ts
+    _lineEdits[lid_breaks]->setAccessibleName(tr("nr%1").arg(PARAM::breakCntr));
     //connect(lineEdits[lid_breaks],SIGNAL(textEdited(QString)),this,SLOT(onlEditchanged(QString)));
     _lineEdits[lid_breaks]->setValidator(this->getValidator(EAQtParamDialog::vt_breaks));
     _lineEdits[lid_breaks]->setMaxLength(1);
@@ -788,7 +788,7 @@ void EAQtParamDialog::prepareDialog()
         }
     }
 
-    if ( this->getParam(PARAM::breaknr) == 0 ) {
+    if ( this->getParam(PARAM::breakCntr) == 0 ) {
         this->_butManageBreaks->setDisabled(true);
     } else {
         this->_butManageBreaks->setEnabled(true);
@@ -903,13 +903,13 @@ void EAQtParamDialog::saveAndStart()
 void EAQtParamDialog::setCGMDE(int num, int val)
 {
     switch (num) {
-    case PARAM::impnr:
+    case PARAM::valveCntr:
         this->_cgmdeNr = val;
         break;
-    case PARAM::imptime:
+    case PARAM::valveTime:
         this->_cgmdeTime = val;
         break;
-    case PARAM::inttime:
+    case PARAM::valveDelay:
         this->_cgmdeDelay = val;
         break;
     default:
@@ -920,13 +920,13 @@ void EAQtParamDialog::setCGMDE(int num, int val)
 int EAQtParamDialog::getCGMDE(int num)
 {
     switch (num) {
-    case PARAM::impnr:
+    case PARAM::valveCntr:
         return this->_cgmdeNr;
         break;
-    case PARAM::imptime:
+    case PARAM::valveTime:
         return this->_cgmdeTime;
         break;
-    case PARAM::inttime:
+    case PARAM::valveDelay:
         return this->_cgmdeDelay;
         break;
     default:
@@ -936,12 +936,12 @@ int EAQtParamDialog::getCGMDE(int num)
 
 void EAQtParamDialog::setBreaks(int n, int v)
 {
-    this->_breaksData[n-PARAM::breaknr-1] = v;
+    this->_breaksData[n-PARAM::breakCntr-1] = v;
 }
 
 int EAQtParamDialog::getBreaks(int n)
 {
-    return this->_breaksData[n-PARAM::breaknr-1];
+    return this->_breaksData[n-PARAM::breakCntr-1];
 }
 
 void EAQtParamDialog::saveParams()
@@ -979,22 +979,22 @@ void EAQtParamDialog::saveParams()
         aver = 1;
     }
     this->setParam(PARAM::aver, aver);
-    this->setParam(PARAM::breaknr, this->_lineEdits[lid_breaks]->text().toInt());
+    this->setParam(PARAM::breakCntr, this->_lineEdits[lid_breaks]->text().toInt());
     this->setParam(PARAM::dE, this->_lineEdits[lid_E0_dE]->text().toInt());
     this->setParam(PARAM::Ek, this->_lineEdits[lid_Ek]->text().toInt());
     this->setParam(PARAM::Ep, this->_lineEdits[lid_Ep]->text().toInt());
     this->setParam(PARAM::Estep, this->_lineEdits[lid_Estep]->text().toInt());
-    this->setParam(PARAM::mix, this->_lineEdits[lid_mixer]->text().toInt());
+    this->setParam(PARAM::mesStirrerDelay, this->_lineEdits[lid_mixer]->text().toInt());
     this->setParam(PARAM::ptnr, this->_lineEdits[lid_points]->text().toInt());
     this->setParam(PARAM::td, this->_lineEdits[lid_td]->text().toInt());
     this->setParam(PARAM::tp, this->_lineEdits[lid_tp]->text().toInt());
     this->setParam(PARAM::tw, this->_lineEdits[lid_tw]->text().toInt());
-    this->setParam(PARAM::impnr,this->_cgmdeNr);
-    this->setParam(PARAM::imptime,this->_cgmdeTime);
-    this->setParam(PARAM::inttime,this->_cgmdeDelay);
+    this->setParam(PARAM::valveCntr,this->_cgmdeNr);
+    this->setParam(PARAM::valveTime,this->_cgmdeTime);
+    this->setParam(PARAM::valveDelay,this->_cgmdeDelay);
 
     for ( int i = 0; i< 21; ++i ) {
-        this->setParam(PARAM::breaknr+1+i,this->_breaksData[i]);
+        this->setParam(PARAM::breakCntr+1+i,this->_breaksData[i]);
     }
 
 

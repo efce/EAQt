@@ -27,13 +27,13 @@ EAQtParamCGMDE::EAQtParamCGMDE(QObject *parent) : QObject()
     _dialog->setWindowTitle(tr("CGMDE settings"));
     QGridLayout *grid = new QGridLayout;
     QLabel *labNrImp  = new QLabel(tr("Numer of impulses:"));
-    QLineEdit *lneNrImp = new QLineEdit(QString::number(pd->getCGMDE(PARAM::impnr)));
+    QLineEdit *lneNrImp = new QLineEdit(QString::number(pd->getCGMDE(PARAM::valveCntr)));
     lneNrImp->setAccessibleName("41");
     QLabel *labTimeValve  = new QLabel(tr("Valve [ms]:"));
-    QLineEdit *lneTimeValve = new QLineEdit(QString::number(pd->getCGMDE(PARAM::imptime)));
+    QLineEdit *lneTimeValve = new QLineEdit(QString::number(pd->getCGMDE(PARAM::valveTime)));
     lneTimeValve->setAccessibleName("42");
     QLabel *labNrImpBreak  = new QLabel(tr("Impulse delay [ms]:"));
-    QLineEdit *lneNrImpBreak = new QLineEdit(QString::number(pd->getCGMDE(PARAM::inttime)));
+    QLineEdit *lneNrImpBreak = new QLineEdit(QString::number(pd->getCGMDE(PARAM::valveDelay)));
     lneNrImpBreak->setAccessibleName("43");
     QPushButton *ok = new QPushButton(tr("Confirm"));
     QObject::connect(ok,SIGNAL(clicked()),this,SLOT(Confirmed()));

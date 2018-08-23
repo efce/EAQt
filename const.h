@@ -137,6 +137,7 @@ namespace PARAM {
         method_dpv = 2,
         method_sqw_osteryoung = 3,
         method_lsv = 4,
+        method_ocp = 5,
         method_sqw_classic = 99,
 
         sampl = 1, //type of sampling (usually single sampling for SCV/LSV and double sampling for NPV/DPV/SQW)
@@ -198,21 +199,27 @@ namespace PARAM {
         td = 15,    //before first potential step apply potential [ms]
         ts = 15,    //LSV multicyclic time of starting potential
         ptnr = 16,  //number of points of the curve
-        kn = 17,    //hammer (knock power?)
-        mix = 18,   //mixer speed
+        kn = 17,    // unused
+        mesStirrerDelay = 18,   //mixer speed
 
-        breaknr = 19, //number of interruput (eg. preconcentration) 0-7
+        breakCntr = 19, //number of interruput (eg. preconcentration) 0-7
         breakmin = 20, //time in [min] of each interrupt (from 20 to 26)
         breaksec = 27, //time in [sec] of each interrupt (from 27 to 34)
         breakE = 34,   //potential in [sec] of each interrupt (from 34 to 40)
 
-        impnr = 41, /* offset of nr of imp. - KER-KW  */
-        imptime = 42, /* offset of impulse time         */
-        inttime = 43, /* offset of interrupt time       */
-        gtype = 44, /* offset of type of generation   */
-        maxse = 45, /* nr of impulse in max. drop */
+        valveCntr = 41, /* offset of nr of imp. - KER-KW  */
+        valveTime = 42, /* offset of impulse time         */
+        valveDelay = 43, /* offset of interrupt time       */
 
-        sqw_frequency = 46, // not in use
+        cgmdeMode = 44, /* offset of type of generation   */
+        cgmdeMode_dropBeforeMes = 0,
+        cgmdeMode_dropBeforeEachPoint = 1,
+        cgmdeMode_pulseBeforeEachPoint = 2,
+        cgmdeMode_pulseBeforeEachPointSum = 3,
+        cgmdeMode_pulseBeforeEachPointSumLinear = 4,
+
+        maxse = 45, /* unused */
+        sqw_frequency = 46, // unused //
 
         inf_smooth = 47, //was curve smoothed
         inf_smooth_no = 0,
@@ -226,9 +233,9 @@ namespace PARAM {
         inf_move_no = 0,
         inf_move_yes = 1,
 
-        sti = 50, //stirrer speed
-        kp = 51,  //knock power
-        kpt = 52, //knock pulse time
+        stirrerSpeed = 50, //stirrer speed
+        knockPower = 51,  //knock power
+        knockTime = 52, //knock pulse time
 
         Escheck = 53, //use Es potential for LSV measurement
         Escheck_no = 0,

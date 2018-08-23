@@ -110,16 +110,16 @@ void EAQtData::initParam()
     _PVParam[PARAM::mespv] = PARAM::mespv_voltammetry;
     _PVParam[PARAM::sampl] = PARAM::sampl_single;
     _PVParam[PARAM::crange] = PARAM::crange_macro_10uA;
-    _PVParam[PARAM::gtype] = 0;
-    _PVParam[PARAM::impnr] = 5;
-    _PVParam[PARAM::imptime] = 10;
-    _PVParam[PARAM::inttime] = 200;
+    _PVParam[PARAM::cgmdeMode] = 0;
+    _PVParam[PARAM::valveCntr] = 5;
+    _PVParam[PARAM::valveTime] = 10;
+    _PVParam[PARAM::valveDelay] = 200;
     _PVParam[PARAM::nonaveragedsampling] = 1;
 
     // Akcesoria
-    _PVParam[PARAM::sti] = 20;
-    _PVParam[PARAM::kp] = 10;
-    _PVParam[PARAM::kpt] = 30;
+    _PVParam[PARAM::stirrerSpeed] = 20;
+    _PVParam[PARAM::knockPower] = 10;
+    _PVParam[PARAM::knockTime] = 30;
 }
 
 void EAQtData::initParamLSV()
@@ -135,9 +135,9 @@ void EAQtData::initParamLSV()
     _LSVParam[PARAM::electr] = PARAM::electr_solid;
     _LSVParam[PARAM::el23] = PARAM::el23_dummy;
     _LSVParam[PARAM::crange] = PARAM::crange_macro_10uA;
-    _LSVParam[PARAM::impnr] = 5;
-    _LSVParam[PARAM::imptime] = 10;
-    _LSVParam[PARAM::inttime] = 200;
+    _LSVParam[PARAM::valveCntr] = 5;
+    _LSVParam[PARAM::valveTime] = 10;
+    _LSVParam[PARAM::valveDelay] = 200;
     _LSVParam[PARAM::dEdt] = 3;
     _LSVParam[PARAM::EstartLSV] = 0;
     _LSVParam[PARAM::Escheck] = 0;
@@ -145,9 +145,9 @@ void EAQtData::initParamLSV()
     _LSVParam[PARAM::td] = 500;
 
     // Akcesoria
-    _LSVParam[PARAM::sti] = 20;
-    _LSVParam[PARAM::kp] = 10;
-    _LSVParam[PARAM::kpt] = 30;
+    _LSVParam[PARAM::stirrerSpeed] = 20;
+    _LSVParam[PARAM::knockPower] = 10;
+    _LSVParam[PARAM::knockTime] = 30;
 }
 
 void EAQtData::initEca()
@@ -189,7 +189,7 @@ void EAQtData::initPtime()
     } else {
         if ( ! (((this->getMesCurves()->get(0)->Param(PARAM::electr) == PARAM::electr_cgmde )  // CGMDE
                  || (this->getMesCurves()->get(0)->Param(PARAM::electr) == PARAM::electr_microCgmde )) &&  // mikroelektroda CGMDE
-                (this->getMesCurves()->get(0)->Param(PARAM::gtype) >= 2)) ) {
+                (this->getMesCurves()->get(0)->Param(PARAM::cgmdeMode) >= 2)) ) {
             _singleStepTime = this->getMesCurves()->get(0)->Param(PARAM::td); // woltamper.
         }
     }
@@ -216,7 +216,7 @@ void EAQtData::createMatrix()
         // CGMDE and seinf == 2 - do not put PROC1
         if (!(((this->getMesCurves()->get(i)->Param(PARAM::electr) == PARAM::electr_cgmde ) ||  // CGMDE
                (this->getMesCurves()->get(i)->Param(PARAM::electr) == PARAM::electr_microCgmde )) &&  // mikroelektroda CGMDE
-              (this->getMesCurves()->get(i)->Param(PARAM::gtype) >= 2))) {
+              (this->getMesCurves()->get(i)->Param(PARAM::cgmdeMode) >= 2))) {
             _measurementMatrix[0] = 1;
         }
     }
@@ -1145,9 +1145,9 @@ void EAQtData::MesStart(bool isLsv)
             if ( ii != PARAM::pro  // parametry nie ustawiane (ignorowane) w eacfg (do ustawienia w EAPro)
                  && ii != PARAM::nonaveragedsampling
                  && ii != PARAM::multi
-                 && ii != PARAM::sti
-                 && ii != PARAM::kp
-                 && ii != PARAM::kpt ) {
+                 && ii != PARAM::stirrerSpeed
+                 && ii != PARAM::knockPower
+                 && ii != PARAM::knockTime ) {
                 _PVParam[ii] = _pSeriesData->Mes_Param(ii);
             }
         }
@@ -1181,9 +1181,9 @@ void EAQtData::MesStart(bool isLsv)
             return;
         }
 
-        _LSVParam[PARAM::sti] = _PVParam[PARAM::sti];
-        _LSVParam[PARAM::kp] = _PVParam[PARAM::kp];
-        _LSVParam[PARAM::kpt] = _PVParam[PARAM::kpt];
+        _LSVParam[PARAM::stirrerSpeed] = _PVParam[PARAM::stirrerSpeed];
+        _LSVParam[PARAM::knockPower] = _PVParam[PARAM::knockPower];
+        _LSVParam[PARAM::knockTime] = _PVParam[PARAM::knockTime];
 
         _EstartInfo = (bool)_LSVParam[PARAM::Escheck];
 
@@ -2532,17 +2532,17 @@ void EAQtData::sendAccessories()
     TxN = 1;
 
     // stirrer
-    work = _PVParam[PARAM::sti];
+    work = _PVParam[PARAM::stirrerSpeed];
     _TxBuf[TxN] = (unsigned char)(work & 0x00ff); TxN++;
     _TxBuf[TxN] = (unsigned char)((work >> 8) & 0x00ff); TxN++;
 
     // knock
-    work = _PVParam[PARAM::kp];
+    work = _PVParam[PARAM::knockPower];
     _TxBuf[TxN] = (unsigned char)(work & 0x00ff); TxN++;
     _TxBuf[TxN] = (unsigned char)((work >> 8) & 0x00ff); TxN++;
 
     // knock - time
-    work = _PVParam[PARAM::kpt];
+    work = _PVParam[PARAM::knockTime];
     _TxBuf[TxN] = (unsigned char)(work & 0x00ff); TxN++;
     _TxBuf[TxN] = (unsigned char)((work >> 8) & 0x00ff); TxN++;
 
@@ -2589,11 +2589,11 @@ bool EAQtData::sendTestCGMDE()
 
     _TxBuf[TxN++] = PC2EA_RECORODS::recordCGMDE;
 
-    work = ParamPV(PARAM::kp);
+    work = ParamPV(PARAM::knockPower);
     _TxBuf[TxN++] = (unsigned char)(work & 0x00ff);
     _TxBuf[TxN++] = (unsigned char)((work >> 8) & 0x00ff);
 
-    work = ParamPV(PARAM::kpt);
+    work = ParamPV(PARAM::knockTime);
     _TxBuf[TxN++] = (unsigned char)(work & 0x00ff);
     _TxBuf[TxN++] = (unsigned char)((work >> 8) & 0x00ff);
 

@@ -74,19 +74,19 @@ QGridLayout* EAQtAccessoriesDialog::createForms()
 
     QLabel* labMix = new QLabel(tr("mixer speed [%]:"));
     this->_forms[0] = new QLineEdit();
-    this->_forms[0]->setText(tr("%1").arg(this->_pData->ParamPV(PARAM::sti)));
+    this->_forms[0]->setText(tr("%1").arg(this->_pData->ParamPV(PARAM::stirrerSpeed)));
     this->_forms[0]->setValidator(new QIntValidator(0,100));
     this->_forms[0]->setFixedWidth(metrics->width("9999"));
 
     QLabel *labHamForce = new QLabel(tr("hammer force [%]:"));
     this->_forms[1] = new QLineEdit();
-    this->_forms[1]->setText(tr("%1").arg(this->_pData->ParamPV(PARAM::kp)));
+    this->_forms[1]->setText(tr("%1").arg(this->_pData->ParamPV(PARAM::knockPower)));
     this->_forms[1]->setValidator(new QIntValidator(0,100));
     this->_forms[1]->setFixedWidth(metrics->width("9999"));
 
     QLabel *labHammerTime = new QLabel(tr("hammer time [ms]:"));
     this->_forms[2] = new QLineEdit();
-    this->_forms[2]->setText(tr("%1").arg(this->_pData->ParamPV(PARAM::kpt)));
+    this->_forms[2]->setText(tr("%1").arg(this->_pData->ParamPV(PARAM::knockTime)));
     this->_forms[2]->setValidator(new QIntValidator(0,999));
     this->_forms[2]->setFixedWidth(metrics->width("9999"));
 
@@ -131,9 +131,9 @@ QGridLayout* EAQtAccessoriesDialog::createForms()
 
 void EAQtAccessoriesDialog::saveAndSend()
 {
-    this->_pData->ParamPV(PARAM::sti,this->_forms[0]->text().toInt());
-    this->_pData->ParamPV(PARAM::kp,this->_forms[1]->text().toInt());
-    this->_pData->ParamPV(PARAM::kpt,this->_forms[2]->text().toInt());
+    this->_pData->ParamPV(PARAM::stirrerSpeed,this->_forms[0]->text().toInt());
+    this->_pData->ParamPV(PARAM::knockPower,this->_forms[1]->text().toInt());
+    this->_pData->ParamPV(PARAM::knockTime,this->_forms[2]->text().toInt());
     if ( this->_gas[0]->isChecked() ) {
         this->_pData->setGas(false);
     } else {

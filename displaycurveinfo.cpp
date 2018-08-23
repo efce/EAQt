@@ -41,9 +41,9 @@ QString DisplayCurveInfo::getHTMLInfo()
     }
 
     QString breaks = "";
-    if ( _curve->Param(PARAM::breaknr) > 0 ) {
+    if ( _curve->Param(PARAM::breakCntr) > 0 ) {
         breaks=tr("<table><tr><th>E&nbsp;[mV]</th><th>t&nbsp;[min:sec]</th></tr>");
-        for ( int i = 0; i<_curve->Param(PARAM::breaknr) ; ++i ) {
+        for ( int i = 0; i<_curve->Param(PARAM::breakCntr) ; ++i ) {
             breaks.append(tr("<tr><td>%1</td><td>%2:%3</td></tr>").arg(_curve->Param(PARAM::breakE+i))
                                                                    .arg(_curve->Param(PARAM::breakmin+i), 2, 10, QChar('0'))
                                                                    .arg(_curve->Param(PARAM::breaksec+i), 2, 10, QChar('0'))
@@ -94,7 +94,7 @@ QString DisplayCurveInfo::getHTMLInfo()
           + tr("<tr><td><b>td:</b>&nbsp;%1&nbsp;ms</td><td></td></tr>").arg(_curve->Param(PARAM::td))
           + tr("<tr><td colspan=2><b>Data points:</b>&nbsp;%1</td></tr>").arg(_curve->Param(PARAM::ptnr))
           + tr("<tr><td colspan=2><b>Multielectrode setup:</b>&nbsp;%1</td></tr>").arg(_curve->Param(PARAM::multi),8,2)
-          + (_curve->Param(PARAM::breaknr)>0?
+          + (_curve->Param(PARAM::breakCntr)>0?
                  tr("<tr><td colspan=2><b>Breaks:</b></td></tr>")
                + tr("<tr><td colspan=2>%1</td></tr>").arg(breaks)
              : tr("")
@@ -145,10 +145,10 @@ QString DisplayCurveInfo::getHTMLInfo()
     pte.append(QApplication::translate("EAQtMainWindow","<tr><td colspan=2>td: %1 ms</td></tr>").arg(_curve->Param(PARAM::td)));
     pte.append(QApplication::translate("EAQtMainWindow","<tr><td colspan=2>current range: %1</td></tr>").arg(this->getCranage()));
 
-    if ( _curve->Param(PARAM::breaknr) > 0 ) {
+    if ( _curve->Param(PARAM::breakCntr) > 0 ) {
         pte.append(QApplication::translate("EAQtMainWindow","<tr><th colspan=2>Breaks:</td></tr>"));
         pte.append(QApplication::translate("EAQtMainWindow","<tr><th>E [mV]</th><th>t [min:sec]</th></tr>"));
-        for ( int i=0; i<_curve->Param(PARAM::breaknr); ++i ) {
+        for ( int i=0; i<_curve->Param(PARAM::breakCntr); ++i ) {
             pte.append(QApplication::translate("EAQtMainWindow", "<tr><td>%1</td><td>%2:%3</td></tr>").arg(_curve->Param(PARAM::breakE+i))
                                                                     .arg(_curve->Param(PARAM::breakmin+i), 2, 10, QChar('0'))
                                                                     .arg(_curve->Param(PARAM::breaksec+i), 2, 10, QChar('0'))
