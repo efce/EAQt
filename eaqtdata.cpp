@@ -1020,7 +1020,7 @@ void EAQtData::ProcessPacketFromEA(const char* packet)
                     if ((_ctnrSQW == 6) || (_ctnrSQW == 4) || (_ctnrSQW == 2)) {
                         mesCurve->addToMesCurrent2Point(currentPointNum,  workl/3);
                     } else {
-                        mesCurve->addToMesCurrent2Point(currentPointNum,  workl/3);
+                        mesCurve->addToMesCurrent1Point(currentPointNum,  workl/3);
                     }
                     if (_ctnrSQW == 6) {
                         mesCurve->addToMesTimePoint(currentPointNum, 1);
@@ -1061,7 +1061,7 @@ void EAQtData::ProcessPacketFromEA(const char* packet)
             i+= 2;
             currentPointNum = ((uint16_t)RxBuf[i] | ((uint16_t)RxBuf[i+1]<<8));
             i+= 2;
-            workl = ((int32_t)RxBuf[i] | ((int32_t)RxBuf[i+1]<<8) | ((int32_t)RxBuf[i+2]<<16) | ((int32_t)RxBuf[i+3]<<24));
+            workl = ((uint32_t)RxBuf[i] | ((uint32_t)RxBuf[i+1]<<8) | ((uint32_t)RxBuf[i+2]<<16) | ((uint32_t)RxBuf[i+3]<<24));
             i += 4;
             DataLen -= 8;
             if ( firstCycle ) {
