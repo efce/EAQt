@@ -1954,7 +1954,7 @@ double EAQtData::CountResultPV(int64_t ResI)
  */
 void EAQtData::updateELSV()
 {
-    _pUI->setLowLabelText(0,tr("Applying Estart: %1 mV, %2 s").arg(_mesCurves->get(0)->Param(PARAM::EstartLSV)).arg(_EstartCurrentTime));
+    _pUI->setLowLabelText(2, tr("Applying Estart: %1 mV, %2 s").arg(_mesCurves->get(0)->Param(PARAM::EstartLSV)).arg(_EstartCurrentTime));
     return;
 }
 
