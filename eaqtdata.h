@@ -262,7 +262,7 @@ private:
    } _accessories;
 
    int32_t _CGMDETestNr;		// _CGMDETestNr - counter for number valve openings (CGMDE)
-   int64_t _EstartCurrentTime;	// time of start potential applied in LSV multicyclic
+   int32_t _EstartCurrentTime;	// time of start potential applied in LSV multicyclic
    int32_t _singleStepTime;		// time in ms of one point
    int32_t _ctnrSQW;    // Counter for Oysteryoung SQW measuremnet
    int32_t _trValue;    // Donno
