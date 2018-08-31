@@ -118,6 +118,8 @@ public:
     void ParamMain(int32_t, int32_t);
     int32_t ParamMain(int32_t);
 
+    int32_t getDropsBeforeMes();
+    void setDropsBeforeMes(int32_t);
     int32_t isGasOn();
     void setGas(int32_t);
     int32_t isMixerOn();

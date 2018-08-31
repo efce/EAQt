@@ -30,6 +30,7 @@ EAQtParamDialog::EAQtParamDialog(EAQtDataInterface *pd, bool isLsv)
     this->_cgmdeDelay = getParam(PARAM::valveDelay);
     this->_cgmdeNr = getParam(PARAM::valveCntr);
     this->_cgmdeMode = getParam(PARAM::cgmdeMode);
+    this->_dropsBeforeMes = _pData->getDropsBeforeMes();
 
     for ( int i = 0; i<21; ++i ) {
         this->_breaksData[i] = this->getParam(PARAM::breakCntr+1+i);
@@ -916,6 +917,8 @@ void EAQtParamDialog::setCGMDE(int num, int val)
      case PARAM::cgmdeMode:
         this->_cgmdeMode = val;
         break;
+     case 99:
+        this->_dropsBeforeMes = val;
     default:
         return;
     }
@@ -936,6 +939,8 @@ int EAQtParamDialog::getCGMDE(int num)
     case PARAM::cgmdeMode:
         return this->_cgmdeMode;
         break;
+    case 99:
+        return this->_dropsBeforeMes;
     default:
         return 0;
     }
@@ -1000,6 +1005,7 @@ void EAQtParamDialog::saveParams()
     this->setParam(PARAM::valveTime,this->_cgmdeTime);
     this->setParam(PARAM::valveDelay,this->_cgmdeDelay);
     this->setParam(PARAM::cgmdeMode,this->_cgmdeMode);
+    _pData->setDropsBeforeMes(this->_dropsBeforeMes);
 
     for ( int i = 0; i< 21; ++i ) {
         this->setParam(PARAM::breakCntr+1+i,this->_breaksData[i]);

@@ -151,6 +151,7 @@ private:
     int _cgmdeDelay;
     int _cgmdeNr;
     int _cgmdeMode;
+    int _dropsBeforeMes;
     int _breaksData[21];
     struct AdvancedWidgets {
         QCheckBox *nonaveraged;

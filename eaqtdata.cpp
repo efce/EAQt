@@ -2494,6 +2494,19 @@ void EAQtData::NetworkError(QString text)
     this->_pUI->showMessageBox(text);
 }
 
+
+int32_t EAQtData::getDropsBeforeMes()
+{
+    return _accessories.drops_bm;
+}
+
+
+void EAQtData::setDropsBeforeMes(int32_t drops)
+{
+    _accessories.drops_bm = drops;
+}
+
+
 int32_t EAQtData::isGasOn()
 {
     return this->_accessories.gas_on;

@@ -35,6 +35,9 @@ EAQtParamCGMDE::EAQtParamCGMDE(QObject *parent) : QObject()
     QLabel *labValveDelay  = new QLabel(tr("Impulse delay [ms]:"));
     QLineEdit *lneValveDelay = new QLineEdit(QString::number(pd->getCGMDE(PARAM::valveDelay)));
     lneValveDelay->setAccessibleName("43");
+    QLabel *labDropBefore  = new QLabel(tr("Drops before measurement:"));
+    QLineEdit *lneDropBefore = new QLineEdit(QString::number(pd->getCGMDE(99)));
+    lneDropBefore->setAccessibleName("99");
 
     _cgmdeMode = new QGroupBox(tr("CGMDE mode:"));
     _cgmdeMode->setAccessibleName("44");
@@ -46,8 +49,10 @@ EAQtParamCGMDE::EAQtParamCGMDE(QObject *parent) : QObject()
     QRadioButton* grow_norm = new QRadioButton(tr("Grow drop before each step"));
     grow_norm->setAccessibleName("2");
     QRadioButton* grow_sum = new QRadioButton(tr("Grow and sum current"));
+    grow_sum->setDisabled(true);
     grow_sum->setAccessibleName("3");
     QRadioButton* grow_lin = new QRadioButton(tr("Grow linearly and sum"));
+    grow_lin->setDisabled(true);
     grow_lin->setAccessibleName("4");
     vbMode->addWidget(drop_mes);
     vbMode->addWidget(drop_step);
@@ -74,9 +79,11 @@ EAQtParamCGMDE::EAQtParamCGMDE(QObject *parent) : QObject()
     grid->addWidget(lneTimeValve, 1, 1);
     grid->addWidget(labValveDelay, 2, 0);
     grid->addWidget(lneValveDelay, 2, 1);
+    grid->addWidget(labDropBefore, 3, 0);
+    grid->addWidget(lneDropBefore, 3, 1);
     grid->addWidget(_cgmdeMode, 0, 2, 5, 1);
-    grid->addWidget(ok, 3, 0);
-    grid->addWidget(cancel, 3, 1);
+    grid->addWidget(ok, 4, 0);
+    grid->addWidget(cancel, 4, 1);
     _dialog->setLayout(grid);
     _dialog->setMaximumHeight(10);
     this->_dialog->layout()->setSizeConstraint(QLayout::SetFixedSize);

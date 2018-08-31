@@ -31,6 +31,8 @@ public:
     virtual int32_t ParamLSV(int32_t) = 0;
     virtual void ParamLSV(int32_t, int32_t) = 0;
     virtual void MesStart(bool isLSV) = 0;
+    virtual int32_t getDropsBeforeMes() = 0;
+    virtual void setDropsBeforeMes(int32_t) = 0;
     virtual int32_t isGasOn() = 0;
     virtual void setGas(int32_t) = 0;
     virtual int32_t isMixerOn() = 0;
