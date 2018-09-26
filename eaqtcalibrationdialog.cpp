@@ -48,6 +48,10 @@ EAQtCalibrationDialog::EAQtCalibrationDialog(CalibrationData *cd, QHash<QString,
     _vConcs.push_back( multipliers{1.0,"mg" + cdot + "mL" + sup1} );
     _vConcs.push_back( multipliers{0.001,"µg" + cdot + "mL" + sup1} );
     _vConcs.push_back( multipliers{0.000001,"ng" + cdot + "mL" + sup1} );
+    _vConcs.push_back( multipliers{1.0,"mol" + cdot + "L" + sup1} );
+    _vConcs.push_back( multipliers{0.001,"mmol" + cdot+ "L" + sup1} );
+    _vConcs.push_back( multipliers{0.000001,"µmol" + cdot + "L" + sup1} );
+    _vConcs.push_back( multipliers{0.000000001,"nmol" + cdot + "L" + sup1} );
 
     if ( oldSettings->size() != 4 ) {
         oldSettings->reserve(4);
