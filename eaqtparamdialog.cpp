@@ -482,12 +482,14 @@ QGroupBox* EAQtParamDialog::createElecType()
 
     this->_paramElec.resize(6);
     this->_paramElec[PARAM::electr_dme] = new QRadioButton(tr("DME"));
+    connect(this->_paramElec[PARAM::electr_dme],SIGNAL(toggled(bool)),this,SLOT(checkElectr()));
     this->_paramElec[PARAM::electr_cgmde] = new QRadioButton(tr("CGMDE"));
-    connect(this->_paramElec[PARAM::electr_cgmde],SIGNAL(toggled(bool)),this,SLOT(checkCGMDE()));
+    connect(this->_paramElec[PARAM::electr_cgmde],SIGNAL(toggled(bool)),this,SLOT(checkElectr()));
     this->_paramElec[PARAM::electr_solid] = new QRadioButton(tr("Solid"));
     this->_paramElec[PARAM::electr_microDme] = new QRadioButton(tr("µDME"));
+    connect(this->_paramElec[PARAM::electr_microDme],SIGNAL(toggled(bool)),this,SLOT(checkElectr()));
     this->_paramElec[PARAM::electr_microCgmde] = new QRadioButton(tr("µCGMDE"));
-    connect(this->_paramElec[PARAM::electr_microCgmde],SIGNAL(toggled(bool)),this,SLOT(checkCGMDE()));
+    connect(this->_paramElec[PARAM::electr_microCgmde],SIGNAL(toggled(bool)),this,SLOT(checkElectr()));
     this->_paramElec[PARAM::electr_microSolid] = new QRadioButton(tr("µSolid"));
     for (int i =0; i<this->_paramElec.size(); ++i) {
         this->_paramElec[i]->setVisible(false);
@@ -765,15 +767,20 @@ void EAQtParamDialog::microelectrodeChanged(bool state)
     }
 }
 
-void EAQtParamDialog::checkCGMDE()
+void EAQtParamDialog::checkElectr()
 {
     if ( this->_paramElec[PARAM::electr_microCgmde]->isChecked()
     || this->_paramElec[PARAM::electr_cgmde]->isChecked() ) {
         this->_butCGMDE_settings->setEnabled(true);
     } else {
         this->_butCGMDE_settings->setEnabled(false);
+        if ( this->_paramElec[PARAM::electr_dme]->isChecked()
+        || this->_paramElec[PARAM::electr_microDme]->isChecked() ) {
+            this->_lineLabels[lid_td]->setText(tr("tk [ms]:"));
+        } else {
+            this->_lineLabels[lid_td]->setText(tr("td [ms]:"));
+        }
     }
-
 }
 
 void EAQtParamDialog::prepareDialog()
@@ -1015,6 +1022,12 @@ void EAQtParamDialog::saveParams()
     for ( int i = 0; i<_paramElec.size(); ++i ) {
         if ( this->_paramElec[i]->isChecked() ) {
             this->setParam(PARAM::electr, i);
+            if (i == PARAM::electr_dme) {
+                this->setParam(PARAM::mespv, PARAM::mespv_polarography);
+            } else {
+                this->setParam(PARAM::mespv, PARAM::mespv_voltammetry);
+            }
+
             break;
         }
     }

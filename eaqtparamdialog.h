@@ -74,7 +74,7 @@ public slots:
     void multicyclicChanged(bool);
     void microelectrodeChanged(bool);
     void multielectrodeChange(bool);
-    void checkCGMDE();
+    void checkElectr();
     void saveAndQuit();
     void cancelAndQuit();
     void saveAndStart();
