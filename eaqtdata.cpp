@@ -3245,3 +3245,40 @@ void EAQtData::undoExecute()
         _pUI->updateAll(true);
     }
 }
+
+QVector<double> EAQtData::generateTimeVector(int32_t* param)
+{
+    int32_t tsize = param[PARAM::ptnr];
+    QVector<double> vtime(param[PARAM::ptnr]);
+    int32_t tp = param[PARAM::tp];
+    int32_t tw = param[PARAM::tw];
+    int32_t td_or_tk = param[PARAM::td];
+    bool is_polar = (param[PARAM::mespv] == PARAM::mespv_polarography);
+    bool is_special_cgmde = (
+                (param[PARAM::electr] == PARAM::electr_cgmde)
+                || (param[PARAM::electr] == PARAM::electr_microCgmde)
+            ) && (param[PARAM::cgmdeMode] > PARAM::cgmdeMode_dropBeforeMes);
+
+    int32_t tstep = 0;
+    int32_t time = 0;
+    if (!is_polar && !is_special_cgmde) {
+        if (param[PARAM::method] != PARAM::method_lsv) {
+            tstep = 2*(tp + tw);
+            time = tstep + td_or_tk;
+        } else {
+            tstep = MEASUREMENT::LSVtime[param[PARAM::dEdt]];
+            time = td_or_tk + tstep;
+        }
+    } else if (is_polar) {
+        tstep = td_or_tk;
+        time = tstep;
+    } else if (is_special_cgmde) {
+        //TODO: how to do ?
+    }
+
+    for (int i=0; i<tsize; ++i) {
+        vtime[i] = time;
+        time += tstep;
+    }
+    return vtime;
+}
