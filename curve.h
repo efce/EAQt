@@ -92,6 +92,7 @@ public:
     QString CName();
     void Comment(QString lszText);
     QString Comment();
+    int32_t* Params();
 
     QString getListName();
 

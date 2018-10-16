@@ -224,6 +224,11 @@ QString Curve::Comment()
 	return _comment;
 }
 
+int32_t* Curve::Params()
+{
+    return _mesParam;
+}
+
 void Curve::allocateMesArray(TYPES::vectorindex_t numOfFields, bool twoCurrent)
 {
 	this->_curveData->allocateMesArray(numOfFields, twoCurrent);
