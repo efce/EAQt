@@ -787,20 +787,13 @@ int EAQtData::CurReadCurveOld(QFile &ff, QString CName)
     getCurves()->get(j1)->Param(PARAM::pro, 0);
 
     // wyniki
-    double time = 0;
-    int timestep = 1;
-    if ( getCurves()->get(j1)->Param(PARAM::method) != PARAM::method_lsv ) {
-        timestep = 2*this->getCurves()->get(j1)->Param(PARAM::tp) + 2*this->getCurves()->get(j1)->Param(PARAM::tw);
-    } else {
-        timestep = MEASUREMENT::LSVtime[this->getCurves()->get(j1)->Param(PARAM::dEdt)];
-    }
+    QVector<double> vecT = this->generateTimeVector(getCurves()->get(j1)->Params(), 0);
     double potential = this->getCurves()->get(j1)->Param(PARAM::Ep);
     double estep = ( (double)this->getCurves()->get(j1)->Param(PARAM::Ek) - (double)this->getCurves()->get(j1)->Param(PARAM::Ep) ) / (double)this->getCurves()->get(j1)->Param(PARAM::ptnr);
     for (TYPES::vectorindex_t ii=0 ; ii<this->getCurves()->get(j1)->Param(PARAM::ptnr) ; ++ii) {
         ff.read((char*)&dwork, sizeof(double));
-        this->getCurves()->get(j1)->addDataPoint(time, potential, dwork);
+        this->getCurves()->get(j1)->addDataPoint(vecT[ii], potential, dwork);
         potential += estep;
-        time += timestep;
     }
     this->setCurrentRange(getCurves()->get(j1)->Param(PARAM::crange),this->getCurves()->get(j1)->Param(PARAM::electr));
     this->getCurves()->get(j1)->FName(ff.fileName());
@@ -820,12 +813,11 @@ int EAQtData::CurReadCurveOld(QFile &ff, QString CName)
         }
 
         double potential = this->getCurves()->get(j1)->Param(PARAM::Ep);
-        double time = timestep*2*this->getCurves()->get(j2)->Param(PARAM::ptnr);
+        vecT = this->generateTimeVector(getCurves()->get(j2)->Params(), 1);
         for (int ii=0 ; ii<this->getCurves()->get(j2)->Param(PARAM::ptnr) ; ++ii) {
             ff.read((char*)&dwork, sizeof(double));
-            this->getCurves()->get(j2)->addDataPoint(time, potential, dwork);
+            this->getCurves()->get(j2)->addDataPoint(vecT[ii], potential, dwork);
             potential +=estep;
-            time -= timestep;
         }
     }
     if (this->getCurves()->get(j1)->Param(PARAM::messc) >= PARAM::messc_cyclic) {
@@ -1240,17 +1232,15 @@ void EAQtData::MesStart(bool isLsv)
                         this->_ptnrFromEss = (int) ceil( fabs( (double)(_LSVParam[PARAM::Ek] - _LSVParam[PARAM::EstartLSV])
                                                                 / MEASUREMENT::LSVstepE[_LSVParam[PARAM::dEdt]]) );
                         vecMesPotential.resize(_LSVParam[PARAM::ptnr]);
-                        vecMesTime.resize(_LSVParam[PARAM::ptnr]);
                         int32_t p;
                         for ( p = 0; p<(_LSVParam[PARAM::ptnr]-this->_ptnrFromEss); ++p ) {
                             vecMesPotential[p] = _LSVParam[PARAM::EstartLSV];
-                            vecMesTime[p] = MEASUREMENT::LSVtime[_LSVParam[PARAM::dEdt]];
                         }
                         for ( ; p<_LSVParam[PARAM::ptnr]; ++p ) {
                             vecMesPotential[p]=(double)( _LSVParam[PARAM::Ep] + ((double)p * MEASUREMENT::LSVstepE[_LSVParam[PARAM::dEdt]]) );
-                            vecMesTime[p]=( timeCounter++ * MEASUREMENT::LSVtime[_LSVParam[PARAM::dEdt]] );
                         }
                         //MesCurve(mesCurveIndex)->reinitializeCurveData(ptnrFromEss);
+                        vecMesTime = this->generateTimeVector(getMesCurves()->get(mesCurveIndex)->Params(), mesCurveIndex);
                         getMesCurves()->get(mesCurveIndex)->setPotentialVector(vecMesPotential);
                         getMesCurves()->get(mesCurveIndex)->setTimeVector(vecMesTime);
                     } else {
@@ -1258,15 +1248,14 @@ void EAQtData::MesStart(bool isLsv)
                         QVector<double> vecMesPotential;
                         QVector<double> vecMesTime;
                         vecMesPotential.resize(_LSVParam[PARAM::ptnr]);
-                        vecMesTime.resize(_LSVParam[PARAM::ptnr]);
                         for ( int p=0; p<_LSVParam[PARAM::ptnr]; p++ ) {
                             if ( _LSVParam[PARAM::Ep] < _LSVParam[PARAM::Ek] ) {
                                 vecMesPotential[p]=(double)( _LSVParam[PARAM::Ep] + ((double)p * MEASUREMENT::LSVstepE[_LSVParam[PARAM::dEdt]]) );
                             } else {
                                 vecMesPotential[p]=(double)( _LSVParam[PARAM::Ep] - ((double)p * MEASUREMENT::LSVstepE[_LSVParam[PARAM::dEdt]]) );
                             }
-                            vecMesTime[p]=( timeCounter++ * MEASUREMENT::LSVtime[_LSVParam[PARAM::dEdt]] );
                         }
+                        vecMesTime = this->generateTimeVector(getMesCurves()->get(mesCurveIndex)->Params(), mesCurveIndex);
                         getMesCurves()->get(mesCurveIndex)->setPotentialVector(vecMesPotential);
                         getMesCurves()->get(mesCurveIndex)->setTimeVector(vecMesTime);
                     }
@@ -1278,16 +1267,14 @@ void EAQtData::MesStart(bool isLsv)
                         this->_ptnrFromEss = (int) ceil( fabs( (double)(_LSVParam[PARAM::Ek] - _LSVParam[PARAM::EstartLSV])
                                                                 / MEASUREMENT::LSVstepE[_LSVParam[PARAM::dEdt]]) );
                         vecMesPotential.resize(_LSVParam[PARAM::ptnr]);
-                        vecMesTime.resize(_LSVParam[PARAM::ptnr]);
                         int p;
                         for ( p = 0; p<(_LSVParam[PARAM::ptnr]-this->_ptnrFromEss); ++p ) {
                             vecMesPotential[p] = _LSVParam[PARAM::EstartLSV];
-                            vecMesTime[p] = MEASUREMENT::LSVtime[_LSVParam[PARAM::dEdt]];
                         }
                         for ( ; p<_LSVParam[PARAM::ptnr]; ++p ) {
                             vecMesPotential[p]=(double)( _LSVParam[PARAM::Ep] - ((double)p * MEASUREMENT::LSVstepE[_LSVParam[PARAM::dEdt]]) );
-                            vecMesTime[p]=( timeCounter++ * MEASUREMENT::LSVtime[_LSVParam[PARAM::dEdt]] );
                         }
+                        vecMesTime = this->generateTimeVector(getMesCurves()->get(mesCurveIndex)->Params(), mesCurveIndex);
                         getMesCurves()->get(mesCurveIndex)->setPotentialVector(vecMesPotential);
                         getMesCurves()->get(mesCurveIndex)->setTimeVector(vecMesTime);
                     } else {
@@ -1295,15 +1282,14 @@ void EAQtData::MesStart(bool isLsv)
                         QVector<double> vecMesPotential;
                         QVector<double> vecMesTime;
                         vecMesPotential.resize(_LSVParam[PARAM::ptnr]);
-                        vecMesTime.resize(_LSVParam[PARAM::ptnr]);
                         for ( int p=0; p<_LSVParam[PARAM::ptnr]; p++ ) {
                             if ( _LSVParam[PARAM::Ep] < _LSVParam[PARAM::Ek] ) {
                                 vecMesPotential[p]=(double)( _LSVParam[PARAM::Ep] + ((double)p * MEASUREMENT::LSVstepE[_LSVParam[PARAM::dEdt]]) );
                             } else {
                                 vecMesPotential[p]=(double)( _LSVParam[PARAM::Ep] - ((double)p * MEASUREMENT::LSVstepE[_LSVParam[PARAM::dEdt]]) );
                             }
-                            vecMesTime[p]=( timeCounter++ * MEASUREMENT::LSVtime[_LSVParam[PARAM::dEdt]] );
                         }
+                        vecMesTime = this->generateTimeVector(getMesCurves()->get(mesCurveIndex)->Params(), mesCurveIndex);
                         getMesCurves()->get(mesCurveIndex)->setPotentialVector(vecMesPotential);
                         getMesCurves()->get(mesCurveIndex)->setTimeVector(vecMesTime);
                     }
@@ -1313,7 +1299,6 @@ void EAQtData::MesStart(bool isLsv)
                 * Gdy nie interpretujemy potencjału startowego, to nic ciekawego
                 */
                 vecMesPotential.resize(_LSVParam[PARAM::ptnr]);
-                vecMesTime.resize(_LSVParam[PARAM::ptnr]);
                 for ( int p=0; p<_LSVParam[PARAM::ptnr]; p++ ) {
                     if ( mesCurveIndex % 2 == 0 ) {
                         if ( _LSVParam[PARAM::Ep] < _LSVParam[PARAM::Ek] ) {
@@ -1328,8 +1313,8 @@ void EAQtData::MesStart(bool isLsv)
                             vecMesPotential[p]=(double)( _LSVParam[PARAM::Ek] - ((double)(1.0+p) * MEASUREMENT::LSVstepE[_LSVParam[PARAM::dEdt]]) );
                         }
                     }
-                    vecMesTime[p]=( timeCounter++ * MEASUREMENT::LSVtime[_LSVParam[PARAM::dEdt]] );
                 }
+                vecMesTime = this->generateTimeVector(getMesCurves()->get(mesCurveIndex)->Params(), mesCurveIndex);
                 getMesCurves()->get(mesCurveIndex)->setPotentialVector(vecMesPotential);
                 getMesCurves()->get(mesCurveIndex)->setTimeVector(vecMesTime);
             }
@@ -1412,14 +1397,14 @@ void EAQtData::MesStart(bool isLsv)
                         //powrot cyklicznej
                         for ( int y=prsize-1; y<=0; y-- ) {
                             vecP.append(_PVParam_PotentialProgram[y]);
-                            vecT.append( (2*prsize-(y+1))*2*(_PVParam[PARAM::tp]+_PVParam[PARAM::tw]));
                         }
+                        vecT = this->generateTimeVector(getMesCurves()->get(mesCurveIndex)->Params(), 1);
                     } else {
                         // normalny pomiar
                         for (int y=0; y<prsize;y++) {
                             vecP.append(this->_PVParam_PotentialProgram[y]);
-                            vecT.append( (y+1)*2*(_PVParam[PARAM::tp]+_PVParam[PARAM::tw]) );
                         }
+                        vecT = this->generateTimeVector(getMesCurves()->get(mesCurveIndex)->Params(), 0);
                     }
                 } else {
                     getMesCurves()->get(mesCurveIndex)->reinitializeCurveData(prsize/2);
@@ -1429,14 +1414,14 @@ void EAQtData::MesStart(bool isLsv)
                         //powrot cyklicznej
                         for ( int y=prsize-1; y<=0; y-=2 ) {
                             vecP.append(_PVParam_PotentialProgram[y/2]);
-                            vecT.append( (2*prsize-(y+1))*2*(_PVParam[PARAM::tp]+_PVParam[PARAM::tw]));
                         }
+                        vecT = this->generateTimeVector(getMesCurves()->get(mesCurveIndex)->Params(), 1);
                     } else {
                         // normalny pomiar
                         for (int y=0; y<prsize;y+=2) {
                             vecP.append(this->_PVParam_PotentialProgram[y/2]);
-                            vecT.append( (y+1)*2*(_PVParam[PARAM::tp]+_PVParam[PARAM::tw]) );
                         }
+                        vecT = this->generateTimeVector(getMesCurves()->get(mesCurveIndex)->Params(), 0);
                     }
                 }
                 getMesCurves()->get(mesCurveIndex)->setPotentialVector(vecP);
@@ -1451,19 +1436,17 @@ void EAQtData::MesStart(bool isLsv)
                 QVector<double> vecMesPotential;
                 QVector<double> vecMesTime;
                 vecMesPotential.resize(_PVParam[PARAM::ptnr]);
-                vecMesTime.resize(_PVParam[PARAM::ptnr]);
-                for ( int p=0; p<_PVParam[PARAM::ptnr]; p++ ) {
-                    if ( nrOfElectrodes > mesCurveIndex ) {
-                        vecMesTime[p] = ( (p+1.0) * 2.0 * (_PVParam[PARAM::tw]+_PVParam[PARAM::tp]) );
+                if ( nrOfElectrodes > mesCurveIndex ) {
+                    for ( int p=0; p<_PVParam[PARAM::ptnr]; p++ ) {
                         vecMesPotential[p] = _PVParam[PARAM::Ep] + (p* _PVParam[PARAM::Estep]);
+                    }
+                    vecMesTime = this->generateTimeVector(getMesCurves()->get(mesCurveIndex)->Params(), 0);
 
-                    } else { // powrót cyklicznej //
-                        vecMesTime[p]= (
-                                    _PVParam[PARAM::ptnr] * 2.0 * (_PVParam[PARAM::tw]+_PVParam[PARAM::tp])
-                                + (p * 2.0 * (_PVParam[PARAM::tw]+_PVParam[PARAM::tp]))
-                                );
+                } else { // powrót cyklicznej //
+                    for ( int p=0; p<_PVParam[PARAM::ptnr]; p++ ) {
                         vecMesPotential[p] = _PVParam[PARAM::Ek] - ( (1.0+p) * _PVParam[PARAM::Estep]);
                     }
+                    vecMesTime = this->generateTimeVector(getMesCurves()->get(mesCurveIndex)->Params(), 1);
                 }
 
                 getMesCurves()->get(mesCurveIndex)->setPotentialVector(vecMesPotential);
@@ -1500,30 +1483,6 @@ void EAQtData::MesStart(bool isLsv)
 
     } // KONIEC DODATKOWE
 
-    //sbuf.LoadString(IDD_off);
-
-    //    if (!is_connect(view)) {
-    //        view->MessageBox(sbuf);
-
-    //        m_alMesParam[tp]=itp;
-    //        m_alMesParam[tw]=itw;
-    //        int nn=0;
-    //        while (MesCurve(nn)!=NULL) {
-    //            MesCurve(nn)->Param(tp,m_alMesParam[tp]);
-    //            MesCurve(nn)->Param(tw,m_alMesParam[tw]);
-    //            nn++;
-    //        }
-
-    //        return;
-    //    }
-    //    view->m_sSubtext = _T("");
-    //    view->mHandler->ChangeMouseMode(MouseHandler::mouseMode::mesurement,
-    //                                    MouseHandler::userFunctions::none);
-
-    //    if (this->m_alMesParam[PARAM::Ep] == this->m_alMesParam[PARAM::Ek]) {
-    //        this->setXAxis(XTIME);
-    //    }
-
     _stopInfo = 0;
     _conductingMeasurement = 1;
     setCurrentRange(getMesCurves()->get(0)->Param(PARAM::crange)
@@ -1540,7 +1499,7 @@ void EAQtData::MesStart(bool isLsv)
             _PVParam[PARAM::tp]=itp;
             _PVParam[PARAM::tw]=itw;
             int nn=0;
-            while (getMesCurves()->get(nn)!=NULL) {
+            while (getMesCurves()->get(nn) != nullptr) {
                 getMesCurves()->get(nn)->Param(PARAM::tp,_PVParam[PARAM::tp]);
                 getMesCurves()->get(nn)->Param(PARAM::tw,_PVParam[PARAM::tw]);
                 nn++;
@@ -1548,14 +1507,10 @@ void EAQtData::MesStart(bool isLsv)
 
             return;
         } else { // m_nMesInfo=1 - pomiar techniki impulsowe
-            // b³edy podczas transmisji parametrów lub EA od³aczony
             _conductingMeasurement = 0;
-            //view->MessageBox(sbuf);
             _PVParam[PARAM::tp]=itp;
             _PVParam[PARAM::tw]=itw;
             this->getMesCurves()->clear();
-            //view->enableAllButtons();
-            //this->bIsSeriaMes = false;
             return;
         }
     } else {
@@ -1564,10 +1519,7 @@ void EAQtData::MesStart(bool isLsv)
         } // m_nMesInfo=2,3 - pomiar LSV
         else {
             _conductingMeasurement = 0;
-            //view->MessageBox(sbuf);
             this->getMesCurves()->clear();
-            //view->enableAllButtons();
-            //this->bIsSeriaMes = false;
             return ;
         } // błedy podczas transmisji parametrów lub EA odłaczony
     }
@@ -3246,7 +3198,7 @@ void EAQtData::undoExecute()
     }
 }
 
-QVector<double> EAQtData::generateTimeVector(int32_t* param)
+QVector<double> EAQtData::generateTimeVector(int32_t* param, TYPES::vectorindex_t curve_number)
 {
     int32_t tsize = param[PARAM::ptnr];
     QVector<double> vtime(param[PARAM::ptnr]);
@@ -3264,20 +3216,29 @@ QVector<double> EAQtData::generateTimeVector(int32_t* param)
     if (!is_polar && !is_special_cgmde) {
         if (param[PARAM::method] != PARAM::method_lsv) {
             tstep = 2*(tp + tw);
-            time = tstep + td_or_tk;
+            time = tstep;
         } else {
             tstep = MEASUREMENT::LSVtime[param[PARAM::dEdt]];
-            time = td_or_tk + tstep;
+            time = tstep;
         }
     } else if (is_polar) {
         tstep = td_or_tk;
         time = tstep;
     } else if (is_special_cgmde) {
-        //TODO: how to do ?
+        if (param[PARAM::cgmdeMode] == PARAM::cgmdeMode_pulseBeforeEachPoint) {
+            tstep = 2*(tp + tw) + param[PARAM::valveTime];
+            time = tstep;
+        } else if (param[PARAM::cgmdeMode] == PARAM::cgmdeMode_dropBeforeEachPoint) {
+            tstep = 2*(tp + tw) + param[PARAM::knockTime] + param[PARAM::valveCntr] * (param[PARAM::valveTime] + param[PARAM::valveDelay]);
+            time = tstep;
+        } else {
+            tstep = 2*(tp + tw);
+            time = tstep;
+        }
     }
 
     for (int i=0; i<tsize; ++i) {
-        vtime[i] = time;
+        vtime[i] = time + (tsize * tstep * curve_number);
         time += tstep;
     }
     return vtime;

@@ -136,7 +136,7 @@ public:
     void ParamReadOld(QFile &ff);
     bool MDirReadOld(QFile &ff);
     void CurReadFileOld(QString *FileName, int PosNr);
-    QVector<double> generateTimeVector(int32_t* param);
+    QVector<double> generateTimeVector(int32_t* param, TYPES::vectorindex_t curve_number);
     int safeAppend(QString pFileName, Curve* CurveToAppend);
     void exportToTXT(QString path);
     void exportToCSV(QString path);
