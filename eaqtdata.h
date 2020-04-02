@@ -76,7 +76,7 @@ private:
     } _sqwClassicTemp;
 
     void loadMesFile();
-    void seriaWait(int32_t delay_secs);
+    bool seriaWait(int32_t delay_secs);
 
     bool sendLSVToEA();
     bool sendPVToEA();
@@ -282,6 +282,7 @@ private:
     bool _useSeriesFile;
     QString _seriesFilePath;
     MesCFG *_pSeriesData;
+    bool _tryToStopMesSeries;
     // END SERIA
 signals:
     void actChanged(int act);

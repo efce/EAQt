@@ -34,6 +34,7 @@ EAQtData::EAQtData() : QObject(), EAQtDataInterface()
     _multielectrodeNr = 0;
     _isMesSeries = false;
     _useSeriesFile = false;
+    _tryToStopMesSeries = false;
     _fromUpdate.start();
 
     _vChannelNamesOfMultielectrode.resize(8);
@@ -1110,6 +1111,7 @@ void EAQtData::MesStart(bool isLsv)
     int32_t mesCurveIndex;
     int i;
     _mesReadyForUI = false;
+    _tryToStopMesSeries = false;
 
     this->_pUI->changeStartButtonText(tr("Start ") + (isLsv?"LSV":"PV"));
 
@@ -1153,7 +1155,9 @@ void EAQtData::MesStart(bool isLsv)
             _pUI->showMessageBox(tr("Press OK to continue the measurement series."), tr("Measurement Series"));
         }
         if ( this->_pSeriesData->Mes_Delay() != 0 ) {
-            this->seriaWait(this->_pSeriesData->Mes_Delay());
+            if (!this->seriaWait(this->_pSeriesData->Mes_Delay())) {
+               return;
+            }
         }
     }
     /////////////////////////////////////////////////////////////////////////////
@@ -1654,6 +1658,7 @@ void EAQtData::MesStop()
     if (_conductingMeasurement == 0) {
         this->_pUI->showMessageBox(tr("Measurement was not initiated.")); // Pomiar nie został zainicjowany
     } else {
+        _tryToStopMesSeries = true;
         _conductingMeasurement = 0;
         _TxBuf[0] = PC2EA_RECORODS::recordStop;
         this->_network->sendToEA((char*)&_TxBuf[0]);
@@ -1947,6 +1952,7 @@ void EAQtData::MesAfter()
 
     _mesReadyForUI = false;
     _conductingMeasurement = 0;
+    _tryToStopMesSeries = false;
     work_act = this->Act();
     // nie wiem czy trzeba: m_nStopInfo = 1;
 
@@ -2428,14 +2434,17 @@ void EAQtData::loadMesFile()
 /*
  * When there is delay between measurements is MeasurementSeries, this should be done
  */
-void EAQtData::seriaWait(int32_t delay_secs)
+bool EAQtData::seriaWait(int32_t delay_secs)
 {
     QTime dieTime= QTime::currentTime().addSecs(delay_secs);
     while (QTime::currentTime() < dieTime) {
         QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
+        if (this->_tryToStopMesSeries) {
+            return false;
+        }
         _pUI->setLowLabelText(2,tr("Measurement series - timer: %1 s").arg(QTime::currentTime().secsTo(dieTime)));
     }
-    return;
+    return true;
 }
 
 /*
