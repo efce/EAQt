@@ -1118,16 +1118,12 @@ void EAQtData::MesStart(bool isLsv)
     _mesReadyForUI = false;
     _tryToStopMesSeries = false;
 
-    this->_pUI->changeStartButtonText(tr("Start ") + (isLsv?"LSV":"PV"));
-
-    this->_wasLSVMeasurement = isLsv;
-
-    if ( !this->_network->connectToEA() ) {
-        return;
-    }
-    _pUI->MeasurementSetup();
-
     if ( this->_useSeriesFile && !this->_isMesSeries ) {
+        if ( !this->_pUI->showQuestionBox( tr("Do you want to start the measurement series from file:\n").append(this->getMesSeriesFile()),
+                                          tr("Start series"),
+                                          false ) ) {
+            return;
+        }
         // Wczytaj, ale tylko raz
         this->loadMesFile();
         if ( this->_isMesSeries ) {
@@ -1137,6 +1133,14 @@ void EAQtData::MesStart(bool isLsv)
             return;
         }
     }
+
+    this->_wasLSVMeasurement = isLsv;
+
+    if ( !this->_network->connectToEA() ) {
+        return;
+    }
+    _pUI->MeasurementSetup();
+    this->_pUI->changeStartButtonText(tr("Start ") + (_isMesSeries?tr("Series"):(isLsv?"LSV":"PV")));
 
     //////////////// SERIA /////////////////////////////////////////////////////
     if ( _isMesSeries == true ) {
