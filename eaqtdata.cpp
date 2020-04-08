@@ -864,7 +864,11 @@ void EAQtData::deleteActiveCurveFromGraph()
 
 void EAQtData::deleteNonactiveCurvesFromGraph()
 {
-    if ( this->getCurves()->get(this->Act()) != nullptr ) {
+    if ( this->_pUI->showQuestionBox(
+             tr("Delete inactive curves?"),
+             tr("Are you sure"),
+             false) ) {
+        if ( this->getCurves()->get(this->Act()) != nullptr ) {
         this->undoPrepare();
         Curve *c = this->getCurves()->get(this->Act());
         this->getCurves()->unset(this->Act());
@@ -881,6 +885,7 @@ void EAQtData::deleteNonactiveCurvesFromGraph()
 
         this->Act(index);
         this->_pUI->updateAll();
+        }
     }
 }
 
