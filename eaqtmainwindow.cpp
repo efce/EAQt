@@ -993,6 +993,10 @@ void EAQtMainWindow::createActionsTopMenu()
     this->_actBkgCorrectionSettings->setStatusTip(tr("Show settings of background correction."));
     connect(_actBkgCorrectionSettings, SIGNAL(triggered(bool)),this,SLOT(showBackgroundCorrectionSettings()));
 
+    this->_actArplsBkgCorrection = new QAction(tr("Fit arPLS background"), this);
+    this->_actArplsBkgCorrection->setStatusTip(tr("Perform arPLS background correction."));
+    connect(_actArplsBkgCorrection, SIGNAL(triggered(bool)), this, SLOT(showArplsBkgCorrection()));
+
     this->_actSubtractActive= new QAction(tr("Subtract active curve"), this);
     this->_actSubtractActive->setStatusTip(tr("Subtracts active curve from all."));
     connect(_actSubtractActive, SIGNAL(triggered(bool)),this,SLOT(subtractActive()));
@@ -1110,6 +1114,7 @@ void EAQtMainWindow::createMenusTopMenu()
     _menuAnalysis->addAction(this->_actFindPeaks);
     _menuAnalysis->addAction(this->_actBkgCorrection);
     _menuAnalysis->addAction(this->_actBkgCorrectionSettings);
+    _menuAnalysis->addAction(this->_actArplsBkgCorrection);
     _menuAnalysis->addAction(this->_actSubtractActive);
     _menuAnalysis->addAction(this->_actRelativeValues);
     _menuAnalysis->addAction(this->_actMoveUpDown);
@@ -1144,6 +1149,13 @@ void EAQtMainWindow::startBackgroundCorrection()
         _mouseHandler->ChangeMouseMode(EAQtMouseHandler::mm_place4markers,
                                        EAQtMouseHandler::uf_background_correction);
     }
+}
+
+void EAQtMainWindow::showArplsBkgCorrection()
+{
+    EAQTArplsBackgroundCorrectionDialog *arPLS = new EAQTArplsBackgroundCorrectionDialog(this);
+    arPLS->exec();
+    delete arPLS;
 }
 
 void EAQtMainWindow::subtractActive()

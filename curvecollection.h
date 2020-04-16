@@ -29,6 +29,7 @@
 class CurveCollection
 {
 public:
+    CurveCollection();
     CurveCollection(EAQtUIInterface*);
     CurveCollection(CurveCollection*);
     ~CurveCollection();

@@ -31,6 +31,7 @@
 #include "eaqtmousehandler.h"
 #include "displaycurveinfo.h"
 #include "eaqttestcgmdedialog.h"
+#include "eaqtarplsbackgroundcorrectiondialog.h"
 
 namespace Ui {
 class MainWindow;
@@ -151,6 +152,9 @@ private:
     QAction *_actDataCursor;
     QAction *_actBkgCorrection;
     QAction *_actBkgCorrectionSettings;
+
+    QAction *_actArplsBkgCorrection;
+
     QAction *_actSubtractActive;
     QAction *_actRelativeValues;
     QAction *_actMoveUpDown;
@@ -204,6 +208,9 @@ private slots:
     void showPeaks();
     void showBackgroundCorrectionSettings();
     void startBackgroundCorrection();
+
+    void showArplsBkgCorrection();
+
     void subtractActive();
     void startRelativeValues();
     void startMoveUpDown();

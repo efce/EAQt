@@ -17,6 +17,11 @@
   *******************************************************************************************************************/
 #include "curvecollection.h"
 
+CurveCollection::CurveCollection()
+{
+    _vCurves.clear();
+}
+
 CurveCollection::CurveCollection(EAQtUIInterface *ui)
 {
     _pUI = ui;

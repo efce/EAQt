@@ -34,6 +34,30 @@ RC_FILE = eaqt.rc
 
 SOURCES += main.cpp\
     Qcustomplot/qcustomplot.cpp \
+    arPLS2/arPLS2.cpp \
+    arPLS2/arPLS2_emxAPI.cpp \
+    arPLS2/arPLS2_emxutil.cpp \
+    arPLS2/arPLS2_initialize.cpp \
+    arPLS2/arPLS2_terminate.cpp \
+    arPLS2/colon.cpp \
+    arPLS2/diag.cpp \
+    arPLS2/diff.cpp \
+    arPLS2/heapsort.cpp \
+    arPLS2/insertionsort.cpp \
+    arPLS2/introsort.cpp \
+    arPLS2/mldivide.cpp \
+    arPLS2/norm.cpp \
+    arPLS2/rtGetInf.cpp \
+    arPLS2/rtGetNaN.cpp \
+    arPLS2/rt_nonfinite.cpp \
+    arPLS2/sparse.cpp \
+    arPLS2/sparse1.cpp \
+    arPLS2/spdiags.cpp \
+    arPLS2/std.cpp \
+    arPLS2/xgeqp3.cpp \
+    arPLS2/xnrm2.cpp \
+    arPLS2/xscal.cpp \
+    eaqtarplsbackgroundcorrectiondialog.cpp \
     eaqtmainwindow.cpp \
     eaqtdata.cpp \
     curvedata.cpp \
@@ -70,6 +94,36 @@ SOURCES += main.cpp\
 
 HEADERS  += \
     Qcustomplot/qcustomplot.h \
+    arPLS2/arPLS2.h \
+    arPLS2/arPLS2_emxAPI.h \
+    arPLS2/arPLS2_emxutil.h \
+    arPLS2/arPLS2_initialize.h \
+    arPLS2/arPLS2_terminate.h \
+    arPLS2/arPLS2_types.h \
+    arPLS2/colon.h \
+    arPLS2/diag.h \
+    arPLS2/diff.h \
+    arPLS2/emlrt.h \
+    arPLS2/heapsort.h \
+    arPLS2/insertionsort.h \
+    arPLS2/introsort.h \
+    arPLS2/matrix.h \
+    arPLS2/mex.h \
+    arPLS2/mldivide.h \
+    arPLS2/norm.h \
+    arPLS2/rtGetInf.h \
+    arPLS2/rtGetNaN.h \
+    arPLS2/rt_nonfinite.h \
+    arPLS2/rtwtypes.h \
+    arPLS2/sparse.h \
+    arPLS2/sparse1.h \
+    arPLS2/spdiags.h \
+    arPLS2/std.h \
+    arPLS2/tmwtypes.h \
+    arPLS2/xgeqp3.h \
+    arPLS2/xnrm2.h \
+    arPLS2/xscal.h \
+    eaqtarplsbackgroundcorrectiondialog.h \
     eaqtmainwindow.h \
     eaqtdata.h \
     curve.h \
@@ -410,7 +464,8 @@ HEADERS  += \
     settingsdialog.h \
     eaqtcalculateloddialog.h
 
-FORMS    +=
+FORMS    += \
+    eaqtarplsbackgroundcorrectiondialog.ui
 
 TRANSLATIONS = ./eaqt_pl.ts
 
@@ -421,6 +476,7 @@ DISTFILES += \
     Qcustomplot/GPL.txt \
     Eigen/CMakeLists.txt \
     README.md \
+    arPLS3/rtw_proj.tmw \
     fonts/LiberationSans-Regular.ttf \
     fonts/DejaVuSans.ttf \
     fonts/SIL Open Font License.txt \
