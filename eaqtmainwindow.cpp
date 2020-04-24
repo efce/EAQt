@@ -1153,9 +1153,17 @@ void EAQtMainWindow::startBackgroundCorrection()
 
 void EAQtMainWindow::showArplsBkgCorrection()
 {
-    EAQTArplsBackgroundCorrectionDialog *arPLS = new EAQTArplsBackgroundCorrectionDialog(this);
-    arPLS->exec();
-    delete arPLS;
+    if( _pEAQtData->getCurves()->count() > 0 && (_pEAQtData->Act() >= 0 || _pEAQtData->Act() == SELECT::all) )
+    {
+        EAQTArplsBackgroundCorrectionDialog *arPLS = new EAQTArplsBackgroundCorrectionDialog(this);
+        arPLS->exec();
+        delete arPLS;
+    }
+    else
+    {
+        this->showMessageBox(tr("Select any (or all) curve before you choose arPLS background correction method"),tr("arPLS message"));
+    }
+
 }
 
 void EAQtMainWindow::subtractActive()

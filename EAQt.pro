@@ -34,29 +34,24 @@ RC_FILE = eaqt.rc
 
 SOURCES += main.cpp\
     Qcustomplot/qcustomplot.cpp \
-    arPLS2/arPLS2.cpp \
-    arPLS2/arPLS2_emxAPI.cpp \
-    arPLS2/arPLS2_emxutil.cpp \
-    arPLS2/arPLS2_initialize.cpp \
-    arPLS2/arPLS2_terminate.cpp \
-    arPLS2/colon.cpp \
-    arPLS2/diag.cpp \
-    arPLS2/diff.cpp \
-    arPLS2/heapsort.cpp \
-    arPLS2/insertionsort.cpp \
-    arPLS2/introsort.cpp \
-    arPLS2/mldivide.cpp \
-    arPLS2/norm.cpp \
-    arPLS2/rtGetInf.cpp \
-    arPLS2/rtGetNaN.cpp \
-    arPLS2/rt_nonfinite.cpp \
-    arPLS2/sparse.cpp \
-    arPLS2/sparse1.cpp \
-    arPLS2/spdiags.cpp \
-    arPLS2/std.cpp \
-    arPLS2/xgeqp3.cpp \
-    arPLS2/xnrm2.cpp \
-    arPLS2/xscal.cpp \
+    arPLS2Ver2/arPLS2Ver2.cpp \
+    arPLS2Ver2/arPLS2Ver2_emxAPI.cpp \
+    arPLS2Ver2/arPLS2Ver2_emxutil.cpp \
+    arPLS2Ver2/arPLS2Ver2_initialize.cpp \
+    arPLS2Ver2/arPLS2Ver2_terminate.cpp \
+    arPLS2Ver2/diag.cpp \
+    arPLS2Ver2/exp.cpp \
+    arPLS2Ver2/mean.cpp \
+    arPLS2Ver2/mldivide.cpp \
+    arPLS2Ver2/norm.cpp \
+    arPLS2Ver2/rdivide_helper.cpp \
+    arPLS2Ver2/rtGetInf.cpp \
+    arPLS2Ver2/rtGetNaN.cpp \
+    arPLS2Ver2/rt_nonfinite.cpp \
+    arPLS2Ver2/std.cpp \
+    arPLS2Ver2/xgeqp3.cpp \
+    arPLS2Ver2/xnrm2.cpp \
+    arPLS2Ver2/xscal.cpp \
     eaqtarplsbackgroundcorrectiondialog.cpp \
     eaqtmainwindow.cpp \
     eaqtdata.cpp \
@@ -94,35 +89,27 @@ SOURCES += main.cpp\
 
 HEADERS  += \
     Qcustomplot/qcustomplot.h \
-    arPLS2/arPLS2.h \
-    arPLS2/arPLS2_emxAPI.h \
-    arPLS2/arPLS2_emxutil.h \
-    arPLS2/arPLS2_initialize.h \
-    arPLS2/arPLS2_terminate.h \
-    arPLS2/arPLS2_types.h \
-    arPLS2/colon.h \
-    arPLS2/diag.h \
-    arPLS2/diff.h \
-    arPLS2/emlrt.h \
-    arPLS2/heapsort.h \
-    arPLS2/insertionsort.h \
-    arPLS2/introsort.h \
-    arPLS2/matrix.h \
-    arPLS2/mex.h \
-    arPLS2/mldivide.h \
-    arPLS2/norm.h \
-    arPLS2/rtGetInf.h \
-    arPLS2/rtGetNaN.h \
-    arPLS2/rt_nonfinite.h \
-    arPLS2/rtwtypes.h \
-    arPLS2/sparse.h \
-    arPLS2/sparse1.h \
-    arPLS2/spdiags.h \
-    arPLS2/std.h \
-    arPLS2/tmwtypes.h \
-    arPLS2/xgeqp3.h \
-    arPLS2/xnrm2.h \
-    arPLS2/xscal.h \
+    arPLS2Ver2/arPLS2Ver2.h \
+    arPLS2Ver2/arPLS2Ver2_emxAPI.h \
+    arPLS2Ver2/arPLS2Ver2_emxutil.h \
+    arPLS2Ver2/arPLS2Ver2_initialize.h \
+    arPLS2Ver2/arPLS2Ver2_terminate.h \
+    arPLS2Ver2/arPLS2Ver2_types.h \
+    arPLS2Ver2/diag.h \
+    arPLS2Ver2/exp.h \
+    arPLS2Ver2/mean.h \
+    arPLS2Ver2/mldivide.h \
+    arPLS2Ver2/norm.h \
+    arPLS2Ver2/rdivide_helper.h \
+    arPLS2Ver2/rtGetInf.h \
+    arPLS2Ver2/rtGetNaN.h \
+    arPLS2Ver2/rt_nonfinite.h \
+    arPLS2Ver2/rtwtypes.h \
+    arPLS2Ver2/std.h \
+    arPLS2Ver2/tmwtypes.h \
+    arPLS2Ver2/xgeqp3.h \
+    arPLS2Ver2/xnrm2.h \
+    arPLS2Ver2/xscal.h \
     eaqtarplsbackgroundcorrectiondialog.h \
     eaqtmainwindow.h \
     eaqtdata.h \
