@@ -4,11 +4,13 @@
 #include <QDoubleValidator>
 #include <math.h>
 
-EAQTArplsBackgroundCorrectionDialog::EAQTArplsBackgroundCorrectionDialog(QWidget *parent) :
+EAQTArplsBackgroundCorrectionDialog::EAQTArplsBackgroundCorrectionDialog(QWidget *parent, EAQtUIInterface *pui) :
     QDialog(parent),
     ui(new Ui::EAQTArplsBackgroundCorrectionDialog)
 { 
     ui->setupUi(this);
+    this->_pUI = pui;
+
 
     // main curves init
     this->_curves = EAQtData::getInstance().getCurves();
@@ -26,6 +28,40 @@ EAQTArplsBackgroundCorrectionDialog::EAQTArplsBackgroundCorrectionDialog(QWidget
         this->_m = 1;
     }
     this->_n = _curves->get(0)->getNrOfDataPoints();
+
+    // main vectors init
+    this->_curvesCopyXVector = new QVector<QVector<double>>(this->_m, QVector<double>(this->_n));
+    this->_curvesCopyYVector = new QVector<QVector<double>>(this->_m, QVector<double>(this->_n));
+    this->_bkg = new QVector<QVector<double>>(this->_m, QVector<double>(this->_n));
+    this->_weights = new QVector<QVector<double>>(this->_m, QVector<double>(this->_n));
+    this->_sig_without_bkg = new QVector<QVector<double>>(this->_m, QVector<double>(this->_n));
+    this->_iter = new QVector<int>(this->_m);
+
+    // copy Collection Curves
+    if(_act == SELECT::all)
+    {
+        for (int i=0; i < _m; i++)
+        {
+            _curvesCopyXVector[0][i] = _curves->get(i)->getXVector();
+            _curvesCopyYVector[0][i] = _curves->get(i)->getYVector();
+        }
+    }
+    else
+    {
+        _curvesCopyXVector[0][0] = _curves->get(_act)->getXVector();
+        _curvesCopyYVector[0][0] = _curves->get(_act)->getYVector();
+    }
+
+    // "status bar"
+    ui->progressBar->setValue(0);
+    ui->progressBar->setMinimum(0);
+    ui->progressBar->setMaximum(100);
+    ui->progressBar->hide();
+    ui->labelIterations->setText("");
+    ui->labelIterations->hide();
+    ui->labelStatus->setText("");
+    ui->labelStatus->hide();
+
 
     // default settings init
     // Lambda
@@ -73,16 +109,20 @@ EAQTArplsBackgroundCorrectionDialog::EAQTArplsBackgroundCorrectionDialog(QWidget
     this->_plotBkg = ui->widgetPlot;
     _plotBkg->xAxis->setLabel("E / mV");
     _plotBkg->yAxis->setLabel("i / µA");
+    this->_plotW = ui->widgetPlotW;
+    _plotW->xAxis->setLabel("E / mV");
+    _plotW->yAxis->setLabel("w");
+    //_plotW->xAxis->setRange(0,1);
+    //_plotW->yAxis->setRange(-0.2,1.2);
     // button Fit background
     connect(ui->pushButtonFitBkg,SIGNAL(clicked()),this,SLOT(calculateBkg()));
     // other buttons
     ui->pushButtonShowWithouBkg->setEnabled(false);
     ui->pushButtonExportBkg->setEnabled(false);
+    connect(ui->pushButtonShowWithouBkg,SIGNAL(clicked()),this,SLOT(showWithoutBkg()));
+    connect(ui->pushButtonExportBkg,SIGNAL(clicked()),this,SLOT(exportCurvesWithoutBkg()));
 
-    // main vectors init
-    this->_bkg = new QVector<QVector<double>>(this->_m, QVector<double>(this->_n));
-    this->_weights = new QVector<QVector<double>>(this->_m, QVector<double>(this->_n));
-    this->_iter = new QVector<int>(this->_m);
+
 
     // plot curves
     this->plotSignals();
@@ -94,38 +134,12 @@ EAQTArplsBackgroundCorrectionDialog::~EAQTArplsBackgroundCorrectionDialog()
     delete ui;
     delete this->_bkg;
     delete this->_weights;
+    delete this->_sig_without_bkg;
     delete this->_iter;
 }
 
 void EAQTArplsBackgroundCorrectionDialog::tests()
 {
-    for (int current=0; current < this->_m; current++) {
-
-        qDebug() << "****************";
-        qDebug() << "_bkg: ";
-        qDebug() << "size: " << _bkg[0].size() << " x " << _bkg[0][current].size();
-        qDebug() << "first element: " << _bkg[0][current][0];
-
-        qDebug() << "***";
-        qDebug() << "_weights: ";
-        qDebug() << "size: " << _weights[0].size() << " x " << _weights[0][current].size();
-        qDebug() << "first element: " << _weights[0][current][0];
-
-        qDebug() << "***";
-        qDebug() << "_iter: ";
-        qDebug() << "size: " << _iter->size();
-        qDebug() << "first element: " << _iter[0][current];
-    }
-
-    qDebug() << "First curve background:";
-    for (int i=0; i < _n; i++) {
-        qDebug() << _bkg[0][0][i];
-    }
-
-    qDebug() << "First curve weights:";
-    for (int i=0; i < _n; i++) {
-        qDebug() << _weights[0][0][i];
-    }
 
 }
 
@@ -133,104 +147,177 @@ void EAQTArplsBackgroundCorrectionDialog::plotSignals()
 {
     _plotBkg->clearGraphs();
 
-    if(_act == SELECT::all)
+/*    if(_act == SELECT::all)
     {
-        Curve* curve;
-        int i = 0;
-        while((curve = _curves->get(i)) != nullptr )
+//        Curve* curve;
+//        int i = 0;
+//        while((curve = _curves->get(i)) != nullptr )
+//        {
+//            addGraphs(_plotBkg, i, curve->getXVector(), curve->getYVector(), QPen(COLOR::regular));
+//            i++;
+//        }
+        for (int i=0; i < _m; i++)
         {
-            _plotBkg->addGraph();
-            _plotBkg->graph(i);
-            _plotBkg->graph(i)->setData(curve->getXVector(),curve->getYVector());
-            _plotBkg->graph(i)->setPen(QPen(COLOR::regular));
-            i++;
+            addGraphs(_plotBkg, i, _curvesCopyXVector[0][i], _curvesCopyYVector[0][i], QPen(COLOR::regular));
         }
     }
     else
     {
-        Curve* curve = _curves->get(_act);
-        _plotBkg->addGraph();
-        _plotBkg->graph(0);
-        _plotBkg->graph(0)->setData(curve->getXVector(),curve->getYVector());
-        _plotBkg->graph(0)->setPen(QPen(COLOR::regular));
+//        Curve* curve = _curves->get(_act);
+//        addGraphs(_plotBkg, 0, curve->getXVector(), curve->getYVector(), QPen(COLOR::regular));
+        addGraphs(_plotBkg, 0, _curvesCopyXVector[0][0], _curvesCopyYVector[0][0], QPen(COLOR::regular));
+    }*/
+
+    for (int i=0; i < _m; i++)
+    {
+        addGraphs(_plotBkg, i, _curvesCopyXVector[0][i], _curvesCopyYVector[0][i], QPen(COLOR::regular));
     }
 
-    _plotBkg->rescaleAxes();
-    _plotBkg->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables);
-    _plotBkg->replot();
+    rescaleAndReplot(_plotBkg);
 }
 
 void EAQTArplsBackgroundCorrectionDialog::plotSignalsAndBkg()
 {
+    _plotBkg->clearGraphs();
     this->plotSignals();
 
     int gCount = _plotBkg->graphCount();
     for(int i = 0; i < _m; i++)
     {
-        QVector<double> x = _curves->get(i)->getXVector();
-        QVector<double> y = _bkg[0][i];
-        _plotBkg->addGraph();
-        _plotBkg->graph(gCount);
-        _plotBkg->graph(gCount)->setData(x,y);
-        _plotBkg->graph(gCount)->setPen(QPen(COLOR::background));
+        //QVector<double> x = _curves->get(i)->getXVector();
+        addGraphs(_plotBkg, gCount, _curvesCopyXVector[0][i], _bkg[0][i], QPen(COLOR::background));
         gCount++;
+        addGraphs(_plotW, i, _curvesCopyXVector[0][i], _weights[0][i], QPen(COLOR::regular));
     }
 
-    _plotBkg->rescaleAxes();
-    _plotBkg->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables);
-    _plotBkg->replot();
+    rescaleAndReplot(_plotBkg);
+    rescaleAndReplot(_plotW);
+}
+
+void EAQTArplsBackgroundCorrectionDialog::plotSignalsWithoutBkg()
+{
+    _plotBkg->clearGraphs();
+    if(!plotInticator)
+    {
+//        if(_act == SELECT::all)
+//        {
+//            for(int i = 0; i < _m; i++)
+//            {
+//                QVector<double> x = _curves->get(i)->getXVector();
+//                addGraphs(_plotBkg, i, x, _sig_without_bkg[0][i], QPen(COLOR::regular));
+//            }
+//        }
+//        else
+//        {
+//            Curve* curve = _curves->get(_act);
+//            QVector<double> x = curve->getXVector();
+//            addGraphs(_plotBkg, 0, x, _sig_without_bkg[0][0], QPen(COLOR::regular));
+//        }
+        for(int i = 0; i < _m; i++)
+        {
+            addGraphs(_plotBkg, i, _curvesCopyXVector[0][i], _sig_without_bkg[0][i], QPen(COLOR::regular));
+        }
+
+        rescaleAndReplot(_plotBkg);
+        ui->pushButtonShowWithouBkg->setText(tr("BACK"));
+        ui->pushButtonExportBkg->setEnabled(false);
+        ui->pushButtonFitBkg->setEnabled(false);
+        plotInticator = true;
+    }
+    else
+    {
+        plotSignalsAndBkg();
+        ui->pushButtonShowWithouBkg->setText(tr("Show signals without background"));
+        ui->pushButtonExportBkg->setEnabled(true);
+        ui->pushButtonFitBkg->setEnabled(true);
+        plotInticator = false;
+    }
+
+}
+
+void EAQTArplsBackgroundCorrectionDialog::addGraphs(QCustomPlot *plt, int iter, QVector<double> x, QVector<double> y, QPen col)
+{
+    plt->addGraph();
+    plt->graph(iter);
+    plt->graph(iter)->setData(x,y);
+    plt->graph(iter)->setPen(col);
+}
+
+void EAQTArplsBackgroundCorrectionDialog::rescaleAndReplot(QCustomPlot *plt)
+{
+    plt->rescaleAxes();
+    //plt->xAxis->setRangeReversed(true);
+    plt->setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables);
+    plt->replot();
 }
 
 void EAQTArplsBackgroundCorrectionDialog::applyArPLS()
 {
     arPLS2Ver2_initialize();
-    ui->pushButtonFitBkg->setEnabled(false);
-    ui->pushButtonShowWithouBkg->setEnabled(false);
-    ui->pushButtonExportBkg->setEnabled(false);
+    plotInticator = false;
 
-    if(_act == SELECT::all)
+//    if(_act == SELECT::all)
+//    {
+//        for(int i=0; i<_m; i++)
+//        {
+//            if(_curves->get(i) != nullptr)
+//            {
+//                QString s1 = tr("Calculating background for curve: ");
+//                QString s2 = QString::number(i+1);
+//                ui->labelStatus->setText(s1.append(s2).append(" |"));
+//                //call arPLS function
+//                tryArPLS(_curves->get(i),i);
+//                QCoreApplication::processEvents();
+//                ui->progressBar->setValue(((i+1)*100/_m));
+//            }
+//            else
+//            {
+//                throw 1;
+//            }
+//        }
+//    }
+//    else
+//    {
+//        Curve *c = _curves->get(_act);
+//        if(c != nullptr)
+//        {
+//            QString s1 = tr("Calculating background for curve: ");
+//            ui->labelStatus->setText(s1.append("1").append(" |"));
+//            //call arPLS function
+//            tryArPLS(c,0);
+//            QCoreApplication::processEvents();
+//            ui->progressBar->setValue(100);
+//        }
+//        else
+//        {
+//            throw 1;
+//        }
+//    }
+
+    for(int i=0; i<_m; i++)
     {
-        for(int32_t i=0; i<_curves->count(); i++)
-        {
-            if(_curves->get(i) != nullptr)
-            {
-                qDebug() << "----------------";
-                qDebug() << "Curve: " << i;
-                //wywołanie funkcji
-                tryArPLS(_curves->get(i),i);
-            }
-            else
-            {
-                throw 1;
-            }
-        }
-    }
-    else
-    {
-        Curve *c = _curves->get(_act);
-        if(c != nullptr)
-        {
-            qDebug() << "----------------";
-            qDebug() << "Curve: " << 0;
-            //wywołanie funkcji
-            tryArPLS(c,0);
-        }
-        else
-        {
-            throw 1;
-        }
+        QString s1 = tr("Calculating background for curve: ");
+        QString s2 = QString::number(i+1);
+        ui->labelStatus->setText(s1.append(s2).append(" |"));
+        //call arPLS function
+        tryArPLS(_curvesCopyYVector[0][i],i);
+        QCoreApplication::processEvents();
+        ui->progressBar->setValue(((i+1)*100/_m));
     }
 
     arPLS2Ver2_terminate();
     this->plotSignalsAndBkg();
-    ui->pushButtonFitBkg->setEnabled(true);
+    QCoreApplication::processEvents();
+    ui->progressBar->hide();
+    ui->labelStatus->hide();
+    ui->labelIterations->hide();
     ui->pushButtonShowWithouBkg->setEnabled(true);
     ui->pushButtonExportBkg->setEnabled(true);
 }
 
-void EAQTArplsBackgroundCorrectionDialog::tryArPLS(Curve *c, int current)
+void EAQTArplsBackgroundCorrectionDialog::tryArPLS(QVector<double> y, int current)
 {
-    QVector<double> y = c->getYVector();
+    //QVector<double> y = c->getYVector();
     main_arPLS2(&y,_valueLambda,_valueRatio,_maxIter,_endPoints,_refineW,current);
 }
 
@@ -269,15 +356,13 @@ void EAQTArplsBackgroundCorrectionDialog::main_arPLS2(QVector<double> *yqVect, i
 
     // Initialize function 'arPLS2' input arguments.
     // Initialize function input argument 'y'.
-    //y = argInit_Unboundedx1_real_T(yqVect);
     y = argInit_Unboundedx1_real_T(yqVect);
 
     // Call the entry-point 'arPLS2'.
-    // arPLS(y, lambda, ratio, maxIter, includeEndsNb, threshold, bkg, weights)
-    //arPLS2(y, lambda, ratio, maxIter, includeEndsNb, threshold, bkg, weights);
     arPLS2Ver2(y, lambda, ratio, maxIter, includeEndsNb, threshold, bkg, weights, &iter);
 
-    qDebug() << "iterations nb: " << int32_t(iter);    
+    QString s3 = tr("algorithm iterations number: ");
+    ui->labelIterations->setText(s3.append(QString::number(iter)));
 
     for(int i = 0; i < yqVect->size(); i++) {
         this->_bkg[0][current][i] = bkg->data[i];
@@ -285,14 +370,94 @@ void EAQTArplsBackgroundCorrectionDialog::main_arPLS2(QVector<double> *yqVect, i
         this->_iter[0][current] = iter;
     }
 
+    this->subtractBkg();
+
     emxDestroyArray_real_T(weights);
     emxDestroyArray_real_T(bkg);
     emxDestroyArray_real_T(y);
 }
 
+void EAQTArplsBackgroundCorrectionDialog::subtractBkg()
+{
+//    if(_act == SELECT::all)
+//    {
+//        for(int i = 0; i < _m; i++)
+//        {
+//            QVector<double> y = _curves->get(i)->getYVector();
+//            QVector<double> b = _bkg[0][i];
+//            QVector<double> swb(_n);
+//            for (int j = 0; j < _n; j++) {
+//                swb[j] = y[j] - b[j];
+//            }
+//            this->_sig_without_bkg[0][i] = swb;
+//        }
+//    }
+//    else
+//    {
+//        Curve* curve = _curves->get(_act);
+//        QVector<double> y = curve->getYVector();
+//        QVector<double> b = _bkg[0][0];
+//        QVector<double> swb(_n);
+//        for (int j = 0; j < _n; j++) {
+//            swb[j] = y[j] - b[j];
+//        }
+//        _sig_without_bkg[0][0] = swb;
+//    }
+
+    for(int i = 0; i < _m; i++)
+    {
+        for (int j = 0; j < _n; j++) {
+            _sig_without_bkg[0][i][j] = _curvesCopyYVector[0][i][j] - _bkg[0][i][j];
+        }
+    }
+}
+
 void EAQTArplsBackgroundCorrectionDialog::calculateBkg()
 {
+    ui->labelStatus->show();
+    ui->labelIterations->show();
+    ui->progressBar->show();
+    ui->progressBar->setValue(0);
+    ui->pushButtonShowWithouBkg->setEnabled(false);
+    ui->pushButtonExportBkg->setEnabled(false);
+    ui->pushButtonFitBkg->setEnabled(false);
+
     this->applyArPLS();
+
+    ui->pushButtonShowWithouBkg->setEnabled(true);
+    ui->pushButtonExportBkg->setEnabled(true);
+    ui->pushButtonFitBkg->setEnabled(true);
+}
+
+void EAQTArplsBackgroundCorrectionDialog::showWithoutBkg()
+{
+    this->plotSignalsWithoutBkg();
+}
+
+void EAQTArplsBackgroundCorrectionDialog::exportCurvesWithoutBkg()
+{
+    if(_act == SELECT::all)
+    {
+        for(int i = 0; i < _m; i++)
+        {
+            Curve *c = _curves->get(i);
+            for(int j = 0; j < _n; j++)
+            {
+                c->setYValue(j,_sig_without_bkg[0][i][j]);
+            }
+
+        }
+    }
+    else
+    {
+        Curve *c = _curves->get(_act);
+        for (int j = 0; j < _n; j++)
+        {
+            c->setYValue(j,_sig_without_bkg[0][0][j]);
+        }
+    }
+
+    _pUI->updateAll(true);
 }
 
 
@@ -327,6 +492,10 @@ void EAQTArplsBackgroundCorrectionDialog::setRefineWValue(double val)
 {
     _refineW = val;
 }
+
+
+
+
 
 
 

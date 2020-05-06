@@ -1155,7 +1155,7 @@ void EAQtMainWindow::showArplsBkgCorrection()
 {
     if( _pEAQtData->getCurves()->count() > 0 && (_pEAQtData->Act() >= 0 || _pEAQtData->Act() == SELECT::all) )
     {
-        EAQTArplsBackgroundCorrectionDialog *arPLS = new EAQTArplsBackgroundCorrectionDialog(this);
+        EAQTArplsBackgroundCorrectionDialog *arPLS = new EAQTArplsBackgroundCorrectionDialog(this,this);
         arPLS->exec();
         delete arPLS;
     }
