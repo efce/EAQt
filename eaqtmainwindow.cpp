@@ -1153,16 +1153,34 @@ void EAQtMainWindow::startBackgroundCorrection()
 
 void EAQtMainWindow::showArplsBkgCorrection()
 {
-    if( _pEAQtData->getCurves()->count() > 0 && (_pEAQtData->Act() >= 0 || _pEAQtData->Act() == SELECT::all) )
+    bool theSameNbOfDataPoints = true;
+    for (int i=1; i < _pEAQtData->getCurves()->count(); i++)
     {
-        EAQTArplsBackgroundCorrectionDialog *arPLS = new EAQTArplsBackgroundCorrectionDialog(this,this);
-        arPLS->exec();
-        delete arPLS;
+        if(_pEAQtData->getCurves()->get(i-1)->getNrOfDataPoints() != _pEAQtData->getCurves()->get(i)->getNrOfDataPoints())
+        {
+            theSameNbOfDataPoints = false;
+        }
+    }
+
+    if(theSameNbOfDataPoints || (_pEAQtData->Act() != SELECT::all))
+    {
+        if( _pEAQtData->getCurves()->count() > 0 && (_pEAQtData->Act() >= 0 || _pEAQtData->Act() == SELECT::all) )
+        {
+            EAQTArplsBackgroundCorrectionDialog *arPLS = new EAQTArplsBackgroundCorrectionDialog(this,this);
+            arPLS->exec();
+            delete arPLS;
+        }
+        else
+        {
+            this->showMessageBox(tr("Select any (or all) curve(s) before you choose arPLS background correction method"),tr("Error."));
+        }
     }
     else
     {
-        this->showMessageBox(tr("Select any (or all) curve before you choose arPLS background correction method"),tr("arPLS message"));
+        this->showMessageBox(tr("Select only curves with the same number of datapoints"),tr("Error."));
     }
+
+
 
 }
 

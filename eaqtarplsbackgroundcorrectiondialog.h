@@ -29,7 +29,6 @@ public:
 private:
     Ui::EAQTArplsBackgroundCorrectionDialog *ui;
 
-    void tests();
     void plotSignals();
     void plotSignalsAndBkg();
     void plotSignalsWithoutBkg();

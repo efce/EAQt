@@ -11,6 +11,8 @@ EAQTArplsBackgroundCorrectionDialog::EAQTArplsBackgroundCorrectionDialog(QWidget
     ui->setupUi(this);
     this->_pUI = pui;
 
+    // main window title
+    this->setWindowTitle(tr("arPLS background correction - EAQt"));
 
     // main curves init
     this->_curves = EAQtData::getInstance().getCurves();
@@ -22,12 +24,13 @@ EAQTArplsBackgroundCorrectionDialog::EAQTArplsBackgroundCorrectionDialog(QWidget
     if(_act == SELECT::all)
     {
         this->_m = _curves->count();
+        this->_n = _curves->get(0)->getNrOfDataPoints();
     }
     else
     {
         this->_m = 1;
+        this->_n = _curves->get(_act)->getNrOfDataPoints();
     }
-    this->_n = _curves->get(0)->getNrOfDataPoints();
 
     // main vectors init
     this->_curvesCopyXVector = new QVector<QVector<double>>(this->_m, QVector<double>(this->_n));
@@ -44,12 +47,14 @@ EAQTArplsBackgroundCorrectionDialog::EAQTArplsBackgroundCorrectionDialog(QWidget
         {
             _curvesCopyXVector[0][i] = _curves->get(i)->getXVector();
             _curvesCopyYVector[0][i] = _curves->get(i)->getYVector();
+            _weights[0][i] = QVector<double>(_n,0.0);
         }
     }
     else
     {
         _curvesCopyXVector[0][0] = _curves->get(_act)->getXVector();
         _curvesCopyYVector[0][0] = _curves->get(_act)->getYVector();
+        _weights[0][0] = QVector<double>(_n,0.0);
     }
 
     // "status bar"
@@ -61,10 +66,15 @@ EAQTArplsBackgroundCorrectionDialog::EAQTArplsBackgroundCorrectionDialog(QWidget
     ui->labelIterations->hide();
     ui->labelStatus->setText("");
     ui->labelStatus->hide();
+    ui->labelSeparator->hide();
 
+    // grupBox
+    ui->groupBoxArplsParams->setTitle(tr("arPLS parameters"));
+    ui->groupBoxOtherParams->setTitle(tr("Other parameters"));
 
     // default settings init
     // Lambda
+    ui->labelLambda->setText(tr("Lambda"));
     this->_valueLambda = this->defaultLambda;
     ui->spinBoxLambda->setRange(this->minLambda,this->maxLambda);
     ui->spinBoxLambda->setSingleStep(10);
@@ -77,6 +87,7 @@ EAQTArplsBackgroundCorrectionDialog::EAQTArplsBackgroundCorrectionDialog(QWidget
     connect(ui->spinBoxLambda,SIGNAL(valueChanged(int)),ui->horizontalSliderLambda,SLOT(setValue(int)));
     connect(ui->spinBoxLambda,SIGNAL(valueChanged(int)),this,SLOT(setLambdaValue(int)));
     // Ratio
+    ui->labelRatio->setText(tr("Ratio"));
     this->_valueRatio = this->defaultRatio;
     ui->doubleSpinBoxRatio->setRange(this->minRatio,this->maxRatio);
     ui->doubleSpinBoxRatio->setDecimals(abs(log10(this->minRatio)));
@@ -89,31 +100,36 @@ EAQTArplsBackgroundCorrectionDialog::EAQTArplsBackgroundCorrectionDialog(QWidget
     connect(ui->horizontalSliderRatio,SIGNAL(valueChanged(int)),this,SLOT(setValueDoubleSpinBoxRatio(int)));
     connect(ui->doubleSpinBoxRatio,SIGNAL(valueChanged(double)),this,SLOT(setValueHorizontalSliderRatio(double)));
     // maxIter
+    ui->labelMaxIter->setText(tr("Max. number of iterations"));
     this->_maxIter = this->defaultMaxIter;
     ui->spinBoxMaxIter->setRange(this->minMaxIter,this->maxMaxIter);
     ui->spinBoxMaxIter->setValue(this->defaultMaxIter);
     connect(ui->spinBoxMaxIter,SIGNAL(valueChanged(int)),this,SLOT(setMaxIterValue(int)));
     // endPoints
+    ui->labelEndPoints->setText(tr("Set 'w=1' to marginal points"));
     this->_endPoints = this->defaultEndPoints;
     this->maxEndPoints = (_n-10)/2;
     ui->spinBoxEndPoints->setRange(this->minEndPoints,this->maxEndPoints);
     ui->spinBoxEndPoints->setValue(this->defaultEndPoints);
     connect(ui->spinBoxEndPoints,SIGNAL(valueChanged(int)),this,SLOT(setEndPointsValue(int)));
     // refineW
+    ui->labelRefineW->setText(tr("Refine 'w' threshold"));
     this->_refineW = this->defaultRefineW;
     ui->doubleSpinBoxRefineW->setRange(this->minRefineW,this->maxRefineW);
     ui->doubleSpinBoxRefineW->setSingleStep(this->refineWStep);
     ui->doubleSpinBoxRefineW->setValue(this->defaultRefineW);
     connect(ui->doubleSpinBoxRefineW,SIGNAL(valueChanged(double)),this,SLOT(setRefineWValue(double)));
-    // Widget Plot
+    // Widget Plots
     this->_plotBkg = ui->widgetPlot;
     _plotBkg->xAxis->setLabel("E / mV");
     _plotBkg->yAxis->setLabel("i / µA");
+    _plotBkg->plotLayout()->insertRow(0);
+    _plotBkg->plotLayout()->addElement(0, 0, new QCPTextElement(_plotBkg, tr("Signals and fitted background"), QFont("sans", 8, QFont::Normal)));
     this->_plotW = ui->widgetPlotW;
     _plotW->xAxis->setLabel("E / mV");
     _plotW->yAxis->setLabel("w");
-    //_plotW->xAxis->setRange(0,1);
-    //_plotW->yAxis->setRange(-0.2,1.2);
+    _plotW->plotLayout()->insertRow(0);
+    _plotW->plotLayout()->addElement(0, 0, new QCPTextElement(_plotW, tr("Weights"), QFont("sans", 8, QFont::Normal)));
     // button Fit background
     connect(ui->pushButtonFitBkg,SIGNAL(clicked()),this,SLOT(calculateBkg()));
     // other buttons
@@ -122,69 +138,45 @@ EAQTArplsBackgroundCorrectionDialog::EAQTArplsBackgroundCorrectionDialog(QWidget
     connect(ui->pushButtonShowWithouBkg,SIGNAL(clicked()),this,SLOT(showWithoutBkg()));
     connect(ui->pushButtonExportBkg,SIGNAL(clicked()),this,SLOT(exportCurvesWithoutBkg()));
 
-
-
     // plot curves
     this->plotSignals();
-    //this->tests();
 }
 
 EAQTArplsBackgroundCorrectionDialog::~EAQTArplsBackgroundCorrectionDialog()
 {
     delete ui;
+    delete this->_curvesCopyXVector;
+    delete this->_curvesCopyYVector;
     delete this->_bkg;
     delete this->_weights;
     delete this->_sig_without_bkg;
     delete this->_iter;
 }
 
-void EAQTArplsBackgroundCorrectionDialog::tests()
-{
-
-}
-
 void EAQTArplsBackgroundCorrectionDialog::plotSignals()
 {
     _plotBkg->clearGraphs();
-
-/*    if(_act == SELECT::all)
-    {
-//        Curve* curve;
-//        int i = 0;
-//        while((curve = _curves->get(i)) != nullptr )
-//        {
-//            addGraphs(_plotBkg, i, curve->getXVector(), curve->getYVector(), QPen(COLOR::regular));
-//            i++;
-//        }
-        for (int i=0; i < _m; i++)
-        {
-            addGraphs(_plotBkg, i, _curvesCopyXVector[0][i], _curvesCopyYVector[0][i], QPen(COLOR::regular));
-        }
-    }
-    else
-    {
-//        Curve* curve = _curves->get(_act);
-//        addGraphs(_plotBkg, 0, curve->getXVector(), curve->getYVector(), QPen(COLOR::regular));
-        addGraphs(_plotBkg, 0, _curvesCopyXVector[0][0], _curvesCopyYVector[0][0], QPen(COLOR::regular));
-    }*/
+    _plotW->clearGraphs();
 
     for (int i=0; i < _m; i++)
     {
         addGraphs(_plotBkg, i, _curvesCopyXVector[0][i], _curvesCopyYVector[0][i], QPen(COLOR::regular));
+        addGraphs(_plotW, i, _curvesCopyXVector[0][i], _weights[0][i], QPen(COLOR::regular));
     }
 
     rescaleAndReplot(_plotBkg);
+    rescaleAndReplot(_plotW);
 }
 
 void EAQTArplsBackgroundCorrectionDialog::plotSignalsAndBkg()
 {
     _plotBkg->clearGraphs();
+    _plotW->clearGraphs();
     this->plotSignals();
 
     int gCount = _plotBkg->graphCount();
     for(int i = 0; i < _m; i++)
     {
-        //QVector<double> x = _curves->get(i)->getXVector();
         addGraphs(_plotBkg, gCount, _curvesCopyXVector[0][i], _bkg[0][i], QPen(COLOR::background));
         gCount++;
         addGraphs(_plotW, i, _curvesCopyXVector[0][i], _weights[0][i], QPen(COLOR::regular));
@@ -199,20 +191,6 @@ void EAQTArplsBackgroundCorrectionDialog::plotSignalsWithoutBkg()
     _plotBkg->clearGraphs();
     if(!plotInticator)
     {
-//        if(_act == SELECT::all)
-//        {
-//            for(int i = 0; i < _m; i++)
-//            {
-//                QVector<double> x = _curves->get(i)->getXVector();
-//                addGraphs(_plotBkg, i, x, _sig_without_bkg[0][i], QPen(COLOR::regular));
-//            }
-//        }
-//        else
-//        {
-//            Curve* curve = _curves->get(_act);
-//            QVector<double> x = curve->getXVector();
-//            addGraphs(_plotBkg, 0, x, _sig_without_bkg[0][0], QPen(COLOR::regular));
-//        }
         for(int i = 0; i < _m; i++)
         {
             addGraphs(_plotBkg, i, _curvesCopyXVector[0][i], _sig_without_bkg[0][i], QPen(COLOR::regular));
@@ -253,52 +231,23 @@ void EAQTArplsBackgroundCorrectionDialog::rescaleAndReplot(QCustomPlot *plt)
 
 void EAQTArplsBackgroundCorrectionDialog::applyArPLS()
 {
+    ui->labelStatus->show();
+    ui->labelStatus->setText(tr("Calculating background for curve: -"));
+    ui->labelIterations->show();
+    ui->labelIterations->setText(tr("iterations: -"));
+    ui->progressBar->show();
+    ui->progressBar->setValue(0);
+    ui->labelSeparator->show();
+
     arPLS2Ver2_initialize();
     plotInticator = false;
-
-//    if(_act == SELECT::all)
-//    {
-//        for(int i=0; i<_m; i++)
-//        {
-//            if(_curves->get(i) != nullptr)
-//            {
-//                QString s1 = tr("Calculating background for curve: ");
-//                QString s2 = QString::number(i+1);
-//                ui->labelStatus->setText(s1.append(s2).append(" |"));
-//                //call arPLS function
-//                tryArPLS(_curves->get(i),i);
-//                QCoreApplication::processEvents();
-//                ui->progressBar->setValue(((i+1)*100/_m));
-//            }
-//            else
-//            {
-//                throw 1;
-//            }
-//        }
-//    }
-//    else
-//    {
-//        Curve *c = _curves->get(_act);
-//        if(c != nullptr)
-//        {
-//            QString s1 = tr("Calculating background for curve: ");
-//            ui->labelStatus->setText(s1.append("1").append(" |"));
-//            //call arPLS function
-//            tryArPLS(c,0);
-//            QCoreApplication::processEvents();
-//            ui->progressBar->setValue(100);
-//        }
-//        else
-//        {
-//            throw 1;
-//        }
-//    }
 
     for(int i=0; i<_m; i++)
     {
         QString s1 = tr("Calculating background for curve: ");
         QString s2 = QString::number(i+1);
-        ui->labelStatus->setText(s1.append(s2).append(" |"));
+        ui->labelStatus->setText(s1.append(s2));
+
         //call arPLS function
         tryArPLS(_curvesCopyYVector[0][i],i);
         QCoreApplication::processEvents();
@@ -307,24 +256,21 @@ void EAQTArplsBackgroundCorrectionDialog::applyArPLS()
 
     arPLS2Ver2_terminate();
     this->plotSignalsAndBkg();
-    QCoreApplication::processEvents();
-    ui->progressBar->hide();
-    ui->labelStatus->hide();
-    ui->labelIterations->hide();
-    ui->pushButtonShowWithouBkg->setEnabled(true);
-    ui->pushButtonExportBkg->setEnabled(true);
+    //QCoreApplication::processEvents();
+    //ui->progressBar->hide();
+    //ui->labelStatus->hide();
+    //ui->labelIterations->hide();
+
 }
 
 void EAQTArplsBackgroundCorrectionDialog::tryArPLS(QVector<double> y, int current)
 {
-    //QVector<double> y = c->getYVector();
     main_arPLS2(&y,_valueLambda,_valueRatio,_maxIter,_endPoints,_refineW,current);
 }
 
 emxArray_real_T *EAQTArplsBackgroundCorrectionDialog::argInit_Unboundedx1_real_T(QVector<double> *y)
 {
   emxArray_real_T *result;
-  //static int iv0[1] = { y->size() };
   int iv = y->size();
   int *iv0 = &iv;
 
@@ -361,7 +307,7 @@ void EAQTArplsBackgroundCorrectionDialog::main_arPLS2(QVector<double> *yqVect, i
     // Call the entry-point 'arPLS2'.
     arPLS2Ver2(y, lambda, ratio, maxIter, includeEndsNb, threshold, bkg, weights, &iter);
 
-    QString s3 = tr("algorithm iterations number: ");
+    QString s3 = tr("iterations: ");
     ui->labelIterations->setText(s3.append(QString::number(iter)));
 
     for(int i = 0; i < yqVect->size(); i++) {
@@ -379,31 +325,6 @@ void EAQTArplsBackgroundCorrectionDialog::main_arPLS2(QVector<double> *yqVect, i
 
 void EAQTArplsBackgroundCorrectionDialog::subtractBkg()
 {
-//    if(_act == SELECT::all)
-//    {
-//        for(int i = 0; i < _m; i++)
-//        {
-//            QVector<double> y = _curves->get(i)->getYVector();
-//            QVector<double> b = _bkg[0][i];
-//            QVector<double> swb(_n);
-//            for (int j = 0; j < _n; j++) {
-//                swb[j] = y[j] - b[j];
-//            }
-//            this->_sig_without_bkg[0][i] = swb;
-//        }
-//    }
-//    else
-//    {
-//        Curve* curve = _curves->get(_act);
-//        QVector<double> y = curve->getYVector();
-//        QVector<double> b = _bkg[0][0];
-//        QVector<double> swb(_n);
-//        for (int j = 0; j < _n; j++) {
-//            swb[j] = y[j] - b[j];
-//        }
-//        _sig_without_bkg[0][0] = swb;
-//    }
-
     for(int i = 0; i < _m; i++)
     {
         for (int j = 0; j < _n; j++) {
@@ -414,10 +335,6 @@ void EAQTArplsBackgroundCorrectionDialog::subtractBkg()
 
 void EAQTArplsBackgroundCorrectionDialog::calculateBkg()
 {
-    ui->labelStatus->show();
-    ui->labelIterations->show();
-    ui->progressBar->show();
-    ui->progressBar->setValue(0);
     ui->pushButtonShowWithouBkg->setEnabled(false);
     ui->pushButtonExportBkg->setEnabled(false);
     ui->pushButtonFitBkg->setEnabled(false);
