@@ -11,9 +11,6 @@ EAQTArplsBackgroundCorrectionDialog::EAQTArplsBackgroundCorrectionDialog(QWidget
     ui->setupUi(this);
     this->_pUI = pui;
 
-    // main window title
-    this->setWindowTitle(tr("arPLS background correction - EAQt"));
-
     // main curves init
     this->_curves = EAQtData::getInstance().getCurves();
 
@@ -68,13 +65,9 @@ EAQTArplsBackgroundCorrectionDialog::EAQTArplsBackgroundCorrectionDialog(QWidget
     ui->labelStatus->hide();
     ui->labelSeparator->hide();
 
-    // grupBox
-    ui->groupBoxArplsParams->setTitle(tr("arPLS parameters"));
-    ui->groupBoxOtherParams->setTitle(tr("Other parameters"));
 
     // default settings init
     // Lambda
-    ui->labelLambda->setText(tr("Lambda"));
     this->_valueLambda = this->defaultLambda;
     ui->spinBoxLambda->setRange(this->minLambda,this->maxLambda);
     ui->spinBoxLambda->setSingleStep(10);
@@ -87,7 +80,6 @@ EAQTArplsBackgroundCorrectionDialog::EAQTArplsBackgroundCorrectionDialog(QWidget
     connect(ui->spinBoxLambda,SIGNAL(valueChanged(int)),ui->horizontalSliderLambda,SLOT(setValue(int)));
     connect(ui->spinBoxLambda,SIGNAL(valueChanged(int)),this,SLOT(setLambdaValue(int)));
     // Ratio
-    ui->labelRatio->setText(tr("Ratio"));
     this->_valueRatio = this->defaultRatio;
     ui->doubleSpinBoxRatio->setRange(this->minRatio,this->maxRatio);
     ui->doubleSpinBoxRatio->setDecimals(abs(log10(this->minRatio)));
@@ -100,20 +92,17 @@ EAQTArplsBackgroundCorrectionDialog::EAQTArplsBackgroundCorrectionDialog(QWidget
     connect(ui->horizontalSliderRatio,SIGNAL(valueChanged(int)),this,SLOT(setValueDoubleSpinBoxRatio(int)));
     connect(ui->doubleSpinBoxRatio,SIGNAL(valueChanged(double)),this,SLOT(setValueHorizontalSliderRatio(double)));
     // maxIter
-    ui->labelMaxIter->setText(tr("Max. number of iterations"));
     this->_maxIter = this->defaultMaxIter;
     ui->spinBoxMaxIter->setRange(this->minMaxIter,this->maxMaxIter);
     ui->spinBoxMaxIter->setValue(this->defaultMaxIter);
     connect(ui->spinBoxMaxIter,SIGNAL(valueChanged(int)),this,SLOT(setMaxIterValue(int)));
     // endPoints
-    ui->labelEndPoints->setText(tr("Set 'w=1' to marginal points"));
     this->_endPoints = this->defaultEndPoints;
     this->maxEndPoints = (_n-10)/2;
     ui->spinBoxEndPoints->setRange(this->minEndPoints,this->maxEndPoints);
     ui->spinBoxEndPoints->setValue(this->defaultEndPoints);
     connect(ui->spinBoxEndPoints,SIGNAL(valueChanged(int)),this,SLOT(setEndPointsValue(int)));
     // refineW
-    ui->labelRefineW->setText(tr("Refine 'w' threshold"));
     this->_refineW = this->defaultRefineW;
     ui->doubleSpinBoxRefineW->setRange(this->minRefineW,this->maxRefineW);
     ui->doubleSpinBoxRefineW->setSingleStep(this->refineWStep);
@@ -124,7 +113,7 @@ EAQTArplsBackgroundCorrectionDialog::EAQTArplsBackgroundCorrectionDialog(QWidget
     _plotBkg->xAxis->setLabel("E / mV");
     _plotBkg->yAxis->setLabel("i / µA");
     _plotBkg->plotLayout()->insertRow(0);
-    _plotBkg->plotLayout()->addElement(0, 0, new QCPTextElement(_plotBkg, tr("Signals and fitted background"), QFont("sans", 8, QFont::Normal)));
+    _plotBkg->plotLayout()->addElement(0, 0, new QCPTextElement(_plotBkg, tr("Curves and fitted background"), QFont("sans", 8, QFont::Normal)));
     this->_plotW = ui->widgetPlotW;
     _plotW->xAxis->setLabel("E / mV");
     _plotW->yAxis->setLabel("w");
@@ -205,7 +194,7 @@ void EAQTArplsBackgroundCorrectionDialog::plotSignalsWithoutBkg()
     else
     {
         plotSignalsAndBkg();
-        ui->pushButtonShowWithouBkg->setText(tr("Show signals without background"));
+        ui->pushButtonShowWithouBkg->setText(tr("Show curves without background"));
         ui->pushButtonExportBkg->setEnabled(true);
         ui->pushButtonFitBkg->setEnabled(true);
         plotInticator = false;
@@ -257,9 +246,10 @@ void EAQTArplsBackgroundCorrectionDialog::applyArPLS()
     arPLS2Ver2_terminate();
     this->plotSignalsAndBkg();
     //QCoreApplication::processEvents();
-    //ui->progressBar->hide();
-    //ui->labelStatus->hide();
-    //ui->labelIterations->hide();
+    ui->progressBar->hide();
+    ui->labelStatus->setText(tr("Background calculation finished"));
+    ui->labelIterations->hide();
+    ui->labelSeparator->hide();
 
 }
 
@@ -374,6 +364,7 @@ void EAQTArplsBackgroundCorrectionDialog::exportCurvesWithoutBkg()
         }
     }
 
+    ui->labelStatus->setText(tr("Curves exported"));
     _pUI->updateAll(true);
 }
 

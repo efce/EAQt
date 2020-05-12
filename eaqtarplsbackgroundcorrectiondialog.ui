@@ -20,7 +20,7 @@
    <item row="3" column="1">
     <widget class="QPushButton" name="pushButtonShowWithouBkg">
      <property name="text">
-      <string>Show signals without background</string>
+      <string>Show curves without background</string>
      </property>
     </widget>
    </item>
@@ -54,7 +54,7 @@
    <item row="0" column="1">
     <widget class="QGroupBox" name="groupBoxArplsParams">
      <property name="title">
-      <string>arPLS paramiters</string>
+      <string>arPLS parameters</string>
      </property>
      <layout class="QGridLayout" name="gridLayout_2">
       <item row="0" column="0">
@@ -124,7 +124,7 @@
    <item row="1" column="1">
     <widget class="QGroupBox" name="groupBoxOtherParams">
      <property name="title">
-      <string>Other paramiters</string>
+      <string>Other parameters</string>
      </property>
      <layout class="QGridLayout" name="gridLayout_3">
       <item row="0" column="0">
@@ -153,7 +153,7 @@
       <item row="1" column="0">
        <widget class="QLabel" name="labelEndPoints">
         <property name="text">
-         <string>Set w=1 to end points</string>
+         <string>Set 'w=1' to marginal points</string>
         </property>
        </widget>
       </item>
@@ -167,7 +167,7 @@
       <item row="2" column="0">
        <widget class="QLabel" name="labelRefineW">
         <property name="text">
-         <string>Refine w threshold</string>
+         <string>Simplify 'w' threshold</string>
         </property>
        </widget>
       </item>
@@ -193,7 +193,7 @@
    <item row="4" column="1">
     <widget class="QPushButton" name="pushButtonExportBkg">
      <property name="text">
-      <string>Export signals without background</string>
+      <string>Export curves without background</string>
      </property>
     </widget>
    </item>
