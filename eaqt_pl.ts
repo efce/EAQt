@@ -297,7 +297,7 @@
     <message>
         <location filename="eaqtarplsbackgroundcorrectiondialog.ui" line="235"/>
         <source>iter nb</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="eaqtarplsbackgroundcorrectiondialog.ui" line="156"/>
@@ -352,7 +352,7 @@
     <message>
         <location filename="eaqtarplsbackgroundcorrectiondialog.cpp" line="367"/>
         <source>Curves exported</source>
-        <translation type="unfinished"></translation>
+        <translation>Krzywe wyeksportowane</translation>
     </message>
 </context>
 <context>
