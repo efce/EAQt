@@ -1418,7 +1418,7 @@
     <message>
         <location filename="eaqtmainwindow.cpp" line="996"/>
         <source>Fit arPLS background</source>
-        <translation type="unfinished">Dopasuj tło metodą arPLS</translation>
+        <translation>Dopasuj tło metodą arPLS</translation>
     </message>
     <message>
         <location filename="eaqtmainwindow.cpp" line="997"/>
@@ -1775,7 +1775,7 @@
         <source>Build date: %1 %2
 <byte value="xd"/>
 <byte value="xd"/></source>
-        <translation type="unfinished"></translation>
+        <translation>Data kompilacji</translation>
     </message>
     <message>
         <location filename="eaqtmainwindow.cpp" line="1690"/>
@@ -2156,7 +2156,7 @@
         <location filename="eaqtparamcgmde.cpp" line="29"/>
         <source>Number of impulses:</source>
         <oldsource>Numer of impulses:</oldsource>
-        <translation type="unfinished">Ilość impulsów:</translation>
+        <translation>Ilość impulsów:</translation>
     </message>
     <message>
         <location filename="eaqtparamcgmde.cpp" line="32"/>
@@ -2171,37 +2171,37 @@
     <message>
         <location filename="eaqtparamcgmde.cpp" line="38"/>
         <source>Drops before measurement:</source>
-        <translation type="unfinished"></translation>
+        <translation>Krople przed pomiarem:</translation>
     </message>
     <message>
         <location filename="eaqtparamcgmde.cpp" line="42"/>
         <source>CGMDE mode:</source>
-        <translation type="unfinished"></translation>
+        <translation>Tryb CGMDE:</translation>
     </message>
     <message>
         <location filename="eaqtparamcgmde.cpp" line="45"/>
         <source>Single drop</source>
-        <translation type="unfinished"></translation>
+        <translation>Pojedyńcza kropla</translation>
     </message>
     <message>
         <location filename="eaqtparamcgmde.cpp" line="47"/>
         <source>New drop before each step</source>
-        <translation type="unfinished"></translation>
+        <translation>Nowa kropla przed każdym krokiem</translation>
     </message>
     <message>
         <location filename="eaqtparamcgmde.cpp" line="49"/>
         <source>Grow drop before each step</source>
-        <translation type="unfinished"></translation>
+        <translation>Wzorst kropli przed każdym krokiem</translation>
     </message>
     <message>
         <location filename="eaqtparamcgmde.cpp" line="51"/>
         <source>Grow and sum current</source>
-        <translation type="unfinished"></translation>
+        <translation>Wzrost i sumowanie prądu</translation>
     </message>
     <message>
         <location filename="eaqtparamcgmde.cpp" line="54"/>
         <source>Grow linearly and sum</source>
-        <translation type="unfinished"></translation>
+        <translation>Wzrost liniowy i sumowanie</translation>
     </message>
     <message>
         <location filename="eaqtparamcgmde.cpp" line="72"/>
@@ -2584,7 +2584,7 @@
     <message>
         <location filename="eaqtparamdialog.cpp" line="779"/>
         <source>tk [ms]:</source>
-        <translation type="unfinished"></translation>
+        <translation>tk [ms]:</translation>
     </message>
     <message>
         <location filename="eaqtparamdialog.cpp" line="974"/>
