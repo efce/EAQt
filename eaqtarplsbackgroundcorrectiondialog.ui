@@ -198,7 +198,7 @@
     </widget>
    </item>
    <item row="5" column="0" colspan="2">
-    <layout class="QHBoxLayout" name="horizontalLayoutStatusB" stretch="5,0,0,0,0,2">
+    <layout class="QHBoxLayout" name="horizontalLayoutStatusB" stretch="5,0,0,0,0">
      <property name="sizeConstraint">
       <enum>QLayout::SetMaximumSize</enum>
      </property>
@@ -248,13 +248,6 @@
         </size>
        </property>
       </spacer>
-     </item>
-     <item>
-      <widget class="QProgressBar" name="progressBar">
-       <property name="value">
-        <number>24</number>
-       </property>
-      </widget>
      </item>
     </layout>
    </item>

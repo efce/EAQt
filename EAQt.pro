@@ -34,24 +34,8 @@ RC_FILE = eaqt.rc
 
 SOURCES += main.cpp\
     Qcustomplot/qcustomplot.cpp \
-    arPLS2Ver2/arPLS2Ver2.cpp \
-    arPLS2Ver2/arPLS2Ver2_emxAPI.cpp \
-    arPLS2Ver2/arPLS2Ver2_emxutil.cpp \
-    arPLS2Ver2/arPLS2Ver2_initialize.cpp \
-    arPLS2Ver2/arPLS2Ver2_terminate.cpp \
-    arPLS2Ver2/diag.cpp \
-    arPLS2Ver2/exp.cpp \
-    arPLS2Ver2/mean.cpp \
-    arPLS2Ver2/mldivide.cpp \
-    arPLS2Ver2/norm.cpp \
-    arPLS2Ver2/rdivide_helper.cpp \
-    arPLS2Ver2/rtGetInf.cpp \
-    arPLS2Ver2/rtGetNaN.cpp \
-    arPLS2Ver2/rt_nonfinite.cpp \
-    arPLS2Ver2/std.cpp \
-    arPLS2Ver2/xgeqp3.cpp \
-    arPLS2Ver2/xnrm2.cpp \
-    arPLS2Ver2/xscal.cpp \
+    arPLS/arPLS2EigenD/arPLSEigenD.cpp \
+    arPLS/arPLS2EigenF/arPLSEigenF.cpp \
     eaqtarplsbackgroundcorrectiondialog.cpp \
     eaqtmainwindow.cpp \
     eaqtdata.cpp \
@@ -89,27 +73,8 @@ SOURCES += main.cpp\
 
 HEADERS  += \
     Qcustomplot/qcustomplot.h \
-    arPLS2Ver2/arPLS2Ver2.h \
-    arPLS2Ver2/arPLS2Ver2_emxAPI.h \
-    arPLS2Ver2/arPLS2Ver2_emxutil.h \
-    arPLS2Ver2/arPLS2Ver2_initialize.h \
-    arPLS2Ver2/arPLS2Ver2_terminate.h \
-    arPLS2Ver2/arPLS2Ver2_types.h \
-    arPLS2Ver2/diag.h \
-    arPLS2Ver2/exp.h \
-    arPLS2Ver2/mean.h \
-    arPLS2Ver2/mldivide.h \
-    arPLS2Ver2/norm.h \
-    arPLS2Ver2/rdivide_helper.h \
-    arPLS2Ver2/rtGetInf.h \
-    arPLS2Ver2/rtGetNaN.h \
-    arPLS2Ver2/rt_nonfinite.h \
-    arPLS2Ver2/rtwtypes.h \
-    arPLS2Ver2/std.h \
-    arPLS2Ver2/tmwtypes.h \
-    arPLS2Ver2/xgeqp3.h \
-    arPLS2Ver2/xnrm2.h \
-    arPLS2Ver2/xscal.h \
+    arPLS/arPLS2EigenD/arPLSEigenD.h \
+    arPLS/arPLS2EigenF/arPLSEigenF.h \
     eaqtarplsbackgroundcorrectiondialog.h \
     eaqtmainwindow.h \
     eaqtdata.h \

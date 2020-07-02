@@ -4,14 +4,11 @@
 #include <QDialog>
 #include <QWidget>
 #include "./Qcustomplot/qcustomplot.h"
-#include "./arPLS2Ver2/rt_nonfinite.h"
-#include "./arPLS2Ver2/arPLS2Ver2.h"
-#include "./arPLS2Ver2/arPLS2Ver2_terminate.h"
-#include "./arPLS2Ver2/arPLS2Ver2_emxAPI.h"
-#include "./arPLS2Ver2/arPLS2Ver2_initialize.h"
 #include "eaqtuiinterface.h"
 #include "eaqtdata.h"
 #include "curve.h"
+#include "arPLS/arPLS2EigenF/arPLSEigenF.h"
+#include "arPLS/arPLS2EigenD/arPLSEigenD.h"
 
 namespace Ui {
 class EAQTArplsBackgroundCorrectionDialog;
@@ -37,7 +34,7 @@ private:
     void applyArPLS();
     //void tryArPLS(Curve *c, int current);
     void tryArPLS(QVector<double> y, int current);
-    emxArray_real_T *argInit_Unboundedx1_real_T(QVector<double> *y);
+//    emxArray_real_T *argInit_Unboundedx1_real_T(QVector<double> *y);
     void main_arPLS2(QVector<double> *y, int32_t lambda, double ratio, int32_t maxIter, int32_t includeEndsNb,
                      double threshold, int current);
     void subtractBkg();
@@ -91,9 +88,11 @@ private:
     double refineWStep = 0.1;
     // other
     bool plotInticator = false;
+    bool cancelCalcul = false;
 
 private slots:
     void calculateBkg();
+    void cancelCalculation();
     void showWithoutBkg();
     void exportCurvesWithoutBkg();
     void setValueDoubleSpinBoxRatio(int);

@@ -4,6 +4,7 @@
 #include <QDoubleValidator>
 #include <math.h>
 
+
 EAQTArplsBackgroundCorrectionDialog::EAQTArplsBackgroundCorrectionDialog(QWidget *parent, EAQtUIInterface *pui) :
     QDialog(parent),
     ui(new Ui::EAQTArplsBackgroundCorrectionDialog)
@@ -55,10 +56,6 @@ EAQTArplsBackgroundCorrectionDialog::EAQTArplsBackgroundCorrectionDialog(QWidget
     }
 
     // "status bar"
-    ui->progressBar->setValue(0);
-    ui->progressBar->setMinimum(0);
-    ui->progressBar->setMaximum(100);
-    ui->progressBar->hide();
     ui->labelIterations->setText("");
     ui->labelIterations->hide();
     ui->labelStatus->setText("");
@@ -220,36 +217,40 @@ void EAQTArplsBackgroundCorrectionDialog::rescaleAndReplot(QCustomPlot *plt)
 
 void EAQTArplsBackgroundCorrectionDialog::applyArPLS()
 {
+    ui->pushButtonFitBkg->setText(tr("Cancel"));
     ui->labelStatus->show();
     ui->labelStatus->setText(tr("Calculating background for curve: -"));
     ui->labelIterations->show();
     ui->labelIterations->setText(tr("iterations: -"));
-    ui->progressBar->show();
-    ui->progressBar->setValue(0);
     ui->labelSeparator->show();
 
-    arPLS2Ver2_initialize();
     plotInticator = false;
 
     for(int i=0; i<_m; i++)
     {
-        QString s1 = tr("Calculating background for curve: ");
-        QString s2 = QString::number(i+1);
-        ui->labelStatus->setText(s1.append(s2));
+        if(!this->cancelCalcul)
+        {
+            QString s1 = tr("Calculating background for curve: ");
+            QString s2 = QString::number(i+1);
+            QString s3 = QString::number(_m);
+            ui->labelStatus->setText(s1.append(s2).append("/").append(s3));
 
-        //call arPLS function
-        tryArPLS(_curvesCopyYVector[0][i],i);
-        QCoreApplication::processEvents();
-        ui->progressBar->setValue(((i+1)*100/_m));
+            //call arPLS function
+            tryArPLS(_curvesCopyYVector[0][i],i);
+            QCoreApplication::processEvents();
+        }
+        else
+        {
+            ui->labelStatus->setText(tr("Background calculation canceled"));
+            break;
+        }
     }
 
-    arPLS2Ver2_terminate();
     this->plotSignalsAndBkg();
-    //QCoreApplication::processEvents();
-    ui->progressBar->hide();
     ui->labelStatus->setText(tr("Background calculation finished"));
     ui->labelIterations->hide();
     ui->labelSeparator->hide();
+    ui->pushButtonFitBkg->setText(tr("Fit background"));
 
 }
 
@@ -258,59 +259,27 @@ void EAQTArplsBackgroundCorrectionDialog::tryArPLS(QVector<double> y, int curren
     main_arPLS2(&y,_valueLambda,_valueRatio,_maxIter,_endPoints,_refineW,current);
 }
 
-emxArray_real_T *EAQTArplsBackgroundCorrectionDialog::argInit_Unboundedx1_real_T(QVector<double> *y)
-{
-  emxArray_real_T *result;
-  int iv = y->size();
-  int *iv0 = &iv;
-
-  int idx0;
-
-  // Set the size of the array.
-  // Change this size to the value that the application requires.
-  result = emxCreateND_real_T(1, iv0);
-
-  // Loop over the array to initialize each element.
-  for (idx0 = 0; idx0 < result->size[0U]; idx0++) {
-    // Set the value of the array element.
-    // Change this value to the value that the application requires.
-      result->data[idx0] = y->at(idx0);
-  }
-
-  return result;
-}
-
 void EAQTArplsBackgroundCorrectionDialog::main_arPLS2(QVector<double> *yqVect, int32_t lambda, double ratio,
                                                       int32_t maxIter, int32_t includeEndsNb, double threshold, int current)
 {
-    emxArray_real_T *bkg;
-    emxArray_real_T *weights;
-    emxArray_real_T *y;
-    double iter;
-    emxInitArray_real_T(&bkg, 1);
-    emxInitArray_real_T(&weights, 1);
+    QVector<double> bkg(yqVect->size());
+    QVector<double> weights(yqVect->size());
+    int iter = 0;
 
-    // Initialize function 'arPLS2' input arguments.
-    // Initialize function input argument 'y'.
-    y = argInit_Unboundedx1_real_T(yqVect);
-
-    // Call the entry-point 'arPLS2'.
-    arPLS2Ver2(y, lambda, ratio, maxIter, includeEndsNb, threshold, bkg, weights, &iter);
+    //arPLSVf(yqVect,lambda,ratio,maxIter,includeEndsNb,threshold,&bkg,&weights,&iter);
+    arPLSVd(yqVect,lambda,ratio,maxIter,includeEndsNb,threshold,&bkg,&weights,&iter);
 
     QString s3 = tr("iterations: ");
     ui->labelIterations->setText(s3.append(QString::number(iter)));
 
     for(int i = 0; i < yqVect->size(); i++) {
-        this->_bkg[0][current][i] = bkg->data[i];
-        this->_weights[0][current][i] = weights->data[i];
-        this->_iter[0][current] = iter;
+         this->_bkg[0][current][i] = bkg[i];
+         this->_weights[0][current][i] = weights[i];
+         this->_iter[0][current] = iter;
     }
 
     this->subtractBkg();
 
-    emxDestroyArray_real_T(weights);
-    emxDestroyArray_real_T(bkg);
-    emxDestroyArray_real_T(y);
 }
 
 void EAQTArplsBackgroundCorrectionDialog::subtractBkg()
@@ -325,15 +294,23 @@ void EAQTArplsBackgroundCorrectionDialog::subtractBkg()
 
 void EAQTArplsBackgroundCorrectionDialog::calculateBkg()
 {
+    disconnect(ui->pushButtonFitBkg,SIGNAL(clicked()),this,SLOT(calculateBkg()));
+    connect(ui->pushButtonFitBkg,SIGNAL(clicked()),this,SLOT(cancelCalculation()));
     ui->pushButtonShowWithouBkg->setEnabled(false);
     ui->pushButtonExportBkg->setEnabled(false);
-    ui->pushButtonFitBkg->setEnabled(false);
 
     this->applyArPLS();
 
     ui->pushButtonShowWithouBkg->setEnabled(true);
     ui->pushButtonExportBkg->setEnabled(true);
-    ui->pushButtonFitBkg->setEnabled(true);
+    disconnect(ui->pushButtonFitBkg,SIGNAL(clicked()),this,SLOT(cancelCalculation()));
+    this->cancelCalcul = false;
+    connect(ui->pushButtonFitBkg,SIGNAL(clicked()),this,SLOT(calculateBkg()));
+}
+
+void EAQTArplsBackgroundCorrectionDialog::cancelCalculation()
+{
+    this->cancelCalcul = true;
 }
 
 void EAQTArplsBackgroundCorrectionDialog::showWithoutBkg()
