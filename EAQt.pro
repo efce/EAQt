@@ -34,8 +34,7 @@ RC_FILE = eaqt.rc
 
 SOURCES += main.cpp\
     Qcustomplot/qcustomplot.cpp \
-    arPLS/arPLS2EigenD/arPLSEigenD.cpp \
-    arPLS/arPLS2EigenF/arPLSEigenF.cpp \
+    arPLS/arplsclass.cpp \
     eaqtarplsbackgroundcorrectiondialog.cpp \
     eaqtmainwindow.cpp \
     eaqtdata.cpp \
@@ -73,8 +72,7 @@ SOURCES += main.cpp\
 
 HEADERS  += \
     Qcustomplot/qcustomplot.h \
-    arPLS/arPLS2EigenD/arPLSEigenD.h \
-    arPLS/arPLS2EigenF/arPLSEigenF.h \
+    arPLS/arplsclass.h \
     eaqtarplsbackgroundcorrectiondialog.h \
     eaqtmainwindow.h \
     eaqtdata.h \

@@ -266,8 +266,8 @@ void EAQTArplsBackgroundCorrectionDialog::main_arPLS2(QVector<double> *yqVect, i
     QVector<double> weights(yqVect->size());
     int iter = 0;
 
-    //arPLSVf(yqVect,lambda,ratio,maxIter,includeEndsNb,threshold,&bkg,&weights,&iter);
-    arPLSVd(yqVect,lambda,ratio,maxIter,includeEndsNb,threshold,&bkg,&weights,&iter);
+    arPLSClass ac = arPLSClass();
+    ac.compute(yqVect, lambda, ratio, maxIter, includeEndsNb, threshold, &bkg, &weights, &iter, false);
 
     QString s3 = tr("iterations: ");
     ui->labelIterations->setText(s3.append(QString::number(iter)));

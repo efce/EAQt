@@ -7,8 +7,7 @@
 #include "eaqtuiinterface.h"
 #include "eaqtdata.h"
 #include "curve.h"
-#include "arPLS/arPLS2EigenF/arPLSEigenF.h"
-#include "arPLS/arPLS2EigenD/arPLSEigenD.h"
+#include "arPLS/arplsclass.h"
 
 namespace Ui {
 class EAQTArplsBackgroundCorrectionDialog;
