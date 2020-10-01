@@ -993,6 +993,10 @@ void EAQtMainWindow::createActionsTopMenu()
     this->_actBkgCorrectionSettings->setStatusTip(tr("Show settings of background correction."));
     connect(_actBkgCorrectionSettings, SIGNAL(triggered(bool)),this,SLOT(showBackgroundCorrectionSettings()));
 
+    this->_actArplsBkgCorrection = new QAction(tr("Fit arPLS background"), this);
+    this->_actArplsBkgCorrection->setStatusTip(tr("Perform arPLS background correction."));
+    connect(_actArplsBkgCorrection, SIGNAL(triggered(bool)), this, SLOT(showArplsBkgCorrection()));
+
     this->_actSubtractActive= new QAction(tr("Subtract active curve"), this);
     this->_actSubtractActive->setStatusTip(tr("Subtracts active curve from all."));
     connect(_actSubtractActive, SIGNAL(triggered(bool)),this,SLOT(subtractActive()));
@@ -1110,6 +1114,7 @@ void EAQtMainWindow::createMenusTopMenu()
     _menuAnalysis->addAction(this->_actFindPeaks);
     _menuAnalysis->addAction(this->_actBkgCorrection);
     _menuAnalysis->addAction(this->_actBkgCorrectionSettings);
+    _menuAnalysis->addAction(this->_actArplsBkgCorrection);
     _menuAnalysis->addAction(this->_actSubtractActive);
     _menuAnalysis->addAction(this->_actRelativeValues);
     _menuAnalysis->addAction(this->_actMoveUpDown);
@@ -1144,6 +1149,39 @@ void EAQtMainWindow::startBackgroundCorrection()
         _mouseHandler->ChangeMouseMode(EAQtMouseHandler::mm_place4markers,
                                        EAQtMouseHandler::uf_background_correction);
     }
+}
+
+void EAQtMainWindow::showArplsBkgCorrection()
+{
+    bool theSameNbOfDataPoints = true;
+    for (int i=1; i < _pEAQtData->getCurves()->count(); i++)
+    {
+        if(_pEAQtData->getCurves()->get(i-1)->getNrOfDataPoints() != _pEAQtData->getCurves()->get(i)->getNrOfDataPoints())
+        {
+            theSameNbOfDataPoints = false;
+        }
+    }
+
+    if(theSameNbOfDataPoints || (_pEAQtData->Act() != SELECT::all))
+    {
+        if( _pEAQtData->getCurves()->count() > 0 && (_pEAQtData->Act() >= 0 || _pEAQtData->Act() == SELECT::all) )
+        {
+            EAQTArplsBackgroundCorrectionDialog *arPLS = new EAQTArplsBackgroundCorrectionDialog(this,this);
+            arPLS->exec();
+            delete arPLS;
+        }
+        else
+        {
+            this->showMessageBox(tr("Select any (or all) curve(s) before you choose arPLS background correction method"),tr("Error."));
+        }
+    }
+    else
+    {
+        this->showMessageBox(tr("Select only curves with the same number of datapoints"),tr("Error."));
+    }
+
+
+
 }
 
 void EAQtMainWindow::subtractActive()

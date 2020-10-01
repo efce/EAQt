@@ -34,6 +34,8 @@ RC_FILE = eaqt.rc
 
 SOURCES += main.cpp\
     Qcustomplot/qcustomplot.cpp \
+    arPLS/arplsclass.cpp \
+    eaqtarplsbackgroundcorrectiondialog.cpp \
     eaqtmainwindow.cpp \
     eaqtdata.cpp \
     curvedata.cpp \
@@ -70,6 +72,8 @@ SOURCES += main.cpp\
 
 HEADERS  += \
     Qcustomplot/qcustomplot.h \
+    arPLS/arplsclass.h \
+    eaqtarplsbackgroundcorrectiondialog.h \
     eaqtmainwindow.h \
     eaqtdata.h \
     curve.h \
@@ -410,7 +414,8 @@ HEADERS  += \
     settingsdialog.h \
     eaqtcalculateloddialog.h
 
-FORMS    +=
+FORMS    += \
+    eaqtarplsbackgroundcorrectiondialog.ui
 
 TRANSLATIONS = ./eaqt_pl.ts
 
@@ -421,6 +426,7 @@ DISTFILES += \
     Qcustomplot/GPL.txt \
     Eigen/CMakeLists.txt \
     README.md \
+    arPLS3/rtw_proj.tmw \
     fonts/LiberationSans-Regular.ttf \
     fonts/DejaVuSans.ttf \
     fonts/SIL Open Font License.txt \
