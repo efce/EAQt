@@ -118,6 +118,7 @@ EAQTArplsBackgroundCorrectionDialog::EAQTArplsBackgroundCorrectionDialog(QWidget
     _plotW->plotLayout()->addElement(0, 0, new QCPTextElement(_plotW, tr("Weights"), QFont("sans", 8, QFont::Normal)));
     // button Fit background
     connect(ui->pushButtonFitBkg,SIGNAL(clicked()),this,SLOT(calculateBkg()));
+    connect(ui->pushCloseWindow,SIGNAL(clicked()),this,SLOT(close()));
     // other buttons
     ui->pushButtonShowWithouBkg->setEnabled(false);
     ui->pushButtonExportBkg->setEnabled(false);

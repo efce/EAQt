@@ -244,46 +244,55 @@
         <translation>Koreka linii bazowej arPLS - EAQt</translation>
     </message>
     <message>
-        <location filename="eaqtarplsbackgroundcorrectiondialog.ui" line="23"/>
-        <location filename="eaqtarplsbackgroundcorrectiondialog.cpp" line="199"/>
+        <location filename="eaqtarplsbackgroundcorrectiondialog.ui" line="36"/>
+        <location filename="eaqtarplsbackgroundcorrectiondialog.cpp" line="195"/>
         <source>Show curves without background</source>
         <translation>Krzywe bez tła</translation>
     </message>
     <message>
-        <location filename="eaqtarplsbackgroundcorrectiondialog.ui" line="57"/>
+        <location filename="eaqtarplsbackgroundcorrectiondialog.ui" line="43"/>
+        <source>Apply</source>
+        <translation>Zastosuj</translation>
+    </message>
+    <message>
+        <location filename="eaqtarplsbackgroundcorrectiondialog.ui" line="146"/>
         <source>arPLS parameters</source>
         <translation>Parametry arPLS</translation>
     </message>
     <message>
-        <location filename="eaqtarplsbackgroundcorrectiondialog.ui" line="63"/>
+        <location filename="eaqtarplsbackgroundcorrectiondialog.ui" line="152"/>
         <source>Lambda</source>
         <translation>Lambda</translation>
     </message>
     <message>
-        <location filename="eaqtarplsbackgroundcorrectiondialog.ui" line="84"/>
+        <location filename="eaqtarplsbackgroundcorrectiondialog.ui" line="173"/>
         <source>Ratio</source>
         <translation>Ratio</translation>
     </message>
     <message>
-        <location filename="eaqtarplsbackgroundcorrectiondialog.ui" line="120"/>
-        <location filename="eaqtarplsbackgroundcorrectiondialog.cpp" line="264"/>
+        <location filename="eaqtarplsbackgroundcorrectiondialog.ui" line="255"/>
+        <source>Close</source>
+        <translation>Zamknij</translation>
+    </message>
+    <message>
+        <location filename="eaqtarplsbackgroundcorrectiondialog.ui" line="29"/>
+        <location filename="eaqtarplsbackgroundcorrectiondialog.cpp" line="254"/>
         <source>Fit background</source>
         <translation>Dopasuj tło</translation>
     </message>
     <message>
-        <location filename="eaqtarplsbackgroundcorrectiondialog.ui" line="127"/>
+        <location filename="eaqtarplsbackgroundcorrectiondialog.ui" line="50"/>
         <source>Other parameters</source>
         <translation>Pozostałe parametry</translation>
     </message>
     <message>
-        <location filename="eaqtarplsbackgroundcorrectiondialog.ui" line="133"/>
+        <location filename="eaqtarplsbackgroundcorrectiondialog.ui" line="56"/>
         <source>Max. number of iterations</source>
         <translation>Maks. liczba iteracji</translation>
     </message>
     <message>
-        <location filename="eaqtarplsbackgroundcorrectiondialog.ui" line="196"/>
         <source>Export curves without background</source>
-        <translation>Ekportuj krzywe bez tła</translation>
+        <translation type="vanished">Ekportuj krzywe bez tła</translation>
     </message>
     <message>
         <location filename="eaqtarplsbackgroundcorrectiondialog.ui" line="221"/>
@@ -301,67 +310,67 @@
         <translation></translation>
     </message>
     <message>
-        <location filename="eaqtarplsbackgroundcorrectiondialog.ui" line="156"/>
+        <location filename="eaqtarplsbackgroundcorrectiondialog.ui" line="79"/>
         <source>Set &apos;w=1&apos; to marginal points</source>
         <translation>Ustaw &apos;w=1&apos; dla skrajnych punktów</translation>
     </message>
     <message>
-        <location filename="eaqtarplsbackgroundcorrectiondialog.ui" line="170"/>
+        <location filename="eaqtarplsbackgroundcorrectiondialog.ui" line="93"/>
         <source>Simplify &apos;w&apos; threshold</source>
         <translation>Próg uproszeczenia wag &apos;w&apos;</translation>
     </message>
     <message>
-        <location filename="eaqtarplsbackgroundcorrectiondialog.cpp" line="118"/>
+        <location filename="eaqtarplsbackgroundcorrectiondialog.cpp" line="113"/>
         <source>Curves and fitted background</source>
         <translation>Krzywe i dopasowane tło</translation>
     </message>
     <message>
-        <location filename="eaqtarplsbackgroundcorrectiondialog.cpp" line="123"/>
+        <location filename="eaqtarplsbackgroundcorrectiondialog.cpp" line="118"/>
         <source>Weights</source>
         <translation>Wagi</translation>
     </message>
     <message>
-        <location filename="eaqtarplsbackgroundcorrectiondialog.cpp" line="191"/>
+        <location filename="eaqtarplsbackgroundcorrectiondialog.cpp" line="187"/>
         <source>BACK</source>
         <translation>WRÓĆ</translation>
     </message>
     <message>
-        <location filename="eaqtarplsbackgroundcorrectiondialog.cpp" line="225"/>
+        <location filename="eaqtarplsbackgroundcorrectiondialog.cpp" line="221"/>
         <source>Cancel</source>
         <translation>Anuluj</translation>
     </message>
     <message>
-        <location filename="eaqtarplsbackgroundcorrectiondialog.cpp" line="227"/>
+        <location filename="eaqtarplsbackgroundcorrectiondialog.cpp" line="223"/>
         <source>Calculating background for curve: -</source>
         <translation>Obliczanie tła dla krzywej: -</translation>
     </message>
     <message>
-        <location filename="eaqtarplsbackgroundcorrectiondialog.cpp" line="229"/>
+        <location filename="eaqtarplsbackgroundcorrectiondialog.cpp" line="225"/>
         <source>iterations: -</source>
         <translation>liczba iteracji: -</translation>
     </message>
     <message>
-        <location filename="eaqtarplsbackgroundcorrectiondialog.cpp" line="241"/>
+        <location filename="eaqtarplsbackgroundcorrectiondialog.cpp" line="234"/>
         <source>Calculating background for curve: </source>
         <translation>Obliczanie tła dla krzywej: </translation>
     </message>
     <message>
-        <location filename="eaqtarplsbackgroundcorrectiondialog.cpp" line="253"/>
+        <location filename="eaqtarplsbackgroundcorrectiondialog.cpp" line="245"/>
         <source>Background calculation canceled</source>
         <translation>Anulowano obliczenia</translation>
     </message>
     <message>
-        <location filename="eaqtarplsbackgroundcorrectiondialog.cpp" line="261"/>
+        <location filename="eaqtarplsbackgroundcorrectiondialog.cpp" line="251"/>
         <source>Background calculation finished</source>
         <translation>Obliczanie tła zakończone</translation>
     </message>
     <message>
-        <location filename="eaqtarplsbackgroundcorrectiondialog.cpp" line="304"/>
+        <location filename="eaqtarplsbackgroundcorrectiondialog.cpp" line="273"/>
         <source>iterations: </source>
         <translation>liczba iteracji: </translation>
     </message>
     <message>
-        <location filename="eaqtarplsbackgroundcorrectiondialog.cpp" line="407"/>
+        <location filename="eaqtarplsbackgroundcorrectiondialog.cpp" line="345"/>
         <source>Curves exported</source>
         <translation>Krzywe wyeksportowane</translation>
     </message>
